@@ -1,0 +1,23 @@
+{
+  "name": "icosa",
+  "version": "0.0.1",
+  "description": "The common React component library used by the websites created by HIVDB team",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hivdb/icosa.git"
+  },
+  "author": "Philip Tzou <philiptz@stanford.edu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hivdb/icosa/issues"
+  },
+  "homepage": "https://github.com/hivdb/icosa#readme",
+  "dependencies": {
+    "csv-parse": "^1.2.4",
+    "underscore.string": "^3.3.4"
+  }
+}
