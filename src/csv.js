@@ -1,21 +1,17 @@
 import parseCSV from 'csv-parse/lib/sync';
 import {readFile, writeFile} from './file';
 
-export function loadString(fileContent, headers, delimiter = ',', omit_first_row = true) {
+export function loadString(fileContent, columns = true, delimiter = ',') {
   let rows = parseCSV(fileContent, {
-    delimiter, trim: true,
     skip_empty_lines: true,
-    columns: headers
+    columns: columns
   });
-  if (rows.length && omit_first_row) {
-    rows.splice(0, 1);
-  }
   return rows;
 }
 
-export async function loadFile(file, headers, delimiter = ',', omit_first_row = true) {
+export async function loadFile(file, columns = true, delimiter = ',') {
   const fileContent = await readFile(file);
-  return loadString(fileContent, headers, delimiter, omit_first_row);
+  return loadString(fileContent, columns, delimiter);
 }
 
 function quoteString(text) {
@@ -25,18 +21,18 @@ function quoteString(text) {
   return `"${text.replace(/"/g, '\\"')}"`;
 }
 
-export function dumpString(rows, headers, delimiter = ',') {
+export function dumpString(rows, columns, delimiter = ',') {
   let data = [];
-  data.push(headers.map(quoteString).join(delimiter));
+  data.push(columns.map(quoteString).join(delimiter));
   for (let row of rows) {
-    row = headers.map(col => row[col]).map(quoteString).join(',');
+    row = columns.map(col => row[col]).map(quoteString).join(',');
     data.push(row);
   }
   return data.join('\n');
 }
 
-export function dumpFile(rows, headers, delimiter = ',') {
-  const data = dumpString(rows, headers, delimiter);
+export function dumpFile(rows, columns, delimiter = ',') {
+  const data = dumpString(rows, columns, delimiter);
   writeFile(data, 'text/tab-separated-values', fileName);
 }
 
