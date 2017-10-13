@@ -39,3 +39,5 @@ export function dumpFile(rows, headers, delimiter = ',') {
   const data = dumpString(rows, headers, delimiter);
   writeFile(data, 'text/tab-separated-values', fileName);
 }
+
+export default {loadFile, loadString, dumpFile, dumpString};
