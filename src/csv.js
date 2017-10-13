@@ -15,7 +15,7 @@ export function loadString(fileContent, headers, delimiter = ',', omit_first_row
 
 export async function loadFile(file, headers, delimiter = ',', omit_first_row = true) {
   const fileContent = await readFile(file);
-  return loadString(fileContent, headers, delimiter, omit_first_row, defaults);
+  return loadString(fileContent, headers, delimiter, omit_first_row);
 }
 
 function quoteString(text) {
