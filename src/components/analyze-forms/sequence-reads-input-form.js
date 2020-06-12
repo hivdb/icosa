@@ -250,7 +250,7 @@ export default class SequenceReadsInputForm extends React.Component {
           </fieldset>
           : null}
         <div className={classNames(
-          style.loadingModal, isSubmitting ?
+          style['loading-modal'], isSubmitting ?
           null : style.hidden)
         }>
           <div className={style.inner}>

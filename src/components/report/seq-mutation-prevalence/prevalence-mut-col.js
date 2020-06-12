@@ -29,7 +29,7 @@ export default class PrevalenceMutCol extends React.Component {
         (aas.indexOf(cons) > -1 && aas.length === 2)
       ) {
         return <span>
-          <Icon className={style.expandBtn} />
+          <Icon className={style['expand-btn']} />
           {cons}{pos}{aas}
         </span>;
       }
@@ -44,8 +44,8 @@ export default class PrevalenceMutCol extends React.Component {
           display.push(`${spaces}${aa}`);
         }
         return <span>
-          <Icon className={style.expandBtn} />
-          <span className={style.mixtureMut}>{display}</span>
+          <Icon className={style['expand-btn']} />
+          <span className={style['mixture-mut']}>{display}</span>
         </span>;
       }
     }

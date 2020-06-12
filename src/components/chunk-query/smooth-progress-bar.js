@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ProgressBar from 'react-progressbar';
 
-import style from './style.scss';
+import style from './style.module.scss';
 
 
 export default class SmoothProgressBar extends React.Component {
@@ -52,7 +52,7 @@ export default class SmoothProgressBar extends React.Component {
       }
     }, estInterval);
     const completed = parseInt(estProgress / total * 100, 10);
-    return <div className={style.progressBarContainer}>
+    return <div className={style['progress-bar-container']}>
       {progressText(estProgress, total)}
       <ProgressBar {...props} completed={completed} />
     </div>;

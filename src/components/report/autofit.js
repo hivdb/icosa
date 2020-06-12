@@ -15,13 +15,18 @@ export default class AutofitGraph extends React.Component {
     return this.props.output === 'printable';
   }
 
+  constructor() {
+    super(...arguments);
+    this.sectionRef = React.createRef();
+  }
+
   componentDidMount() {
     if (!this.isPrint) {
       let prevContainerWidth;
       this._resizeEvent = () => {
         // automatically resize container width
-        if (this.refs.section) {
-          const containerWidth = this.refs.section.clientWidth;
+        if (this.sectionRef.current) {
+          const containerWidth = this.sectionRef.current.clientWidth;
           if (containerWidth !== prevContainerWidth) {
             prevContainerWidth = containerWidth;
             this.props.onResize({width: containerWidth});
@@ -45,8 +50,8 @@ export default class AutofitGraph extends React.Component {
 
     return (
       <section
-       ref="section"
-       className={style.reportSequenceQa}>
+       ref={this.sectionRef}
+       className={style['report-sequence-qa']}>
         {children}
       </section>
     );

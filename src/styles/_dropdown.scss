@@ -1,76 +1,78 @@
 @import "./colors";
 
 %base-dropdown {
-  @import "~react-dropdown/style.css";
-  .Dropdown-control {
-    background-color: $dropdown-bg;
-    border-radius: 0;
-    border-color: $dropdown-border;
-    overflow: visible;
-  }
-  .Dropdown-menu {
-    text-align: left;
-    border: 0;
-    max-height: 24rem;
-    background-color: $dropdown-menu-bg;
-  }
-  .Dropdown-option.is-selected {
-    background-color: $dropdown-opt-selected-bg;
-    color: $dropdown-opt-selected;
-  }
-  .Dropdown-option:hover {
-    background-color: $dropdown-opt-hover-bg;
-    color: $dropdown-opt-hover;
-  }
-  .Dropdown-arrow {
-    width: 25px;
-    //height: calc(100% + 2px);
-    height: auto;
-    display: flex;
-    justify-content: center;
-    background-color: $dropdown-arrow-bg;
-    align-items: center;
-    margin-top: 0;
-    top: -1px;
-    right: -1px;
-    bottom: -1px;
-    border: none;
-  }
-  .is-open .Dropdown-arrow {
-    background-color: $dropdown-arrow-active-bg;
-  }
-  .Dropdown-control:hover .Dropdown-arrow {
-    background-color: $dropdown-arrow-active-bg;
-  }
-  .Dropdown-arrow:before {
-    content: " ";
-    position: absolute;
-    background-color: $btn-flare-bg;
-    clip-path: polygon(100% 0, 0 0, 0 100%);
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  };
-  .Dropdown-arrow:after {
-    content: "▾";
-    color: $dropdown-arrow;
+  :global {
+    @import "~react-dropdown/style.css";
+    .Dropdown-control {
+      background-color: $dropdown-bg;
+      border-radius: 0;
+      border-color: $dropdown-border;
+      overflow: visible;
+    }
+    .Dropdown-menu {
+      text-align: left;
+      border: 0;
+      max-height: 24rem;
+      background-color: $dropdown-menu-bg;
+    }
+    .Dropdown-option.is-selected {
+      background-color: $dropdown-opt-selected-bg;
+      color: $dropdown-opt-selected;
+    }
+    .Dropdown-option:hover {
+      background-color: $dropdown-opt-hover-bg;
+      color: $dropdown-opt-hover;
+    }
+    .Dropdown-arrow {
+      width: 25px;
+      //height: calc(100% + 2px);
+      height: auto;
+      display: flex;
+      justify-content: center;
+      background-color: $dropdown-arrow-bg;
+      align-items: center;
+      margin-top: 0;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      border: none;
+    }
+    .is-open .Dropdown-arrow {
+      background-color: $dropdown-arrow-active-bg;
+    }
+    .Dropdown-control:hover .Dropdown-arrow {
+      background-color: $dropdown-arrow-active-bg;
+    }
+    .Dropdown-arrow:before {
+      content: " ";
+      position: absolute;
+      background-color: $btn-flare-bg;
+      clip-path: polygon(100% 0, 0 0, 0 100%);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    };
+    .Dropdown-arrow:after {
+      content: "▾";
+      color: $dropdown-arrow;
+    }
   }
 }
 
 %general-dropdown {
   @extend %base-dropdown;
-  .Dropdown-control {
+  :global .Dropdown-control {
     padding: 4px 32px 4px 12px;
   }
 }
 
 %small-dropdown {
   @extend %base-dropdown;
-  .Dropdown-control {
+  :global .Dropdown-control {
     padding: 0 32px 0 12px;
   }
-  .Dropdown-option {
+  :global .Dropdown-option {
     padding: 2px 10px;
   }
 }

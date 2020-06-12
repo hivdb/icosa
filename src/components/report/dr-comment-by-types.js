@@ -72,7 +72,7 @@ export default class DRCommentByTypes extends React.Component {
     const displayTPV = disabledDrugs.indexOf('TPV') === -1;
 
     return (
-      <div className={style.drReportCommentByTypes}>
+      <div className={style['dr-report-comment-by-types']}>
         <div className={style.title}>
           {gene.name} comments
         </div>

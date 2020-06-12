@@ -38,7 +38,7 @@ export default class SeqReadsQA extends React.Component {
   render() {
     const {output, name, allGeneSequenceReads} = this.props;
     return (
-      <section className={style.reportSeqreadsQa}>
+      <section className={style['report-seqreads-qa']}>
         <h2>
           Low abundance mutations
         </h2>

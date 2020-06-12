@@ -26,7 +26,7 @@ export default class AlgComparison extends React.Component {
   render() {
     const {algorithmComparison} = this.props;
     return (
-      <section className={style.algComparison}>
+      <section className={style['alg-comparison']}>
         <h2>Comparison of genotypic resistance algorithms</h2>
         <Tabs
          onSelect={this.switchTab}

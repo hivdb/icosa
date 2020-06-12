@@ -97,7 +97,7 @@ export default class AlgDrugClassComparison extends React.Component {
       <div
        ref="container"
        className={classNames(
-          style.algDrugclassComparisonContainer,
+          style['alg-drugclass-comparison-container'],
           containerExpanded ? style.expanded : null
         )}>
         <p className={style.instruction}>
@@ -108,14 +108,14 @@ export default class AlgDrugClassComparison extends React.Component {
           {scrolled ? 
             <span>Scroll right for more <FaAngleDoubleRight /></span> : '\xa0'}
         </p>
-        <div className={style.algDrugclassComparison}>
-          <table className={style.algComparisonTable}>
+        <div className={style['alg-drugclass-comparison']}>
+          <table className={style['alg-comparison-table']}>
             <thead>
               <tr>
                 <th />
                 {algorithms.map((alg, idx) => (
                   <th key={idx}>
-                    <div className={style.algAlgName}>{alg}</div>
+                    <div className={style['alg-alg-name']}>{alg}</div>
                   </th>
                 ))}
               </tr>
@@ -138,7 +138,7 @@ export default class AlgDrugClassComparison extends React.Component {
                 return (
                   <tr key={idx}>
                     <th>
-                      <div className={style.algDrugName}>
+                      <div className={style['alg-drug-name']}>
                         {drug.displayAbbr}
                       </div>
                     </th>
@@ -146,8 +146,8 @@ export default class AlgDrugClassComparison extends React.Component {
                       (alg, idx) => {
                         const ds = drugScore.get(alg);
                         return <td key={idx}
-                         className={isDiff ? style.cellDiff : null}>
-                          <div className={style.algComparisonCard}>
+                         className={isDiff ? style['cell-diff'] : null}>
+                          <div className={style['alg-comparison-card']}>
                             <dl>
                               {ds ? <>
                                 <dt>SIR:</dt>

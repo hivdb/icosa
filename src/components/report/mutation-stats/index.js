@@ -33,11 +33,11 @@ export default class MutationStats extends React.Component {
       location, validationResults
     } = this.props;
     return (
-      <section className={style.reportMutationStats}>
+      <section className={style['report-mutation-stats']}>
         <h2>
           Multi-threshold mutation summary table
         </h2>
-        <div className={style.reportMutationStatsInner}>
+        <div className={style['report-mutation-stats-inner']}>
           <StatTable
            {...histogram}
            currentCutoff={curCutoff}

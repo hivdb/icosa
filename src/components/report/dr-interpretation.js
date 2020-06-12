@@ -40,11 +40,11 @@ export default class DRInterpretation extends React.Component {
     const {algorithm, gene} = geneDR;
 
     return (
-      <section className={style.drInterpretation}>
+      <section className={style['dr-interpretation']}>
         <h2>
           Drug resistance interpretation: {gene.name}
         </h2>
-        <div className={style.headerAnnotation}>
+        <div className={style['header-annotation']}>
           {algorithm.family} {algorithm.version} ({algorithm.publishDate})
         </div>
         <DRMutationByTypes {...geneDR} {...{output, strain}} />
@@ -54,7 +54,7 @@ export default class DRInterpretation extends React.Component {
             failed quality assessment (severe warning).
           </p> :
           <>
-            {suppressLevels ? null : <div className={style.drLevels}>
+            {suppressLevels ? null : <div className={style['dr-levels']}>
               {gene.drugClasses.map((drugClass, idx) => (
                 <DRLevels
                  key={idx} {...{output, drugClass, disabledDrugs}}

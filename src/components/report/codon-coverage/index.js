@@ -19,11 +19,11 @@ export default class CodonReadsCoverage extends React.Component {
     const codonReadsCoverage = JSON.parse(internalJsonCodonReadsCoverage);
     const width = genes.reduce((acc, {length}) => acc + length * 5, 0);
 
-    return <section className={style.codonReadsCoverage}>
+    return <section className={style['codon-reads-coverage']}>
       <h2>
         Codon read coverage
       </h2>
-      <div className={style.graphContainer}>
+      <div className={style['graph-container']}>
         <CodonCoverageGraph 
          containerWidth={width}
          {...{

@@ -2,24 +2,24 @@
 @import "../../styles/tabs";
 @import "../../styles/dropdown";
 
-:local .link-style {
+.link-style {
   @media print {
     color: black;
     text-decoration: none;
   }
 }
 
-:local .icon-before-text {
+.icon-before-text {
   position: relative;
   top: -1px;
 }
 
-:local .dr-mutation-scores {
+.dr-mutation-scores {
   @extend %report-section;
   position: relative;
 }
 
-:local ul.subtype-details {
+ul.subtype-details {
   margin-top: 0;
   margin-bottom: 0;
   padding-left: 1.5rem;
@@ -28,27 +28,29 @@
   }
 }
 
-:local(.dr-mutation-scores) {
-  .griddle-container {
-    margin: 1rem -1rem;
-  }
-
-  .griddle-body th:first-child {
-    width: 8rem;
-  }
-
-  .griddle-body th[data-title="mutations"]:hover {
-    cursor: not-allowed;
-    background-color: $table-head-row-bg;
+.dr-mutation-scores {
+  :global {
+    .griddle-container {
+      margin: 1rem -1rem;
+    }
+  
+    .griddle-body th:first-child {
+      width: 8rem;
+    }
+  
+    .griddle-body th[data-title="mutations"]:hover {
+      cursor: not-allowed;
+      background-color: $table-head-row-bg;
+    }
   }
 }
 
-:local .dr-interpretation {
+.dr-interpretation {
   @extend %report-section;
   position: relative;
 }
 
-:local .gene-mutation-prevalence {
+.gene-mutation-prevalence {
   @extend %report-section;
 
   .expand-btn {
@@ -63,12 +65,12 @@
   }
 }
 
-:local(.gene-mutation-prevalence) {
-  .griddle-container {
+.gene-mutation-prevalence {
+  :global .griddle-container {
     margin: 1rem -1rem;
   }
 
-  .griddle-body {
+  :global(.griddle-body) {
     table {
       overflow: hidden;
       width: 100%;
@@ -124,7 +126,7 @@
         padding-right: 1rem;
       }
 
-      &:local(.prevalence-data) small {
+      &.prevalence-data small {
         font-size: .6rem;
       }
 
@@ -144,7 +146,7 @@
       padding-left: .8rem;
       padding-right: .8rem;
 
-      &:local(.prevalence-data) {
+      &.prevalence-data {
         width: auto;
         position: relative;
         box-sizing: border-box;
@@ -201,7 +203,7 @@
   }
 }
 
-:local .buttons, :local .buttons-right {
+.buttons, .buttons-right {
 
   @media only screen and (max-width: 855px) {
     float: none;
@@ -213,13 +215,13 @@
   }
 }
 
-:local .buttons {
+.buttons {
   > * {
     margin-right: .5rem;
   }
 }
 
-:local .buttons-right {
+.buttons-right {
   float: right;
 
   > * {
@@ -227,23 +229,25 @@
   }
 }
 
-:local .sequence-summary {
+.sequence-summary {
   @extend %report-section;
 
   .desc-list {
     @include desc-list(18rem, $overflow: visible);
-    .has-dropdown :global {
+    .has-dropdown {
       @extend %small-dropdown;
-      .Dropdown-root {
+      :global .Dropdown-root {
         width: 6rem;
       }
       // display: inline-block;
       margin-top: 0.2rem;
       margin-bottom: 0.2rem;
+      
     }
   }
 
   .pretty-pairwise {
+    clear: both;
     h3 {
       font-size: 1rem;
       margin-right: 1rem;
@@ -278,7 +282,7 @@
 
 }
 
-:local .report-sequence-qa {
+.report-sequence-qa {
   @extend %report-section;
   h3 {
     font-size: 1rem;
@@ -290,23 +294,21 @@
   }
 }
 
-:local section.alg-comparison {
+section.alg-comparison {
   @extend %report-section;
 }
 
-:local(section.alg-comparison) {
+section.alg-comparison {
   @extend %react-tabs-container;
-  .react-tabs [role=tabpanel] {
+  :global .react-tabs [role=tabpanel] {
     background-color: $panel-blank-bg;
   }
-  .react-tabs [role=tab][aria-selected=true] {
+  :global .react-tabs [role=tab][aria-selected=true] {
     background-color: $panel-blank-bg;
   }
 }
 
-
-
-:local .validation-report {
+.validation-report {
   > ul {
     margin: 2rem 0;
     > li {
@@ -358,11 +360,11 @@
   }
 }
 
-:local .dr-report-mutation-by-types {
+.dr-report-mutation-by-types {
   @include desc-list(18rem);
 }
 
-:local .dr-report-comment-by-types {
+.dr-report-comment-by-types {
   border: 1px solid $dividing-line;
   box-sizing: border-box;
   background-color: $panel-bg;
@@ -399,7 +401,7 @@
   }
 }
 
-:local .dr-levels {
+.dr-levels {
   overflow: hidden;
 
   table.dr-level {
@@ -434,7 +436,7 @@
   }
 }
 
-:local .alg-drugclass-comparison-container {
+.alg-drugclass-comparison-container {
   .instruction {
     color: $trivia;
     > button {
@@ -523,12 +525,12 @@
   }
 }
 
-:local .footnote {
+.footnote {
    font-size: 0.8rem;
    line-height: 1.5;
 }
 
-:local .header-annotation {
+.header-annotation {
   position: absolute;
   right: 0;
   margin-top: -40px;

@@ -12,7 +12,7 @@ export default class DRMutationByTypes extends React.Component {
     const {gene, mutationsByTypes} = this.props;
 
     return (
-      <div className={style.drReportMutationByTypes}>
+      <div className={style['dr-report-mutation-by-types']}>
         <dl>
           {mutationsByTypes.reduce((r, {mutationType, mutations}) => {
             mutations = mutations.filter(mut => !mut.isUnsequenced);

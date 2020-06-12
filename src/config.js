@@ -22,5 +22,6 @@ export default {
     S: {
       Other: 'Other'
     }
-  }
+  },
+  maxProteinSize: 1273  // S protein
 };

@@ -39,11 +39,10 @@ function getColumnMetadata(subtypeStats, gene) {
             displayName: (
               <span>
                 {display}<br />
-                <small>
-                N={total}</small>
+                <small>N={total}</small>
               </span>
             ),
-            cssClassName: style.prevalenceData,
+            cssClassName: style['prevalence-data'],
             customComponent: PrevalenceData
           };
           break;

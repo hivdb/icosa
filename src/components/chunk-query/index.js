@@ -61,7 +61,7 @@ export default class ChunkQuery extends React.Component {
               {renderPartialResults ?
                 render(data, /* emptyProps= */true) : null}
               <Loader loaded={false} />
-              </>;
+            </>;
           }
           if (error) {
             return `Error! ${error.message}`;

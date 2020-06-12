@@ -54,28 +54,28 @@ export default class SequenceSummary extends React.Component {
     const disablePrettyPairwise = availableGenes.length === 0;
 
     return (
-      <section className={style.sequenceSummary}>
+      <section className={style['sequence-summary']}>
         <h2>
           Sequence summary
         </h2>
-        <div className={style.buttonsRight}>
+        <div className={style['buttons-right']}>
           <Button
            className={style.button}
            onClick={this.toggleSDRMs} disabled={disableSDRMs}>
             {showSDRMs ?
-              <FaEyeSlash className={style.iconBeforeText} /> :
-              <FaEye className={style.iconBeforeText} />} SDRMs
+              <FaEyeSlash className={style['icon-before-text']} /> :
+              <FaEye className={style['icon-before-text']} />} SDRMs
           </Button>
           <Button
            className={style.button}
            onClick={this.togglePrettyPairwise}
            disabled={disablePrettyPairwise}>
             {showPrettyPairwise ?
-              <FaEyeSlash className={style.iconBeforeText} /> :
-              <FaEye className={style.iconBeforeText} />} Pretty pairwise
+              <FaEyeSlash className={style['icon-before-text']} /> :
+              <FaEye className={style['icon-before-text']} />} Pretty pairwise
           </Button>
         </div>
-        <div className={style.descList}>
+        <div className={style['desc-list']}>
           <dl>
             {alignedGeneSequences.reduce((r, geneSeq, idx) => {
               const gene = geneSeq.gene.name;
@@ -107,7 +107,7 @@ export default class SequenceSummary extends React.Component {
             }, [])}
           </dl>
         </div>
-        {showPrettyPairwise ? <div className={style.prettyPairwise}>
+        {showPrettyPairwise ? <div className={style['pretty-pairwise']}>
           {alignedGeneSequences.map(
             ({gene: {name: gene}, prettyPairwise}, idx) => (
               <PrettyPairwise key={idx} {...{gene, prettyPairwise}} />

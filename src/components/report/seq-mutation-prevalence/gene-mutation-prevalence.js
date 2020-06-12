@@ -61,7 +61,7 @@ export default class GeneMutationPrevalence extends React.Component {
 
     return (
       <section
-       className={style.geneMutationPrevalence}
+       className={style['gene-mutation-prevalence']}
        data-drug-class={drugClass}>
         <h2>
           Mutation percentage according to subtype

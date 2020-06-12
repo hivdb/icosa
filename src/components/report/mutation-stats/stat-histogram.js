@@ -125,7 +125,7 @@ class SequenceReadsHistogram extends React.Component {
 
     const barWidth = xScale.bandwidth();
 
-    return <div className={style.statHistogram}>
+    return <div className={style['stat-histogram']}>
       <svg
        width={width + margin.left + margin.right}
        height={height + margin.top + margin.bottom}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import style from './style.scss';
+import style from './style.module.scss';
 
 
 export default class RadioInput extends React.Component {
@@ -27,7 +27,7 @@ export default class RadioInput extends React.Component {
       id, name, value, title, onChange, checked, disabled,
       children, style: userStyle} = this.props;
     return (
-      <span title={title} className={style.generalRadioInput}>
+      <span title={title} className={style['general-radio-input']}>
         <input
          id={id}
          type="radio" name={name}

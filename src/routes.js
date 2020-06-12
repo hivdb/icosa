@@ -1,6 +1,7 @@
 import React from 'react';
 import {Route, Redirect} from 'found';
 
+import Layout from './components/layout';
 import SeqAnaForms from './views/sars2/forms';
 import ReportBySequences from './views/sars2/report-by-sequences';
 // import HivdbReportByMutations from './views/hivdb/report-by-mutations';
@@ -9,7 +10,7 @@ import ReportBySeqReads from './views/sars2/report-by-reads';
 
 const routes = (
   <Route path="/">
-    <Route>
+    <Route Component={Layout}>
       <Redirect from="sars2/" to="/sars2/by-sequences/" />
       <Route path="sars2/">
         <Route path="by-sequences/">

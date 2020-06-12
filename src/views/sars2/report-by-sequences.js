@@ -69,9 +69,9 @@ export default class ReportBySequences extends React.Component {
         {isCritical ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
-             suppressLevels={species === 'HIV2'}
+             suppressLevels={species === 'SARS2'}
              {...{geneDR, output, disabledDrugs, strain}} />
-            {species === 'HIV2' ? null : <DRMutationScores
+            {species === 'SARS2' ? null : <DRMutationScores
              {...{geneDR, output, disabledDrugs, strain}} />}
           </React.Fragment>)}
       </section>

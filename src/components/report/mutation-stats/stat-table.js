@@ -54,14 +54,14 @@ export default class MutationStats extends React.Component {
     const {mutationStats} = this;
     const {numPositions, currentCutoff} = this.props;
 
-    return <table className={style.statTable}>
+    return <table className={style['stat-table']}>
       <thead>
         <tr>
           <th>Mutation detection threshold</th>
           <th># usual mutations</th>
           <th># unusual mutations</th>
           <th># DRMs</th>
-          <th className={style.dividingLine} />
+          <th className={style['dividing-line']} />
           <th># signature APOBEC mutations</th>
           <th># APOBEC-context DRMs</th>
         </tr>
@@ -80,7 +80,7 @@ export default class MutationStats extends React.Component {
               ({(ms.numUnusuals / numPositions * 100).toFixed(1)}%)
             </td>
             <td>{ms.numDRMs}</td>
-            <td className={style.dividingLine} />
+            <td className={style['dividing-line']} />
             <td>{ms.numApobecs}</td>
             <td>{(ms.numApobecs + ms.numApobecDRMs) > 0 ?
                  ms.numApobecDRMs : null}</td>

@@ -5,7 +5,7 @@ $chkbox-border-width: 1px;
 
 $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27.5% 40%);
 
-:local .general-checkbox-input {
+.general-checkbox-input {
 
   &.use-polygon {
     label::after {

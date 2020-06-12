@@ -1,0 +1,11 @@
+@import "~flexbox-grid-mixins";
+@import "../../styles";
+
+[data-reactroot] {
+  position: relative;
+  min-height: calc(100vh - 191px);
+}
+
+.layout-container {
+  @extend %full-container;
+}

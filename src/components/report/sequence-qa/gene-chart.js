@@ -7,10 +7,12 @@ import { scaleBand, scaleLinear} from '@vx/scale';
 import { withTooltip, Tooltip } from '@vx/tooltip';
 import range from 'd3-array/src/range';
 
+import config from '../../../config';
 import memoize from '../../../utils/memoize-decorator';
 
 import style from './style.module.scss';
 
+const MAX_PROTEIN_SIZE = config.maxProteinSize;
 const margin = { top: 10, right: 10, bottom: 25, left: 10 };
 
 // temporary solution: can not use _colors.scss
@@ -42,7 +44,8 @@ function ticks(start, end, tick) {
   step = parseInt((step + 3) / 5, 10) * 5;
   let r = [];
   const istart = parseInt(start / 5, 10) * 5;
-  for (let i=istart; i < end - 7; i += step) {
+  const maxI = end - (MAX_PROTEIN_SIZE / 80);
+  for (let i=istart; i < maxI; i += step) {
     if (i > start) {
       r.push(i);
     }
@@ -155,7 +158,7 @@ class GeneChart extends React.Component {
     }
 
     const lenAA = lastAA - firstAA + 1;
-    const scale = containerWidth / 620;  // xmax = 560
+    const scale = containerWidth / MAX_PROTEIN_SIZE / 1.5;
 
     // use ellipse formula to find a proper width:
     // y = (ymax * 2ax - (ax)^2)^0.5
@@ -220,7 +223,7 @@ class GeneChart extends React.Component {
         if (mut[attr]) {
           problems.push(
             <div key={mut.text}>
-              <strong className={style.tooltipLabel}>{label}: </strong>
+              <strong className={style['tooltip-label']}>{label}: </strong>
               {mut.text}
             </div>
           );
@@ -233,7 +236,7 @@ class GeneChart extends React.Component {
       // the one at the position is a frameshift
       problems.push(
         <div key={`fs${sft.position}`}>
-          <strong className={style.tooltipLabel}>
+          <strong className={style['tooltip-label']}>
             Frameshift {sft.isInsertion ? "Insertion" : "Deletion"}:&nbsp;
           </strong>
           {sft.text}

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import style from './style.scss';
+import style from './style.module.scss';
 
 
 const isClipPathPolygonSupported = (() => {
@@ -48,8 +48,8 @@ export default class CheckboxInput extends React.Component {
     const {id, children, className, style: userStyle, ...props} = this.props;
     return (
       <span className={classNames(
-        style.generalCheckboxInput, className,
-        isClipPathPolygonSupported ? style.usePolygon : null)}>
+        style['general-checkbox-input'], className,
+        isClipPathPolygonSupported ? style['use-polygon'] : null)}>
         <input
          id={id} {...props}
          type="checkbox" />

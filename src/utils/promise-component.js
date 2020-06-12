@@ -27,35 +27,52 @@ export default class PromiseComponent extends React.Component {
 
   constructor() {
     super(...arguments);
-    let {promise, children, component, then, error} = this.props;
+    let {children} = this.props;
     let childProps = null;
     this.state = {
+      loaded: false,
       childProps,
       children
     };
-    if (promise && promise.then) {
-      this.promiseWillUpdate(promise, then, error, component);
-    }
-    else {
-      Object.assign(
-        this.state,
-        this.getStateFromPromiseResult(promise, then, component)
-      );
-    }
   }
-
-  getStateFromPromiseResult(result, then, component) {
-    let state;
+  
+  static getStateFromResult(result, then, component, promise) {
+    let state = {};
     result = then(result);
     if (component) {
-      state = {childProps: result};
+      state = {
+        loaded: promise,
+        childProps: result
+      };
     } else {
-      state = {children: result};
+      state = {
+        loaded: promise,
+        children: result
+      };
     }
     return state;
   }
 
-  async promiseWillUpdate(promise, then, error, component) {
+  static getDerivedStateFromProps(props, state) {
+    const {promise, children, then, component} = props;
+    if (state.loaded === promise) {
+      return null;
+    }
+    else if (promise && promise.then) {
+      return {
+        loaded: false,
+        childProps: null,
+        children
+      };
+    }
+    else {
+      return this.getStateFromResult(
+        promise, then, component, promise
+      );
+    }
+  }
+
+  async _loadAsyncData(promise, then, error, component) {
     let result, callback;
     try {
       result = await promise;
@@ -65,17 +82,22 @@ export default class PromiseComponent extends React.Component {
       result = e.message;
       callback = error;
     }
-    this.setState(this.getStateFromPromiseResult(result, callback, component));
+    this.setState(
+      this.constructor
+        .getStateFromResult(result, callback, component, promise)
+    );
   }
 
   async componentDidMount() {
     const {promise, then, error, component} = this.props;
-    await this.promiseWillUpdate(promise, then, error, component);
+    await this._loadAsyncData(promise, then, error, component);
   }
 
-  async componentWillReceiveProps(nextProps) {
-    const {promise, then, error, component} = nextProps;
-    await this.promiseWillUpdate(promise, then, error, component);
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.loaded !== this.props.promise) {
+      const {promise, then, error, component} = this.props;
+      await this._loadAsyncData(promise, then, error, component);
+    }
   }
 
   render() {
@@ -84,7 +106,7 @@ export default class PromiseComponent extends React.Component {
       const {component} = this.props;
       return React.createElement(component, childProps);
     } else {
-      return <div>{children}</div>;
+      return <>{children}</>;
     }
   }
 

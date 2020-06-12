@@ -115,7 +115,7 @@ export default class ExtCodfish extends React.Component {
     const {downloading, showChart} = this.state;
     const {name, allGeneSequenceReads} = this.props;
     const extCodfish = prepareData(allGeneSequenceReads);
-    return <div className={style.extCodfishContainer} data-hide={!showChart}>
+    return <div className={style['ext-codfish-container']} data-hide={!showChart}>
       <div>
         <CodfishGraph {...{extCodfish}} />
         <br />
@@ -130,15 +130,15 @@ export default class ExtCodfish extends React.Component {
            className={style.button}
            btnStyle="info"
            onClick={this.handleDownload}>
-            <FaDownload className={style.iconBeforeText} />
+            <FaDownload className={style['icon-before-text']} />
             {' '}Spreadsheet
           </Button>
           <Button
            btnSize="small"
            onClick={this.toggle}>
             {showChart ?
-              <FaEyeSlash className={style.iconBeforeText} /> :
-              <FaEye className={style.iconBeforeText} />
+              <FaEyeSlash className={style['icon-before-text']} /> :
+              <FaEye className={style['icon-before-text']} />
             }{' '}
             Graph
           </Button>

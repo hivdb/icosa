@@ -104,7 +104,7 @@ export default class CodfishGraph extends React.Component {
     );
     const barWidth = xScale.bandwidth();
 
-    return <div className={style.codfishGraph} ref="container">
+    return <div className={style['codfish-graph']} ref="container">
       <svg
        width={width + margin.left + margin.right}
        height={height + margin.top + margin.bottom}>

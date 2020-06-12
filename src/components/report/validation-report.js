@@ -31,7 +31,7 @@ export default class ValidationReport extends React.Component {
     validationResults = [...validationResults];
     validationResults.sort(validationResultCmp);
     return (
-      <section className={style.validationReport}>
+      <section className={style['validation-report']}>
         {validationResults.length > 0 ?
           <ul>
             {validationResults.map(({level, message}, idx) => (

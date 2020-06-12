@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Griddle from 'griddle-react';
 import "../../styles/griddle-table.scss";
 
-import Link from '../../components/link';
 import {parseMutation} from '../../utils/mutation';
 
 import style from './style.module.scss';
@@ -23,11 +22,11 @@ class RuleCol extends React.Component {
     }
     else {
       return (
-        <Link
-         className={style.linkStyle}
+        <a
+         className={style['link-style']}
          href={`/cgi-bin/Marvel.cgi?pos=${pos}&class=${dcName}`}>
           {data}
-        </Link>
+        </a>
       );
     }
   }
@@ -140,11 +139,11 @@ export default class DRMutationScores extends React.Component {
     const {geneDR, disabledDrugs} = this.props;
     const {algorithm, gene} = geneDR;
     return (
-      <section className={style.drMutationScores}>
+      <section className={style['dr-mutation-scores']}>
         <h2>
           Mutation scoring: {gene.name}
         </h2>
-        <div className={style.headerAnnotation}>
+        <div className={style['header-annotation']}>
           {algorithm.family} {algorithm.version} ({algorithm.publishDate})
         </div>
         {geneDR.gene.drugClasses.map((drugClass, idx) => {

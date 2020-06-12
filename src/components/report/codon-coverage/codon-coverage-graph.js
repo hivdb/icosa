@@ -12,7 +12,6 @@ import {FaAngleDoubleRight} from 'react-icons/fa';
 import {genesPropType, codonReadsCoveragePropType} from './prop-types';
 import style from './style.module.scss';
 
-//import style from './style.module.scss';
 const colors = {
   stroke: '#ffffff',  // white,
   fill: '#24b298',  // jungleGreen,
@@ -189,7 +188,7 @@ class CodonCoverageGraph extends React.Component {
         Scroll right for more <FaAngleDoubleRight />
       </div>
       <svg
-       className={style.leftAxis}
+       className={style['left-axis']}
        width={margin.left + 1}
        height={height + margin.top + margin.bottom}>
         <AxisLeft
@@ -210,7 +209,7 @@ class CodonCoverageGraph extends React.Component {
       </svg>
       <div
        ref="mainG"
-       className={style.mainGraphContainer}>
+       className={style['main-graph-container']}>
         <svg
          width={width}
          height={height + margin.top + margin.bottom}>

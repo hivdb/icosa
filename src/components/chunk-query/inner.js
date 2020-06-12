@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Loader from 'react-loader';
 
 import SmoothProgressBar from './smooth-progress-bar';
-import style from './style.scss';
+import style from './style.module.scss';
 
 
 export default class ChunkQueryInner extends React.Component {
@@ -26,7 +26,7 @@ export default class ChunkQueryInner extends React.Component {
       <Loader loaded={done} />
       <SmoothProgressBar
        loaded={done}
-       className={style.progressBar}
+       className={style['progress-bar']}
        {...{progress, nextProgress, total, progressText}} />
       {renderResults ? render(data, data === undefined, done) : null}
     </>;

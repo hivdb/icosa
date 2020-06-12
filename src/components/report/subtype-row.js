@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
 
 import Link from '../link';
+import ExtLink from '../link/external';
 
 import style from './style.module.scss';
 
@@ -65,20 +66,20 @@ export default class SubtypeRow extends React.Component {
         :
       </dt>,
       <dd key={1}>
-        <Link
-         className={style.linkStyle} href="#"
+        <a
+         className={style['link-style']} href="#toggle-subtype-details"
          onClick={this.toggleSubtypeDetails}>
           {showSubtypeDetails ?
             <FaRegMinusSquare
              title="Hide subtype details"
-             className={style.iconBeforeText} /> :
+             className={style['icon-before-text']} /> :
             <FaRegPlusSquare
              title="Show subtype details"
-             className={style.iconBeforeText} />}
-        </Link>
+             className={style['icon-before-text']} />}
+        </a>
         {' '}{subtypeText}
         {showSubtypeDetails ?
-          <ul className={style.subtypeDetails}>
+          <ul className={style['subtype-details']}>
             {subtypes.map(
               ({displayWithoutDistance: displaySubtype,
                 subtype: {displayName: subtype},
@@ -88,14 +89,13 @@ export default class SubtypeRow extends React.Component {
                 referenceYear: year}, idx) => (
                   <li key={idx} className={
                   vnum === bestMatchingVnum ?
-                    style.bestMatch : null
+                    style['best-match'] : null
                 }>
-                    <Link
-                     target="_blank"
+                    <ExtLink
                      title="Open corresponding Genbank page"
                      href={`${NUCCORE_PREFIX}${vnum}`}>
                       {vnum}
-                    </Link>:{' '}
+                    </ExtLink>:{' '}
                     {country} ({year});{' '}
                     {displaySubtype} (
                     {displaySubtype !== subtype ? `${subtype}, ` : null}

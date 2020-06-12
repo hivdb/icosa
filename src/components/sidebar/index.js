@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import style from './style.scss';
+import style from './style.module.scss';
 
 
 let _isPositionStickySupported;
@@ -94,12 +94,12 @@ export default class Sidebar extends React.Component {
 
     return <div className={
       isPositionStickySupported() ?
-        style.sidebarStickyContainer :
-        style.sidebarFixedContainer
+        style['sidebar-sticky-container'] :
+        style['sidebar-fixed-container']
     }>
-      <div className={style.sidebarContainer}>
-        <nav className={style.sidebarGeneral}>
-          <div className={style.sidebarTitle}>{title}</div>
+      <div className={style['sidebar-container']}>
+        <nav className={style['sidebar-general']}>
+          <div className={style['sidebar-title']}>{title}</div>
           <ul>
             {children
               .map((item, idx) => (

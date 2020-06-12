@@ -1,6 +1,6 @@
 @import "../../styles";
 
-:local .sidebar-sticky-container {
+.sidebar-sticky-container {
   position: sticky;
   float: left;
   top: 2rem;
@@ -8,13 +8,13 @@
   z-index: 500;
 }
 
-:local .sidebar-fixed-container {
+.sidebar-fixed-container {
   position: fixed;
   margin-top: 2rem;
   z-index: 500;
 }
 
-:local .sidebar-container {
+.sidebar-container {
   $sidebar-width: 15rem;
   $min-sidebar-width: 5rem;
   $sidebar-dividing-line-gutter: 0.5rem;

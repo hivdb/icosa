@@ -174,28 +174,28 @@ export default class SeqReadsSummary extends React.Component {
     }
 
     return <>
-      <section className={style.sequenceSummary}>
+      <section className={style['sequence-summary']}>
         <h2>
           Sequence reads summary
         </h2>
-        <div className={style.buttonsRight}>
+        <div className={style['buttons-right']}>
           <Button
            className={style.button}
            onClick={this.toggleSDRMs} disabled={disableBtns}>
             {showSDRMs ?
-              <FaEyeSlash className={style.iconBeforeText} /> :
-              <FaEye className={style.iconBeforeText} />} SDRMs
+              <FaEyeSlash className={style['icon-before-text']} /> :
+              <FaEye className={style['icon-before-text']} />} SDRMs
           </Button>
           <Button
            className={style.button}
            onClick={this.toggleCodonCov} disabled={disableBtns}>
             {showCodonCov ?
-              <FaEyeSlash className={style.iconBeforeText} /> :
-              <FaEye className={style.iconBeforeText} />}
+              <FaEyeSlash className={style['icon-before-text']} /> :
+              <FaEye className={style['icon-before-text']} />}
             {' '}Read Coverage
           </Button>
         </div>
-        <div className={style.descList}>
+        <div className={style['desc-list']}>
           <dl>
             {allGeneSequenceReads.map((
               {gene: {name: gene}, numPositions, firstAA, lastAA}, idx) => [
@@ -213,8 +213,8 @@ export default class SeqReadsSummary extends React.Component {
               {median.toLocaleString()}
             </dd>
             <SubtypeRow {...{bestMatchingSubtype, subtypes}} />
-            <dt className={style.hasDropdown}>Read depth threshold:</dt>
-            <dd className={style.hasDropdown}>
+            <dt className={style['has-dropdown']}>Read depth threshold:</dt>
+            <dd className={style['has-dropdown']}>
               <Dropdown
                value={curMinReadsDepthOption}
                options={MINREADS_OPTIONS}
@@ -231,8 +231,8 @@ export default class SeqReadsSummary extends React.Component {
                 </dd>
               </>
             ) : null}
-            <dt className={style.hasDropdown}>Mutation detection threshold:</dt>
-            <dd className={style.hasDropdown}>
+            <dt className={style['has-dropdown']}>Mutation detection threshold:</dt>
+            <dd className={style['has-dropdown']}>
               <Dropdown
                value={curCutoffOption}
                placeholder="..."

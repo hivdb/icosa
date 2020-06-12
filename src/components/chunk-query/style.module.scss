@@ -1,9 +1,9 @@
 @import "../../styles";
 
-:local .progress-bar-container {
+.progress-bar-container {
   margin-top: 1.5rem;
 }
 
-:local .progress-bar > div {
+.progress-bar > div {
   background-color: $progress-bar !important;
 }

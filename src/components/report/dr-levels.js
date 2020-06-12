@@ -22,7 +22,7 @@ export default class DRLevels extends React.Component {
     const {levels, drugClass} = this.props;
     const disabledDrugs = new Set(this.props.disabledDrugs);
     return (
-      <table className={style.drLevel}>
+      <table className={style['dr-level']}>
         <caption>
           {drugClass.fullName}s
         </caption>
