@@ -1,3 +1,12 @@
+import config from '../config';
+import {csvParse} from './csv';
+
+
+function testTSV(text) {
+  return /\t/.test(text);
+}
+
+
 function tsvrow(row) {
   const cells = row.split(/\t/g);
   return cells.map(c => {
@@ -13,14 +22,11 @@ function tsvrow(row) {
 
 
 function normalizeGene(gene) {
-  if (/^\s*(PR|protease)\s*$/i.test(gene)) {
-    return 'PR';
+  if (/^\s*(rdrp)\s*$/i.test(gene)) {
+    return 'RdRP';
   }
-  else if (/^\s*(RT|reverse transcriptase)\s*$/i.test(gene)) {
-    return 'RT';
-  }
-  else if (/^\s*(IN|INT|integrase)\s*$/i.test(gene)) {
-    return 'IN';
+  else if (/^\s*(S|spike)\s*$/i.test(gene)) {
+    return 'S';
   }
 }
 
@@ -144,7 +150,6 @@ function parseCodFISH(name, rows, minPrevalence) {
   // Gene, AAPos, TotalReads, Codon, CodonReads
   for (let row of rows) {
     let gene, aaPos, totalReads, codon, codonReads;
-    row = tsvrow(row);
     if (row.length >= 5) {
       [gene, aaPos, totalReads, codon, codonReads] = row;
     }
@@ -183,7 +188,7 @@ function parseCodFISH(name, rows, minPrevalence) {
   }
   return {
     name,
-    strain: 'HIV1', // TODO: support HIV2A and HIV2B in the future
+    strain: config.seqReadsDefaultStrain,
     allReads: Object.values(gpMap),
     minPrevalence
   };
@@ -191,11 +196,19 @@ function parseCodFISH(name, rows, minPrevalence) {
 
 
 export function parseSequenceReads(name, data, minPrevalence) {
-  const rows = data.split(/[\r\n]+/g);
-  if (rows[0].startsWith('##fileformat=AAVF')) {
-    return parseAAVF(name, rows, minPrevalence);
+  const isTSV = testTSV(data);
+  let rows;
+  if (isTSV) {
+    rows = data.split(/[\r\n]+/g);
+    if (rows[0].startsWith('##fileformat=AAVF')) {
+      return parseAAVF(name, rows, minPrevalence);
+    }
+    else {
+      rows = rows.map(tsvrow);
+    }
   }
   else {
-    return parseCodFISH(name, rows, minPrevalence);
+    rows = csvParse(data, false);
   }
+  return parseCodFISH(name, rows, minPrevalence);
 }

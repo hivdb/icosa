@@ -1,4 +1,5 @@
 import React from 'react';
+import {routerShape, matchShape} from 'found';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import Loader from 'react-loader';
@@ -60,12 +61,9 @@ const SequenceReadsPropType = PropTypes.shape({
 
 class SequenceReadsAnalysisInner extends React.Component {
 
-  static contextTypes = {
-    location: PropTypes.object.isRequired,
-    router: PropTypes.object.isRequired
-  }
-
   static propTypes = {
+    match: matchShape.isRequired,
+    router: routerShape.isRequired,
     render: PropTypes.func.isRequired,
     query: PropTypes.object.isRequired,
     allSequenceReads: PropTypes.arrayOf(
@@ -87,12 +85,12 @@ class SequenceReadsAnalysisInner extends React.Component {
   }
 
   hasCache() {
-    const {location: loc} = this.context;
+    const {location: loc} = this.props.match;
     return loc.query && 'load' in loc.query;
   }
 
   get currentSelected() {
-    const {location} = this.context;
+    const {location} = this.props.match;
     const {allSequenceReads, lazyLoad} = this.props;
     if (!lazyLoad) { return undefined; }
     let {hash} = location;
@@ -106,7 +104,7 @@ class SequenceReadsAnalysisInner extends React.Component {
   }
 
   handleSelectSequenceReads = ({name}) => {
-    const {location, router} = this.context;
+    const {match: {location}, router} = this.props;
     const loc = recurMerge(location, {hash: `#${name}`});
     router.push(loc);
   }
@@ -154,8 +152,7 @@ class SequenceReadsAnalysisInner extends React.Component {
   }
 
   async handleSaveCache(data) {
-    const {location, router} = this.context;
-    const {onSaveCache} = this.props;
+    const {match: {location}, router, onSaveCache} = this.props;
     const load = await onSaveCache(data);
     if (load) {
       router.replace({
@@ -236,11 +233,9 @@ class SequenceReadsAnalysisInner extends React.Component {
 
 export default class SequenceReadsAnalysisLayout extends React.Component {
 
-  static contextTypes = {
-    location: PropTypes.object.isRequired
-  }
-
   static propTypes = {
+    match: matchShape.isRequired,
+    router: routerShape.isRequired,
     extraQueryArgs: PropTypes.object.isRequired,
     extraQueryArgTypes: PropTypes.object.isRequired,
     onLoadCache: PropTypes.func
@@ -258,7 +253,7 @@ export default class SequenceReadsAnalysisLayout extends React.Component {
 
   async prepareChildProps() {
     const {onLoadCache, ...props} = this.props;
-    const {location: loc} = this.context;
+    const {location: loc} = this.props.match;
     let allSequenceReads = [];
     let cachedProps;
     if (onLoadCache && loc.query && 'load' in loc.query) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
+import {matchShape, routerShape} from 'found';
 import PropTypes from 'prop-types';
 import {FaEye, FaEyeSlash} from 'react-icons/fa';
 import Dropdown from 'react-dropdown';
@@ -55,6 +56,8 @@ export {query};
 export default class SeqReadsSummary extends React.Component {
 
   static propTypes = {
+    match: matchShape.isRequired,
+    router: routerShape.isRequired,
     sequenceReadsResult: PropTypes.shape({
       allGeneSequenceReads: PropTypes.array.isRequired,
       internalJsonCodonReadsCoverage: PropTypes.string.isRequired,
@@ -68,12 +71,7 @@ export default class SeqReadsSummary extends React.Component {
         iqr75: PropTypes.number.isRequired
       }),
     }),
-    output: PropTypes.string.isRequired,
-    location: PropTypes.object.isRequired
-  }
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired
+    output: PropTypes.string.isRequired
   }
 
   static defaultProps = {
@@ -88,16 +86,16 @@ export default class SeqReadsSummary extends React.Component {
   }
 
   handleCutoffChange = ({value: cutoff}) => {
-    const newLoc = {...this.props.location};
+    const newLoc = {...this.props.match.location};
     newLoc.query = newLoc.query ? newLoc.query : {};
     newLoc.query.cutoff = cutoff;
-    this.context.router.push(newLoc);
+    this.props.router.push(newLoc);
   }
 
   handleMinReadDepthChange = ({value}) => {
-    const newLoc = {query: {}, ...this.props.location};
+    const newLoc = {query: {}, ...this.props.match.location};
     newLoc.query.rd = value;
-    this.context.router.push(newLoc);
+    this.props.router.push(newLoc);
   }
 
   toggleSDRMs = () => {
@@ -231,7 +229,9 @@ export default class SeqReadsSummary extends React.Component {
                 </dd>
               </>
             ) : null}
-            <dt className={style['has-dropdown']}>Mutation detection threshold:</dt>
+            <dt className={style['has-dropdown']}>
+              Mutation detection threshold:
+            </dt>
             <dd className={style['has-dropdown']}>
               <Dropdown
                value={curCutoffOption}

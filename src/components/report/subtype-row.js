@@ -16,7 +16,7 @@ export default class SubtypeRow extends React.Component {
     bestMatchingSubtype: PropTypes.shape({
       display: PropTypes.string.isRequired,
       referenceAccession: PropTypes.string.isRequired
-    }).isRequired,
+    }),
     subtypes: PropTypes.arrayOf(
       PropTypes.shape({
         displayWithoutDistance: PropTypes.string.isRequired,
@@ -55,7 +55,7 @@ export default class SubtypeRow extends React.Component {
     const {showSubtypeDetails} = this.state;
 
     if (!subtypeText) {
-      return <dt>N/A</dt>;
+      return null;
     }
 
     return [

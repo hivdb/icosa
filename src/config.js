@@ -23,5 +23,10 @@ export default {
       Other: 'Other'
     }
   },
-  maxProteinSize: 1273  // S protein
+  maxProteinSize: 1273,  // S protein
+  seqReadsDefaultStrain: 'SARS2',
+  seqReadsCodonCovBgColors: {
+    RdRP: '#f0f0f0',
+    S: '#ffffff'
+  }
 };

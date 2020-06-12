@@ -9,6 +9,8 @@ import {withTooltip, Tooltip} from '@vx/tooltip';
 import range from 'd3-array/src/range';
 import {FaAngleDoubleRight} from 'react-icons/fa';
 
+import config from '../../../config.js';
+
 import {genesPropType, codonReadsCoveragePropType} from './prop-types';
 import style from './style.module.scss';
 
@@ -16,13 +18,10 @@ const colors = {
   stroke: '#ffffff',  // white,
   fill: '#24b298',  // jungleGreen,
   fillTrimmed: '#bbbbbb',  // silver
-  dashedDividingLine: '#1c1b1c',  // thunder
-  bgPR: '#f0f0f0',
-  bgRT: '#ffffff',
-  bgIN: '#f0f0f0'
+  dashedDividingLine: '#1c1b1c'  // thunder
 };
 
-const margin = { top: 10, right: 0, bottom: 20, left: 40 };
+const margin = { top: 10, right: 0, bottom: 40, left: 40 };
 const height = 420;
 
 function ticks(start, end, tick) {
@@ -50,6 +49,11 @@ class CodonCoverageGraph extends React.Component {
 
   static defaultProps = {
     output: 'default'
+  }
+
+  constructor() {
+    super(...arguments);
+    this.mainGRef = React.createRef();
   }
 
   get graphProps(){
@@ -208,7 +212,7 @@ class CodonCoverageGraph extends React.Component {
         />
       </svg>
       <div
-       ref="mainG"
+       ref={this.mainGRef}
        className={style['main-graph-container']}>
         <svg
          width={width}
@@ -224,7 +228,7 @@ class CodonCoverageGraph extends React.Component {
                  width={x1 - x0}
                  y={0}
                  height={yMax}
-                 fill={colors[`bg${gene}`]} key={idx} />
+                 fill={config.seqReadsCodonCovBgColors[gene]} key={idx} />
               );
             })}
             {data.map((d, i) => {
@@ -245,7 +249,7 @@ class CodonCoverageGraph extends React.Component {
                  onMouseMove={event => {
                    // const top = yMax - barHeight;
                    // const left = xPoint(d);
-                   const container = this.refs.mainG.parentElement;
+                   const container = this.mainGRef.current.parentElement;
                    const left = event.pageX - container.offsetLeft + 15;
                    const top = event.pageY - container.offsetTop - 5;
                    const {position, totalReads} = d;

@@ -2,7 +2,7 @@
 
 %base-dropdown {
   :global {
-    @import "~react-dropdown/style.css";
+    @import "~react-dropdown/style";
     .Dropdown-control {
       background-color: $dropdown-bg;
       border-radius: 0;

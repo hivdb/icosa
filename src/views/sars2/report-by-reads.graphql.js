@@ -85,7 +85,7 @@ export default gql`
         isDRM
       }
     }
-    drugResistance(algorithm: $algorithm) {
+    drugResistance {
       algorithm {
         family
         version

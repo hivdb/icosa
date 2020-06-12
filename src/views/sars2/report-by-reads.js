@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import {routerShape, matchShape} from 'found';
 
 import {
   SeqReadsSidebar, DRInterpretation, DRMutationScores,
@@ -20,7 +20,8 @@ const pageTitlePrefix = 'HIVdb Analysis Report';
 export default class HivdbReportBySeqReads extends React.Component {
 
   static propTypes = {
-    location: PropTypes.object.isRequired
+    router: routerShape.isRequired,
+    match: matchShape.isRequired
   }
 
   getPageTitle(sequenceReadsAnalysis, output) {
@@ -46,8 +47,8 @@ export default class HivdbReportBySeqReads extends React.Component {
       validationResults
     } = sequenceReadsResult;
     const {
-      location,
-      location: {state: {disabledDrugs}}
+      match, router,
+      match: {location: {state: {disabledDrugs}}}
     } = this.props;
     const isCritical = validationResults.some(
       ({level}) => level === 'CRITICAL');
@@ -60,8 +61,8 @@ export default class HivdbReportBySeqReads extends React.Component {
       <section className={style.section} key={key}>
         {isPrint ? <h2>Sequence {seqName}</h2> : null}
         <SeqReadsSummary
-         {...{sequenceReadsResult, genes, output, location}} />
-        <MutationStats {...sequenceReadsResult} {...{location, output}} />
+         {...{sequenceReadsResult, genes, output, match, router}} />
+        <MutationStats {...sequenceReadsResult} {...{match, output}} />
         <SeqReadsAnalysisQA {...sequenceReadsResult} output={output} />
         {/*<ValidationReport {...sequenceReadsResult} output={output} />*/}
         {isCritical ?
@@ -84,7 +85,7 @@ export default class HivdbReportBySeqReads extends React.Component {
   }
 
   get output() {
-    const {location} = this.props;
+    const {match: {location}} = this.props;
     let output;
     if (location.query) {
       output = location.query.output;
@@ -94,7 +95,9 @@ export default class HivdbReportBySeqReads extends React.Component {
 
   thenRender = ({
     allSequenceReads, currentSelected, genes,
-    sequenceReadsAnalysis, onSelectSequenceReads}) => {
+    sequenceReadsAnalysis, onSelectSequenceReads
+  }) => {
+    const {match, router} = this.props;  
     const {output} = this;
     const pageTitle = this.getPageTitle(sequenceReadsAnalysis, output);
     setTitle(pageTitle);
@@ -110,9 +113,8 @@ export default class HivdbReportBySeqReads extends React.Component {
       {output === 'printable' ?
         <PrintHeader /> :
         <SeqReadsSidebar
-         currentSelected={currentSelected}
-         onSelect={onSelectSequenceReads}
-         allSequenceReads={allSequenceReads} />
+         {...{match, router, currentSelected, allSequenceReads}}
+         onSelect={onSelectSequenceReads} />
       }
       <article className={style.article}>
         {sequenceReadsAnalysis.map((seqReadsResult, idx) => (
@@ -125,14 +127,12 @@ export default class HivdbReportBySeqReads extends React.Component {
 
   render() {
     const {output} = this;
-    const {location: {state: {algorithm}}} = this.props;
+    const {router, match} = this.props;
     return (
       <SeqReadsAnalysisLayout
+       {...{router, match, query}}
        lazyLoad={output !== 'printable'}
        renderPartialResults={output !== 'printable'}
-       extraQueryArgs={{algorithm}}
-       extraQueryArgTypes={{algorithm: 'ASIAlgorithm'}}
-       query={query}
        render={this.thenRender} />
     );
   }
