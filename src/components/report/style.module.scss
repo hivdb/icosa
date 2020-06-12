@@ -1,0 +1,538 @@
+@import "./ext";
+@import "../../styles/tabs";
+@import "../../styles/dropdown";
+
+:local .link-style {
+  @media print {
+    color: black;
+    text-decoration: none;
+  }
+}
+
+:local .icon-before-text {
+  position: relative;
+  top: -1px;
+}
+
+:local .dr-mutation-scores {
+  @extend %report-section;
+  position: relative;
+}
+
+:local ul.subtype-details {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+  > li.best-match {
+    font-weight: 600;
+  }
+}
+
+:local(.dr-mutation-scores) {
+  .griddle-container {
+    margin: 1rem -1rem;
+  }
+
+  .griddle-body th:first-child {
+    width: 8rem;
+  }
+
+  .griddle-body th[data-title="mutations"]:hover {
+    cursor: not-allowed;
+    background-color: $table-head-row-bg;
+  }
+}
+
+:local .dr-interpretation {
+  @extend %report-section;
+  position: relative;
+}
+
+:local .gene-mutation-prevalence {
+  @extend %report-section;
+
+  .expand-btn {
+    width: 1em;
+    height: 1.5em;
+    vertical-align: top;
+    margin-right: .5rem;
+  }
+
+  .mixture-mut {
+    display: inline-block;
+  }
+}
+
+:local(.gene-mutation-prevalence) {
+  .griddle-container {
+    margin: 1rem -1rem;
+  }
+
+  .griddle-body {
+    table {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    %cell-children {
+      position: relative;
+      z-index: 1;
+    }
+
+    th {
+      width: auto;
+      box-sizing: border-box;
+      padding-left: .8rem;
+      padding-right: .8rem;
+      position: relative;
+
+      &:hover {
+        cursor: not-allowed;
+        background-color: $table-head-row-bg;
+      }
+
+      &::before {
+        position: absolute;
+        left: 0;
+        text-align: center;
+        width: 800%;  // 8 subtypes
+        z-index: 2;
+      }
+
+      &[data-title="naiveCRF02_AG"]::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-right: -.25rem;
+        width: .5rem;
+        height: 15000px;
+        background-color: $body-bg;
+        border-left: 1px solid $dividing-line;
+        border-right: 1px solid $dividing-line;
+        z-index: 3;
+      }
+
+      &[data-title="mutation"] {
+        width: 6rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      &[data-title="nas"] {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      &:local(.prevalence-data) small {
+        font-size: .6rem;
+      }
+
+      > * {
+        @extend %cell-children;
+        display: inline-block;
+        padding-top: 2rem;
+      }
+
+    }
+
+    tbody > tr {
+      white-space: pre;
+    }
+
+    td {
+      padding-left: .8rem;
+      padding-right: .8rem;
+
+      &:local(.prevalence-data) {
+        width: auto;
+        position: relative;
+        box-sizing: border-box;
+        padding-left: .5rem;
+        padding-right: .5rem;
+
+        &:hover::after {
+          content: "";
+          position: absolute;
+          background-color: $table-row-hover-bg;
+          left: 0;
+          top: -5000px;
+          height: 10000px;
+          width: 100%;
+          z-index: 0;
+        }
+      }
+
+      > * {
+        @extend %cell-children;
+      }
+    }
+
+    tbody > tr.child-row td:first-child {
+      text-indent: 1.4rem; // .9 + .5 rem from expand-btn
+    } 
+  }
+
+  &[data-drug-class="PI"] .griddle-body {
+    th[data-title="naiveA"]::before {
+      content: "PI Naive Persons";
+    }
+    th[data-title="treatedA"]::before {
+      content: "PI Treated Persons";
+    }
+  }
+
+  &[data-drug-class="RTI"] .griddle-body {
+    th[data-title="naiveA"]::before {
+      content: "RTI Naive Persons";
+    }
+    th[data-title="treatedA"]::before {
+      content: "RTI Treated Persons";
+    }
+  }
+
+  &[data-drug-class="INSTI"] .griddle-body {
+    th[data-title="naiveA"]::before {
+      content: "INSTI Naive Persons";
+    }
+    th[data-title="treatedA"]::before {
+      content: "INSTI Treated Persons";
+    }
+  }
+}
+
+:local .buttons, :local .buttons-right {
+
+  @media only screen and (max-width: 855px) {
+    float: none;
+    margin-bottom: .5rem;
+  }
+
+  @media print {
+    display: none;
+  }
+}
+
+:local .buttons {
+  > * {
+    margin-right: .5rem;
+  }
+}
+
+:local .buttons-right {
+  float: right;
+
+  > * {
+    margin-left: .5rem;
+  }
+}
+
+:local .sequence-summary {
+  @extend %report-section;
+
+  .desc-list {
+    @include desc-list(18rem, $overflow: visible);
+    .has-dropdown :global {
+      @extend %small-dropdown;
+      .Dropdown-root {
+        width: 6rem;
+      }
+      // display: inline-block;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+    }
+  }
+
+  .pretty-pairwise {
+    h3 {
+      font-size: 1rem;
+      margin-right: 1rem;
+      margin-bottom: 0;
+      display: inline-block;
+    }
+
+    .instruction {
+      font-size: .8rem;
+      color: $trivia;
+    }
+
+    pre {
+      margin-top: .24rem;
+      margin-bottom: 0;
+      overflow-x: auto;
+      padding: .5rem;
+      background-color: $panel-bg;
+      > div {
+        &::after {
+          // an old webkit bug: http://stackoverflow.com/a/22240912
+          content: "";
+        }
+        > span {
+          display: inline-block;
+          width: 3rem;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+}
+
+:local .report-sequence-qa {
+  @extend %report-section;
+  h3 {
+    font-size: 1rem;
+    margin-top: .24rem;
+    margin-bottom: 0;
+  }
+  .tooltip-label {
+    white-space: nowrap;
+  }
+}
+
+:local section.alg-comparison {
+  @extend %report-section;
+}
+
+:local(section.alg-comparison) {
+  @extend %react-tabs-container;
+  .react-tabs [role=tabpanel] {
+    background-color: $panel-blank-bg;
+  }
+  .react-tabs [role=tab][aria-selected=true] {
+    background-color: $panel-blank-bg;
+  }
+}
+
+
+
+:local .validation-report {
+  > ul {
+    margin: 2rem 0;
+    > li {
+      margin: .5rem 0;
+      position: relative;
+      &:hover::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        opacity: .1;
+        left: 0;
+        top: 0;
+      }
+    }
+  }
+  .level-critical {
+    background-color: $validation-critical-bg;
+    color: $validation-critical-text;
+  }
+  .level-severe-warning {
+    background-color: $validation-severe-warning-bg;
+    color: $validation-severe-warning-text;
+  }
+  .level-warning {
+    background-color: $validation-warning-bg;
+    color: $validation-warning-text;
+  }
+  .level-note {
+    background-color: $validation-note-bg;
+    color: $validation-note-text;
+  }
+  .placeholder {
+    margin-left: 3rem;
+    font-style: italic;
+    background-color: $validation-placeholder-bg;
+    color: $validation-placeholder-text;
+  }
+  @media print {
+    .level-severe-warning {
+      text-decoration: underline;
+    }
+    .level-critical, .level-severe-warning, .level-warning, .level-note {
+      background: white;
+      color: black
+    }
+  }
+}
+
+:local .dr-report-mutation-by-types {
+  @include desc-list(18rem);
+}
+
+:local .dr-report-comment-by-types {
+  border: 1px solid $dividing-line;
+  box-sizing: border-box;
+  background-color: $panel-bg;
+  margin: 1.5rem -1rem 0;
+  padding: 1rem;
+  @media print {
+    background-color: white;
+  }
+  
+  .title {
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  > dl {
+    margin: 0;
+    width: 100%;
+    line-height: 1.5;
+    overflow: hidden;
+    > dt {
+      font-weight: 700;
+      width: 18rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    > dd {
+      padding: 0;
+      margin: 0;
+      ul {
+        margin: .5rem 0 1rem;
+      }
+    }
+  }
+}
+
+:local .dr-levels {
+  overflow: hidden;
+
+  table.dr-level {
+    float: left;
+    margin-left: -1rem;
+    @media only screen and (min-width: 640px) {
+      margin-right: 15%;
+    };
+    border-collapse: collapse;
+    line-height: 1.5;
+    border-spacing: 0;
+    caption {
+      font-weight: 700;
+      border-bottom: 1px solid $dividing-line;
+      margin: 1rem auto .5rem
+    }
+    tr {
+      &:hover {
+        background-color: $table-row-hover-bg;
+      }
+    }
+    th {
+      box-sizing: content-box;
+      padding: 0 0 0 1rem;
+      width: 18rem;
+      text-align: left;
+    }
+    td {
+      box-sizing: content-box;
+      padding: 0 1rem 0 0;
+    }
+  }
+}
+
+:local .alg-drugclass-comparison-container {
+  .instruction {
+    color: $trivia;
+    > button {
+      float: right;
+    }
+  }
+
+  .alg-drugclass-comparison {
+    overflow: auto;
+    position: relative;
+  }
+
+  .alg-alg-name {
+    width: 100%;
+    height: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.5rem;
+  }
+
+  .alg-drug-name {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: 700;
+    line-height: 1.5rem;
+    text-align: center;
+    transform: rotate(270deg);
+  }
+
+  .alg-comparison-card {
+    padding: .5rem 1rem;
+  }
+
+  &.expanded {
+    background-color: $panel-blank-bg;
+    position: absolute;
+    z-index: 1000;
+    box-sizing: border-box;
+    width: 100vw;
+    min-height: 100vh;
+    padding: 2rem;
+    left: 0;
+    top: 0;
+
+    table.alg-comparison-table {
+      width: 100%;
+    }
+
+  }
+
+  table.alg-comparison-table {
+    margin-top: .75rem;
+    margin-bottom: .75rem;
+
+    > thead > tr > th {
+      height: 2rem;
+      line-height: 2rem;
+      box-sizing: border-box;
+
+      &:first-child {
+        min-width: 1.5rem;
+      }
+      &:not(:first-child) {
+        background-color: $panel-bg;
+        min-width: 24rem;
+      }
+    }
+
+    > tbody > tr > th {
+      width: 2rem;
+      box-sizing: border-box;
+      background-color: $panel-bg;
+    }
+
+    > tbody > tr > td {
+      background-color: $panel-bg;
+
+      &.cell-diff {
+        background-color: $panel-highlight-bg2;
+      }
+
+      .alg-comparison-card {
+        @include desc-list(4.2em, 1024px);
+      }
+    }
+  }
+}
+
+:local .footnote {
+   font-size: 0.8rem;
+   line-height: 1.5;
+}
+
+:local .header-annotation {
+  position: absolute;
+  right: 0;
+  margin-top: -40px;
+  @media print {
+    margin-top: -26px;
+  }
+}

@@ -1,0 +1,118 @@
+@import "./colors";
+@import "./table";
+
+:local .content-container {
+  @extend %table-style;
+  line-height: 1.5;
+  nav.toc {
+    border: 1px solid $dividing-line;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    background-color: $panel-bg;
+    float: right;
+    min-width: 18rem;
+    width: 24rem;
+    font-size: .8rem;
+    line-height: 2;
+    position: relative;
+    z-index: 1;
+  }
+  td {
+    vertical-align: top;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+  table ul, table ol, nav.toc ul, nav.toc li {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  table strong, table b {
+    font-weight: 700;
+  }
+  h1 {
+    margin-top: .6rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  h2 {
+    font-size: 1.4rem;
+    margin-top: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+  h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    text-decoration: underline;
+  }
+  h4 {
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: .7rem;
+  }
+  img.fullwidth {
+    width: 100%;
+  }
+  a {
+    color: $link-text;
+    &:hover {
+      color: $link-hover-text;
+      text-decoration: underline;
+    }
+    &[role="button"]:hover {
+      text-decoration: none;
+    }
+  }
+  ul, ol {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+  }
+  li {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    &:first-child {
+      margin-top: 0;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  p.center {
+    text-align: center;
+  }
+  p.pull-right {
+    float: right;
+  }
+  @media only screen and (min-width: 641px) and (max-width: 1024px) {
+    nav.toc {
+      width: 18rem;
+    };
+  }
+  @media only screen and (max-width: 640px) {
+    nav.toc {
+      margin-right: 0;
+      float: none;
+    };
+  }
+  &[data-page-name="updates"] {
+    p {
+      margin-bottom: 0;
+    }
+    p + ul, p + ol {
+      margin-top: 0;
+    }
+    li {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+  iframe.dynamic-html {
+    border: 0;
+    position: relative;
+    width: 100%;
+    height: 100vw;
+  }
+}

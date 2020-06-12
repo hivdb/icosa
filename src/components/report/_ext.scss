@@ -1,0 +1,8 @@
+@import "../../styles";
+
+%report-section {
+  margin: 2rem 1rem;
+  > h2 {
+    @extend %title-bar;
+  }
+}

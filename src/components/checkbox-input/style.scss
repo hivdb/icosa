@@ -1,0 +1,67 @@
+@import "../../styles";
+
+$chkbox-size: 18px;
+$chkbox-border-width: 1px;
+
+$tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27.5% 40%);
+
+:local .general-checkbox-input {
+
+  &.use-polygon {
+    label::after {
+      color: transparent;
+      background-color: $chkbox-on;
+    }
+    input:disabled + label::after {
+      color: transparent;
+      background-color: $chkbox-disabled;
+    }
+  }
+
+  label {
+    position: relative;
+    display: inline-block;
+    margin-right: 2rem;
+    cursor: pointer;
+    &::before, &::after {
+      box-sizing: border-box;
+      display: inline-block;
+      width: $chkbox-size;
+      height: $chkbox-size;
+    }
+    &::before {
+      content: "\a0";  // use &nbsp; to enable line-height
+      margin-right: .4rem;
+      line-height: #{$chkbox-size - 2 * $chkbox-border-width};
+      background-color: $chkbox-off-bg;
+      border: $chkbox-border-width solid $chkbox-border;
+    }
+    &::after {
+      left: 0;
+      content: "✓";
+      opacity: 0;
+      font-size: 1rem;
+      text-align: center;
+      position: absolute;
+      clip-path: $tick-polygon;
+      -webkit-clip-path: $tick-polygon;
+      transition: opacity 0.15s ease;
+      color: $chkbox-on;
+    }
+  }
+
+  input {
+    display: none;
+    &:checked + label::after {
+      opacity: 1;
+    }
+    &:disabled {
+      + label {
+        cursor: not-allowed;
+        &::after {
+          color: $chkbox-disabled;
+        }
+      }
+    }
+  }
+}

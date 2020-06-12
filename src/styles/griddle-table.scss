@@ -1,0 +1,29 @@
+@import "./colors";
+@import "./table";
+
+.griddle-container {
+  line-height: 1.5;
+  font-size: 0.9rem;
+  @extend %table-style;
+}
+
+.griddle-body tbody > tr.parent-row {
+  cursor: pointer;
+}
+
+.griddle-body tbody:nth-child(odd) > tr.parent-row {
+  background-color: $table-row-odd-bg;
+}
+
+.griddle-body tbody:nth-child(even) > tr.child-row:nth-child(odd) {
+  background-color: $table-row-even-bg;
+}
+
+.griddle-body tbody:nth-child(even) > tr.child-row:nth-child(even) {
+  background-color: $table-row-odd-bg;
+}
+
+.griddle-body tbody:nth-child(even) > tr.parent-row {
+  background-color: $table-row-even-bg;
+}
+

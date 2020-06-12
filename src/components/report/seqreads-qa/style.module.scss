@@ -1,0 +1,46 @@
+@import "../ext";
+
+.report-seqreads-qa {
+  @extend %report-section;
+  page-break-inside: avoid;
+}
+
+.ext-codfish-container {
+  height: 23rem;
+  position: relative;
+  margin-top: 1rem;
+  &[data-hide="true"] {
+    height: 0;
+    .codfish-graph {
+      display: none;
+    }
+  }
+}
+
+.codfish-graph {
+  height: 23rem;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  svg {
+    margin-bottom: 1.5rem;
+  }
+  @media print {
+    svg {
+      transform: scale(0.5);
+      transform-origin: bottom left;
+    }
+    overflow: hidden;
+  }
+}
+
+.buttons {
+  position: absolute;
+  right: 0;
+  top: -40px;
+  > * {
+    margin-left: .5rem;
+  }
+  @media print {
+    display: none;
+  }
+}

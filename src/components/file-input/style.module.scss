@@ -1,0 +1,21 @@
+@import "../../styles";
+
+span.file-input {
+  display: inline-flex;
+}
+
+input.file-input_file {
+  display: none; // >= IE10
+}
+
+input.file-input_text {
+  @extend %inline-input;
+  cursor: pointer;
+  background-color: transparent;
+  border-width: 0;
+  outline: none;
+  position: relative;
+}
+
+
+

@@ -1,0 +1,108 @@
+@import "../ext";
+
+.report-mutation-stats {
+  @extend %report-section;
+
+  > .report-mutation-stats-inner {
+    display: flex;
+  }
+
+  table.stat-table {
+    & + section > ul {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    min-width: 44rem;
+    border-collapse: collapse;
+    line-height: 2;
+    border-spacing: 0;
+    caption {
+      font-weight: 700;
+      border-bottom: double $dividing-line;
+      margin: 1rem auto .5rem
+    }
+    th.dividing-line, td.dividing-line {
+      background-color: $dividing-line;
+      padding: 0;
+      margin: 0;
+      width: 1px;
+    }
+    tbody tr {
+      &:hover {
+        background-color: $table-row-hover-bg;
+      }
+      &[data-current="true"] {
+        background-color: $table-row-hl-bg;
+        &:hover {
+          background-color: $table-row-hl-bg;
+        }
+      }
+      &.footnote > td {
+        padding-top: 1rem;
+        text-align: left;
+        font-size: 0.8rem;
+        line-height: 1.5;
+      }
+      &.footnote:hover {
+        background-color: transparent;
+      }
+      @media print {
+        &.footnote {
+          display: none;
+        }
+      }
+    }
+    $gap: 0.75rem;
+    th {
+      line-height: 1.2em;
+      position: relative;
+      box-sizing: content-box;
+      text-align: center;
+      padding: 0 $gap $gap;
+      &:first-child {
+        padding-left: $gap / 2;
+        &::after {
+          left: 0;
+          width: calc(100% - #{$gap / 2});
+        }
+      }
+      &:last-child {
+        padding-right: $gap / 2;
+        &::after {
+          left: $gap / 2;
+          width: calc(100% - #{$gap / 2});
+        }
+      }
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: calc(100% - #{$gap});
+        left: $gap / 2;
+        bottom: 0;
+        border-bottom: 1px solid $dividing-line;
+      }
+    }
+    td {
+      padding: 0 $gap;
+      box-sizing: content-box;
+      text-align: center;
+      &:first-child {
+        padding-left: $gap / 2;
+      }
+      &:last-child {
+        padding-right: $gap / 2;
+      }
+    }
+  }
+
+  .stat-histogram {
+    position: relative;
+  }
+
+  &::after {
+    content: "";
+    clear: both;
+    display: block;
+  }
+}

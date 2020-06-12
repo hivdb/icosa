@@ -1,0 +1,66 @@
+@import "./colors";
+
+%table-style {
+  table {
+    border-collapse: collapse;
+    border: 1px solid $dividing-line;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  caption {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  th {
+    cursor: pointer;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: left;
+    background-color: $table-head-row-bg;
+    &:hover {
+      background-color: $table-head-row-hover-bg;
+    }
+  }
+  
+  td {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-align: left;
+  }
+  
+  tbody > tr {
+    font-family: monospace;
+    white-space: pre-wrap;
+  
+    &:nth-child(odd) {
+      background-color: $table-row-odd-bg;
+    }
+    &:nth-child(even) {
+      background-color: $table-row-even-bg;
+    }
+    &:hover {
+      background-color: $table-row-hover-bg !important;
+    }
+  }
+  
+  @media print {
+    tr {
+      border-bottom: 1px solid $dividing-line;
+    }
+    th, th:hover, tbody > tr:nth-child(n), tbody > tr:hover {
+      background-color: white;
+    }
+    th {
+      padding-top: .2rem;
+      padding-bottom: .2rem;
+    }
+    thead, tfoot {
+      display: table-row-group;
+    }
+  }
+}

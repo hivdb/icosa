@@ -1,0 +1,58 @@
+@import "~flexbox-grid-mixins";
+@import "../../../styles";
+
+.algorithm-options {
+  @extend %fieldset-highlight;
+
+  > legend {
+    @extend %legend-highlight;
+  }
+}
+
+fieldset p.first-para {
+  @extend %first-para;
+}
+
+
+.drug-display-options {
+  @extend %fieldset-highlight;
+
+  > legend {
+    @extend %legend-highlight;
+  }
+
+  $vertical-margin: .5rem;
+  $label-font-size: .9rem;
+
+  .label-drug-class {
+    width: 3rem;
+    line-height: 18px;
+    font-size: $label-font-size;
+    margin-top: $vertical-margin;
+    margin-bottom: $vertical-margin;
+  }
+
+  .drug-display-option-checkbox label {
+    font-size: $label-font-size;
+    margin-top: $vertical-margin;
+    margin-bottom: $vertical-margin;
+    margin-right: 0;
+    width: 4.2rem;
+    &:before {
+      margin-right: .2rem;
+    }
+  }
+
+  .all-options {
+    @include grid($flex-wrap: wrap, $gutter: 14px);
+
+    > div {
+      @include grid-col($col: 1, $grid-columns: 2, $gutter: 14px, $condensed: true);
+      display: flex;
+      // smallCellWidth="1" mediumCellWidth="1" cellWidth="1/2"
+    }
+  }
+
+
+
+}

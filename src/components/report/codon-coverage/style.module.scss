@@ -1,0 +1,34 @@
+@import "../ext";
+
+.codon-reads-coverage {
+  @extend %report-section;
+  .graph-container {
+    .instruction {
+      font-size: 0.8rem;
+      color: $trivia;
+      margin-bottom: 0.5rem;
+    }
+    white-space: nowrap;
+    .main-graph-container {
+      position: relative;
+      vertical-align: middle;
+      width: calc(100% - 41px);
+      overflow-x: scroll;
+      display: inline-block;
+      svg {
+        display: inline-block;
+      }
+    }
+    svg.leftAxis {
+      display: inline-block;
+    }
+  }
+  .tooltip-label {
+    white-space: nowrap;
+  }
+  .footnote {
+     font-size: 0.8rem;
+     line-height: 1.5;
+  }
+}
+

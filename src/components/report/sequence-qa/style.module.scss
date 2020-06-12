@@ -1,0 +1,14 @@
+@import "../ext";
+
+.report-sequence-qa {
+  @extend %report-section;
+  h3 {
+    font-size: 1rem;
+    margin-top: .24rem;
+    margin-bottom: 0;
+  }
+  .tooltip-label {
+    white-space: nowrap;
+  }
+}
+

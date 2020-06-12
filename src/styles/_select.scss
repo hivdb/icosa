@@ -1,0 +1,30 @@
+@import "./colors";
+
+@mixin select($class-name-prefix) {
+  :global .#{$class-name-prefix}__control {
+    background-color: $dropdown-bg;
+    border-radius: 0;
+    border-color: $dropdown-border;
+    overflow: visible;
+    min-height: auto;
+  }
+
+  :global .#{$class-name-prefix}__indicator {
+    padding: 4px;
+  }
+
+  :global .#{$class-name-prefix}__menu {
+    border-radius: 0;
+    background-color: $dropdown-menu-bg;
+  }
+
+  :global .#{$class-name-prefix}__option--is-selected {
+    background-color: $dropdown-opt-selected-bg;
+    color: $dropdown-opt-selected;
+  }
+
+  :global .#{$class-name-prefix}__option--is-focused {
+    background-color: $dropdown-opt-hover-bg;
+    color: $dropdown-opt-hover;
+  }
+}

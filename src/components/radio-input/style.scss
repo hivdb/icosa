@@ -1,0 +1,56 @@
+@import "../../styles";
+
+$radio-size: 18px;
+$radio-on-border-width: 5px;
+$radio-off-border-width: 1px;
+
+:local .general-radio-input {
+  label {
+    position: relative;
+    display: inline-block;
+    margin-right: 2rem;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    cursor: pointer;
+
+    &::before, &::after {
+      box-sizing: border-box;
+      content: "\a0";  // use &nbsp; to enable line-height
+      display: inline-block;
+      width: $radio-size;
+      border-radius: 100%;
+      height: $radio-size;
+    }
+
+    &::before {
+      margin-right: .4rem;
+      padding: $radio-on-border-width - $radio-off-border-width;
+      line-height: #{$radio-size - 2 * $radio-on-border-width};
+      background-color: $radio-off-bg;
+      border: $radio-off-border-width solid $radio-off-border;
+    }
+
+    &::after {
+      position: absolute;
+      left: 0;
+      border: 0 solid $radio-on-border;
+      transition: border-width 0.15s ease;
+    }
+
+    &[data-disabled="true"] {
+      cursor: not-allowed;
+      &::before {
+        background-color: $radio-off-bg-disabled;
+      }
+    }
+  }
+
+  input {
+    display: none;
+    &:checked + label::after {
+      border-width: $radio-on-border-width;
+    }
+  }
+}
+
+

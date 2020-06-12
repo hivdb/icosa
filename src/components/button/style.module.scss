@@ -1,0 +1,147 @@
+@import "../../styles";
+
+.btn {
+  border: 0;
+  border-radius: 0;
+  display: inline-flex;
+  box-sizing: content-box;
+  vertical-align: middle;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  position: relative;
+  text-decoration: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: background-color .2s ease;
+  cursor: pointer;
+
+  &button, &[type="button"] {
+    appearance: none;
+  }
+
+  > span {
+    display: block;
+    position: relative;
+  }
+
+  &.btn-xxlarge {
+    padding-left: 1.8rem;
+    padding-right: 1.8rem;
+    font-size: 2rem;
+    height: 4.5rem;
+
+    &.btn-height-2 {
+      height: 6.5rem;
+    }
+  }
+
+  &.btn-xlarge {
+    padding-left: .8rem;
+    padding-right: .8rem;
+    font-size: 1.2rem;
+    height: 3.5rem;
+
+    &.btn-height-2 {
+      height: 5rem;
+    }
+  }
+
+  &.btn-large {
+    padding-left: .5rem;
+    padding-right: .5rem;
+    font-size: 1rem;
+    height: 2.8rem;
+
+    &.btn-height-2 {
+      height: 4rem;
+    };
+  }
+
+  &.btn-normal {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-size: 1rem;
+    line-height: 2rem;
+    height: 2rem;
+
+    &.btn-height-2 {
+      height: 3rem;
+    }
+  }
+
+  &.btn-small {
+    padding-left: .3rem;
+    padding-right: .3rem;
+    font-size: .7rem;
+    line-height: 1.2rem;
+    height: 1.2rem;
+
+    &.btn-height-2 {
+      height: 1.8rem;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .618;
+  };
+
+  &::before {
+    content: " ";
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 50%;
+    display: block;
+    position: absolute;
+    background-color: $btn-flare-bg;
+  };
+
+  &:hover {
+    text-decoration: none;
+    &:not(:disabled)::before {
+      background-color: transparent;
+    }
+  }
+
+  &.btn-style-primary {
+    color: $btn-text-on-dark-bg;
+    background-color: $btn-primary-bg;
+
+    &::before {
+      background-color: $btn-primary-flare-bg;
+    }
+    &:hover:not(:disabled) {
+      color: $btn-text-on-dark-bg;
+      background-color: $btn-primary-hover-bg;
+    }
+  }
+
+  &.btn-style-info {
+    color: $btn-text-on-dark-bg;
+    background-color: $btn-info-bg;
+    &:hover:not(:disabled) {
+      color: $btn-text-on-dark-bg;
+      background-color: $btn-info-hover-bg;
+    }
+  }
+
+  &.btn-style-default {
+    color: $btn-text-on-dark-bg;
+    background-color: $btn-default-bg;
+    &:hover:not(:disabled) {
+      color: $btn-text-on-dark-bg;
+      background-color: $btn-default-hover-bg;
+    }
+  }
+
+  &.btn-style-light {
+    color: $btn-light-text;
+    background-color: $btn-light-bg;
+    &:hover:not(:disabled) {
+      background-color: $btn-light-hover-bg;
+    }
+  }
+}

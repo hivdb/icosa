@@ -1,0 +1,39 @@
+@import "./colors";
+
+%react-tabs-container {
+  :global {
+    @import "~react-tabs/style/react-tabs.scss";
+    .react-tabs [role=tablist] {
+      border-bottom: 1px solid $dividing-line;
+      background-color: $tab-bar-bg;
+      margin: 0;
+    }
+    .react-tabs [role=tab] {
+      position: relative;
+      font-weight: 500;
+    }
+    .react-tabs [role=tab][aria-selected=true] {
+      border-color: $dividing-line;
+      background-color: $panel-bg;
+    }
+    .react-tabs [role=tabpanel] {
+      padding: 1rem;
+      border-left: 1px solid $dividing-line;
+      border-right: 1px solid $dividing-line;
+      border-bottom: 1px solid $dividing-line;
+    }
+    .react-tabs [role=tab] > a {
+      color: $body-text;
+      text-decoration: none;
+    }
+    .react-tabs [role=tab] > a::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
+}

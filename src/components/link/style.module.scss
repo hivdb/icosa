@@ -1,0 +1,14 @@
+@import "../../styles";
+
+a.link {
+  color: $link-text;
+  &:hover {
+    color: $link-hover-text;
+    text-decoration: underline;
+  }
+  &.help-link {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    cursor: help;
+  }
+}

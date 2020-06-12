@@ -1,0 +1,54 @@
+@import "~normalize-scss";
+@import "./colors";
+@import "./constants";
+
+@include normalize();
+
+html {
+  font-weight: 400;
+  color: $body-text;
+  background-color: $body-bg;
+  font-size: $global-font-size;
+}
+
+body {
+  font-weight: 400;
+  font-size: $global-font-size;
+}
+
+input:required:invalid {
+  outline-color: $invalid-input-outline;
+}
+
+svg {
+  vertical-align: middle;
+}
+
+::-webkit-input-placeholder {
+  color: $input-placeholder;
+}
+
+::-ms-input-placeholder {
+  color: $input-placeholder;
+}
+
+::-moz-placeholder {
+  color: $input-placeholder;
+}
+
+:-moz-placeholder {
+  color: $input-placeholder;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: .5in;
+  }
+
+  html, body {
+    font-weight: 400;
+    font-size: $print-font-size;
+    color: black;
+  }
+}
