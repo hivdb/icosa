@@ -11,7 +11,7 @@ export default {
     'hivdb.stanford.edu': 'cms.hivdb.org/prod',
     'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
     'staging2.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging2',
-    '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/localhost'
+    '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev'
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%

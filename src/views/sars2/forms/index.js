@@ -10,23 +10,20 @@ import Link from '../../../components/link';
 
 
 const exampleCodonReads = [
-  getFullLink('downloads/codfreq-examples/SRR4071760.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/SRX3881674.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/DRR030302.codfreq.txt')
+  getFullLink('downloads/codfreq-examples/ERR4085387.S.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/ERR4181732.S.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/ERR4181742.S.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/ERR4181776.S.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/SRR11494719.RdRP.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/SRR11494735.RdRP.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/SRR11577999.RdRP.codfreq.txt'),
+  getFullLink('downloads/codfreq-examples/SRR11578120.RdRP.codfreq.txt'),
 ];
 
 const exampleFasta = [
   {
-    url: getFullLink('downloads/fasta-examples/dataset-small.txt'),
-    title: 'Protease/RT sequences (N=10)'
-  },
-  {
-    url: getFullLink('downloads/fasta-examples/dataset-integrases.txt'),
-    title: 'Integrase sequences (N=31)'
-  },
-  {
-    url: getFullLink('downloads/fasta-examples/dataset-indels.txt'),
-    title: 'Sequences contain insertion(s) / deletion(s) (N=12)'
+    url: getFullLink('downloads/fasta-example.fas'),
+    title: 'FASTA example (N=2)'
   }
 ];
 
