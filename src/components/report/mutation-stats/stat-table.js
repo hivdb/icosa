@@ -1,4 +1,5 @@
 import React from 'react';
+import {routerShape, matchShape} from 'found';
 import PropTypes from 'prop-types';
 
 import style from './style.module.scss';
@@ -7,7 +8,8 @@ import {SitesType} from './prop-types';
 export default class MutationStats extends React.Component {
 
   static propTypes = {
-    location: PropTypes.object.isRequired,
+    router: routerShape.isRequired,
+    match: matchShape.isRequired,
     currentCutoff: PropTypes.number.isRequired,
     usualSites: SitesType.isRequired,
     unusualSites: SitesType.isRequired,
@@ -16,10 +18,6 @@ export default class MutationStats extends React.Component {
     apobecSites: SitesType.isRequired,
     apobecDrmSites: SitesType.isRequired,
     numPositions: PropTypes.number.isRequired
-  }
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired
   }
 
   get mutationStats() {
@@ -44,10 +42,10 @@ export default class MutationStats extends React.Component {
   }
 
   handleCutoffChange = (event) => {
-    const newLoc = {...this.props.location};
+    const newLoc = {...this.props.match.location};
     newLoc.query = newLoc.query ? newLoc.query : {};
     newLoc.query.cutoff = parseFloat(event.currentTarget.dataset.cutoff);
-    this.context.router.push(newLoc);
+    this.props.router.push(newLoc);
   }
 
   render() {

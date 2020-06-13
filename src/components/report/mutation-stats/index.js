@@ -1,4 +1,5 @@
 import React from 'react';
+import {matchShape, routerShape} from 'found';
 import gql from 'graphql-tag.macro';
 
 import StatTable from './stat-table';
@@ -27,10 +28,15 @@ export {query};
 
 export default class MutationStats extends React.Component {
 
+  static propTypes = {
+    router: routerShape.isRequired,
+    match: matchShape.isRequired
+  }
+
   render() {
     const {
       histogram, minPrevalence: curCutoff,
-      location, validationResults
+      match, router, validationResults
     } = this.props;
     return (
       <section className={style['report-mutation-stats']}>
@@ -40,8 +46,8 @@ export default class MutationStats extends React.Component {
         <div className={style['report-mutation-stats-inner']}>
           <StatTable
            {...histogram}
-           currentCutoff={curCutoff}
-           location={location} />
+           {...{match, router}}
+           currentCutoff={curCutoff} />
           <ValidationReport
            {...{validationResults}}
            placeholder={

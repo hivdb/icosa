@@ -1,5 +1,5 @@
 import React from 'react';
-import {routerShape, matchShape} from 'found';
+import {matchShape} from 'found';
 import PropTypes from 'prop-types';
 
 import {getSeqReadsFromHash} from '../../utils/seqreads-loader';
@@ -12,7 +12,6 @@ export default class SeqReadsSidebar extends React.Component {
 
   static propTypes = {
     match: matchShape.isRequired,
-    router: routerShape.isRequired,
     allSequenceReads: PropTypes.array.isRequired,
     onSelect: PropTypes.func
   }
@@ -29,13 +28,9 @@ export default class SeqReadsSidebar extends React.Component {
 
   handleClick(e, seqReads) {
     e.preventDefault();
-    const hash = e.currentTarget.getAttribute('href');
     const {onSelect} = this.props;
 
     onSelect && onSelect(seqReads);
-    // reset query
-    const {query, search, ...loc} = this.props.match.location;
-    this.props.router.push({...loc, hash});
   }
 
   render() {

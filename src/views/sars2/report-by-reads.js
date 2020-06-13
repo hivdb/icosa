@@ -62,7 +62,7 @@ export default class HivdbReportBySeqReads extends React.Component {
         {isPrint ? <h2>Sequence {seqName}</h2> : null}
         <SeqReadsSummary
          {...{sequenceReadsResult, genes, output, match, router}} />
-        <MutationStats {...sequenceReadsResult} {...{match, output}} />
+        <MutationStats {...sequenceReadsResult} {...{match, router, output}} />
         <SeqReadsAnalysisQA {...sequenceReadsResult} output={output} />
         {/*<ValidationReport {...sequenceReadsResult} output={output} />*/}
         {isCritical ?
