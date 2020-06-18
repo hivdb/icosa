@@ -41,7 +41,7 @@ function getQuery(fragment, extraQueryArgTypes) {
 function cleanSeqReads(allSeqReads) {
   const results = [];
   for (const seqReads of allSeqReads) {
-    const {name, strain, allReads, minPrevalence} = seqReads;
+    const {name, strain, allReads, minPrevalence, minReadDepth} = seqReads;
     const newAllReads = [];
     for (const {gene, position, totalReads, allCodonReads} of allReads) {
       const newAllCodonReads = [];
@@ -56,7 +56,8 @@ function cleanSeqReads(allSeqReads) {
     results.push({
       name, strain,
       allReads: newAllReads,
-      minPrevalence
+      minPrevalence,
+      ...(minReadDepth ? {minReadDepth} : {})
     });
   }
   return results;
