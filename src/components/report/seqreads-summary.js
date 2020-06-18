@@ -8,6 +8,7 @@ import Dropdown from 'react-dropdown';
 import {includeFragment} from '../../utils/graphql-helper';
 import Button from '../button';
 import style from './style.module.scss';
+import config from '../../config';
 
 // import CodonGraph from './codon-graph';
 import CodonReadsCoverage, {query as codonCovQuery} from './codon-coverage';
@@ -81,7 +82,10 @@ export default class SeqReadsSummary extends React.Component {
   constructor() {
     super(...arguments);
     const showSDRMs = this.props.output === 'printable';
-    const showCodonCov = this.props.output === 'printable';
+    let showCodonCov = (
+      this.props.output === 'printable' ||
+      config.showCodonCov
+    );
     this.state = {showSDRMs, showCodonCov};
   }
 

@@ -223,6 +223,7 @@ class SequenceReadsHistogram extends React.Component {
          top={tooltipTop}
          left={tooltipLeft}
          style={{
+           position: 'absolute',
            minWidth: 60,
            backgroundColor: 'white',
            color: 'black'

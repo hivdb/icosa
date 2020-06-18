@@ -28,5 +28,7 @@ export default {
   seqReadsCodonCovBgColors: {
     RdRP: '#f0f0f0',
     S: '#ffffff'
-  }
+  },
+  showCodonCov: true,
+  showLowAbundanceMutsChart: true
 };

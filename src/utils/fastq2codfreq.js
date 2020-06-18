@@ -8,7 +8,7 @@ const WT_TRIGGER_RUNNER = 1;
 
 
 function calcUploadWeight(file) {
-  return parseInt(file.size / 524288);
+  return parseInt(file.size / 262144);
 }
 
 

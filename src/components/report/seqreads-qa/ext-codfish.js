@@ -5,6 +5,7 @@ import {FaDownload, FaEye, FaEyeSlash} from 'react-icons/fa';
 
 import Button from '../../button';
 import {makeDownload} from '../../../utils/download';
+import config from '../../../config';
 
 import CodfishGraph from './codfish-graph';
 import style from './style.module.scss';
@@ -96,7 +97,10 @@ export default class ExtCodfish extends React.Component {
 
   constructor() {
     super(...arguments);
-    this.state = {downloading: false, showChart: false};
+    this.state = {
+      downloading: false,
+      showChart: config.showLowAbundanceMutsChart
+    };
   }
 
   handleDownload = () => {
@@ -115,7 +119,9 @@ export default class ExtCodfish extends React.Component {
     const {downloading, showChart} = this.state;
     const {name, allGeneSequenceReads} = this.props;
     const extCodfish = prepareData(allGeneSequenceReads);
-    return <div className={style['ext-codfish-container']} data-hide={!showChart}>
+    return <div
+     className={style['ext-codfish-container']}
+     data-hide={!showChart}>
       <div>
         <CodfishGraph {...{extCodfish}} />
         <br />
