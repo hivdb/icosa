@@ -43,6 +43,14 @@ class LayoutInner extends React.Component {
     className = classNames(style['layout-container'], className);
     return (
       <div id="hivdb-layout">
+        <ul>
+          <li>
+            <a href="/sars2/by-sequences/">Sequence Analysis</a>
+          </li>
+          <li>
+            <a href="/sars2/by-reads/">NGS Reads Analysis</a>
+          </li>
+        </ul>
         <div className={className} style={customStyle}>
           {children}
         </div>
