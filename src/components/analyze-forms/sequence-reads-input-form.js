@@ -7,6 +7,7 @@ import {routerShape, matchShape} from 'found';
 import {FaRegFileAlt, FaTimesCircle} from 'react-icons/fa';
 
 import {parseSequenceReads} from '../../utils/sequence-reads';
+import fastq2codfreq from '../../utils/fastq2codfreq';
 import BigData from '../../utils/big-data';
 import readFile from '../../utils/read-file';
 import BaseForm from './base';
@@ -14,11 +15,13 @@ import FileInput from '../file-input';
 import RadioInput from '../radio-input';
 import CheckboxInput from '../checkbox-input';
 import Link from '../link/basic';
+import config from '../../config';
 
 import style from './style.module.scss';
 
 const SUPPORT_FORMATS =
-  "text/tsv,text/plain,.tsv,.txt,.codfreq,.codfish,.aavf";
+  ".fastq, .gz, application/gzip, text/tsv, text/plain, " +
+  ".tsv, .txt, .codfreq, .codfish, .aavf";
 
 const DEFAULT_CUTOFF = 0.2;  // 20%
 
@@ -40,7 +43,9 @@ export default class SequenceReadsInputForm extends React.Component {
     super(...arguments);
     this.state = {
       allSequenceReads: [],
+      allFastqFiles: [],
       progress: 0,
+      progressDesc: '',
       numProcessedSeqs: 0,
       numAllSeqs: 0,
       isSubmitting: false,
@@ -50,18 +55,52 @@ export default class SequenceReadsInputForm extends React.Component {
   }
 
   handleReset = () => {
-    this.setState({allSequenceReads: []});
+    this.setState({
+      allSequenceReads: [],
+      allFastqFiles: []
+    });
   }
 
   handleSubmit = async (e) => {
+    e && e.persist();
     const {outputOptions} = this.props;
-    const {outputOption, allSequenceReads} = this.state;
+    let {outputOption, allFastqFiles, allSequenceReads} = this.state;
     let validated = true;
     let state = {};
     if (this.props.onSubmit) {
-      [validated, state] = await this.props.onSubmit(e, allSequenceReads);
+      [validated, state] = await this.props.onSubmit(
+        e, allSequenceReads, allFastqFiles
+      );
     }
     if (validated) {
+      if (allFastqFiles.length > 0) {
+        this.setState({isSubmitting: true});
+        for await (const progress of fastq2codfreq(allFastqFiles)) {
+          let {loaded, codfreqs, count, total, description} = progress;
+          total = Math.round(total / 0.99); // make total a little bit larger
+          const pcnt = Math.floor(count / total * 100);
+          this.setState({
+            progress: pcnt,
+            progressDesc: `${description} (${pcnt}%)`
+          });
+          if (loaded) {
+            allSequenceReads = [
+              ...allSequenceReads,
+              ...codfreqs.map(cf => ({
+                ...cf,
+                strain: config.seqReadsDefaultStrain,
+                minPrevalence: DEFAULT_CUTOFF
+              }))
+            ];
+            break;
+          }
+        }
+        this.setState({
+          isSubmitting: false,
+          progress: 0,
+          progressDesc: ''
+        });
+      }
       if (outputOption.startsWith('__')) {
         await BigData.clear();
         Object.assign(state, {
@@ -106,13 +145,51 @@ export default class SequenceReadsInputForm extends React.Component {
   }
 
   handleUpload = async (fileList) => {
-    const {allSequenceReads} = this.state;
-    fileList = Array.from(fileList).map(f => [f.name, readFile(f)]);
-    for (const [name, asyncData] of fileList) {
-      const data = await asyncData;
-      allSequenceReads.push(parseSequenceReads(name, data, DEFAULT_CUTOFF));
+    const {allSequenceReads, allFastqFiles} = this.state;
+    const knownFiles = new Set();
+    for (const {name} of allSequenceReads) {
+      knownFiles.add(name);
     }
-    this.setState({allSequenceReads});
+    for (const {name} of allFastqFiles) {
+      knownFiles.add(name);
+    }
+    const unsupportedFiles = [];
+    for (const file of Array.from(fileList)) {
+      const name = file.name;
+      if (knownFiles.has(name)) {
+        unsupportedFiles.push(name);
+      }
+      else if (/[^\w.()-]/.test(name)) {
+        unsupportedFiles.push(name);
+      }
+      else if (/\.fastq(\.gz)?$/i.test(name)) {
+        allFastqFiles.push(file);
+      }
+      else if (/\.gz$/i.test(name)) {
+        unsupportedFiles.push(name);
+      }
+      else {
+        const data = await readFile(file);
+        allSequenceReads.push(parseSequenceReads(name, data, DEFAULT_CUTOFF));
+      }
+    }
+    if (unsupportedFiles.length > 0) {
+      alert(
+        'Unsupported file/duplicate file/invalid file name:\n - ' +
+        unsupportedFiles.join('\n - ')
+      );
+    }
+    this.setState({allSequenceReads, allFastqFiles});
+  }
+
+  handleRemoveFastq(index) {
+    return (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const {allFastqFiles} = this.state;
+      allFastqFiles.splice(index, 1);
+      this.setState({allFastqFiles});
+    };
   }
 
   handleRemoveSeqReads(index) {
@@ -159,16 +236,18 @@ export default class SequenceReadsInputForm extends React.Component {
     const {outputOptions} = this;
     const {match, router, to, exampleCodonReads} = this.props;
     const {
-      allSequenceReads, outputOption, numProcessedSeqs, numAllSeqs,
+      allSequenceReads, allFastqFiles, outputOption,
+      numProcessedSeqs, numAllSeqs, progressDesc,
       outputOptionChildren, isSubmitting, progress} = this.state;
     const hasOptions = Object.keys(outputOptions || {}).length > 1;
     const hasOptionChild = Object.keys(outputOptionChildren || {}).length > 0;
+    const allowSubmit = (allFastqFiles.length + allSequenceReads.length) > 0;
 
     return (
       <BaseForm
        {...{match, router, to}}
-       resetDisabled={allSequenceReads.length === 0 || isSubmitting}
-       submitDisabled={allSequenceReads.length === 0 || isSubmitting}
+       resetDisabled={!allowSubmit || isSubmitting}
+       submitDisabled={!allowSubmit || isSubmitting}
        onSubmit={this.handleSubmit}
        onReset={this.handleReset}>
         {this.props.children}
@@ -197,10 +276,20 @@ export default class SequenceReadsInputForm extends React.Component {
             <input {...getInputProps()} />
             <ul
              data-drag-active={isDragActive}
-             data-placeholder={"Drag and drop CodFreq/AAVF files here"}
+             data-placeholder={"Drag and drop FASTQ/CodFreq/AAVF files here"}
              {...getRootProps({className: style['sequence-reads-preview']})}>
+              {allFastqFiles.map((f, idx) => (
+                <li key={`fastq-${idx}`}>
+                  <FaRegFileAlt className={style['file-icon']} />
+                  <br />
+                  <span className={style['file-name']}>{f.name}</span>
+                  <FaTimesCircle
+                   onClick={this.handleRemoveFastq(idx)}
+                   className={style.remove} />
+                </li>
+              ))}
               {allSequenceReads.map((sr, idx) => (
-                <li key={idx}>
+                <li key={`codfreq-${idx}`}>
                   <FaRegFileAlt className={style['file-icon']} />
                   <br />
                   <span className={style['file-name']}>{sr.name}</span>
@@ -255,7 +344,9 @@ export default class SequenceReadsInputForm extends React.Component {
         }>
           <div className={style.inner}>
             <strong>
-              Analyzing sequence ({numProcessedSeqs}/{numAllSeqs} finished) ...
+              {progressDesc ? progressDesc :
+                ('Analyzing sequence (' +
+                `${numProcessedSeqs}/${numAllSeqs} finished) ...`)}
             </strong>
             <ProgressBar
              className={style['progress-bar']}

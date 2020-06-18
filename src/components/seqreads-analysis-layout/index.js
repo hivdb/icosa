@@ -38,6 +38,31 @@ function getQuery(fragment, extraQueryArgTypes) {
 }
 
 
+function cleanSeqReads(allSeqReads) {
+  const results = [];
+  for (const seqReads of allSeqReads) {
+    const {name, strain, allReads, minPrevalence} = seqReads;
+    const newAllReads = [];
+    for (const {gene, position, totalReads, allCodonReads} of allReads) {
+      const newAllCodonReads = [];
+      for (const {codon, reads} of allCodonReads) {
+        newAllCodonReads.push({codon, reads});
+      }
+      newAllReads.push({
+        gene, position, totalReads,
+        allCodonReads: newAllCodonReads
+      });
+    }
+    results.push({
+      name, strain,
+      allReads: newAllReads,
+      minPrevalence
+    });
+  }
+  return results;
+}
+
+
 const SequenceReadsPropType = PropTypes.shape({
   name: PropTypes.string.isRequired,
   strain: PropTypes.oneOf(['HIV1', 'HIV2A', 'HIV2B']).isRequired,
@@ -133,7 +158,9 @@ class SequenceReadsAnalysisInner extends React.Component {
     return {
       variables: {
         ...extraQueryArgs,
-        allSequenceReads: allSequenceReads.slice(offset, offset + limit)
+        allSequenceReads: cleanSeqReads(
+          allSequenceReads.slice(offset, offset + limit)
+        )
       },
       progress: offset,
       nextProgress: Math.min(total, (offset + limit)),
