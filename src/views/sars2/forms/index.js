@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
-import AnalyzeForms, {getCurrentTab} from '../../../components/analyze-forms';
+import AnalyzeForms, {
+  getCurrentTab, getBasePath
+} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
-import Link from '../../../components/link';
 
 
 const exampleCodonReads = [
@@ -27,12 +28,26 @@ const exampleFasta = [
   }
 ];
 
-export default class HivdbForms extends React.Component {
+
+export default class SierraForms extends React.Component {
 
   static propTypes = {
     match: matchShape.isRequired,
     router: routerShape.isRequired,
-    species: PropTypes.string.isRequired
+    species: PropTypes.string.isRequired,
+    pathPrefix: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired
+  }
+
+  static defaultProps = {
+    children: <Intro>
+      <IntroHeader>
+        <h1>SARS2 Sequence Analysis Program</h1>
+        <p>
+          Genotypic Resistance Interpretation Algorithm
+        </p>
+      </IntroHeader>
+    </Intro>
   }
 
   get showAlgOpt() {
@@ -40,37 +55,25 @@ export default class HivdbForms extends React.Component {
     return Boolean(query && 'alg-opt' in query);
   }
 
-  get currentTab() {
-    return getCurrentTab(this.props.match.location);
-  }
-
   render() {
-    const {species, match, router} = this.props;
-    const isReads = this.currentTab === 'by-reads';
+    const {species, match, router, children} = this.props;
+    const currentTab = getCurrentTab(match.location);
+    const basePath = getBasePath(match.location);
+    const isReads = currentTab === 'by-reads';
     const titleSuffix = (
       isReads ? 'Sequence Reads Analysis' : 'Sequence Analysis'
     );
 
-    setTitle(`${species} Sequence Analysis Program: ${titleSuffix}`);
+    setTitle(`${species} ${titleSuffix}`);
 
     return <>
-      <Intro>
-        <IntroHeader>
-          <h1>SARS2 Sequence Analysis Program</h1>
-          <p>{isReads ?
-            <Link to="/page/hivdb-ngs-release-notes/">
-              Release Notes
-            </Link> :
-            'Genotypic Resistance Interpretation Algorithm'
-          }</p>
-        </IntroHeader>
-      </Intro>
+      {children}
       <AnalyzeForms
-       basePath="/sars2"
+       basePath={basePath}
        match={match}
        router={router}
-       sequencesTo="/sars2/by-sequences/report/"
-       enableReads readsTo="/sars2/by-reads/report/"
+       sequencesTo={`${basePath}/by-sequences/report/`}
+       enableReads readsTo={`${basePath}/by-reads/report/`}
        exampleFasta={exampleFasta} 
        exampleCodonReads={exampleCodonReads}
        sequencesOutputOptions={{

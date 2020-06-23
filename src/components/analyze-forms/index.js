@@ -26,6 +26,12 @@ export function getCurrentTab(location) {
 }
 
 
+export function getBasePath(location) {
+  const tabName = location.pathname.replace(/\/$/, '').split(/\//);
+  return tabName.slice(0, tabName.length - 1).join('/');
+}
+
+
 export default class AnalyzeForms extends React.Component {
 
   static propTypes = {

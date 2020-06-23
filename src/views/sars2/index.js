@@ -14,7 +14,8 @@ import config from './config';
 export default function SARS2Routes({
   pathPrefix,
   species,
-  graphqlURI
+  graphqlURI,
+  formProps
 } = {
   pathPrefix: "sars2/",
   species: "SARS2",
@@ -26,27 +27,27 @@ export default function SARS2Routes({
     name: 'sierra-frontend-client',
     version: '0.1'
   });
-  return <>
-    <Redirect from={pathPrefix} to={`${pathPrefix}by-sequences/`} />
-    <Route path={pathPrefix} render={({props}) => (
-      <ApolloProvider {...props} client={apolloClient} />
-    )}>
-      <Route path="by-sequences/">
-        <Route render={({props}) => (
-          <SeqAnaForms {...props} species={species} />
-        )}/>
-        <Route path="report/" render={({props}) => (
-          <ReportBySequences {...props} species={species} />
-        )}/>
-      </Route>
-      <Route path="by-reads/">
-        <Route render={({props}) => (
-          <SeqAnaForms {...props} species={species} />
-        )}/>
-        <Route path="report/" render={({props}) => (
-          <ReportBySeqReads {...props} species={species} />
-        )}/>
-      </Route>
+  return <Route path={pathPrefix} render={({props}) => (
+    <ApolloProvider {...props} client={apolloClient} />
+  )}>
+    <Route path="by-sequences/">
+      <Route render={({props}) => (
+        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+      )}/>
+      <Route path="report/" render={({props}) => (
+        <ReportBySequences {...props} species={species} />
+      )}/>
     </Route>
-  </>;
+    <Route path="by-reads/">
+      <Route render={({props}) => (
+        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+      )}/>
+      <Route path="report/" render={({props}) => (
+        <ReportBySeqReads {...props} species={species} />
+      )}/>
+    </Route>
+    <Redirect to={({location: {pathname}}) => (
+      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-sequences/`
+    )} />
+  </Route>;
 }
