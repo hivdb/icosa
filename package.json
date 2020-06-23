@@ -2,12 +2,14 @@
   "name": "sierra-frontend",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@testing-library/dom": ">=5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
+    "@testing-library/user-event": "^7.1.2"
+  },
+  "peerDependencies": {
     "@types/react": "^16.8.0",
     "@vx/axis": "^0.0.197",
     "@vx/scale": "^0.0.197",
@@ -49,7 +51,7 @@
   },
   "scripts": {
     "start": "PORT=3009 react-scripts start",
-    "build": "NODE_ENV=production npx babel src --out-dir dist",
+    "build": "NODE_ENV=production npx babel src --out-dir dist --copy-files",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
