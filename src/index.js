@@ -10,13 +10,11 @@ import {
   makeRouteConfig,
   resolver
 } from 'found';
-import {ApolloProvider} from 'react-apollo';
 
 import 'typeface-source-sans-pro';
 
 import './index.css';
 import routes from './routes';
-import apolloClient from './apollo';
 import * as serviceWorker from './serviceWorker';
 
 const Router = createFarceRouter({
@@ -28,9 +26,7 @@ const Router = createFarceRouter({
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <Router resolver={resolver} />
-    </ApolloProvider>
+    <Router resolver={resolver} />
   </React.StrictMode>,
   document.getElementById('root')
 );
