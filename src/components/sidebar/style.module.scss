@@ -66,7 +66,7 @@
 
       // reverse colors
       nav.sidebar-general {
-        background-color: $tiny-sidebar-bg;
+        background-color: color(tiny-sidebar-bg);
       }
     }
 
@@ -93,7 +93,7 @@
 
   nav.sidebar-general {
   
-    background-color: $sidebar-bg;
+    background-color: color(sidebar-bg);
     background-clip: content-box;
     width: 100%;
     max-height: 70rem;
@@ -107,7 +107,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       text-transform: uppercase;
-      border-bottom: 2px solid $dividing-line-dark;
+      border-bottom: 2px solid color(dividing-line-dark);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -129,16 +129,16 @@
         padding: 0 1rem;
         text-decoration: none;
         overflow: hidden;
-        color: $sidebar-text;
+        color: color(sidebar-text);
   
         &:hover {
-          color: $sidebar-text-hover;
-          background-color: $sidebar-text-hover-bg;
+          color: color(sidebar-text-hover);
+          background-color: color(sidebar-text-hover-bg);
         }
   
         &.current, &.current:hover {
-          color: $sidebar-text-current;
-          background-color: $sidebar-text-current-bg;
+          color: color(sidebar-text-current);
+          background-color: color(sidebar-text-current-bg);
         }
   
         > span {

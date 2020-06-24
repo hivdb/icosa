@@ -12,18 +12,18 @@
 }
 
 .griddle-body tbody:nth-child(odd) > tr.parent-row {
-  background-color: $table-row-odd-bg;
+  background-color: color(table-row-odd-bg);
 }
 
 .griddle-body tbody:nth-child(even) > tr.child-row:nth-child(odd) {
-  background-color: $table-row-even-bg;
+  background-color: color(table-row-even-bg);
 }
 
 .griddle-body tbody:nth-child(even) > tr.child-row:nth-child(even) {
-  background-color: $table-row-odd-bg;
+  background-color: color(table-row-odd-bg);
 }
 
 .griddle-body tbody:nth-child(even) > tr.parent-row {
-  background-color: $table-row-even-bg;
+  background-color: color(table-row-even-bg);
 }
 

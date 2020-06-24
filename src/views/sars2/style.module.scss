@@ -1,3 +1,9 @@
+@import '../../styles/default-colors';
+
+.sierra-webui {
+  @include default-color();
+}
+
 section.section {
   width: 100%;
   padding-top: 2rem;

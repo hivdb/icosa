@@ -6,8 +6,8 @@
 
 html {
   font-weight: 400;
-  color: $body-text;
-  background-color: $body-bg;
+  color: color(body-text);
+  background-color: color(body-bg);
   font-size: $global-font-size;
 }
 
@@ -17,7 +17,7 @@ body {
 }
 
 input:required:invalid {
-  outline-color: $invalid-input-outline;
+  outline-color: color(invalid-input-outline);
 }
 
 svg {
@@ -25,19 +25,19 @@ svg {
 }
 
 ::-webkit-input-placeholder {
-  color: $input-placeholder;
+  color: color(input-placeholder);
 }
 
 ::-ms-input-placeholder {
-  color: $input-placeholder;
+  color: color(input-placeholder);
 }
 
 ::-moz-placeholder {
-  color: $input-placeholder;
+  color: color(input-placeholder);
 }
 
 :-moz-placeholder {
-  color: $input-placeholder;
+  color: color(input-placeholder);
 }
 
 @media print {

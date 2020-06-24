@@ -11,7 +11,7 @@
 
 .analyze-form-tabs {
   @extend %react-tabs-container;
-  background-color: $panel-bg;
+  background-color: color(panel-bg);
 }
 
 
@@ -60,7 +60,7 @@ fieldset.output-options {
     @extend %fixed-modal-inner;
   }
   .progress-bar > div {
-    background-color: $progress-bar !important;
+    background-color: color(progress-bar) !important;
   }
 }
 
@@ -117,8 +117,8 @@ ul.file-options {
 }
 
 ul.sequence-reads-preview {
-  background-color: $input-bg;
-  border: 1px solid $dividing-line;
+  background-color: color(input-bg);
+  border: 1px solid color(dividing-line);
   min-height: 7.8rem;
   max-height: 23.4rem;
   overflow: auto;
@@ -134,14 +134,14 @@ ul.sequence-reads-preview {
     font-weight: 700;
     margin-top: 2rem;
     font-size: 3rem;
-    color: $mercury;
+    color: color(seqreads-preview-placeholder-text);
   }
   &:empty::before {
     display: block;
   }
   &[data-drag-active="true"]::before {
     display: block;
-    color: $silver;
+    color: color(seqreads-preview-placeholder-hover-text);
   }
   > li {
     margin: 1rem 0.5rem;
@@ -151,14 +151,14 @@ ul.sequence-reads-preview {
     text-align: center;
     > svg.fileIcon {
       font-size: 4rem;
-      color: $shakespeare;
+      color: color(seqreads-preview-file-icon);
     }
     > svg.remove {
       position: absolute;
       top: 0;
       right: 0.5rem;
       font-size: 1rem;
-      color: $redberry;
+      color: color(seqreads-preview-remove-file);
       cursor: pointer;
     }
     span.file-name {
@@ -174,8 +174,8 @@ ul.sequence-reads-preview {
     &:hover {
       z-index: 200;
       > span.file-name {
-        background-color: $pampas;
-        border: 1px solid $softamber;
+        background-color: color(seqreads-preview-file-hover-bg);
+        border: 1px solid color(seqreads-preview-file-hover-text);
         width: auto;
       }
     }

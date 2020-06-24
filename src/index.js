@@ -13,7 +13,6 @@ import {
 
 import 'typeface-source-sans-pro';
 
-import './index.css';
 import routes from './routes';
 import * as serviceWorker from './serviceWorker';
 

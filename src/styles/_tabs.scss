@@ -4,8 +4,8 @@
   :global {
     @import "~react-tabs/style/react-tabs.scss";
     .react-tabs [role=tablist] {
-      border-bottom: 1px solid $dividing-line;
-      background-color: $tab-bar-bg;
+      border-bottom: 1px solid color(dividing-line);
+      background-color: color(tab-bar-bg);
       margin: 0;
     }
     .react-tabs [role=tab] {
@@ -13,17 +13,17 @@
       font-weight: 500;
     }
     .react-tabs [role=tab][aria-selected=true] {
-      border-color: $dividing-line;
-      background-color: $panel-bg;
+      border-color: color(dividing-line);
+      background-color: color(panel-bg);
     }
     .react-tabs [role=tabpanel] {
       padding: 1rem;
-      border-left: 1px solid $dividing-line;
-      border-right: 1px solid $dividing-line;
-      border-bottom: 1px solid $dividing-line;
+      border-left: 1px solid color(dividing-line);
+      border-right: 1px solid color(dividing-line);
+      border-bottom: 1px solid color(dividing-line);
     }
     .react-tabs [role=tab] > a {
-      color: $body-text;
+      color: color(body-text);
       text-decoration: none;
     }
     .react-tabs [role=tab] > a::after {

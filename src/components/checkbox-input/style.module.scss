@@ -10,11 +10,11 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
   &.use-polygon {
     label::after {
       color: transparent;
-      background-color: $chkbox-on;
+      background-color: color(chkbox-on);
     }
     input:disabled + label::after {
       color: transparent;
-      background-color: $chkbox-disabled;
+      background-color: color(chkbox-disabled);
     }
   }
 
@@ -33,8 +33,8 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
       content: "\a0";  // use &nbsp; to enable line-height
       margin-right: .4rem;
       line-height: #{$chkbox-size - 2 * $chkbox-border-width};
-      background-color: $chkbox-off-bg;
-      border: $chkbox-border-width solid $chkbox-border;
+      background-color: color(chkbox-off-bg);
+      border: $chkbox-border-width solid color(chkbox-border);
     }
     &::after {
       left: 0;
@@ -46,7 +46,7 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
       clip-path: $tick-polygon;
       -webkit-clip-path: $tick-polygon;
       transition: opacity 0.15s ease;
-      color: $chkbox-on;
+      color: color(chkbox-on);
     }
   }
 
@@ -59,7 +59,7 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
       + label {
         cursor: not-allowed;
         &::after {
-          color: $chkbox-disabled;
+          color: color(chkbox-disabled);
         }
       }
     }

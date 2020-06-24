@@ -3,7 +3,7 @@
 %table-style {
   table {
     border-collapse: collapse;
-    border: 1px solid $dividing-line;
+    border: 1px solid color(dividing-line);
     width: 100%;
     table-layout: fixed;
   }
@@ -21,9 +21,9 @@
     padding-left: 1rem;
     padding-right: 1rem;
     text-align: left;
-    background-color: $table-head-row-bg;
+    background-color: color(table-head-row-bg);
     &:hover {
-      background-color: $table-head-row-hover-bg;
+      background-color: color(table-head-row-hover-bg);
     }
   }
   
@@ -38,19 +38,19 @@
     white-space: pre-wrap;
   
     &:nth-child(odd) {
-      background-color: $table-row-odd-bg;
+      background-color: color(table-row-odd-bg);
     }
     &:nth-child(even) {
-      background-color: $table-row-even-bg;
+      background-color: color(table-row-even-bg);
     }
     &:hover {
-      background-color: $table-row-hover-bg !important;
+      background-color: color(table-row-hover-bg) !important;
     }
   }
   
   @media print {
     tr {
-      border-bottom: 1px solid $dividing-line;
+      border-bottom: 1px solid color(dividing-line);
     }
     th, th:hover, tbody > tr:nth-child(n), tbody > tr:hover {
       background-color: white;

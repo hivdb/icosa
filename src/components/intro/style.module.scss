@@ -3,18 +3,18 @@
 .intro {
   header {
     position: relative;
-    border-bottom: 3px solid $dividing-line-light;
+    border-bottom: 3px solid color(dividing-line-light);
     overflow: hidden;
     margin-bottom: 1rem;
     &> h1 {
-      color: $intro-title;
+      color: color(intro-title);
       font-weight: 700;
       margin-bottom: .1rem;
       font-size: 2rem;
     }
 
     &> p {
-      color: $intro-alter-title;
+      color: color(intro-alter-title);
       font-weight: 500;
       margin-top: .1rem;
       margin-bottom: .3rem;
@@ -27,7 +27,7 @@
     position: absolute;
     right: 0;
     bottom: .24rem;
-    color: $trivia;
+    color: color(trivia);
     & > div {
       text-align: right;
     }

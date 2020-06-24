@@ -17,12 +17,12 @@
 }
 
 %input-general {
-  background-color: $input-bg;
+  background-color: color(input-bg);
   font-size: .8rem;
   padding-left: .5rem;
   padding-right: .5rem;
   border-width: 1px;
-  border-color: $dividing-line;
+  border-color: color(dividing-line);
   border-style: solid;
 }
 
@@ -33,7 +33,7 @@
 }
 
 %inline-input-notation {
-  color: $trivia;
+  color: color(trivia);
   padding-left: 1rem;
 }
 
@@ -44,7 +44,7 @@
 }
 
 %inline-input-warning {
-  color: $warning-text;
+  color: color(warning-text);
   font-size: .8rem;
 }
 
@@ -66,7 +66,7 @@
 }
 
 %fixed-modal {
-  background-color: $modal-bg;
+  background-color: color(modal-bg);
   position: fixed;
   width: 100vw;
   height: 100vh;
@@ -80,8 +80,8 @@
 
 %fixed-modal-inner {
   padding: 1rem;
-  background-color: $modal-dialog-bg;
-  border: 1px solid $dividing-line;
+  background-color: color(modal-dialog-bg);
+  border: 1px solid color(dividing-line);
   display: inline-block;
   line-height: 1.5;
   width: 30rem;
@@ -107,28 +107,28 @@
 
 %fieldset-highlight {
   @extend %fieldset-general;
-  border: 1px solid $panel-highlight-border;
-  background-color: $panel-highlight-bg;
+  border: 1px solid color(panel-highlight-border);
+  background-color: color(panel-highlight-bg);
 }
 
 %legend-highlight {
   @extend %legend-general;
-  border: 1px solid $form-title-bar-alter-border;
-  background-color: $form-title-bar-alter-bg;
-  color: $form-title-bar-alter;
+  border: 1px solid color(form-title-bar-alter-border);
+  background-color: color(form-title-bar-alter-bg);
+  color: color(form-title-bar-alter);
 }
 
 %fieldset {
   @extend %fieldset-general;
-  border: 1px solid $dividing-line-light;
+  border: 1px solid color(dividing-line-light);
   margin: 0 2px;
 }
 
 %legend {
   @extend %legend-general;
-  border: 1px solid $form-title-bar-border;
-  background-color: $form-title-bar-bg;
-  color: $form-title-bar;
+  border: 1px solid color(form-title-bar-border);
+  background-color: color(form-title-bar-bg);
+  color: color(form-title-bar);
 }
 
 %first-para {
@@ -143,9 +143,9 @@
   font-size: 1.1rem;
   margin: 2rem -1rem 1rem;
   padding: .5rem 1rem;
-  border: 1px solid $form-title-bar-border;
-  background-color: $form-title-bar-bg;
-  color: $form-title-bar;
+  border: 1px solid color(form-title-bar-border);
+  background-color: color(form-title-bar-bg);
+  color: color(form-title-bar);
   font-weight: 500;
   -webkit-print-color-adjust: exact;
 }
@@ -154,8 +154,8 @@
   font-size: 1.1rem;
   margin: 2rem -1rem 1rem;
   padding: .5rem 1rem;
-  border: 1px solid $form-title-bar-alter-border;
-  background-color: $form-title-bar-alter-bg;
-  color: $form-title-bar-alter;
+  border: 1px solid color(form-title-bar-alter-border);
+  background-color: color(form-title-bar-alter-bg);
+  color: color(form-title-bar-alter);
   font-weight: 500;
 }

@@ -8,28 +8,31 @@ import {HttpLink} from 'apollo-link-http';
 import SeqAnaForms from './forms';
 import ReportBySequences from './report-by-sequences';
 import ReportBySeqReads from './report-by-reads';
+import style from './style.module.scss';
 import config from './config';
 
 
 export default function SARS2Routes({
-  pathPrefix,
-  species,
-  graphqlURI,
-  formProps
-} = {
-  pathPrefix: "sars2/",
-  species: "SARS2",
-  graphqlURI: config.graphqlURI
-}) {
+  pathPrefix = "sars2/",
+  species = "SARS2",
+  graphqlURI = config.graphqlURI,
+  formProps,
+  colors
+} = {}) {
   const apolloClient = new ApolloClient({
     link: new HttpLink({uri: config.graphqlURI}),
     cache: new Hermes(),
     name: 'sierra-frontend-client',
     version: '0.1'
   });
-  return <Route path={pathPrefix} render={({props}) => (
-    <ApolloProvider {...props} client={apolloClient} />
-  )}>
+  const colorStyle = {};
+  if (colors) {
+    for (const name in colors) {
+      colorStyle[`--sierra-color-${name}`] = colors[name];
+    }
+  }
+
+  return <Route path={pathPrefix} Component={wrapper}>
     <Route path="by-sequences/">
       <Route render={({props}) => (
         <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
@@ -50,4 +53,10 @@ export default function SARS2Routes({
       `${pathname}${pathname.endsWith('/') ? '' : '/'}by-sequences/`
     )} />
   </Route>;
+
+  function wrapper(props) {
+    return <div className={style['sierra-webui']} style={colorStyle}>
+      <ApolloProvider {...props} client={apolloClient} />
+    </div>;
+  }
 }

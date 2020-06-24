@@ -40,7 +40,7 @@ ul.subtype-details {
   
     .griddle-body th[data-title="mutations"]:hover {
       cursor: not-allowed;
-      background-color: $table-head-row-bg;
+      background-color: color(table-head-row-bg);
     }
   }
 }
@@ -90,7 +90,7 @@ ul.subtype-details {
 
       &:hover {
         cursor: not-allowed;
-        background-color: $table-head-row-bg;
+        background-color: color(table-head-row-bg);
       }
 
       &::before {
@@ -109,9 +109,9 @@ ul.subtype-details {
         margin-right: -.25rem;
         width: .5rem;
         height: 15000px;
-        background-color: $body-bg;
-        border-left: 1px solid $dividing-line;
-        border-right: 1px solid $dividing-line;
+        background-color: color(body-bg);
+        border-left: 1px solid color(dividing-line);
+        border-right: 1px solid color(dividing-line);
         z-index: 3;
       }
 
@@ -156,7 +156,7 @@ ul.subtype-details {
         &:hover::after {
           content: "";
           position: absolute;
-          background-color: $table-row-hover-bg;
+          background-color: color(table-row-hover-bg);
           left: 0;
           top: -5000px;
           height: 10000px;
@@ -257,7 +257,7 @@ ul.subtype-details {
 
     .instruction {
       font-size: .8rem;
-      color: $trivia;
+      color: color(trivia);
     }
 
     pre {
@@ -265,7 +265,7 @@ ul.subtype-details {
       margin-bottom: 0;
       overflow-x: auto;
       padding: .5rem;
-      background-color: $panel-bg;
+      background-color: color(panel-bg);
       > div {
         &::after {
           // an old webkit bug: http://stackoverflow.com/a/22240912
@@ -301,10 +301,10 @@ section.alg-comparison {
 section.alg-comparison {
   @extend %react-tabs-container;
   :global .react-tabs [role=tabpanel] {
-    background-color: $panel-blank-bg;
+    background-color: color(panel-blank-bg);
   }
   :global .react-tabs [role=tab][aria-selected=true] {
-    background-color: $panel-blank-bg;
+    background-color: color(panel-blank-bg);
   }
 }
 
@@ -328,26 +328,26 @@ section.alg-comparison {
     }
   }
   .level-critical {
-    background-color: $validation-critical-bg;
-    color: $validation-critical-text;
+    background-color: color(validation-critical-bg);
+    color: color(validation-critical-text);
   }
   .level-severe-warning {
-    background-color: $validation-severe-warning-bg;
-    color: $validation-severe-warning-text;
+    background-color: color(validation-severe-warning-bg);
+    color: color(validation-severe-warning-text);
   }
   .level-warning {
-    background-color: $validation-warning-bg;
-    color: $validation-warning-text;
+    background-color: color(validation-warning-bg);
+    color: color(validation-warning-text);
   }
   .level-note {
-    background-color: $validation-note-bg;
-    color: $validation-note-text;
+    background-color: color(validation-note-bg);
+    color: color(validation-note-text);
   }
   .placeholder {
     margin-left: 3rem;
     font-style: italic;
-    background-color: $validation-placeholder-bg;
-    color: $validation-placeholder-text;
+    background-color: color(validation-placeholder-bg);
+    color: color(validation-placeholder-text);
   }
   @media print {
     .level-severe-warning {
@@ -365,9 +365,9 @@ section.alg-comparison {
 }
 
 .dr-report-comment-by-types {
-  border: 1px solid $dividing-line;
+  border: 1px solid color(dividing-line);
   box-sizing: border-box;
-  background-color: $panel-bg;
+  background-color: color(panel-bg);
   margin: 1.5rem -1rem 0;
   padding: 1rem;
   @media print {
@@ -415,12 +415,12 @@ section.alg-comparison {
     border-spacing: 0;
     caption {
       font-weight: 700;
-      border-bottom: 1px solid $dividing-line;
+      border-bottom: 1px solid color(dividing-line);
       margin: 1rem auto .5rem
     }
     tr {
       &:hover {
-        background-color: $table-row-hover-bg;
+        background-color: color(table-row-hover-bg);
       }
     }
     th {
@@ -438,7 +438,7 @@ section.alg-comparison {
 
 .alg-drugclass-comparison-container {
   .instruction {
-    color: $trivia;
+    color: color(trivia);
     > button {
       float: right;
     }
@@ -471,7 +471,7 @@ section.alg-comparison {
   }
 
   &.expanded {
-    background-color: $panel-blank-bg;
+    background-color: color(panel-blank-bg);
     position: absolute;
     z-index: 1000;
     box-sizing: border-box;
@@ -500,7 +500,7 @@ section.alg-comparison {
         min-width: 1.5rem;
       }
       &:not(:first-child) {
-        background-color: $panel-bg;
+        background-color: color(panel-bg);
         min-width: 24rem;
       }
     }
@@ -508,14 +508,14 @@ section.alg-comparison {
     > tbody > tr > th {
       width: 2rem;
       box-sizing: border-box;
-      background-color: $panel-bg;
+      background-color: color(panel-bg);
     }
 
     > tbody > tr > td {
-      background-color: $panel-bg;
+      background-color: color(panel-bg);
 
       &.cell-diff {
-        background-color: $panel-highlight-bg2;
+        background-color: color(panel-highlight-bg2);
       }
 
       .alg-comparison-card {

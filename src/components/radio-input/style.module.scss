@@ -26,21 +26,21 @@ $radio-off-border-width: 1px;
       margin-right: .4rem;
       padding: $radio-on-border-width - $radio-off-border-width;
       line-height: #{$radio-size - 2 * $radio-on-border-width};
-      background-color: $radio-off-bg;
-      border: $radio-off-border-width solid $radio-off-border;
+      background-color: color(radio-off-bg);
+      border: $radio-off-border-width solid color(radio-off-border);
     }
 
     &::after {
       position: absolute;
       left: 0;
-      border: 0 solid $radio-on-border;
+      border: 0 solid color(radio-on-border);
       transition: border-width 0.15s ease;
     }
 
     &[data-disabled="true"] {
       cursor: not-allowed;
       &::before {
-        background-color: $radio-off-bg-disabled;
+        background-color: color(radio-off-bg-disabled);
       }
     }
   }

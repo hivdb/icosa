@@ -1,0 +1,210 @@
+//@import "compass";
+
+// Internal colors
+// Use the name: $http://chir.ag/projects/name-that-color/
+
+
+// Internal colors end
+@mixin default-color() {
+  --sierra-color-name-thunder: #1c1b1c;
+  --sierra-color-name-scorpion: #605f60;
+  --sierra-color-name-dustygray: #969696;
+  --sierra-color-name-silver: #bbbbbb;
+  --sierra-color-name-mercury: #e3e3e3;
+  --sierra-color-name-wildsand: #f4f4f4;
+  --sierra-color-name-tutu: #fffeff;
+  --sierra-color-name-blue: #1b8ecc;
+  --sierra-color-name-jungleGreen: #24b298;
+
+  --sierra-color-name-shadow: #7c6b50;
+  --sierra-color-name-teak: #AEA266;
+  --sierra-color-name-buddhagold: #cba800;
+  --sierra-color-name-supernova: #f5cc00;
+  --sierra-color-name-softamber: #d4cfb4;
+  --sierra-color-name-tana: #dcd8c1;
+  --sierra-color-name-satinLinen: #ebe8db;
+  --sierra-color-name-cararra: #F0F0E8;
+  --sierra-color-name-pampas: #F1F0E9;
+
+  --sierra-color-name-cardinal: #d32424;
+  --sierra-color-name-redberry: #8c1515;
+  --sierra-color-name-thunderbird: #c81e1e;
+  --sierra-color-name-alizarinCrimson: #d52020;
+  --sierra-color-name-cinnabar: #e13333;
+  --sierra-color-name-mandy: #e55252;
+
+  --sierra-color-name-shakespeare: #5ac0cc;
+  --sierra-color-name-picton-blue: #45d3e3;
+
+  --sierra-color-name-persian-red: #ca402b;
+  --sierra-color-name-we-peep: #f7ddd9;
+
+  --sierra-color-type-main: var(--sierra-color-name-redberry);
+  --sierra-color-type-main-lighter: var(--sierra-color-name-cardinal);
+
+  --sierra-color-body-bg: var(--sierra-color-name-tutu);
+  --sierra-color-body-text: var(--sierra-color-name-thunder);
+
+  //--sierra-color-page-not-found-icon: var(--sierra-color-type-main);
+
+  --sierra-color-modal-bg: rgba(  var(--sierra-color-name-tutu), 0.5);
+  --sierra-color-modal-dialog-bg: var(--sierra-color-name-tutu);
+  //--sierra-color-modal-close: var(--sierra-color-name-dustygray);
+  //--sierra-color-modal-close-hover: var(--sierra-color-name-thunder);
+  --sierra-color-progress-bar: var(--sierra-color-name-supernova);
+
+  //--sierra-color-slider-dot: var(--sierra-color-name-scorpion);
+  //--sierra-color-slider-dot-active: var(--sierra-color-type-main);
+  //--sierra-color-slider-arrow: var(--sierra-color-name-scorpion);
+  //--sierra-color-slider-arrow-bg: var(--sierra-color-name-tutu);
+  //--sierra-color-slider-caption-color: var(--sierra-color-type-main);
+  //--sierra-color-slider-caption-desc-color: var(--sierra-color-name-thunder);
+
+  --sierra-color-intro-title: var(--sierra-color-name-thunder);
+  --sierra-color-intro-alter-title: var(--sierra-color-name-scorpion);
+
+  --sierra-color-btn-text-on-light-bg: var(--sierra-color-name-thunder);
+  --sierra-color-btn-text-on-dark-bg: var(--sierra-color-name-tutu);
+
+  --sierra-color-btn-default-bg: var(--sierra-color-name-dustygray);
+  --sierra-color-btn-default-hover-bg: var(--sierra-color-name-silver);
+
+  --sierra-color-btn-light-bg: var(--sierra-color-name-mercury);
+  --sierra-color-btn-light-text: var(--sierra-color-type-main);
+  --sierra-color-btn-light-hover-bg: rgba(  var(--sierra-color-name-mercury), 0.6);
+
+  --sierra-color-btn-info-bg: var(--sierra-color-name-shakespeare);
+  --sierra-color-btn-info-hover-bg: var(--sierra-color-name-picton-blue);
+
+  --sierra-color-btn-primary-bg: var(--sierra-color-type-main);
+  --sierra-color-btn-primary-hover-bg: var(--sierra-color-type-main-lighter);
+  --sierra-color-btn-primary-flare-bg: rgba(  var(--sierra-color-name-tutu), 0.1);
+
+  --sierra-color-btn-flare-bg: rgba(  var(--sierra-color-name-tutu), 0.2);
+
+  --sierra-color-radio-off-bg: var(--sierra-color-name-tutu);
+  --sierra-color-radio-off-bg-disabled: var(--sierra-color-name-mercury);
+  --sierra-color-radio-off-border: var(--sierra-color-name-silver);
+  --sierra-color-radio-on-border: var(--sierra-color-type-main);
+
+  --sierra-color-chkbox-off-bg: var(--sierra-color-name-tutu);
+  --sierra-color-chkbox-border: var(--sierra-color-name-silver);
+  --sierra-color-chkbox-on: var(--sierra-color-type-main);
+  --sierra-color-chkbox-disabled: var(--sierra-color-name-dustygray);
+
+  --sierra-color-dropdown-bg: var(--sierra-color-name-tutu);
+  --sierra-color-dropdown-border: var(--sierra-color-name-silver);
+  --sierra-color-dropdown-arrow-bg: var(--sierra-color-type-main);
+  --sierra-color-dropdown-arrow-active-bg: var(--sierra-color-type-main-lighter);
+  --sierra-color-dropdown-arrow: var(--sierra-color-name-tutu);
+  --sierra-color-dropdown-menu-bg: var(--sierra-color-name-wildsand);
+  //--sierra-color-dropdown-menu: var(--sierra-color-name-wildsand);
+  --sierra-color-dropdown-opt-hover-bg: var(--sierra-color-type-main);
+  --sierra-color-dropdown-opt-hover: var(--sierra-color-name-tutu);
+  --sierra-color-dropdown-opt-selected: var(--sierra-color-name-tutu);
+  --sierra-color-dropdown-opt-selected-bg: var(--sierra-color-type-main-lighter);
+
+  //--sierra-color-btn-info: var(--sierra-color-name-blue);
+  --sierra-color-trivia: var(--sierra-color-name-dustygray);
+  --sierra-color-dividing-line-dark: var(--sierra-color-name-thunder);
+  --sierra-color-dividing-line: var(--sierra-color-name-dustygray);
+  --sierra-color-dividing-line-light: var(--sierra-color-name-silver);
+  //--sierra-color-banner: var(--sierra-color-type-main);
+  //--sierra-color-banner-text: var(--sierra-color-name-tutu);
+  //--sierra-color-banner-link: var(--sierra-color-name-tutu);
+  //--sierra-color-banner-link-hover: var(--sierra-color-name-mercury);
+  //--sierra-color-navbar-bg: var(--sierra-color-name-cararra);
+  //--sierra-color-navbar-text: var(--sierra-color-type-main);
+  //--sierra-color-navbar-border: var(--sierra-color-name-softamber);
+  //--sierra-color-navbar-text-hover: var(--sierra-color-type-main);
+
+  //--sierra-color-footer-bg: var(--sierra-color-name-pampas);
+  //--sierra-color-footer-border: var(--sierra-color-name-softamber);
+
+  //--sierra-color-qa-chart-dR: var(--sierra-color-name-blue);
+  //--sierra-color-qa-chart-other: var(--sierra-color-name-thunder);
+  //--sierra-color-qa-chart-problem: var(--sierra-color-name-cinnabar);
+
+  //--sierra-color-super-strong-text: var(--sierra-color-name-cinnabar);
+  //--sierra-color-super-strong-text2: var(--sierra-color-name-thunderbird);
+
+  --sierra-color-sidebar-bg: var(--sierra-color-name-pampas);
+  --sierra-color-tiny-sidebar-bg: var(--sierra-color-name-tana);
+  //--sierra-color-sidebar-title: var(--sierra-color-name-scorpion);
+  --sierra-color-sidebar-text: var(--sierra-color-type-main);
+  --sierra-color-sidebar-text-hover: var(--sierra-color-name-tutu);
+  --sierra-color-sidebar-text-hover-bg: var(--sierra-color-name-teak);
+  --sierra-color-sidebar-text-current: var(--sierra-color-name-tutu);
+  --sierra-color-sidebar-text-current-bg: var(--sierra-color-type-main);
+  //--sierra-color-side-banner-mask-bg: rgba(  var(--sierra-color-name-thunder), 0.7);
+  //--sierra-color-side-banner-mask-text: var(--sierra-color-name-tutu);
+
+  //--sierra-color-hr: var(--sierra-color-name-softamber);
+
+  --sierra-color-tab-bar-bg: var(--sierra-color-name-tutu);
+  --sierra-color-form-title-bar-bg: var(--sierra-color-name-pampas);
+  --sierra-color-form-title-bar-border: var(--sierra-color-name-buddhagold);
+  --sierra-color-form-title-bar: var(--sierra-color-name-thunder);
+  --sierra-color-form-title-bar-alter-bg: var(--sierra-color-type-main);
+  --sierra-color-form-title-bar-alter-border: var(--sierra-color-type-main);
+  --sierra-color-form-title-bar-alter: var(--sierra-color-name-tutu);
+  //--sierra-color-form-bg: var(--sierra-color-name-mercury); // TODO: var(--sierra-color-name-change) this to panel-bg
+  --sierra-color-panel-bg: var(--sierra-color-name-mercury);
+  --sierra-color-panel-blank-bg: var(--sierra-color-name-tutu);
+  --sierra-color-panel-highlight-border: var(--sierra-color-name-softamber);
+  --sierra-color-panel-highlight-bg: var(--sierra-color-name-cararra);
+  --sierra-color-panel-highlight-bg2: var(--sierra-color-name-we-peep);
+
+  --sierra-color-input-bg: var(--sierra-color-name-tutu);
+  --sierra-color-invalid-input-outline: var(--sierra-color-name-mandy);
+  --sierra-color-input-placeholder: var(--sierra-color-name-scorpion);
+  //--sierra-color-mutation-bg: var(--sierra-color-name-tutu);
+  //--sierra-color-mutation-border: var(--sierra-color-name-dustygray);
+  //--sierra-color-mutation-remove: var(--sierra-color-name-dustygray);
+  //--sierra-color-mutation-remove-hover: var(--sierra-color-name-alizarinCrimson);
+  //--sierra-color-mutation-del: var(--sierra-color-name-cinnabar);
+  //--sierra-color-mutation-ins: var(--sierra-color-name-jungleGreen);
+
+  --sierra-color-link-text: var(--sierra-color-name-shadow);
+  --sierra-color-link-hover-text: var(--sierra-color-type-main);
+
+  //--sierra-color-deleted-text: var(--sierra-color-name-dustygray);
+  //--sierra-color-changed-text: var(--sierra-color-name-alizarinCrimson);
+
+  //--sierra-color-home-section-title: var(--sierra-color-type-main);
+  //--sierra-color-home-section-hr: var(--sierra-color-type-main);
+  //--sierra-color-home-subsection-title: var(--sierra-color-type-main);
+
+  //--sierra-color-dropzone-active-bg: var(--sierra-color-name-mercury);
+
+  --sierra-color-table-head-row-bg: var(--sierra-color-name-satinLinen);
+  --sierra-color-table-head-row-hover-bg: var(--sierra-color-name-tana);
+  --sierra-color-table-row-odd-bg: var(--sierra-color-name-tutu);
+  --sierra-color-table-row-even-bg: var(--sierra-color-name-pampas);
+  --sierra-color-table-row-hover-bg: rgba(  var(--sierra-color-name-supernova), 0.7);
+  --sierra-color-table-row-hl-bg: var(--sierra-color-name-supernova);
+
+  --sierra-color-warning-text: var(--sierra-color-name-persian-red);
+  --sierra-color-validation-critical-bg: var(--sierra-color-name-thunder);
+  --sierra-color-validation-critical-text: var(--sierra-color-name-tutu);
+  --sierra-color-validation-severe-warning-bg: transparent;
+  --sierra-color-validation-severe-warning-text: var(--sierra-color-name-persian-red);
+  --sierra-color-validation-warning-bg: transparent;
+  --sierra-color-validation-warning-text: var(--sierra-color-name-persian-red);
+  --sierra-color-validation-note-bg: transparent;
+  --sierra-color-validation-note-text: var(--sierra-color-name-thunder);
+  --sierra-color-validation-placeholder-bg: transparent;
+  --sierra-color-validation-placeholder-text: var(--sierra-color-name-dustygray);
+
+  //--sierra-color-selected-alg-bg: var(--sierra-color-name-tutu);
+  //--sierra-color-selected-alg-border: var(--sierra-color-name-dustygray);
+  //--sierra-color-selected-alg-remove: var(--sierra-color-name-dustygray);
+  //--sierra-color-selected-alg-remove-hover: var(--sierra-color-name-alizarinCrimson);
+
+  --sierra-color-seqreads-preview-placeholder-text: var(--sierra-color-name-mercury);
+  --sierra-color-seqreads-preview-placeholder-hover-text: var(--sierra-color-name-silver);
+  --sierra-color-seqreads-preview-file-icon: var(--sierra-color-name-shakespeare);
+  --sierra-color-seqreads-preview-remove-file: var(--sierra-color-type-main);
+  --sierra-color-seqreads-preview-file-hover-bg: var(--sierra-color-name-pampas);
+  --sierra-color-seqreads-preview-file-hover-text: var(--sierra-color-name-softamber);
+}

@@ -18,23 +18,23 @@
     border-spacing: 0;
     caption {
       font-weight: 700;
-      border-bottom: double $dividing-line;
+      border-bottom: double color(dividing-line);
       margin: 1rem auto .5rem
     }
     th.dividing-line, td.dividing-line {
-      background-color: $dividing-line;
+      background-color: color(dividing-line);
       padding: 0;
       margin: 0;
       width: 1px;
     }
     tbody tr {
       &:hover {
-        background-color: $table-row-hover-bg;
+        background-color: color(table-row-hover-bg);
       }
       &[data-current="true"] {
-        background-color: $table-row-hl-bg;
+        background-color: color(table-row-hl-bg);
         &:hover {
-          background-color: $table-row-hl-bg;
+          background-color: color(table-row-hl-bg);
         }
       }
       &.footnote > td {
@@ -80,7 +80,7 @@
         width: calc(100% - #{$gap});
         left: $gap / 2;
         bottom: 0;
-        border-bottom: 1px solid $dividing-line;
+        border-bottom: 1px solid color(dividing-line);
       }
     }
     td {

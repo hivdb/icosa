@@ -1,9 +1,9 @@
 @import "../../styles";
 
 a.link {
-  color: $link-text;
+  color: color(link-text);
   &:hover {
-    color: $link-hover-text;
+    color: color(link-hover-text);
     text-decoration: underline;
   }
   &.help-link {
