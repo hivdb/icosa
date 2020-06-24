@@ -4,6 +4,7 @@ import {ApolloProvider} from 'react-apollo';
 import {ApolloClient} from 'apollo-client';
 import {Hermes} from 'apollo-cache-hermes';
 import {HttpLink} from 'apollo-link-http';
+import makeClassNames from 'classnames';
 
 import SeqAnaForms from './forms';
 import ReportBySequences from './report-by-sequences';
@@ -17,7 +18,8 @@ export default function SARS2Routes({
   species = "SARS2",
   graphqlURI = config.graphqlURI,
   formProps,
-  colors
+  colors,
+  className
 } = {}) {
   const apolloClient = new ApolloClient({
     link: new HttpLink({uri: config.graphqlURI}),
@@ -30,6 +32,10 @@ export default function SARS2Routes({
     for (const name in colors) {
       colorStyle[`--sierra-color-${name}`] = colors[name];
     }
+  }
+  let wrapperClassName = style['sierra-webui'];
+  if (className) {
+    wrapperClassName = makeClassNames(wrapperClassName, className);
   }
 
   return <Route path={pathPrefix} Component={wrapper}>
@@ -55,7 +61,7 @@ export default function SARS2Routes({
   </Route>;
 
   function wrapper(props) {
-    return <div className={style['sierra-webui']} style={colorStyle}>
+    return <div className={wrapperClassName} style={colorStyle}>
       <ApolloProvider {...props} client={apolloClient} />
     </div>;
   }
