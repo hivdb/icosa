@@ -5,6 +5,7 @@
   "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@babel/core": "^7.0.0-0",
+    "@babel/runtime": "^7.1.2",
     "@testing-library/dom": ">=5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -51,6 +52,7 @@
     "typescript": "^3.9.5"
   },
   "peerDependencies": {
+    "@babel/runtime": "^7.1.2",
     "@types/react": "^16.8.0",
     "axios": "^0.19.2",
     "found": "^0.5.3",
@@ -84,7 +86,10 @@
   },
   "babel": {
     "presets": [
-      "react-app"
+      ["react-app", {
+        "# reason": "https://stackoverflow.com/a/58851078/2644759",
+        "absoluteRuntime": false
+      }]
     ]
   }
 }
