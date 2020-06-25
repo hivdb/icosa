@@ -22,7 +22,7 @@ export default function SARS2Routes({
   className
 } = {}) {
   const apolloClient = new ApolloClient({
-    link: new HttpLink({uri: config.graphqlURI}),
+    link: new HttpLink({uri: graphqlURI}),
     cache: new Hermes(),
     name: 'sierra-frontend-client',
     version: '0.1'
