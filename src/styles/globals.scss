@@ -20,10 +20,6 @@ input:required:invalid {
   outline-color: color(invalid-input-outline);
 }
 
-svg {
-  vertical-align: middle;
-}
-
 ::-webkit-input-placeholder {
   color: color(input-placeholder);
 }
