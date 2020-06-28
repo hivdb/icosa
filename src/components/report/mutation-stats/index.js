@@ -11,7 +11,7 @@ import style from './style.module.scss';
 const query = gql`
   fragment SequenceReadsHistogramQuery on SequenceReadsAnalysis {
     histogram(
-      binTicks: [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2]
+      binTicks: [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5]
     ) {
       usualSites { percentStart, percentStop, count }
       drmSites { percentStart, percentStop, count }

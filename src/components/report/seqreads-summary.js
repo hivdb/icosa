@@ -15,14 +15,14 @@ import CodonReadsCoverage, {query as codonCovQuery} from './codon-coverage';
 import SubtypeRow from './subtype-row';
 
 const CUTOFF_OPTIONS = [
-  {value: 0.001, label: '0.1%'},
   {value: 0.002, label: '0.2%'},
   {value: 0.005, label: '0.5%'},
   {value: 0.01, label: '1%'},
   {value: 0.02, label: '2%'},
   {value: 0.05, label: '5%'},
   {value: 0.1, label: '10%'},
-  {value: 0.2, label: '20%'}
+  {value: 0.2, label: '20%'},
+  {value: 0.5, label: '50%'}
 ];
 
 const MINREADS_OPTIONS = [
@@ -181,13 +181,14 @@ export default class SeqReadsSummary extends React.Component {
           Sequence reads summary
         </h2>
         <div className={style['buttons-right']}>
-          <Button
-           className={style.button}
-           onClick={this.toggleSDRMs} disabled={disableBtns}>
-            {showSDRMs ?
-              <FaEyeSlash className={style['icon-before-text']} /> :
-              <FaEye className={style['icon-before-text']} />} SDRMs
-          </Button>
+          {config.sdrmButton ?
+            <Button
+             className={style.button}
+             onClick={this.toggleSDRMs} disabled={disableBtns}>
+              {showSDRMs ?
+                <FaEyeSlash className={style['icon-before-text']} /> :
+                <FaEye className={style['icon-before-text']} />} SDRMs
+            </Button> : null}
           <Button
            className={style.button}
            onClick={this.toggleCodonCov} disabled={disableBtns}>
@@ -200,16 +201,38 @@ export default class SeqReadsSummary extends React.Component {
         <div className={style['desc-list']}>
           <dl>
             {allGeneSequenceReads.map((
-              {gene: {name: gene}, numPositions, firstAA, lastAA}, idx) => [
-                <dt key={`dt-${idx}`}>
-                  Sequence includes {gene}:
+              {
+                gene: {name: geneName}, numPositions,
+                firstAA, lastAA, mutations
+              }, idx
+            ) => {
+              const gene = config.geneDisplay[geneName];
+              const rows = [
+                <dt key={`dt-gene-${idx}`}>
+                  Sequence includes {gene} gene:
                 </dt>,
-                <dd key={`dd-${idx}`}>
+                <dd key={`dd-gene-${idx}`}>
                   {numPositions} codon positions
                   ({firstAA} … {lastAA})
                 </dd>
-              ]
-            )}
+              ];
+              if (config.showMutationsInSummary) {
+                rows.push(
+                  <dt key={`dt-mut-${idx}`}>
+                    {gene} mutations:
+                  </dt>
+                );
+                rows.push(
+                  <dd key={`dd-mut-${idx}`}>
+                    {mutations
+                      .filter(({isUnsequenced}) => !isUnsequenced)
+                      .map(({text}) => text).join(', ') || 'None'
+                    }
+                  </dd>
+                );
+              }
+              return rows;
+            })}
             <dt>Median read depth:</dt>
             <dd>
               {median.toLocaleString()}

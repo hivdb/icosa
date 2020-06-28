@@ -15,6 +15,10 @@ export default {
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%
+  geneDisplay: {
+    RdRP: 'RdRP',
+    S: 'Spike'
+  },
   mutationTypesByGenes: {
     RdRP: {
       Other: 'Other'
@@ -30,5 +34,15 @@ export default {
     S: '#ffffff'
   },
   showCodonCov: true,
-  showLowAbundanceMutsChart: true
+  showLowAbundanceMutsChart: true,
+  sdrmButton: false,
+  showMutationsInSummary: true,
+  mutStatDisplayColumns: {
+    numUsuals: true,
+    numUnusuals: true,
+    numDRMs: false,
+    numApobecs: false,
+    numStops: true,
+    numApobecDRMs: false
+  }
 };

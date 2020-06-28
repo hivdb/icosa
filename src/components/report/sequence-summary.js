@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {FaEye, FaEyeSlash} from 'react-icons/fa';
 
 import Button from '../button';
+import config from '../../config';
 import style from './style.module.scss';
 
 import SubtypeRow from './subtype-row';
@@ -59,13 +60,14 @@ export default class SequenceSummary extends React.Component {
           Sequence summary
         </h2>
         <div className={style['buttons-right']}>
-          <Button
-           className={style.button}
-           onClick={this.toggleSDRMs} disabled={disableSDRMs}>
-            {showSDRMs ?
-              <FaEyeSlash className={style['icon-before-text']} /> :
-              <FaEye className={style['icon-before-text']} />} SDRMs
-          </Button>
+          {config.sdrmButtom ?
+            <Button
+             className={style.button}
+             onClick={this.toggleSDRMs} disabled={disableSDRMs}>
+              {showSDRMs ?
+                <FaEyeSlash className={style['icon-before-text']} /> :
+                <FaEye className={style['icon-before-text']} />} SDRMs
+            </Button> : null}
           <Button
            className={style.button}
            onClick={this.togglePrettyPairwise}
@@ -78,15 +80,31 @@ export default class SequenceSummary extends React.Component {
         <div className={style['desc-list']}>
           <dl>
             {alignedGeneSequences.reduce((r, geneSeq, idx) => {
-              const gene = geneSeq.gene.name;
+              const gene = config.geneDisplay[geneSeq.gene.name];
               r.push(
-                <dt key={`dt-${idx}`}>
-                  Sequence includes {gene}:
-                </dt>);
+                <dt key={`dt-gene-${idx}`}>
+                  Sequence includes {gene} gene:
+                </dt>
+              );
               r.push(
-                <dd key={`dd-${idx}`}>
+                <dd key={`dd-gene-${idx}`}>
                   codons {geneSeq.firstAA} - {geneSeq.lastAA}
-                </dd>);
+                </dd>
+              );
+              if (config.showMutationsInSummary) {
+                r.push(
+                  <dt key={`dt-mut-${idx}`}>
+                    {gene} mutations:
+                  </dt>
+                );
+                r.push(
+                  <dd key={`dd-mut-${idx}`}>
+                    {geneSeq.mutations
+                      .filter(({isUnsequenced}) => !isUnsequenced)
+                      .map(({text}) => text).join(', ') || 'None'}
+                  </dd>
+                );
+              }
               return r;
             }, [])}
             <SubtypeRow {...{bestMatchingSubtype, subtypes}} />

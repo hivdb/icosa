@@ -2,6 +2,7 @@ import React from 'react';
 import {routerShape, matchShape} from 'found';
 import PropTypes from 'prop-types';
 
+import config from '../../../config';
 import style from './style.module.scss';
 import {SitesType} from './prop-types';
 
@@ -51,17 +52,20 @@ export default class MutationStats extends React.Component {
   render() {
     const {mutationStats} = this;
     const {numPositions, currentCutoff} = this.props;
+    const {mutStatDisplayColumns: showCols} = config;
 
     return <table className={style['stat-table']}>
       <thead>
         <tr>
           <th>Mutation detection threshold</th>
-          <th># usual mutations</th>
-          <th># unusual mutations</th>
-          <th># DRMs</th>
-          <th className={style['dividing-line']} />
-          <th># signature APOBEC mutations</th>
-          <th># APOBEC-context DRMs</th>
+          {showCols.numUsuals ? <th># usual mutations</th> : null}
+          {showCols.numUnusuals ? <th># unusual mutations</th> : null}
+          {showCols.numDRMs ? <th># DRMs</th> : null}
+          {showCols.numApobecs || showCols.numStops || showCols.numApobecDRMs ?
+            <th className={style['dividing-line']} /> : null}
+          {showCols.numApobecs ? <th># signature APOBEC mutations</th> : null}
+          {showCols.numStops ? <th># Stop codons</th> : null}
+          {showCols.numApobecDRMs ? <th># APOBEC-context DRMs</th> : null}
         </tr>
       </thead>
       <tbody>
@@ -72,16 +76,23 @@ export default class MutationStats extends React.Component {
            data-current={Math.abs(ms.cutoff - currentCutoff * 100) < 1e-5}
            key={idx}>
             <td>{Number((ms.cutoff).toPrecision(1))}%</td>
-            <td>{ms.numUsuals}</td>
-            <td>
+            {showCols.numUsuals ? <td>{ms.numUsuals}</td> : null}
+            {showCols.numUnusuals ? <td>
               {ms.numUnusuals}{' '}
               ({(ms.numUnusuals / numPositions * 100).toFixed(1)}%)
-            </td>
-            <td>{ms.numDRMs}</td>
-            <td className={style['dividing-line']} />
-            <td>{ms.numApobecs}</td>
-            <td>{(ms.numApobecs + ms.numApobecDRMs) > 0 ?
-                 ms.numApobecDRMs : null}</td>
+            </td> : null}
+            {showCols.numDRMs ? <td>{ms.numDRMs}</td> : null}
+            {showCols.numApobecs ||
+              showCols.numStops ||
+              showCols.numApobecDRMs ?
+                <td className={style['dividing-line']} /> : null}
+            {showCols.numApobecs ? <td>{ms.numApobecs}</td> : null}
+            {showCols.numStops ? <td>{ms.numStops}</td> : null}
+            {showCols.numApobecDRMs ?
+              <td>
+                {(ms.numApobecs + ms.numApobecDRMs) > 0 ?
+                ms.numApobecDRMs : null}
+              </td> : null}
           </tr>
         ))}
         <tr className={style.footnote}>

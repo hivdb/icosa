@@ -10,7 +10,7 @@ import {scaleBand, scaleLinear} from 'd3-scale';
 
 import style from './style.module.scss';
 
-const margin = {top: 10, right: 0, bottom: 30, left: 50};
+const margin = {top: 10, right: 0, bottom: 50, left: 50};
 
 const colorPalettes = [
   '#c0c0c0',
@@ -59,7 +59,7 @@ export default class CodfishGraph extends React.Component {
       .map(r => ({
         value: r.pcnt,
         mutation: `${r.gene}:${r.ref}${r.pos}${r.aa}$$${r.cd}`,
-        color: colorPalettes[r.aaPcnt < 0.0001 ? 1 : 0],
+        color: colorPalettes[r.isUnusual ? 1 : 0],
         accumScore: r.accumScore,
         codon: r.cd,
         footnote: r.isDRM ? '*' : null
@@ -80,13 +80,13 @@ export default class CodfishGraph extends React.Component {
   }
 
   render() {
-    const yTicks = [0, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5];
+    const yTicks = [0, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1];
 
     const {bars} = this;
     this.resetScroll();
 
     const width = 16 * bars.length;
-    const height = 800;
+    const height = 4000;
 
     const xMax = width - margin.left - margin.right;
     const yMax = height - margin.top - 20;
@@ -99,7 +99,7 @@ export default class CodfishGraph extends React.Component {
     );
     const yScale = (
       scaleLinear()
-        .domain([0., .2])
+        .domain([0., 1.])
         .range([yMax, 0])
     );
     const barWidth = xScale.bandwidth();

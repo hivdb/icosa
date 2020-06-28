@@ -13,8 +13,8 @@ const query = gql`
       gene { name }
       internalJsonAllPositionCodonReads(
         mutationOnly: true,
-        maxProportion: 0.2,
-        minProportion: 0.001
+        maxProportion: 1,
+        minProportion: 0.002
       )
     }
   }
