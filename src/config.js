@@ -37,12 +37,33 @@ export default {
   showLowAbundanceMutsChart: true,
   sdrmButton: false,
   showMutationsInSummary: true,
-  mutStatDisplayColumns: {
-    numUsuals: true,
-    numUnusuals: true,
-    numDRMs: false,
-    numApobecs: false,
-    numStops: true,
-    numApobecDRMs: false
-  }
+  mutStatTableColumns: [
+    {
+      name: 'sarsUsualSites',
+      label: '# SARS-CoV-2 >1% Mutations',
+      query: 'usualSitesBy(treatment: "all", subtype: "SARS2")'
+    },
+    {
+      name: 'sarsrUsualSites',
+      label: '# Sarbecovirus ≥2 Mutations',
+      query: 'usualSitesBy(treatment: "all", subtype: "SARSr")'
+    },
+    {
+      name: 'unusualSites',
+      label: '# Other Mutations',
+      query: 'unusualSites',
+      formatter: (count, total) => (
+        `${count} (${(count / total * 100).toFixed(1)}%)`
+      )
+    },
+    {
+      name: 'dividingLine1',
+      type: 'dividingLine'
+    },
+    {
+      name: 'stopCodonSites',
+      label: '# Stops',
+      query: 'stopCodonSites'
+    }
+  ]
 };

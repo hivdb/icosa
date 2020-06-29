@@ -1,10 +1,11 @@
 import React from 'react';
 import {matchShape, routerShape} from 'found';
-import gql from 'graphql-tag.macro';
+import gql from 'graphql-tag';
 
 import StatTable from './stat-table';
 import ValidationReport from '../validation-report';
 // import StatHistogram from './stat-histogram';
+import config from '../../../config';
 
 import style from './style.module.scss';
 
@@ -13,14 +14,11 @@ const query = gql`
     histogram(
       binTicks: [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5]
     ) {
-      usualSites { percentStart, percentStop, count }
-      drmSites { percentStart, percentStop, count }
-      unusualSites { percentStart, percentStop, count }
-      unusualApobecSites { percentStart, percentStop, count }
-      apobecSites { percentStart, percentStop, count }
-      apobecDrmSites { percentStart, percentStop, count }
-      stopCodonSites { percentStart, percentStop, count }
       numPositions
+    ${config.mutStatTableColumns.filter(({query}) => !!query)
+    .map(({name, query}) => (
+      `${name}: ${query} { percentStart, percentStop, count }`
+    )).join('\n')}
     }
   }
 `;
