@@ -1,3 +1,34 @@
+async function popPrevalence(dataURI) {
+  const resp = await fetch(dataURI);
+  const data = await resp.json();
+  const pcntLookup = data.reduce((acc, row) => {
+    acc[`${row.gene}${row.position}${row.aa}`] = row.percent;
+    return acc;
+  }, {});
+  return async (colname, rows) => rows.map((row) => {
+    row[colname] = (
+      `${pcntLookup[`${row.gene}${row.position}${row.aminoAcid}`] * 100 ||
+      .0}%`
+    );
+    return row;
+  });
+}
+
+
+async function popRefAminoAcid(dataURI) {
+  const resp = await fetch(dataURI);
+  const data = await resp.json();
+  const geneLookup = data.reduce((acc, row) => {
+    acc[row.abstractGene] = row.refSequence;
+    return acc;
+  }, {});
+  return async (colname, rows) => rows.map((row) => {
+    row[colname] = geneLookup[row.gene][row.position - 1];
+    return row;
+  });
+}
+
+
 export default {
   graphql_url: (
     window.__NODE_ENV === 'production' ?
@@ -64,6 +95,36 @@ export default {
       name: 'stopCodonSites',
       label: '# Stops',
       query: 'stopCodonSites'
+    }
+  ],
+  codFreqExtraColumns: [
+    {
+      name: 'refAminoAcid',
+      callback: popRefAminoAcid(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/genes.json'
+      )
+    },
+    {
+      name: 'covdbSARS2Pcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARS2.json'
+      )
+    },
+    {
+      name: 'covdbSARSPcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARS.json'
+      )
+    },
+    {
+      name: 'covdbSARSrPcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARSr.json'
+      )
     }
   ]
 };

@@ -16,6 +16,9 @@ import {
 const LIMIT = 100;
 const DEFAULT_CUTOFF = config.seqReadsDefaultCutoff;
 
+const SeqReadsContext = React.createContext({});
+
+
 function getQuery(fragment, extraQueryArgTypes) {
   let extArgs = Object.entries(extraQueryArgTypes)
     .map(([key, typeText]) => `$${key}: ${typeText}`)
@@ -228,6 +231,7 @@ class SequenceReadsAnalysisInner extends React.Component {
 
   render() {
     const {
+      allSequenceReads,
       query, renderPartialResults, noCache,
       cachedProps, extraQueryArgTypes
     } = this.props;
@@ -243,15 +247,17 @@ class SequenceReadsAnalysisInner extends React.Component {
     }
     else {
       return (
-        <ChunkQuery
-         {...{renderPartialResults, noCache}}
-         query={getQuery(query, extraQueryArgTypes)}
-         render={this.thenRender}
-         progressText={(progress, total) => (
-           `Processing sequence reads... (${progress}/${total})`
-         )}
-         onRequireVariables={this.handleRequireVariables}
-         onMergeData={this.handleMergeData} />
+        <SeqReadsContext.Provider value={{allSequenceReads}}>
+          <ChunkQuery
+           {...{renderPartialResults, noCache}}
+           query={getQuery(query, extraQueryArgTypes)}
+           render={this.thenRender}
+           progressText={(progress, total) => (
+             `Processing sequence reads... (${progress}/${total})`
+           )}
+           onRequireVariables={this.handleRequireVariables}
+           onMergeData={this.handleMergeData} />
+        </SeqReadsContext.Provider>
       );
     }
   }
@@ -273,6 +279,8 @@ export default class SequenceReadsAnalysisLayout extends React.Component {
     extraQueryArgs: {},
     extraQueryArgTypes: {}
   }
+
+  static SequenceReadsConsumer = SeqReadsContext.Consumer
 
   constructor() {
     super(...arguments);

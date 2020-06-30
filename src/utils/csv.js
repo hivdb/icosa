@@ -86,4 +86,17 @@ function csvStringify(row, options = {missing: '', header: null}) {
   }
 }
 
-export {csvEscape, csvUnescape, csvParse, csvStringify};
+function tsvStringify(row, options = {missing: '', header: null}) {
+  if (options.header) {
+    return options.header.map(h => (
+      row[h] ? row[h].toString() : options.missing
+    )).join('\t');
+  }
+  else {
+    return row.map(c => (
+      c ? c.toString() : options.missing
+    )).join('\t');
+  }
+}
+
+export {csvEscape, csvUnescape, csvParse, csvStringify, tsvStringify};

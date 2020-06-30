@@ -9,6 +9,7 @@ import {includeFragment} from '../../utils/graphql-helper';
 import Button from '../button';
 import style from './style.module.scss';
 import config from '../../config';
+import DownloadCodFreqs from './download-codfreqs';
 
 // import CodonGraph from './codon-graph';
 import CodonReadsCoverage, {query as codonCovQuery} from './codon-coverage';
@@ -189,6 +190,7 @@ export default class SeqReadsSummary extends React.Component {
                 <FaEyeSlash className={style['icon-before-text']} /> :
                 <FaEye className={style['icon-before-text']} />} SDRMs
             </Button> : null}
+          <DownloadCodFreqs />
           <Button
            className={style.button}
            onClick={this.toggleCodonCov} disabled={disableBtns}>
