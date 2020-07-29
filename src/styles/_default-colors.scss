@@ -21,6 +21,7 @@
   --sierra-color-name-buddhagold: #cba800;
   --sierra-color-name-supernova: #f5cc00;
   --sierra-color-name-softamber: #d4cfb4;
+  --sierra-color-name-egg-white: #ffefc1;
   --sierra-color-name-tana: #dcd8c1;
   --sierra-color-name-satinLinen: #ebe8db;
   --sierra-color-name-cararra: #F0F0E8;
@@ -207,4 +208,11 @@
   --sierra-color-seqreads-preview-remove-file: var(--sierra-color-type-main);
   --sierra-color-seqreads-preview-file-hover-bg: var(--sierra-color-name-pampas);
   --sierra-color-seqreads-preview-file-hover-text: var(--sierra-color-name-softamber);
+
+  --sierra-color-seqviewer-position-item-border: var(--sierra-color-name-mercury);
+  --sierra-color-seqviewer-position-item-hover-border: var(--sierra-color-name-silver);
+  --sierra-color-seqviewer-position-item-active-border: var(--sierra-color-type-main-lighter);
+  --sierra-color-seqviewer-position-item-hover-bg: var(--sierra-color-name-egg-white);
+  --sierra-color-seqviewer-position-item-active-bg: var(--sierra-color-name-supernova);
+  --sierra-color-seqviewer-position-item-posnum-text: var(--sierra-color-name-dustygray);
 }

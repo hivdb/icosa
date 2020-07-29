@@ -66,7 +66,7 @@ export default class PromiseComponent extends React.Component {
       };
     }
     else {
-      return this.getStateFromResult(
+      return PromiseComponent.getStateFromResult(
         promise, then, component, promise
       );
     }

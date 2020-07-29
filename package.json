@@ -37,6 +37,7 @@
     "griddle-react": "^1.13.1",
     "jszip": "^3.4.0",
     "localforage": "^1.7.4",
+    "lodash": "^4.17.19",
     "node-sass": "^4.14.1",
     "normalize-scss": "^7.0.1",
     "object-merge": "^2.5.1",
@@ -86,10 +87,13 @@
   },
   "babel": {
     "presets": [
-      ["react-app", {
-        "# reason": "https://stackoverflow.com/a/58851078/2644759",
-        "absoluteRuntime": false
-      }]
+      [
+        "react-app",
+        {
+          "# reason": "https://stackoverflow.com/a/58851078/2644759",
+          "absoluteRuntime": false
+        }
+      ]
     ]
   }
 }

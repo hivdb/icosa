@@ -1,0 +1,174 @@
+@import "../../../../styles/colors";
+
+.sequence-viewer {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
+  user-select: none;
+}
+
+@mixin position-item($size: 3rem) {
+  $border-size: $size / 10;
+  $spacing-size: $size / 5;
+  position: relative;
+  min-height: 0;
+  > .position-item-box {
+    position: relative;
+    box-sizing: border-box;
+    font-size: $size / 3 * 2;
+    font-weight: 600;
+    margin: $spacing-size / 2;
+    padding-top: $size / 4;
+    line-height: 1;
+    text-align: center;
+    min-width: $size + 2 * $border-size;
+    max-width: $size + 2 * $border-size;
+    max-height: $size + 2 * $border-size;
+    min-height: $size + 2 * $border-size;
+    border: $border-size solid color(seqviewer-position-item-border);
+    cursor: pointer;
+    transition: border-color .1s ease-in-out, background-color .1s ease-in-out;
+    &:hover {
+      border-color: color(seqviewer-position-item-hover-border);
+    }
+    &::before {
+      content: attr(data-position);
+      color: color(seqviewer-position-item-posnum-text);
+      font-size: $size / 4;
+      line-height: 1.2;
+      position: absolute;
+      top: 0;
+      left: $size / 16;
+    }
+  }
+
+  > .position-item-annot-range {
+    position: relative;
+    height: $border-size;
+    padding: 0;
+    box-sizing: border-box;
+    background-clip: content-box;
+    margin: $border-size * 4 0 $border-size * 2;
+  }
+
+  $annot-range-divider-size: 2px;
+  &[data-highlight="true"] {
+    > .position-item-annot-range {
+      background-color: color(seqviewer-position-item-border);
+      width: 101%;
+    }
+    > .position-item-box {
+      border-color: color(seqviewer-position-item-active-border);
+      &:hover {
+        border-color: color(seqviewer-position-item-active-border);
+        background-color: color(seqviewer-position-item-hover-bg);
+      }
+    }
+  }
+  &[data-active="true"] {
+    > .position-item-box {
+      background-color: color(seqviewer-position-item-active-bg);
+      &:hover {
+        background-color: color(seqviewer-position-item-active-bg);
+      }
+    }
+  }
+  &[data-pos-annot-value] {
+    &::before {
+      font-style: italic;
+      content: attr(data-pos-annot-value);
+      position: absolute;
+      display: none;
+      z-index: 1;
+      font-size: $size / 3;
+      top: 0;
+      width: 100%;
+      text-align: center;
+    }
+    &:hover::before {
+      display: block;
+    }
+  }
+  &[data-is-annot-start="true"], &[data-is-annot-end="true"] {
+    &::before {
+      display: block;
+    }
+    > .position-item-annot-range {
+      > .left, > .right {
+        &::before, &::before {
+          content: "";
+          width: 0;
+          height: 0;
+          margin-top: -$size / 4 + $border-size / 2;
+          border-top: #{$size / 4} solid transparent;
+          border-bottom: #{$size / 4} solid transparent;
+          position: absolute;
+        }
+        &::after, &::after {
+          content: "";
+          height: $border-size * 7 + $size + $spacing-size;
+          background-color: rgba(0, 0, 0, .7);
+          width: $annot-range-divider-size;
+          position: absolute;
+          display: block;
+          top: 0;
+          margin-top: -$size / 4 - $border-size;
+        }
+      }
+    }
+  }
+  &[data-is-annot-start="true"] {
+    > .position-item-annot-range {
+      padding-left: 10%;
+      > .left {
+        &::before {
+          margin-left: 5%;
+          left: 0;
+          border-right: #{$size / 4} solid color(seqviewer-position-item-border);
+        }
+        &::after {
+          left: - $annot-range-divider-size / 2;
+        }
+      }
+    }
+  }
+  &[data-is-annot-start="false"] > .position-item-annot-range > .left {
+    display: none;
+  }
+  &[data-is-annot-end="true"] + &[data-is-annot-start="true"] {
+    > .position-item-annot-range > .left::after {
+      display: none;
+    }
+  }
+  &[data-is-annot-end="true"] {
+    > .position-item-annot-range {
+      padding-right: 10%;
+       > .right {
+        &::before {
+          margin-right: 5%;
+          right: 0;
+          border-left: #{$size / 4} solid color(seqviewer-position-item-border);
+        }
+        &::after {
+          right: - $annot-range-divider-size / 2;
+        }
+      }
+    }
+  }
+  &[data-is-annot-end="false"] > .position-item-annot-range > .right {
+    display: none;
+  }
+}
+
+.position-item-large {
+  @include position-item(5rem);
+}
+
+.position-item-middle {
+  @include position-item(2.8rem);
+}
+
+.position-item-small {
+  @include position-item(2.2rem);
+}

@@ -12,6 +12,8 @@ import ReportBySeqReads from './report-by-reads';
 import style from './style.module.scss';
 import config from './config';
 
+import CustomColors from '../../components/custom-colors';
+
 
 export default function SARS2Routes({
   pathPrefix = "sars2/",
@@ -27,16 +29,7 @@ export default function SARS2Routes({
     name: 'sierra-frontend-client',
     version: '0.1'
   });
-  const colorStyle = {};
-  if (colors) {
-    for (const name in colors) {
-      colorStyle[`--sierra-color-${name}`] = colors[name];
-    }
-  }
-  let wrapperClassName = style['sierra-webui'];
-  if (className) {
-    wrapperClassName = makeClassNames(wrapperClassName, className);
-  }
+  const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
   return <Route path={pathPrefix} Component={wrapper}>
     <Route path="by-sequences/">
@@ -61,8 +54,8 @@ export default function SARS2Routes({
   </Route>;
 
   function wrapper(props) {
-    return <div className={wrapperClassName} style={colorStyle}>
+    return <CustomColors className={wrapperClassName} colors={colors}>
       <ApolloProvider {...props} client={apolloClient} />
-    </div>;
+    </CustomColors>;
   }
 }

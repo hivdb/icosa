@@ -1,0 +1,31 @@
+@import "../../styles/default-colors";
+@import "../../styles/dropdown";
+
+.mut-annot-editor {
+  @include default-color();
+  .preset-selection {
+    @extend %large-dropdown;
+    :global(.Dropdown-root) {
+      max-width: 32rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .editor {
+    display: grid;
+    grid-template-columns: auto 18rem;
+    > .seqviewer {
+    }
+    > .controller-container {
+      > .controller {
+        z-index: 1;
+        max-height: 50vw;
+        position: sticky;
+        top: 2rem;
+      }
+      pre {
+        opacity: 0.4;
+      }
+    }
+  }
+}

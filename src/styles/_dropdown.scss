@@ -76,3 +76,18 @@
     padding: 2px 10px;
   }
 }
+
+%large-dropdown {
+  @extend %base-dropdown;
+  :global .Dropdown-control {
+    padding: 8px 64px 8px 24px;
+    font-size: 1.5rem;
+  }
+  :global .Dropdown-option {
+    padding: 16px 20px;
+    font-size: 1.5rem;
+  }
+  :global .Dropdown-arrow {
+    width: 42px;
+  }
+}

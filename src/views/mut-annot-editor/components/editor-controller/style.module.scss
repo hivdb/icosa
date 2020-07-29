@@ -1,0 +1,5 @@
+@import "../../../../styles/dropdown";
+
+.editor-controller {
+  @extend %general-dropdown;
+}
