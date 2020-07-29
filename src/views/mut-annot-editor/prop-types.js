@@ -34,7 +34,10 @@ const posShape = PropTypes.shape({
   ).isRequired
 });
 
+const seqViewerSizeType = PropTypes.oneOf(['large', 'middle', 'small']);
+
 export {
   annotShape,
-  posShape
+  posShape,
+  seqViewerSizeType
 };

@@ -38,6 +38,7 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
     }
     &::after {
       left: 0;
+      top: 0;
       content: "✓";
       opacity: 0;
       font-size: 1rem;

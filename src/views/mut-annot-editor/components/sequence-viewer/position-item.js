@@ -15,10 +15,13 @@ export default class PositionItem extends React.Component {
     prevPosAnnot: posShape,
     postPosAnnot: posShape,
     residue: PropTypes.string.isRequired,
+    displayCitationIds: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
     active: PropTypes.bool.isRequired
   }
 
-  static getPosHighlight(curAnnot, posAnnot) {
+  static getPosHighlight(curAnnot, posAnnot, displayCitationIds) {
     if (!posAnnot) {
       return null;
     }
@@ -29,39 +32,49 @@ export default class PositionItem extends React.Component {
     if (level === 'amino acid') {
       return null;
     }
-    for (const {name, value} of posAnnot.annotations) {
-      if (name === annotName) {
-        return value;
+    for (const {name, value, citationIds} of posAnnot.annotations) {
+      if (name !== annotName) {
+        continue;
       }
+      if (!citationIds.some(citeId => displayCitationIds.includes(citeId))) {
+        continue;
+      }
+      return value;
     }
     return null;
   }
 
   get posHighlight() {
-    const {curAnnot, posAnnot} = this.props;
-    return this.constructor.getPosHighlight(curAnnot, posAnnot);
+    const {curAnnot, posAnnot, displayCitationIds} = this.props;
+    return this.constructor.getPosHighlight(
+      curAnnot, posAnnot, displayCitationIds
+    );
   }
 
   get isAnnotStart() {
-    const {curAnnot, prevPosAnnot, posAnnot} = this.props;
+    const {curAnnot, prevPosAnnot, posAnnot, displayCitationIds} = this.props;
     const prevAnnotVal = this.constructor.getPosHighlight(
-      curAnnot, prevPosAnnot
+      curAnnot, prevPosAnnot, displayCitationIds
     );
-    const annotVal = this.constructor.getPosHighlight(curAnnot, posAnnot);
+    const annotVal = this.constructor.getPosHighlight(
+      curAnnot, posAnnot, displayCitationIds
+    );
     return annotVal !== null && prevAnnotVal !== annotVal;
   }
 
   get isAnnotEnd() {
-    const {curAnnot, postPosAnnot, posAnnot} = this.props;
+    const {curAnnot, postPosAnnot, posAnnot, displayCitationIds} = this.props;
     const postAnnotVal = this.constructor.getPosHighlight(
-      curAnnot, postPosAnnot
+      curAnnot, postPosAnnot, displayCitationIds
     );
-    const annotVal = this.constructor.getPosHighlight(curAnnot, posAnnot);
+    const annotVal = this.constructor.getPosHighlight(
+      curAnnot, posAnnot, displayCitationIds
+    );
     return annotVal !== null && postAnnotVal !== annotVal;
   }
 
   get aaHighlights() {
-    const {posAnnot} = this.props;
+    const {posAnnot, displayCitationIds} = this.props;
     if (!posAnnot) {
       return [];
     }
@@ -76,34 +89,17 @@ export default class PositionItem extends React.Component {
     }
     const aas = [];
     for (const {aminoAcid, annotations} of posAnnot.aminoAcids) {
-      for (const {name} of annotations) {
-        if (name === annotName) {
-          aas.push(aminoAcid);
+      for (const {name, citationIds} of annotations) {
+        if (name !== annotName) {
+          continue;
         }
+        if (!citationIds.some(citeId => displayCitationIds.includes(citeId))) {
+          continue;
+        }
+        aas.push(aminoAcid);
       }
     }
     return aas;
-  }
-
-  get shouldHighlight() {
-    const {posAnnot} = this.props;
-    if (!posAnnot) {
-      return false;
-    }
-    const {
-      curAnnot: {
-        name: annotName,
-        level
-      }
-    } = this.props;
-    if (level === 'position') {
-      return posAnnot.annotations.some(({name}) => name === annotName);
-    }
-    else {
-      return posAnnot.aminoAcids.some(({annotations}) => (
-        annotations.some(({name}) => name === annotName)
-      ));
-    }
   }
 
   render() {

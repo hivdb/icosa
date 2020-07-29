@@ -8,7 +8,7 @@ import union from 'lodash/union';
 import PositionItem from './position-item';
 import style from './style.module.scss';
 
-import {annotShape, posShape} from '../../prop-types';
+import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
 
 
 function getPositionFromTarget(target) {
@@ -60,7 +60,7 @@ function unionSelections(curSels, prevSels, newSels) {
 export default class SequenceViewer extends React.Component {
 
   static propTypes = {
-    size: PropTypes.oneOf(['large', 'middle', 'small']).isRequired,
+    size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
     curAnnot: annotShape.isRequired,
     sequence: PropTypes.string.isRequired,
@@ -68,11 +68,10 @@ export default class SequenceViewer extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
+    displayCitationIds: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
     onChange: PropTypes.func.isRequired
-  }
-
-  static defaultProps = {
-    size: 'middle'
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -225,7 +224,8 @@ export default class SequenceViewer extends React.Component {
   render() {
     const {
       className, sequence, size,
-      curAnnot, selectedPositions
+      curAnnot, selectedPositions,
+      displayCitationIds,
     } = this.props;
     const combinedClassName = makeClassNames(
       style['sequence-viewer'], className
@@ -246,6 +246,7 @@ export default class SequenceViewer extends React.Component {
            posAnnot={positionLookup[pos0 + 1]}
            prevPosAnnot={positionLookup[pos0]}
            postPosAnnot={positionLookup[pos0 + 2]}
+           displayCitationIds={displayCitationIds}
            position={pos0 + 1} residue={residue} />
         ))}
       </div>

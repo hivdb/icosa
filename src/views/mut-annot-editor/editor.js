@@ -1,11 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import union from 'lodash/union';
 
 import SequenceViewer from './components/sequence-viewer';
 import EditorController from './components/editor-controller';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
+
+
+const KEY_SEQVIEWER = '--sierra-seqviewer-size';
+
+
+function loadSeqViewerSize() {
+  let size = window.localStorage.getItem(KEY_SEQVIEWER);
+  if (size !== 'large' && size !== 'middle' && size !== 'small') {
+    size = 'middle';
+  }
+  return size;
+}
+
+
+function saveSeqViewerSize(size) {
+  window.localStorage.setItem(KEY_SEQVIEWER, size);
+}
+
+
+function getReferredCitationIds(curAnnot, positions) {
+  const {
+    name: annotName, level: annotLevel
+  } = curAnnot;
+  let referredCitationIds = [];
+
+  if (annotLevel === 'position') {
+    unionCitations(positions);
+  }
+  else {
+    for (const {aminoAcids} of positions) {
+      unionCitations(aminoAcids);
+    }
+  }
+  return referredCitationIds;
+
+  function unionCitations(items) {
+    for (const {annotations} of items) {
+      for (const {name, citationIds} of annotations) {
+        if (name === annotName) {
+          referredCitationIds = union(
+            referredCitationIds, citationIds
+          );
+        }
+      }
+    }
+  }
+}
 
 
 class MutAnnotEditorInner extends React.Component {
@@ -23,13 +71,21 @@ class MutAnnotEditorInner extends React.Component {
       positions,
       citations
     } = this.props.annotationData;
+    const curAnnot = annotations[0] || null;
     this.state = {
       annotations: [...annotations],
       positions: [...positions],
       citations: {...citations},
-      curAnnot: annotations[0] || null,
+      curAnnot,
+      displayCitationIds: getReferredCitationIds(curAnnot, positions),
+      seqViewerSize: loadSeqViewerSize(),
       selectedPositions: []
     };
+  }
+
+  get referredCitationIds() {
+    const {curAnnot, positions} = this.state;
+    return getReferredCitationIds(curAnnot, positions);
   }
 
   handlePositionsSelect = (selectedPositions) => {
@@ -37,8 +93,26 @@ class MutAnnotEditorInner extends React.Component {
   }
 
   handleAnnotChange = (curAnnot) => {
-    this.setState({curAnnot});
+    const {positions} = this.state;
+    this.setState({
+      curAnnot,
+      displayCitationIds: getReferredCitationIds(curAnnot, positions)
+    });
   };
+  
+  handleSeqViewerSizeChange = (seqViewerSize) => {
+    this.setState({seqViewerSize});
+    saveSeqViewerSize(seqViewerSize);
+  };
+
+  handleDisplayCitationIdsChange = (displayCitationIds) => {
+    this.setState({displayCitationIds});
+  }
+
+  handleSave = () => {}
+  handleReset = () => {
+    this.setState({selectedPositions: []});
+  }
 
   render() {
     const {
@@ -50,15 +124,22 @@ class MutAnnotEditorInner extends React.Component {
       positions,
       citations,
       selectedPositions,
+      seqViewerSize,
+      displayCitationIds,
       curAnnot
     } = this.state;
+    const {
+      referredCitationIds
+    } = this;
 
     return <section className={style.editor}>
       <SequenceViewer
+       size={seqViewerSize}
        sequence={refSeq}
        curAnnot={curAnnot}
        positions={positions}
        citations={citations}
+       displayCitationIds={displayCitationIds}
        selectedPositions={selectedPositions}
        onChange={this.handlePositionsSelect}
        className={style.seqviewer} />
@@ -66,7 +147,17 @@ class MutAnnotEditorInner extends React.Component {
         <EditorController
          annotations={annotations}
          annotation={curAnnot}
+         positions={positions}
+         citations={citations}
+         referredCitationIds={referredCitationIds}
+         displayCitationIds={displayCitationIds}
          onAnnotationChange={this.handleAnnotChange}
+         onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
+         onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
+         onSave={this.handleSave}
+         onReset={this.handleReset}
+         seqViewerSize={seqViewerSize}
+         selectedPositions={selectedPositions}
          className={style['controller']} />
         <pre>
           {JSON.stringify(annotationData, null, '  ')}

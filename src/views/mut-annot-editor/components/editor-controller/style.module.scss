@@ -1,5 +1,42 @@
+@import "../../../../styles/colors";
 @import "../../../../styles/dropdown";
 
-.editor-controller {
+.input-group {
   @extend %general-dropdown;
+  margin-bottom: 2rem;
+  > label {
+    display: block;
+    margin: .5rem 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    a {
+      font-size: 1rem;
+      color: color(link-text);
+      &:hover {
+        color: color(link-text);
+        text-decoration: underline;
+      }
+    }
+  }
+  > .inline-buttons {
+    display: block;
+    text-align: right;
+    > button:not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  }
+  
+  > .citation-checkbox {
+    display: block;
+    margin-bottom: .5rem;
+    > label {
+      display: block;
+      > .citation-section {
+        text-indent: calc(18px + 0.4rem);
+        display: block;
+        color: rgba(0, 0, 0, .35);
+        font-size: 0.8rem;
+      }
+    }
+  }
 }
