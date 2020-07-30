@@ -116,8 +116,7 @@ class MutAnnotEditorInner extends React.Component {
 
   render() {
     const {
-      refSeq,
-      annotationData
+      refSeq
     } = this.props;
     const {
       annotations,
@@ -159,9 +158,6 @@ class MutAnnotEditorInner extends React.Component {
          seqViewerSize={seqViewerSize}
          selectedPositions={selectedPositions}
          className={style['controller']} />
-        <pre>
-          {JSON.stringify(annotationData, null, '  ')}
-        </pre>
       </div>
     </section>;
   }

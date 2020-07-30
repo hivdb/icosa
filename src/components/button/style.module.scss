@@ -1,7 +1,7 @@
 @import "../../styles";
 
 .btn {
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 0;
   display: inline-flex;
   box-sizing: content-box;
@@ -141,6 +141,7 @@
     color: color(btn-light-text);
     background-color: color(btn-light-bg);
     &:hover:not(:disabled) {
+      border: 1px solid color(btn-light-text);
       background-color: color(btn-light-hover-bg);
     }
   }
