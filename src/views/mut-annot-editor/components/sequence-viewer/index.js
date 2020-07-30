@@ -41,6 +41,12 @@ function xorSelections(curSels, prevSels, newSels) {
 }
 
 
+function unionSelections(curSels, prevSels, newSels) {
+  const combined = union(xor(curSels, prevSels), newSels);
+  return combined.sort();
+}
+
+
 function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
   let multiSel = ctrlKey || metaKey;
   let rangeSel = shiftKey;
@@ -51,12 +57,6 @@ function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
 }
 
 
-function unionSelections(curSels, prevSels, newSels) {
-  const combined = union(xor(curSels, prevSels), newSels);
-  return combined.sort();
-}
-
-
 export default class SequenceViewer extends React.Component {
 
   static propTypes = {
@@ -64,7 +64,7 @@ export default class SequenceViewer extends React.Component {
     className: PropTypes.string,
     curAnnot: annotShape.isRequired,
     sequence: PropTypes.string.isRequired,
-    positions: PropTypes.arrayOf(posShape.isRequired).isRequired,
+    positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
@@ -93,14 +93,6 @@ export default class SequenceViewer extends React.Component {
       mouseUpPos: false,
       prevSelecteds: []
     };
-  }
-
-  get positionLookup() {
-    const {positions} = this.props;
-    return positions.reduce((acc, posdata) => {
-      acc[posdata.position] = posdata;
-      return acc;
-    }, {});
   }
 
   setSelection(selecteds) {
@@ -226,11 +218,11 @@ export default class SequenceViewer extends React.Component {
       className, sequence, size,
       curAnnot, selectedPositions,
       displayCitationIds,
+      positionLookup
     } = this.props;
     const combinedClassName = makeClassNames(
       style['sequence-viewer'], className
     );
-    const {positionLookup} = this;
 
     return (
       <div

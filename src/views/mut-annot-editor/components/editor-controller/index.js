@@ -11,15 +11,10 @@ import style from './style.module.scss';
 import ExtLink from '../../../../components/link/external';
 import Button from '../../../../components/button';
 import CheckboxInput from '../../../../components/checkbox-input';
-import {posShape, annotShape, seqViewerSizeType} from '../../prop-types';
-
-
-function getPositionLookup(positions) {
-  return positions.reduce((acc, posdata) => {
-    acc[posdata.position] = posdata;
-    return acc;
-  }, {});
-}
+import {
+  posShape, citationShape,
+  annotShape, seqViewerSizeType
+} from '../../prop-types';
 
 
 function isAnnotated(annotations, annotName, displayCitationIds) {
@@ -40,7 +35,7 @@ function isAnnotated(annotations, annotName, displayCitationIds) {
 
 function getDefaultAnnotVal(props) {
   const {
-    positions,
+    positionLookup: posLookup,
     selectedPositions,
     annotation: {
       name: annotName,
@@ -51,7 +46,6 @@ function getDefaultAnnotVal(props) {
   if (annotLevel === 'aminoAcids') {
     return null;
   }
-  const posLookup = getPositionLookup(positions);
   const annotValCounter = {};
   for (const pos of selectedPositions) {
     const posdata = posLookup[pos];
@@ -111,8 +105,8 @@ export default class EditorController extends React.Component {
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
-    positions: PropTypes.arrayOf(posShape.isRequired).isRequired,
-    citations: PropTypes.object.isRequired,
+    positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
+    citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     className: PropTypes.string,
     annotation: annotShape.isRequired,
     referredCitationIds: PropTypes.arrayOf(
@@ -154,11 +148,6 @@ export default class EditorController extends React.Component {
     return annotation.name;
   }
 
-  get positionLookup() {
-    const {positions} = this.props;
-    return getPositionLookup(positions);
-  }
-
   get annotationOptions() {
     const {annotations} = this.props;
     return annotations.map(({name}) => name);
@@ -190,7 +179,7 @@ export default class EditorController extends React.Component {
     if (!this.isEditing) {
       return null;
     }
-    const {positionLookup} = this;
+    const {positionLookup} = this.props;
     const {
       annotation: {
         name: annotName,
@@ -242,7 +231,7 @@ export default class EditorController extends React.Component {
     this.props.onDisplayCitationIdsChange(this.props.referredCitationIds);
   }
 
-  handleUnselectAllCitations = (evt) => {
+  handleDeselectAllCitations = (evt) => {
     evt.preventDefault();
     this.props.onDisplayCitationIdsChange([]);
   }
@@ -264,10 +253,6 @@ export default class EditorController extends React.Component {
     this.props.onSeqViewerSizeChange(value);
   }
 
-  handleSave = () => {
-    this.props.onSave();
-  }
-  
   handleAnnotValChange = ({currentTarget: {value}}) => {
     this.setState({annotVal: value});
   }
@@ -298,10 +283,12 @@ export default class EditorController extends React.Component {
         annotation,
         displayCitationIds
       } = this.props;
+      const {annotVal} = this.state;
       onSave({
         action: 'addPositions',
-        positions: selectedPositions,
-        annotation: annotation,
+        selectedPositions,
+        annotation,
+        annotVal,
         citationIds: displayCitationIds
       });
     },
@@ -314,8 +301,8 @@ export default class EditorController extends React.Component {
       } = this.props;
       onSave({
         action: 'removePositions',
-        positions: selectedPositions,
-        annotation: annotation,
+        selectedPositions,
+        annotation,
         citationIds: displayCitationIds
       });
     }
@@ -377,8 +364,8 @@ export default class EditorController extends React.Component {
               select all
             </a>
             {', '}
-            <a href="#unselect-all" onClick={this.handleUnselectAllCitations}>
-              unselect all
+            <a href="#deselect-all" onClick={this.handleDeselectAllCitations}>
+              deselect all
             </a>
             ):
           </label>
@@ -471,19 +458,21 @@ export default class EditorController extends React.Component {
               </div> : null}
             {showSetAnnotValDialog ?
               <div className={style['dialog']}>
-                <p>
-                  Following citations will be add with the annotation:
-                </p>
-                <div>
-                  {referredCitationIds.map(citeId => (
-                    <CitationCheckbox
-                     key={citeId}
-                     citeId={citeId}
-                     onChange={this.handleDisplayCitationIdsChange}
-                     citations={citations}
-                     displayCitationIds={displayCitationIds} />
-                  ))}
-                </div>
+                {editMode !== 'remove' ? <>
+                  <p>
+                    Following citations will be added for current annotation:
+                  </p>
+                  <div>
+                    {referredCitationIds.map(citeId => (
+                      <CitationCheckbox
+                       key={citeId}
+                       citeId={citeId}
+                       onChange={this.handleDisplayCitationIdsChange}
+                       citations={citations}
+                       displayCitationIds={displayCitationIds} />
+                    ))}
+                  </div>
+                </> : null}
                 <p>
                   Enter an annotation to be showed when moving mouse
                   over the selected positions:

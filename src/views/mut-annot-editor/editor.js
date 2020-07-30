@@ -7,6 +7,7 @@ import EditorController from './components/editor-controller';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
+import {actions, makePositionLookup} from './utils';
 
 
 const KEY_SEQVIEWER = '--sierra-seqviewer-size';
@@ -88,6 +89,11 @@ class MutAnnotEditorInner extends React.Component {
     return getReferredCitationIds(curAnnot, positions);
   }
 
+  get positionLookup() {
+    const {positions} = this.state;
+    return makePositionLookup(positions);
+  }
+
   handlePositionsSelect = (selectedPositions) => {
     this.setState({selectedPositions});
   }
@@ -109,7 +115,18 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({displayCitationIds});
   }
 
-  handleSave = () => {}
+  handleSave = ({action, ...actionObj}) => {
+    const {positionLookup} = this;
+    const {annotations, citations} = this.state;
+    const state = actions[action](
+      actionObj, positionLookup, annotations, citations
+    );
+    this.setState({
+      ...state,
+      selectedPositions: []
+    });
+  }
+
   handleReset = () => {
     this.setState({selectedPositions: []});
   }
@@ -120,7 +137,6 @@ class MutAnnotEditorInner extends React.Component {
     } = this.props;
     const {
       annotations,
-      positions,
       citations,
       selectedPositions,
       seqViewerSize,
@@ -128,7 +144,8 @@ class MutAnnotEditorInner extends React.Component {
       curAnnot
     } = this.state;
     const {
-      referredCitationIds
+      referredCitationIds,
+      positionLookup
     } = this;
 
     return <section className={style.editor}>
@@ -136,7 +153,7 @@ class MutAnnotEditorInner extends React.Component {
        size={seqViewerSize}
        sequence={refSeq}
        curAnnot={curAnnot}
-       positions={positions}
+       positionLookup={positionLookup}
        citations={citations}
        displayCitationIds={displayCitationIds}
        selectedPositions={selectedPositions}
@@ -146,7 +163,7 @@ class MutAnnotEditorInner extends React.Component {
         <EditorController
          annotations={annotations}
          annotation={curAnnot}
-         positions={positions}
+         positionLookup={positionLookup}
          citations={citations}
          referredCitationIds={referredCitationIds}
          displayCitationIds={displayCitationIds}

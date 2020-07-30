@@ -4,6 +4,15 @@ const annotShape = PropTypes.shape({
   name: PropTypes.string.isRequired
 });
 
+const citationShape = PropTypes.shape({
+  citationId: PropTypes.number.isRequired,
+  sectionId: PropTypes.number.isRequired,
+  author: PropTypes.string.isRequired,
+  year: PropTypes.number.isRequired,
+  doi: PropTypes.string.isRequired,
+  section: PropTypes.string.isRequired
+});
+
 const posShape = PropTypes.shape({
   position: PropTypes.number.isRequired,
   annotations: PropTypes.arrayOf(
@@ -38,6 +47,7 @@ const seqViewerSizeType = PropTypes.oneOf(['large', 'middle', 'small']);
 
 export {
   annotShape,
+  citationShape,
   posShape,
   seqViewerSizeType
 };
