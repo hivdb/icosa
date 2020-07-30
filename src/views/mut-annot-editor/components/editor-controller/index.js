@@ -4,7 +4,7 @@ import Dropdown from 'react-dropdown';
 import makeClassNames from 'classnames';
 import capitalize from 'lodash/capitalize';
 import isEmpty from 'lodash/isEmpty';
-import {FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
+import {FaRegEdit, FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
 
 import style from './style.module.scss';
 
@@ -76,6 +76,32 @@ function getDefaultAnnotVal(props) {
         .sort((a, b) => b[1] - a[1])
     )[0][0];
   }
+}
+
+
+function CitationCheckbox(props) {
+  const {citeId, onChange, citations, displayCitationIds} = props;
+  return (
+    <CheckboxInput
+     name="display-citations"
+     id={`display-citations-${citeId}`}
+     onChange={onChange}
+     className={style['citation-checkbox']}
+     checked={displayCitationIds.includes(citeId)}
+     value={citeId}>
+      {(() => {
+        const {author, year, doi, section} = citations[citeId];
+        return <>
+          {author} {year} (
+          <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>
+          )
+          <span className={style['citation-section']}>
+            {section}
+          </span>
+        </>;
+      })()}
+    </CheckboxInput>
+  );
 }
 
 
@@ -357,26 +383,12 @@ export default class EditorController extends React.Component {
             ):
           </label>
           {referredCitationIds.map(citeId => (
-            <CheckboxInput
+            <CitationCheckbox
              key={citeId}
-             name="display-citations"
-             id={`display-citations-${citeId}`}
+             citeId={citeId}
              onChange={this.handleDisplayCitationIdsChange}
-             className={style['citation-checkbox']}
-             checked={displayCitationIds.includes(citeId)}
-             value={citeId}>
-              {(() => {
-                const {author, year, doi, section} = citations[citeId];
-                return <>
-                  {author} {year} (
-                  <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>
-                  )
-                  <span className={style['citation-section']}>
-                    {section}
-                  </span>
-                </>;
-              })()}
-            </CheckboxInput>
+             citations={citations}
+             displayCitationIds={displayCitationIds} />
           ))}
         </div>
         {isEditing ?
@@ -411,7 +423,7 @@ export default class EditorController extends React.Component {
                    name="edit-positions"
                    btnStyle="light"
                    onClick={this.handlePosAnnotUpdate.edit}>
-                    <FaRegPlusSquare {...btnIconProps} />
+                    <FaRegEdit {...btnIconProps} />
                     Edit
                   </Button>
                   <Button
@@ -459,8 +471,23 @@ export default class EditorController extends React.Component {
               </div> : null}
             {showSetAnnotValDialog ?
               <div className={style['dialog']}>
-                Enter an annotation to be showed when moving mouse
-                over the selected positions:
+                <p>
+                  Following citations will be add with the annotation:
+                </p>
+                <div>
+                  {referredCitationIds.map(citeId => (
+                    <CitationCheckbox
+                     key={citeId}
+                     citeId={citeId}
+                     onChange={this.handleDisplayCitationIdsChange}
+                     citations={citations}
+                     displayCitationIds={displayCitationIds} />
+                  ))}
+                </div>
+                <p>
+                  Enter an annotation to be showed when moving mouse
+                  over the selected positions:
+                </p>
                 <input
                  onChange={this.handleAnnotValChange}
                  value={annotVal}
