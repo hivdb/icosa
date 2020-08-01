@@ -1,6 +1,6 @@
 import union from 'lodash/union';
 
-export function addPositions(actionObj, positionLookup) {
+export function addPositions({actionObj, positionLookup}) {
   const {
     annotation: {
       name: annotName,

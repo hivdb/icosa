@@ -6,7 +6,7 @@ import Link from '../link';
 
 import style from './style.module.scss';
 
-const btnStyles = ['default', 'info', 'primary', 'light'];
+const btnStyles = ['default', 'info', 'primary', 'light', 'link'];
 const btnSizes = ['xlarge', 'large', 'normal', 'small'];
 
 

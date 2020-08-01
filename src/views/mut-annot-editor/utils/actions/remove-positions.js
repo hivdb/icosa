@@ -1,6 +1,14 @@
 import difference from 'lodash/difference';
 
-export function removePositions(actionObj, positionLookup) {
+
+export function cleanPositions(positions) {
+  return positions.filter(({annotations, aminoAcids}) => (
+    annotations.length + aminoAcids.length > 0
+  ));
+}
+
+
+export function removePositions({actionObj, positionLookup}) {
   const {
     annotation: {
       name: annotName,
@@ -29,16 +37,14 @@ export function removePositions(actionObj, positionLookup) {
         );
       }
     }
-    if (
-      posdata.annotations.length === 0 &&
-      posdata.aminoAcids.length === 0
-    ) {
-      delete positionLookup[pos];
-    }
   }
   return {
-    positions: Object.values(positionLookup).sort((a, b) => (
-      a.position - b.position
-    ))
+    positions: (
+      cleanPositions(
+        Object.values(positionLookup)
+      ).sort((a, b) => (
+        a.position - b.position
+      ))
+    )
   };
 }

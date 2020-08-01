@@ -10,7 +10,7 @@ export default class PositionItem extends React.Component {
   static propTypes = {
     size: PropTypes.oneOf(['large', 'middle', 'small']).isRequired,
     position: PropTypes.number.isRequired,
-    curAnnot: annotShape.isRequired,
+    curAnnot: annotShape,
     posAnnot: posShape,
     prevPosAnnot: posShape,
     postPosAnnot: posShape,
@@ -22,7 +22,7 @@ export default class PositionItem extends React.Component {
   }
 
   static getPosHighlight(curAnnot, posAnnot, displayCitationIds) {
-    if (!posAnnot) {
+    if (!posAnnot || !curAnnot) {
       return null;
     }
     const {
@@ -74,16 +74,11 @@ export default class PositionItem extends React.Component {
   }
 
   get aaHighlights() {
-    const {posAnnot, displayCitationIds} = this.props;
-    if (!posAnnot) {
+    const {posAnnot, curAnnot, displayCitationIds} = this.props;
+    if (!posAnnot || !curAnnot) {
       return [];
     }
-    const {
-      curAnnot: {
-        name: annotName,
-        level
-      }
-    } = this.props;
+    const {name: annotName, level} = curAnnot;
     if (level === 'position') {
       return [];
     }
@@ -105,7 +100,7 @@ export default class PositionItem extends React.Component {
   render() {
     const {
       size, position, residue, active,
-      curAnnot: {level: annotLevel}
+      curAnnot: {level: annotLevel} = {}
     } = this.props;
     const {
       posHighlight, aaHighlights,

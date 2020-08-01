@@ -83,7 +83,8 @@ export default class EditorController extends React.Component {
         <AnnotationFilter
          curAnnot={annotation}
          annotations={annotations}
-         onChange={onAnnotationChange} />
+         onChange={onAnnotationChange}
+         onSave={onSave} />
         <CitationFilter
          {...{
            citations,

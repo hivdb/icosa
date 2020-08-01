@@ -62,7 +62,7 @@ export default class SequenceViewer extends React.Component {
   static propTypes = {
     size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
-    curAnnot: annotShape.isRequired,
+    curAnnot: annotShape,
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     selectedPositions: PropTypes.arrayOf(

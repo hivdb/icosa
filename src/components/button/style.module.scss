@@ -145,4 +145,13 @@
       background-color: color(btn-light-hover-bg);
     }
   }
+
+  &.btn-style-link {
+    color: color(btn-light-text);
+    background-color: transparent;
+    &:hover:not(:disabled) {
+      background-color: transparent;
+      text-decoration: underline;
+    }
+  }
 }

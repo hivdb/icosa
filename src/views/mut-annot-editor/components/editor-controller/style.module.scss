@@ -5,6 +5,9 @@
   @extend %general-dropdown;
   margin-bottom: 1rem;
   padding: .5rem 1rem;
+  $dropdown-height: 26px;
+  $button-spacing: 0.5rem;
+
   > label {
     font-weight: 600;
     display: block;
@@ -20,11 +23,41 @@
       }
     }
   }
+  > .dropdown-annotations {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(calc(100% - #{2 * $dropdown-height}) - #{2 * $button-spacing});
+  }
+  > button.edit-annotation {
+    box-sizing: border-box;
+    height: $dropdown-height;
+    width: $dropdown-height;
+    margin-left: $button-spacing;
+    padding-left: 0;
+    padding-right: 0;
+    .btn-icon {
+      position: relative;
+      top: 2px;
+    }
+  }
   .dialog {
     border: 1px solid color(mut-annot-editor-dialog-border);
     border-radius: .4rem;
     padding: 1rem;
     text-align: justify;
+    &:not(:first-child) {
+      margin-top: 1rem;
+    }
+    > p {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    > .warning {
+      color: color(warning-text);
+    }
   }
   .inline-buttons {
     display: block;
@@ -36,7 +69,7 @@
       padding-right: 1rem;
     }
     > button:not(:last-child) {
-      margin-right: 0.5rem;
+      margin-right: $button-spacing;
     }
     .btn-icon {
       position: relative;
@@ -64,6 +97,7 @@
     @extend %inline-input;
     margin: 1rem 0;
     width: 100%;
+    font-size: 1rem;
     box-sizing: border-box;
   }
 }

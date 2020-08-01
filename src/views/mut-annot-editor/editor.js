@@ -28,6 +28,9 @@ function saveSeqViewerSize(size) {
 
 
 function getReferredCitationIds(curAnnot, positions) {
+  if (!curAnnot) {
+    return [];
+  }
   const {
     name: annotName, level: annotLevel
   } = curAnnot;
@@ -119,7 +122,7 @@ class MutAnnotEditorInner extends React.Component {
     const {positionLookup} = this;
     const {annotations, citations} = this.state;
     const state = actions[action](
-      actionObj, positionLookup, annotations, citations
+      {actionObj, positionLookup, annotations, citations}
     );
     this.setState({
       ...state,
