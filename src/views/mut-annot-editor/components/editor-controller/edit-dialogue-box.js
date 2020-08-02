@@ -230,6 +230,17 @@ export default class EditDialogueBox extends React.Component {
       className: style['btn-icon']
     };
 
+    if (displayCitationIds.length === 0) {
+      return <div className={style['input-group']}>
+        <div className={style['dialog']}>
+          <p className={style['warning']}>
+            At least one citaiton must be select for
+            editing annotations.
+          </p>
+        </div>
+      </div>;
+    }
+
     return (
       <div className={style['input-group']}>
         {editMode === 'add' && !showSetAnnotValDialog ?
@@ -239,7 +250,7 @@ export default class EditDialogueBox extends React.Component {
             <div className={style['inline-buttons']}>
               <Button
                name="edit-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.edit}>
                 <FaRegPlusSquare {...btnIconProps} />
                 Add
@@ -248,7 +259,7 @@ export default class EditDialogueBox extends React.Component {
                name="reset"
                btnStyle="light"
                onClick={this.handleReset}>
-                Reset
+                Cancel
               </Button>
             </div>
           </div> : null}
@@ -260,14 +271,14 @@ export default class EditDialogueBox extends React.Component {
             <div className={style['inline-buttons']}>
               <Button
                name="edit-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.edit}>
                 <FaRegEdit {...btnIconProps} />
                 Edit
               </Button>
               <Button
                name="remove-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.remove}>
                 <FaRegMinusSquare {...btnIconProps} />
                 Remove
@@ -276,7 +287,7 @@ export default class EditDialogueBox extends React.Component {
                name="reset"
                btnStyle="light"
                onClick={this.handleReset}>
-                Reset
+                Cancel
               </Button>
             </div>
           </div> : null}
@@ -288,14 +299,14 @@ export default class EditDialogueBox extends React.Component {
             <div className={style['inline-buttons']}>
               <Button
                name="edit-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.edit}>
                 <FaRegPlusSquare {...btnIconProps} />
                 Add
               </Button>
               <Button
                name="remove-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.remove}>
                 <FaRegMinusSquare {...btnIconProps} />
                 Remove
@@ -304,7 +315,7 @@ export default class EditDialogueBox extends React.Component {
                name="reset"
                btnStyle="light"
                onClick={this.handleReset}>
-                Reset
+                Cancel
               </Button>
             </div>
           </div> : null}
@@ -312,11 +323,14 @@ export default class EditDialogueBox extends React.Component {
           <div className={style['dialog']}>
             {editMode !== 'remove' ? <>
               <p>
-                Following citations will be added for current annotation:
+                Following citations will be added for current annotation.
+                Please use the above "<strong>Citations</strong>" section To
+                add/edit/remove citations.
               </p>
               <div>
                 <CitationFilter
                  citations={citations}
+                 useInputGroup={false}
                  referredCitationIds={referredCitationIds}
                  displayCitationIds={displayCitationIds}
                  onChange={onDisplayCitationIdsChange} />
@@ -334,21 +348,21 @@ export default class EditDialogueBox extends React.Component {
             <div className={style['inline-buttons']}>
               <Button
                name="add-positions"
-               btnStyle="light"
+               btnStyle="primary"
                onClick={this.handlePosAnnotUpdate.add}>
                 Save
               </Button>
               <Button
-               name="edit-back-positions"
-               btnStyle="light"
-               onClick={this.handlePosAnnotUpdate.editBack}>
-                Back
-              </Button>
-              <Button
-               name="reset"
+               name="Cancel"
                btnStyle="light"
                onClick={this.handleReset}>
-                Reset
+                Cancel
+              </Button>
+              <Button
+               name="edit-back-positions"
+               btnStyle="link"
+               onClick={this.handlePosAnnotUpdate.editBack}>
+                Back
               </Button>
             </div>
           </div> : null}

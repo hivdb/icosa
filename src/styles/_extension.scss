@@ -24,6 +24,9 @@
   border-width: 1px;
   border-color: color(dividing-line);
   border-style: solid;
+  &::placeholder {
+    color: rgba(0, 0, 0, .3);
+  }
 }
 
 %textarea {

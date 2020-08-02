@@ -83,13 +83,17 @@ class MutAnnotEditorInner extends React.Component {
       curAnnot,
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
       seqViewerSize: loadSeqViewerSize(),
-      selectedPositions: []
+      selectedPositions: [],
+      extraReferredCitationIds: []
     };
   }
 
   get referredCitationIds() {
-    const {curAnnot, positions} = this.state;
-    return getReferredCitationIds(curAnnot, positions);
+    const {curAnnot, positions, extraReferredCitationIds} = this.state;
+    return union(
+      getReferredCitationIds(curAnnot, positions),
+      extraReferredCitationIds
+    );
   }
 
   get positionLookup() {
@@ -120,10 +124,20 @@ class MutAnnotEditorInner extends React.Component {
 
   handleSave = ({action, ...actionObj}) => {
     const {positionLookup} = this;
-    const {annotations, citations} = this.state;
-    const state = actions[action](
-      {actionObj, positionLookup, annotations, citations}
-    );
+    const {
+      annotations,
+      citations,
+      displayCitationIds,
+      extraReferredCitationIds
+    } = this.state;
+    const state = actions[action]({
+      actionObj,
+      positionLookup,
+      annotations,
+      citations,
+      extraReferredCitationIds,
+      displayCitationIds
+    });
     this.setState({
       ...state,
       selectedPositions: []

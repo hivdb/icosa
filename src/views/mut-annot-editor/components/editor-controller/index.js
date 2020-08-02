@@ -86,11 +86,12 @@ export default class EditorController extends React.Component {
          onChange={onAnnotationChange}
          onSave={onSave} />
         <CitationFilter
+         onChange={onDisplayCitationIdsChange}
          {...{
+           onSave,
            citations,
            referredCitationIds,
-           displayCitationIds}}
-         onChange={onDisplayCitationIdsChange} />
+           displayCitationIds}} />
         {isEditing ?
           <EditDialogueBox
            {...{

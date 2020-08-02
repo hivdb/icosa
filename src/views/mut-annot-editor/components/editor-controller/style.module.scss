@@ -15,6 +15,7 @@
     font-size: 1.1rem;
     line-height: 1.5;
     a {
+      font-weight: 400;
       font-size: 1rem;
       color: color(link-text);
       &:hover {
@@ -67,6 +68,13 @@
     > button {
       padding-left: 1rem;
       padding-right: 1rem;
+      &[class*="btn-style-link"] {
+        padding-left: 0;
+        padding-right: 0;
+        &:focus {
+          outline: 0;
+        }
+      }
     }
     > button:not(:last-child) {
       margin-right: $button-spacing;
@@ -89,6 +97,13 @@
         color: rgba(0, 0, 0, .35);
         font-size: 0.8rem;
       }
+      a {
+        color: color(link-text);
+        &:hover {
+          color: color(link-text);
+          text-decoration: underline;
+        }
+      }
     }
   }
 
@@ -99,5 +114,43 @@
     width: 100%;
     font-size: 1rem;
     box-sizing: border-box;
+  }
+
+  .labeled-input {
+    $label-width: 4rem;
+    > label {
+      display: inline-block;
+      width: $label-width;
+      &::after {
+        content: ":";
+      }
+    }
+    > input.text-input {
+      display: inline-block;
+      width: calc(100% - #{$label-width});
+      &.with-refresh-btn {
+        width: calc(calc(calc(100% - #{$label-width}) - #{$dropdown-height}) - #{$button-spacing});
+      }
+    }
+    > .input-note {
+      display: block;
+      position: absolute;
+      margin-top: -0.9rem;
+      margin-left: $label-width + 0.5rem;
+      color: rgba(0, 0, 0, .3);
+      font-size: .9rem;
+    }
+    > button.refresh {
+      box-sizing: border-box;
+      height: $dropdown-height;
+      width: $dropdown-height;
+      margin-left: $button-spacing;
+      padding-left: 0;
+      padding-right: 0;
+      .btn-icon {
+        position: relative;
+        top: 2px;
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
-import {FaPlus, FaAngleUp, FaEdit} from 'react-icons/fa';
+import {FaPlus, FaAngleUp, FaRegEdit} from 'react-icons/fa';
 
 import Button from '../../../../components/button';
 import RadioInput from '../../../../components/radio-input';
@@ -147,12 +147,9 @@ export default class AnnotationFilter extends React.Component {
   }
 
   handleCancel = () => {
-    this.setState({
-      inputExpanded: false,
-      editMode: null,
-      editAnnotName: '',
-      editAnnotLevel: null
-    });
+    this.setState(
+      this.constructor.getDerivedStateFromProps(this.props)
+    );
   }
 
   render() {
@@ -163,11 +160,11 @@ export default class AnnotationFilter extends React.Component {
       warningText
     } = this.state;
     const AddIcon = editMode === 'add' ? FaAngleUp : FaPlus;
-    const EditIcon = editMode === 'edit' ? FaAngleUp : FaEdit;
+    const EditIcon = editMode === 'edit' ? FaAngleUp : FaRegEdit;
 
     return (
       <div className={style['input-group']}>
-        <label htmlFor="annotation">Annotation filter:</label>
+        <label htmlFor="annotation">Annotation group:</label>
         <Dropdown
          value={curAnnotName}
          options={options}
@@ -197,7 +194,7 @@ export default class AnnotationFilter extends React.Component {
             <p>
               {editMode === 'add' ?
                 'Creating a new annotation group:' :
-                'Editing current annotation group:'}
+                'Editing selected annotation group:'}
             </p>
             <input
              type="text"
@@ -232,7 +229,7 @@ export default class AnnotationFilter extends React.Component {
             <div className={style['inline-buttons']}>
               <Button
                name="save"
-               btnStyle="light"
+               btnStyle="primary"
                disabled={!this.canSave}
                onClick={this.handleSave}>
                 Save
@@ -245,7 +242,7 @@ export default class AnnotationFilter extends React.Component {
               </Button>
               {editMode === 'edit' && curAnnotName === editAnnotName ?
                 <Button
-                 name="cancel"
+                 name="remove-group"
                  btnStyle="link"
                  onClick={this.handleDelete}>
                   Remove group
