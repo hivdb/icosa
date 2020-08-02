@@ -12,34 +12,43 @@ import style from './style.module.scss';
 
 
 function CitationCheckbox(props) {
-  const {citeId, onChange, onEdit, citations, displayCitationIds} = props;
+  const {
+    citeId, onChange, onEdit, onCancel, editCiteId,
+    citations, displayCitationIds
+  } = props;
+  const {author, year, doi, section} = citations[citeId];
+  const editing = editCiteId === citeId;
   return (
-    <CheckboxInput
-     name="display-citations"
-     id={`display-citations-${citeId}`}
-     onChange={onChange}
-     className={style['citation-checkbox']}
-     checked={displayCitationIds.includes(citeId)}
-     value={citeId}>
-      {(() => {
-        const {author, year, doi, section} = citations[citeId];
-        return <>
-          {author} {year} (
-          <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>{', '}
-          <a href="#edit-citation" onClick={handleEdit(citeId)}>edit</a>
-          )
-          <span className={style['citation-section']}>
-            {section}
-          </span>
-        </>;
-      })()}
-    </CheckboxInput>
+    <div className={style['citation-checkbox']}>
+      <CheckboxInput
+       name="display-citations"
+       id={`display-citations-${citeId}`}
+       onChange={onChange}
+       checked={displayCitationIds.includes(citeId)}
+       value={citeId}>
+        {author} {year}
+      </CheckboxInput>
+      (
+      <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>{', '}
+      <a href="#edit-citation" onClick={handleEdit(citeId)}>
+        {editing ? 'cancel edit' : 'edit'}
+      </a>
+      )
+      <span className={style['citation-section']}>
+        {section}
+      </span>
+    </div>
   );
 
   function handleEdit(citeId) {
     return evt => {
       evt.preventDefault();
-      onEdit({...citations[citeId], citeId});
+      if (editing) {
+        onCancel();
+      }
+      else {
+        onEdit({...citations[citeId], citeId});
+      }
     };
   }
 }
@@ -140,12 +149,18 @@ export default class CitationFilter extends React.Component {
 
   handleSelectAll = (evt) => {
     evt.preventDefault();
-    this.props.onChange(this.props.referredCitationIds);
+    const {referredCitationIds, displayCitationIds} = this.props;
+    if (referredCitationIds.length > displayCitationIds.length) {
+      this.props.onChange(referredCitationIds);
+    }
   }
 
   handleDeselectAll = (evt) => {
     evt.preventDefault();
-    this.props.onChange([]);
+    const {displayCitationIds} = this.props;
+    if (displayCitationIds.length > 0) {
+      this.props.onChange([]);
+    }
   }
 
   handleChange = ({currentTarget: {value, checked}}) => {
@@ -180,6 +195,20 @@ export default class CitationFilter extends React.Component {
   }
 
   handleDelete = () => {
+    const {editCiteId} = this.state;
+    const {author, year, section} = this.props.citations[editCiteId];
+    const flag = window.confirm(
+      'Click "OK" to confirm deleting citation ' +
+      `"${author} ${year}" (${section}) from ` +
+      'current annotation group.'
+    );
+    if (!flag) {
+      return;
+    }
+    this.props.onSave({
+      action: 'removeCitation',
+      citeId: editCiteId
+    });
   }
 
   handleEditClick = ({citeId, author, year, doi, section}) => {
@@ -266,6 +295,7 @@ export default class CitationFilter extends React.Component {
     const {
       inputExpanded,
       editMode,
+      editCiteId,
       editAuthor,
       editYear,
       editDOI,
@@ -274,15 +304,21 @@ export default class CitationFilter extends React.Component {
       fetchingDOI
     } = this.state;
 
-    const inner = referredCitationIds.map(citeId => (
-      <CitationCheckbox
-       key={citeId}
-       citeId={citeId}
-       onChange={this.handleChange}
-       onEdit={this.handleEditClick}
-       citations={citations}
-       displayCitationIds={displayCitationIds} />
-    ));
+    const inner = (
+      <div className={style['scrollable-citation-list']}>
+        {referredCitationIds.map(citeId => (
+          <CitationCheckbox
+           key={citeId}
+           citeId={citeId}
+           editCiteId={editCiteId}
+           onChange={this.handleChange}
+           onEdit={this.handleEditClick}
+           onCancel={this.handleCancel}
+           citations={citations}
+           displayCitationIds={displayCitationIds} />
+        ))}
+      </div>
+    );
     const addCitationText = (
       editMode === 'add' ?
         'Cancel add citation' :

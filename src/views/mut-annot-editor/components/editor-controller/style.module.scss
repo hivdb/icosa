@@ -89,20 +89,20 @@
   .citation-checkbox {
     display: block;
     margin-bottom: .5rem;
-    > label {
+    > [class*="general-checkbox-input"] > label {
+      margin-right: .4rem;
+    }
+    > .citation-section {
+      text-indent: calc(18px + 0.4rem);
       display: block;
-      > .citation-section {
-        text-indent: calc(18px + 0.4rem);
-        display: block;
-        color: rgba(0, 0, 0, .35);
-        font-size: 0.8rem;
-      }
-      a {
+      color: rgba(0, 0, 0, .35);
+      font-size: 0.8rem;
+    }
+    a {
+      color: color(link-text);
+      &:hover {
         color: color(link-text);
-        &:hover {
-          color: color(link-text);
-          text-decoration: underline;
-        }
+        text-decoration: underline;
       }
     }
   }
@@ -152,5 +152,9 @@
         top: 2px;
       }
     }
+  }
+  .scrollable-citation-list {
+    max-height: 19rem;
+    overflow-y: scroll;
   }
 }

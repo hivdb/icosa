@@ -10,7 +10,7 @@ function addCitationId(idList, id) {
 
 
 export function editCitation({
-  actionObj, citations, positionLookup,
+  actionObj, citations,
   extraReferredCitationIds, displayCitationIds
 }) {
   const {
@@ -37,7 +37,6 @@ export function editCitation({
         cite.section.toLocaleLowerCase() === section.toLocaleLowerCase()
       ) {
         existCitation = cite;
-        cite.section = section;
       }
     }
   }
@@ -45,6 +44,7 @@ export function editCitation({
     citationId = existCitation.citationId;
     sectionId = existCitation.sectionId;
     resultCiteId = `${citationId}.${sectionId}`;
+    existCitation.section = section;
   }
   else {
     if (citationId) {
