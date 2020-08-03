@@ -5,9 +5,26 @@ import style from './style.module.scss';
 import {annotShape, posShape} from '../../prop-types';
 
 
+function AA({aa}) {
+  let inner = aa;
+  if (aa === 'i') {
+    inner = <em title="insertion">ins</em>;
+  }
+  else if (aa === 'd') {
+    inner = <em title="deletion">del</em>;
+  }
+  return (
+    <div className={style['amino-acid']}>
+      {inner}
+    </div>
+  );
+}
+
+
 export default class PositionItem extends React.Component {
 
   static propTypes = {
+    selectableRef: PropTypes.object.isRequired,
     size: PropTypes.oneOf(['large', 'middle', 'small']).isRequired,
     position: PropTypes.number.isRequired,
     curAnnot: annotShape,
@@ -18,6 +35,8 @@ export default class PositionItem extends React.Component {
     displayCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
+    onArrowKeyDown: PropTypes.func.isRequired,
+    onArrowKeyUp: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired
   }
 
@@ -97,10 +116,26 @@ export default class PositionItem extends React.Component {
     return aas;
   }
 
+  handleKeyDown = evt => {
+    const {onArrowKeyDown} = this.props;
+    if (['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].includes(evt.key)) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      onArrowKeyDown(evt);
+    }
+  }
+
+  handleKeyUp = evt => {
+    const {onArrowKeyUp} = this.props;
+    if (['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].includes(evt.key)) {
+      onArrowKeyUp(evt);
+    }
+  }
+
   render() {
     const {
-      size, position, residue, active,
-      curAnnot: {level: annotLevel} = {}
+      selectableRef, size, position, residue,
+      active, curAnnot: {level: annotLevel} = {}
     } = this.props;
     const {
       posHighlight, aaHighlights,
@@ -124,11 +159,21 @@ export default class PositionItem extends React.Component {
             <span className={style.right} />
           </div> : null}
         <div
+         ref={selectableRef}
+         tabIndex="0"
+         onKeyDown={this.handleKeyDown}
+         onKeyUp={this.handleKeyUp}
          className={style['position-item-box']}
          data-selectable="true"
          data-position={position}>
           {residue}
         </div>
+        {annotLevel === 'amino acid' ?
+          <div className={style['position-item-amino-acids']}>
+            {aaHighlights.map(aa => (
+              <AA aa={aa} />
+            ))}
+          </div> : null}
       </div>
     );
 

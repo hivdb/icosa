@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import xor from 'lodash/xor';
@@ -47,7 +47,10 @@ function unionSelections(curSels, prevSels, newSels) {
 }
 
 
-function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
+function getKeyCmd({ctrlKey, metaKey, shiftKey}, annotLevel) {
+  if (annotLevel === 'amino acid') {
+    return {multiSel: false, rangeSel: false};
+  }
   let multiSel = ctrlKey || metaKey;
   let rangeSel = shiftKey;
   if (multiSel && rangeSel) {
@@ -79,7 +82,7 @@ export default class SequenceViewer extends React.Component {
     if (selectedPositions.length === 0) {
       return {
         mouseDown: false,
-        mouseUpPos: false,
+        activePos: false,
         prevSelecteds: []
       };
     }
@@ -90,32 +93,139 @@ export default class SequenceViewer extends React.Component {
     super(...arguments);
     this.state = {
       mouseDown: false,
-      mouseUpPos: false,
+      activePos: false,
       prevSelecteds: []
     };
+    this.posItemRefs = [];
+    const seqLen = this.props.sequence.length;
+    for (let pos0 = 0; pos0 < seqLen; pos0 ++) {
+      this.posItemRefs.push(createRef());
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleKeyUp);
   }
 
   setSelection(selecteds) {
     if (selecteds.length === 0) {
       this.setState({
         mouseDown: false,
-        mouseUpPos: false,
+        activePos: false,
         prevSelecteds: []
       });
     }
     this.props.onChange(selecteds);
   }
 
+  get numPosPerRow() {
+    let firstRowTop, numPos = 0;
+    for (const elemRef of this.posItemRefs) {
+      const rect = elemRef.current.getBoundingClientRect();
+      if (numPos === 0) {
+        numPos = 1;
+        firstRowTop = rect.top;
+      }
+      else if (Math.abs(rect.top - firstRowTop) < 1) {
+        // allow <1px error
+        numPos += 1;
+      }
+      else {
+        break;
+      }
+    }
+    return numPos;
+  }
+
+  handleKeyUp = (evt) => {
+    const {key} = evt;
+    if (key === 'Tab') {
+      setTimeout(() => {
+        const {activeElement} = document;
+        const pos = getPositionFromTarget(activeElement);
+        if (pos) {
+          this.setState({
+            activePos: pos
+          });
+          this.setSelection([pos]);
+        }
+      }, 0);
+    }
+    /* const {mouseDown} = this.state;
+    if (
+      mouseDown &&
+      ['Control', 'Meta', 'Shift'].includes(key) &&
+      getPositionFromTarget(target)
+    ) {
+      this.handleMouseMove(evt);
+    } */
+  }
+
+  handleArrowKeyDown = ({currentTarget, key}) => {
+    const {numPosPerRow} = this;
+    const {sequence} = this.props;
+    const maxPos = sequence.length;
+    let endPos = getPositionFromTarget(currentTarget);
+    const direction = key.slice(5).toLowerCase();
+    switch(direction) {
+      case 'left':
+        endPos --;
+        break;
+      case 'right':
+        endPos ++;
+        break;
+      case 'up':
+        endPos -= numPosPerRow;
+        break;
+      case 'down':
+        endPos += numPosPerRow;
+        break;
+      default:
+        // pass
+    }
+    if (endPos < 1 || endPos > maxPos) {
+      return;
+    }
+    this.posItemRefs[endPos - 1].current.focus();
+  }
+
+  handleArrowKeyUp = ({currentTarget, shiftKey: rangeSel, key}) => {
+    const {activePos, prevSelecteds} = this.state;
+    const endPos = getPositionFromTarget(currentTarget);
+    if (rangeSel) {
+      let selecteds = rangePos(activePos, endPos);
+      this.setState({prevSelecteds: selecteds});
+      selecteds = unionSelections(
+        this.props.selectedPositions,
+        prevSelecteds,
+        selecteds
+      );
+      this.setSelection(selecteds);
+    }
+    else {
+      this.setState({
+        activePos: endPos
+      });
+      this.setSelection([endPos]);
+    }
+    this.posItemRefs[endPos - 1].current.focus();
+  }
+
   handleMouseDown = (evt) => {
-    const {multiSel, rangeSel} = getKeyCmd(evt);
-    let {mouseUpPos, prevSelecteds} = this.state;
+    const {curAnnot: {level: annotLevel}} = this.props;
+    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    let {activePos, prevSelecteds} = this.state;
     const position = getPositionFromTarget(evt.target);
     if (!position) {
       return;
     }
     let selecteds = [position];
-    if (rangeSel && mouseUpPos) {
-      selecteds = rangePos(mouseUpPos, position);
+    if (rangeSel && activePos) {
+      selecteds = rangePos(activePos, position);
     }
     else if (!rangeSel) {
       prevSelecteds = [];
@@ -142,14 +252,15 @@ export default class SequenceViewer extends React.Component {
   }
 
   handleMouseMove = (evt) => {
-    const {multiSel, rangeSel} = getKeyCmd(evt);
-    const {mouseDown, mouseUpPos, prevSelecteds} = this.state;
+    const {curAnnot: {level: annotLevel}} = this.props;
+    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    const {mouseDown, activePos, prevSelecteds} = this.state;
     if (!mouseDown) {
       return;
     }
     let posStart = mouseDown;
-    if (rangeSel && mouseUpPos) {
-      posStart = mouseUpPos;
+    if (rangeSel && activePos) {
+      posStart = activePos;
     }
     const posEnd = getPositionFromTarget(evt.target);
     if (!posEnd) {
@@ -175,8 +286,9 @@ export default class SequenceViewer extends React.Component {
   }
 
   handleMouseUp = (evt) => {
-    const {multiSel, rangeSel} = getKeyCmd(evt);
-    const {mouseDown, mouseUpPos, prevSelecteds} = this.state;
+    const {curAnnot: {level: annotLevel}} = this.props;
+    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    const {mouseDown, activePos, prevSelecteds} = this.state;
     this.setState({mouseDown: false});
     if (!mouseDown) {
       if (!multiSel && !rangeSel) {
@@ -189,11 +301,11 @@ export default class SequenceViewer extends React.Component {
     if (!posEnd) {
       return;
     }
-    if (rangeSel && mouseUpPos) {
-      posStart = mouseUpPos;
+    if (rangeSel && activePos) {
+      posStart = activePos;
     }
     else {
-      this.setState({mouseUpPos: posEnd});
+      this.setState({activePos: posEnd});
     }
     let selecteds = rangePos(posStart, posEnd);
     if (multiSel) {
@@ -233,7 +345,10 @@ export default class SequenceViewer extends React.Component {
         {Array.from(sequence).map((residue, pos0) => (
           <PositionItem
            key={pos0} size={size}
+           selectableRef={this.posItemRefs[pos0]}
            curAnnot={curAnnot}
+           onArrowKeyUp={this.handleArrowKeyUp}
+           onArrowKeyDown={this.handleArrowKeyDown}
            active={selectedPositions.includes(pos0 + 1)}
            posAnnot={positionLookup[pos0 + 1]}
            prevPosAnnot={positionLookup[pos0]}

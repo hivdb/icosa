@@ -28,10 +28,7 @@
     min-height: $size + 2 * $border-size;
     border: $border-size solid color(seqviewer-position-item-border);
     cursor: pointer;
-    transition: border-color .1s ease-in-out, background-color .1s ease-in-out;
-    &:hover {
-      border-color: color(seqviewer-position-item-hover-border);
-    }
+    // transition: border-color .1s ease-in-out, background-color .1s ease-in-out;
     &::before {
       content: attr(data-position);
       color: color(seqviewer-position-item-posnum-text);
@@ -40,6 +37,9 @@
       position: absolute;
       top: 0;
       left: $size / 16;
+    }
+    &:hover, &:focus {
+      border-color: color(seqviewer-position-item-hover-border);
     }
   }
 
@@ -60,17 +60,30 @@
     }
     > .position-item-box {
       border-color: color(seqviewer-position-item-active-border);
-      &:hover {
+      &:hover, &:focus {
         border-color: color(seqviewer-position-item-active-border);
         background-color: color(seqviewer-position-item-hover-bg);
+      }
+    }
+    &:hover {
+      > .position-item-amino-acids > .amino-acid {
+        background-color: color(seqviewer-amino-acid-hover-bg);
       }
     }
   }
   &[data-active="true"] {
     > .position-item-box {
       background-color: color(seqviewer-position-item-active-bg);
-      &:hover {
+      &:hover, &:focus {
         background-color: color(seqviewer-position-item-active-bg);
+      }
+    }
+    > .position-item-amino-acids > .amino-acid {
+      background-color: color(seqviewer-amino-acid-active-bg);
+    }
+    &:hover {
+      > .position-item-amino-acids > .amino-acid {
+        background-color: color(seqviewer-amino-acid-active-bg);
       }
     }
   }
@@ -158,6 +171,26 @@
   }
   &[data-is-annot-end="false"] > .position-item-annot-range > .right {
     display: none;
+  }
+
+  > .position-item-amino-acids {
+    text-align: center;
+    > .amino-acid {
+      margin-top: $size / 8;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      font-size: $size / 2;
+      font-weight: 600;
+      color: color(seqviewer-amino-acid-text);
+      line-height: $size;
+      height: $size;
+      width: $size;
+      border-radius: 50%;
+      &:last-of-type {
+        margin-bottom: $size / 3;
+      }
+    }
   }
 }
 
