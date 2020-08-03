@@ -37,6 +37,7 @@ export default class PositionItem extends React.Component {
     ).isRequired,
     onArrowKeyDown: PropTypes.func.isRequired,
     onArrowKeyUp: PropTypes.func.isRequired,
+    onToggleSelect: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired
   }
 
@@ -118,17 +119,38 @@ export default class PositionItem extends React.Component {
 
   handleKeyDown = evt => {
     const {onArrowKeyDown} = this.props;
-    if (['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].includes(evt.key)) {
-      evt.stopPropagation();
-      evt.preventDefault();
-      onArrowKeyDown(evt);
+    switch (evt.key) {
+      case 'ArrowUp':
+      case 'ArrowRight':
+      case 'ArrowDown':
+      case 'ArrowLeft':
+        evt.stopPropagation();
+        evt.preventDefault();
+        onArrowKeyDown(evt);
+        break;
+      case ' ':
+        evt.stopPropagation();
+        evt.preventDefault();
+        break;
+      default:
+        // pass
     }
   }
 
   handleKeyUp = evt => {
-    const {onArrowKeyUp} = this.props;
-    if (['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'].includes(evt.key)) {
-      onArrowKeyUp(evt);
+    const {onArrowKeyUp, onToggleSelect} = this.props;
+    switch (evt.key) {
+      case 'ArrowUp':
+      case 'ArrowRight':
+      case 'ArrowDown':
+      case 'ArrowLeft':
+        onArrowKeyUp(evt);
+        break;
+      case ' ':
+        onToggleSelect(evt);
+        break;
+      default:
+        // pass
     }
   }
 

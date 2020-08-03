@@ -77,7 +77,7 @@ export default class SequenceViewer extends React.Component {
     onChange: PropTypes.func.isRequired
   }
 
-  static getDerivedStateFromProps(props, state) {
+  /* static getDerivedStateFromProps(props, state) {
     const {selectedPositions} = props;
     if (selectedPositions.length === 0) {
       return {
@@ -87,7 +87,7 @@ export default class SequenceViewer extends React.Component {
       };
     }
     return null;
-  }
+  } */
 
   constructor() {
     super(...arguments);
@@ -151,7 +151,6 @@ export default class SequenceViewer extends React.Component {
           this.setState({
             activePos: pos
           });
-          this.setSelection([pos]);
         }
       }, 0);
     }
@@ -207,12 +206,16 @@ export default class SequenceViewer extends React.Component {
       this.setSelection(selecteds);
     }
     else {
-      this.setState({
-        activePos: endPos
-      });
-      this.setSelection([endPos]);
+      this.setState({activePos: endPos});
     }
-    this.posItemRefs[endPos - 1].current.focus();
+  }
+
+  handleToggleSelect = ({currentTarget}) => {
+    const endPos = getPositionFromTarget(currentTarget);
+    const {selectedPositions} = this.props;
+    const selected = xor(selectedPositions, [endPos]);
+    this.setState({activePos: endPos, prevSelecteds: []});
+    this.setSelection(selected);
   }
 
   handleMouseDown = (evt) => {
@@ -349,6 +352,7 @@ export default class SequenceViewer extends React.Component {
            curAnnot={curAnnot}
            onArrowKeyUp={this.handleArrowKeyUp}
            onArrowKeyDown={this.handleArrowKeyDown}
+           onToggleSelect={this.handleToggleSelect}
            active={selectedPositions.includes(pos0 + 1)}
            posAnnot={positionLookup[pos0 + 1]}
            prevPosAnnot={positionLookup[pos0]}
