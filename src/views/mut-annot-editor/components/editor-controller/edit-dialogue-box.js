@@ -106,6 +106,33 @@ export default class EditDialogueBox extends React.Component {
     this.state = this.constructor.getDerivedStateFromProps(this.props);
   }
 
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleGlobalKeyUp, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleGlobalKeyUp);
+  }
+
+  handleGlobalKeyUp = (evt) => {
+    const {key} = evt;
+    const {showSetAnnotValDialog} = this.state;
+    switch (key) {
+      case 'Enter':
+        if (!showSetAnnotValDialog) {
+          this.handlePosAnnotUpdate.edit();
+        }
+        break;
+      case 'Backspace':
+        if (!showSetAnnotValDialog) {
+          this.handlePosAnnotUpdate.remove();
+        }
+        break;
+      default:
+        // pass
+    }
+  }
+
   get editMode() {
     const {positionLookup} = this.props;
     const {

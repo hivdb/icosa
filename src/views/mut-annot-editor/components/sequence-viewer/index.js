@@ -104,11 +104,13 @@ export default class SequenceViewer extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keyup', this.handleKeyUp, false);
+    document.addEventListener('keydown', this.handleGlobalKeyDown, false);
+    document.addEventListener('keyup', this.handleGlobalKeyUp, false);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keyup', this.handleKeyUp);
+    document.removeEventListener('keydown', this.handleGlobalKeyDown);
+    document.removeEventListener('keyup', this.handleGlobalKeyUp);
   }
 
   setSelection(selecteds) {
@@ -141,30 +143,44 @@ export default class SequenceViewer extends React.Component {
     return numPos;
   }
 
-  handleKeyUp = (evt) => {
+  handleGlobalKeyDown = (evt) => {
     const {key} = evt;
-    if (key === 'Tab') {
-      setTimeout(() => {
-        const {activeElement} = document;
-        const pos = getPositionFromTarget(activeElement);
-        if (pos) {
-          this.setState({
-            activePos: pos
-          });
+    switch (key) {
+      case 'ArrowUp':
+      case 'ArrowRight':
+      case 'ArrowDown':
+      case 'ArrowLeft':
+        if (document.activeElement.tagName === 'BODY') {
+          evt.stopPropagation();
+          evt.preventDefault();
+          this.posItemRefs[0].current.focus();
         }
-      }, 0);
+        break;
+      default:
+        // pass
     }
-    else if (key === 'Escape') {
-      this.setSelection([]);
+  }
+
+  handleGlobalKeyUp = (evt) => {
+    const {key} = evt;
+    switch (key) {
+      case 'Tab':
+        setTimeout(() => {
+          const {activeElement} = document;
+          const pos = getPositionFromTarget(activeElement);
+          if (pos) {
+            this.setState({
+              activePos: pos
+            });
+          }
+        }, 0);
+        break;
+      case 'Escape':
+        this.setSelection([]);
+        break;
+      default:
+        // pass
     }
-    /* const {mouseDown} = this.state;
-    if (
-      mouseDown &&
-      ['Control', 'Meta', 'Shift'].includes(key) &&
-      getPositionFromTarget(target)
-    ) {
-      this.handleMouseMove(evt);
-    } */
   }
 
   handleArrowKeyDown = ({currentTarget, key}) => {
@@ -196,16 +212,11 @@ export default class SequenceViewer extends React.Component {
   }
 
   handleArrowKeyUp = ({currentTarget, shiftKey: rangeSel, key}) => {
-    const {activePos, prevSelecteds} = this.state;
+    const {activePos} = this.state;
     const endPos = getPositionFromTarget(currentTarget);
     if (rangeSel) {
       let selecteds = rangePos(activePos, endPos);
-      this.setState({prevSelecteds: selecteds});
-      selecteds = unionSelections(
-        this.props.selectedPositions,
-        prevSelecteds,
-        selecteds
-      );
+      selecteds = union(this.props.selectedPositions, selecteds);
       this.setSelection(selecteds);
     }
     else {
@@ -297,9 +308,6 @@ export default class SequenceViewer extends React.Component {
     const {mouseDown, activePos, prevSelecteds} = this.state;
     this.setState({mouseDown: false});
     if (!mouseDown) {
-      if (!multiSel && !rangeSel) {
-        this.setSelection([]);
-      }
       return;
     }
     let posStart = mouseDown;
