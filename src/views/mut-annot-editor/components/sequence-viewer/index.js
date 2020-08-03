@@ -154,6 +154,9 @@ export default class SequenceViewer extends React.Component {
         }
       }, 0);
     }
+    else if (key === 'Escape') {
+      this.setSelection([]);
+    }
     /* const {mouseDown} = this.state;
     if (
       mouseDown &&
