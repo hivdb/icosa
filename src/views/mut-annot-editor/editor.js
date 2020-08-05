@@ -110,6 +110,7 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({
       curAnnot,
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
+      selectedPositions: [],
       extraReferredCitationIds: []
     });
   };
@@ -182,7 +183,8 @@ class MutAnnotEditorInner extends React.Component {
       <div className={style['controller-container']}>
         <EditorController
          annotations={annotations}
-         annotation={curAnnot}
+         curAnnot={curAnnot}
+         sequence={refSeq}
          positionLookup={positionLookup}
          citations={citations}
          referredCitationIds={referredCitationIds}

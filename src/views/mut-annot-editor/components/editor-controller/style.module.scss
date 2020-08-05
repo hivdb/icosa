@@ -69,11 +69,8 @@
       padding-left: 1rem;
       padding-right: 1rem;
       &[class*="btn-style-link"] {
-        padding-left: 0;
-        padding-right: 0;
-        &:focus {
-          outline: 0;
-        }
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
       }
     }
     > button:not(:last-child) {
@@ -156,5 +153,32 @@
   .scrollable-citation-list {
     max-height: 19rem;
     overflow-y: scroll;
+  }
+
+  .amino-acids {
+    $size: 2.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    > .amino-acid {
+      user-select: none;
+      text-align: center;
+      cursor: pointer;
+      margin: $size / 8;
+      display: inline-block;
+      font-size: $size / 2;
+      font-weight: 600;
+      color: color(seqviewer-amino-acid-text);
+      line-height: $size;
+      height: $size;
+      width: $size;
+      border-radius: 50%;
+      &:hover, &:focus {
+        background-color: color(seqviewer-amino-acid-hover-bg);
+      }
+      &[data-selected="true"] {
+        background-color: color(seqviewer-amino-acid-active-bg);
+      }
+    }
   }
 }

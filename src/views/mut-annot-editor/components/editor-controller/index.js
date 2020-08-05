@@ -11,7 +11,8 @@ import style from './style.module.scss';
 import SizeController from './size-controller';
 import AnnotationFilter from './annotation-filter';
 import CitationFilter from './citation-filter';
-import EditDialogueBox from './edit-dialogue-box';
+import PosAnnotEditBox from './pos-annot-editbox';
+import AAAnnotEditBox from './aa-annot-editbox';
 
 
 export default class EditorController extends React.Component {
@@ -23,7 +24,7 @@ export default class EditorController extends React.Component {
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     className: PropTypes.string,
-    annotation: annotShape.isRequired,
+    curAnnot: annotShape.isRequired,
     referredCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -34,6 +35,7 @@ export default class EditorController extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
+    sequence: PropTypes.string.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
     onAnnotationChange: PropTypes.func.isRequired,
     onDisplayCitationIdsChange: PropTypes.func.isRequired,
@@ -70,9 +72,13 @@ export default class EditorController extends React.Component {
       onDisplayCitationIdsChange,
       onReset,
       onSave,
-      annotation,
+      curAnnot,
       annotations,
-      citations
+      citations,
+      sequence,
+      curAnnot: {
+        level: annotLevel
+      }
     } = this.props;
 
     return (
@@ -81,7 +87,7 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          onChange={onSeqViewerSizeChange} />
         <AnnotationFilter
-         curAnnot={annotation}
+         curAnnot={curAnnot}
          annotations={annotations}
          onChange={onAnnotationChange}
          onSave={onSave} />
@@ -92,15 +98,29 @@ export default class EditorController extends React.Component {
            citations,
            referredCitationIds,
            displayCitationIds}} />
-        {isEditing ?
-          <EditDialogueBox
+        {isEditing && annotLevel === 'position' ?
+          <PosAnnotEditBox
            {...{
              positionLookup,
              citations,
-             annotation,
+             curAnnot,
              referredCitationIds,
              displayCitationIds,
              selectedPositions,
+             onDisplayCitationIdsChange,
+             onReset,
+             onSave
+           }} /> : null}
+        {isEditing && annotLevel === 'amino acid' ?
+          <AAAnnotEditBox
+           {...{
+             positionLookup,
+             citations,
+             curAnnot,
+             referredCitationIds,
+             displayCitationIds,
+             selectedPosition: selectedPositions[0],
+             sequence,
              onDisplayCitationIdsChange,
              onReset,
              onSave

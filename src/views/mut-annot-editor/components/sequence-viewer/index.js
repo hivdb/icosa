@@ -143,6 +143,10 @@ export default class SequenceViewer extends React.Component {
     return numPos;
   }
 
+  get numPosPerPage() {
+    return this.numPosPerRow * 10;
+  }
+
   handleGlobalKeyDown = (evt) => {
     const {key} = evt;
     switch (key) {
@@ -150,10 +154,20 @@ export default class SequenceViewer extends React.Component {
       case 'ArrowRight':
       case 'ArrowDown':
       case 'ArrowLeft':
+      case 'Home':
+      case 'PageUp':
+      case 'PageDown':
         if (document.activeElement.tagName === 'BODY') {
           evt.stopPropagation();
           evt.preventDefault();
           this.posItemRefs[0].current.focus();
+        }
+        break;
+      case 'End':
+        if (document.activeElement.tagName === 'BODY') {
+          evt.stopPropagation();
+          evt.preventDefault();
+          this.posItemRefs[this.posItemRefs.length - 1].current.focus();
         }
         break;
       default:
@@ -183,24 +197,41 @@ export default class SequenceViewer extends React.Component {
     }
   }
 
-  handleArrowKeyDown = ({currentTarget, key}) => {
-    const {numPosPerRow} = this;
+  handleDirectionKeyDown = ({currentTarget, key}) => {
+    const {numPosPerRow, numPosPerPage} = this;
     const {sequence} = this.props;
     const maxPos = sequence.length;
     let endPos = getPositionFromTarget(currentTarget);
-    const direction = key.slice(5).toLowerCase();
-    switch(direction) {
-      case 'left':
+    switch(key) {
+      case 'ArrowLeft':
         endPos --;
         break;
-      case 'right':
+      case 'ArrowRight':
         endPos ++;
         break;
-      case 'up':
+      case 'ArrowUp':
         endPos -= numPosPerRow;
         break;
-      case 'down':
+      case 'ArrowDown':
         endPos += numPosPerRow;
+        break;
+      case 'Home':
+        endPos = 1;
+        break;
+      case 'End':
+        endPos = maxPos;
+        break;
+      case 'PageUp':
+        endPos -= numPosPerPage;
+        if (endPos < 1) {
+          endPos = 1;
+        }
+        break;
+      case 'PageDown':
+        endPos += numPosPerPage;
+        if (endPos > maxPos) {
+          endPos = maxPos;
+        }
         break;
       default:
         // pass
@@ -211,10 +242,11 @@ export default class SequenceViewer extends React.Component {
     this.posItemRefs[endPos - 1].current.focus();
   }
 
-  handleArrowKeyUp = ({currentTarget, shiftKey: rangeSel, key}) => {
+  handleDirectionKeyUp = ({currentTarget, shiftKey: rangeSel, key}) => {
+    const {curAnnot: {level: annotLevel}} = this.props;
     const {activePos} = this.state;
     const endPos = getPositionFromTarget(currentTarget);
-    if (rangeSel) {
+    if (annotLevel === 'position' && rangeSel) {
       let selecteds = rangePos(activePos, endPos);
       selecteds = union(this.props.selectedPositions, selecteds);
       this.setSelection(selecteds);
@@ -226,8 +258,15 @@ export default class SequenceViewer extends React.Component {
 
   handleToggleSelect = ({currentTarget}) => {
     const endPos = getPositionFromTarget(currentTarget);
-    const {selectedPositions} = this.props;
-    const selected = xor(selectedPositions, [endPos]);
+    const {curAnnot: {level: annotLevel}} = this.props;
+    let selected;
+    if (annotLevel === 'position') {
+      const {selectedPositions} = this.props;
+      selected = xor(selectedPositions, [endPos]);
+    }
+    else {
+      selected = [endPos];
+    }
     this.setState({activePos: endPos, prevSelecteds: []});
     this.setSelection(selected);
   }
@@ -272,7 +311,7 @@ export default class SequenceViewer extends React.Component {
     const {curAnnot: {level: annotLevel}} = this.props;
     const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
     const {mouseDown, activePos, prevSelecteds} = this.state;
-    if (!mouseDown) {
+    if (!mouseDown || annotLevel === 'amino acid') {
       return;
     }
     let posStart = mouseDown;
@@ -307,7 +346,7 @@ export default class SequenceViewer extends React.Component {
     const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
     const {mouseDown, activePos, prevSelecteds} = this.state;
     this.setState({mouseDown: false});
-    if (!mouseDown) {
+    if (!mouseDown || annotLevel === 'amino acid') {
       return;
     }
     let posStart = mouseDown;
@@ -361,8 +400,8 @@ export default class SequenceViewer extends React.Component {
            key={pos0} size={size}
            selectableRef={this.posItemRefs[pos0]}
            curAnnot={curAnnot}
-           onArrowKeyUp={this.handleArrowKeyUp}
-           onArrowKeyDown={this.handleArrowKeyDown}
+           onDirectionKeyUp={this.handleDirectionKeyUp}
+           onDirectionKeyDown={this.handleDirectionKeyDown}
            onToggleSelect={this.handleToggleSelect}
            active={selectedPositions.includes(pos0 + 1)}
            posAnnot={positionLookup[pos0 + 1]}

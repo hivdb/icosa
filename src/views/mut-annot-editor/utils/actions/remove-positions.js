@@ -20,7 +20,7 @@ export function cleanPositions(positions) {
 
 export function removePositions({actionObj, positionLookup}) {
   const {
-    annotation: {
+    curAnnot: {
       name: annotName,
       level: annotLevel
     },

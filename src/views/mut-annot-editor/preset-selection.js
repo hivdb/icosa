@@ -1,5 +1,5 @@
 import React from 'react';
-import {routerShape} from 'found';
+import {matchShape, routerShape} from 'found';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 
@@ -9,6 +9,7 @@ import style from './style.module.scss';
 export default class PresetSelection extends React.Component {
 
   static propTypes = {
+    match: matchShape.isRequired,
     router: routerShape.isRequired,
     options: PropTypes.arrayOf(
       PropTypes.shape({
@@ -19,7 +20,8 @@ export default class PresetSelection extends React.Component {
   }
 
   handleChange = ({value}) => {
-    this.props.router.push(`${value}/`);
+    const {match: {location}} = this.props;
+    this.props.router.push(`${location.pathname}${value}/`);
   }
 
   render() {

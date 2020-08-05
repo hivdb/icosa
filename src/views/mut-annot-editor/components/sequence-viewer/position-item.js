@@ -5,7 +5,7 @@ import style from './style.module.scss';
 import {annotShape, posShape} from '../../prop-types';
 
 
-function AA({aa}) {
+function AA({aa, position}) {
   let inner = aa;
   if (aa === 'i') {
     inner = <em title="insertion">ins</em>;
@@ -14,7 +14,10 @@ function AA({aa}) {
     inner = <em title="deletion">del</em>;
   }
   return (
-    <div className={style['amino-acid']}>
+    <div
+     data-position={position}
+     data-selectable="true"
+     className={style['amino-acid']}>
       {inner}
     </div>
   );
@@ -35,8 +38,8 @@ export default class PositionItem extends React.Component {
     displayCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
-    onArrowKeyDown: PropTypes.func.isRequired,
-    onArrowKeyUp: PropTypes.func.isRequired,
+    onDirectionKeyDown: PropTypes.func.isRequired,
+    onDirectionKeyUp: PropTypes.func.isRequired,
     onToggleSelect: PropTypes.func.isRequired,
     active: PropTypes.bool.isRequired
   }
@@ -118,15 +121,21 @@ export default class PositionItem extends React.Component {
   }
 
   handleKeyDown = evt => {
-    const {onArrowKeyDown} = this.props;
+    const {
+      onDirectionKeyDown
+    } = this.props;
     switch (evt.key) {
       case 'ArrowUp':
       case 'ArrowRight':
       case 'ArrowDown':
       case 'ArrowLeft':
+      case 'Home':
+      case 'End':
+      case 'PageUp':
+      case 'PageDown':
         evt.stopPropagation();
         evt.preventDefault();
-        onArrowKeyDown(evt);
+        onDirectionKeyDown(evt);
         break;
       case ' ':
         evt.stopPropagation();
@@ -138,13 +147,20 @@ export default class PositionItem extends React.Component {
   }
 
   handleKeyUp = evt => {
-    const {onArrowKeyUp, onToggleSelect} = this.props;
+    const {
+      onDirectionKeyUp,
+      onToggleSelect
+    } = this.props;
     switch (evt.key) {
       case 'ArrowUp':
       case 'ArrowRight':
       case 'ArrowDown':
       case 'ArrowLeft':
-        onArrowKeyUp(evt);
+      case 'Home':
+      case 'End':
+      case 'PageUp':
+      case 'PageDown':
+        onDirectionKeyUp(evt);
         break;
       case ' ':
         onToggleSelect(evt);
@@ -193,7 +209,7 @@ export default class PositionItem extends React.Component {
         {annotLevel === 'amino acid' ?
           <div className={style['position-item-amino-acids']}>
             {aaHighlights.map(aa => (
-              <AA aa={aa} />
+              <AA position={position} aa={aa} key={aa} />
             ))}
           </div> : null}
       </div>

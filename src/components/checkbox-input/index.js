@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -44,16 +44,34 @@ export default class CheckboxInput extends React.Component {
     style: {}
   }
 
+  constructor() {
+    super(...arguments);
+    this.labelRef = createRef();
+  }
+
+  handleKeyDown = (evt) => {
+    if (evt.key === ' ') {
+      evt.preventDefault();
+      evt.stopPropagation();
+      this.labelRef.current.click();
+    }
+  }
+
   render() {
     const {id, children, className, style: userStyle, ...props} = this.props;
     return (
-      <span className={classNames(
-        style['general-checkbox-input'], className,
-        isClipPathPolygonSupported ? style['use-polygon'] : null)}>
+      <span
+       tabIndex={0}
+       onKeyDown={this.handleKeyDown}
+       className={classNames(
+         style['general-checkbox-input'], className,
+         isClipPathPolygonSupported ? style['use-polygon'] : null)
+       }>
         <input
          id={id} {...props}
          type="checkbox" />
         <label
+         ref={this.labelRef}
          style={userStyle}
          htmlFor={id}>
           {children}

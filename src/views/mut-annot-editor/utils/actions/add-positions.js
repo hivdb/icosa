@@ -3,7 +3,7 @@ import {citationIdCompare} from '../citation-id-compare';
 
 export function addPositions({actionObj, positionLookup}) {
   const {
-    annotation: {
+    curAnnot: {
       name: annotName,
       level: annotLevel
     },

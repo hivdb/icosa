@@ -33,15 +33,9 @@ function getDefaultAnnotVal(props) {
   const {
     positionLookup: posLookup,
     selectedPositions,
-    annotation: {
-      name: annotName,
-      level: annotLevel
-    },
+    curAnnot: {name: annotName},
     displayCitationIds
   } = props;
-  if (annotLevel === 'aminoAcids') {
-    return null;
-  }
   const annotValCounter = {};
   for (const pos of selectedPositions) {
     const posdata = posLookup[pos];
@@ -69,12 +63,12 @@ function getDefaultAnnotVal(props) {
 }
 
 
-export default class EditDialogueBox extends React.Component {
+export default class PosAnnotEditBox extends React.Component {
 
   static propTypes = {
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
-    annotation: annotShape.isRequired,
+    curAnnot: annotShape.isRequired,
     referredCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -136,10 +130,7 @@ export default class EditDialogueBox extends React.Component {
   get editMode() {
     const {positionLookup} = this.props;
     const {
-      annotation: {
-        name: annotName,
-        level: annotLevel
-      },
+      curAnnot: {name: annotName},
       selectedPositions,
       displayCitationIds
     } = this.props;
@@ -149,25 +140,12 @@ export default class EditDialogueBox extends React.Component {
       if (!posdata) {
         continue;
       }
-      if (annotLevel === 'position') {
-        const {annotations} = posdata;
-        const [annotatedFlag] = isAnnotated(
-          annotations, annotName, displayCitationIds
-        );
-        if (annotatedFlag) {
-          annotateds ++;
-        }
-      }
-      else {
-        const {aminoAcids} = posdata;
-        for (const {annotations} of aminoAcids) {
-          const [annotatedFlag] = isAnnotated(
-            annotations, annotName, displayCitationIds
-          );
-          if (annotatedFlag) {
-            annotateds ++;
-          }
-        }
+      const {annotations} = posdata;
+      const [annotatedFlag] = isAnnotated(
+        annotations, annotName, displayCitationIds
+      );
+      if (annotatedFlag) {
+        annotateds ++;
       }
     }
     if (annotateds === selectedPositions.length) {
@@ -208,14 +186,14 @@ export default class EditDialogueBox extends React.Component {
       const {
         onSave,
         selectedPositions,
-        annotation,
+        curAnnot,
         displayCitationIds
       } = this.props;
       const {annotVal} = this.state;
       onSave({
         action: 'addPositions',
         selectedPositions,
-        annotation,
+        curAnnot,
         annotVal,
         citationIds: displayCitationIds
       });
@@ -224,13 +202,13 @@ export default class EditDialogueBox extends React.Component {
       const {
         onSave,
         selectedPositions,
-        annotation,
+        curAnnot,
         displayCitationIds
       } = this.props;
       onSave({
         action: 'removePositions',
         selectedPositions,
-        annotation,
+        curAnnot,
         citationIds: displayCitationIds
       });
     }
@@ -242,7 +220,7 @@ export default class EditDialogueBox extends React.Component {
       referredCitationIds,
       displayCitationIds,
       onDisplayCitationIdsChange,
-      annotation: {
+      curAnnot: {
         name: curAnnotName,
       },
       citations
