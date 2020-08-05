@@ -22,7 +22,7 @@ export function editCitation({
   } = actionObj;
   const extraState = {};
   let existCitation = citations[citeId];
-  let citationId, sectionId, resultCiteId;
+  let citationId, resultCiteId, sectionId = 0;
 
   const citationObjs = Object.values(citations);
   for (const cite of citationObjs) {

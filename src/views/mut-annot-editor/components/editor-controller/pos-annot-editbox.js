@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import {FaRegEdit, FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
@@ -98,6 +98,7 @@ export default class PosAnnotEditBox extends React.Component {
   constructor() {
     super(...arguments);
     this.state = this.constructor.getDerivedStateFromProps(this.props);
+    this.annotValInputRef = createRef();
   }
 
   componentDidMount() {
@@ -113,7 +114,10 @@ export default class PosAnnotEditBox extends React.Component {
     const {showSetAnnotValDialog} = this.state;
     switch (key) {
       case 'Enter':
-        if (!showSetAnnotValDialog) {
+        if (showSetAnnotValDialog) {
+          this.handlePosAnnotUpdate.add();
+        }
+        else {
           this.handlePosAnnotUpdate.edit();
         }
         break;
@@ -176,6 +180,10 @@ export default class PosAnnotEditBox extends React.Component {
       this.setState({
         showSetAnnotValDialog: true
       });
+      setTimeout(() => {
+        this.annotValInputRef.current.focus();
+        this.annotValInputRef.current.select();
+      }, 0);
     },
     editBack: () => {
       this.setState({
@@ -346,6 +354,7 @@ export default class PosAnnotEditBox extends React.Component {
               over the selected positions:
             </p>
             <input
+             ref={this.annotValInputRef}
              onChange={this.handleAnnotValChange}
              value={annotVal}
              className={style['text-input']}

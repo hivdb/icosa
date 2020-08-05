@@ -14,9 +14,16 @@
   .editor {
     display: grid;
     grid-template-columns: auto 24rem;
+    grid-template-rows: 6rem auto;
+    > .menu {
+      grid-column-start: 1;
+      grid-column-end: span 2;
+    }
     > .seqviewer {
+      grid-row-start: 2;
     }
     > .controller-container {
+      grid-row-start: 2;
       > .controller {
         z-index: 1;
         max-height: 95vh;

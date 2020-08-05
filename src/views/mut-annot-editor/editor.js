@@ -1,9 +1,11 @@
 import React from 'react';
+import rfdc from 'rfdc';
 import PropTypes from 'prop-types';
 import union from 'lodash/union';
 
 import SequenceViewer from './components/sequence-viewer';
 import EditorController from './components/editor-controller';
+import EditorMenu from './components/editor-menu';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
@@ -11,6 +13,7 @@ import {actions, makePositionLookup} from './utils';
 
 
 const KEY_SEQVIEWER = '--sierra-seqviewer-size';
+const clone = rfdc();
 
 
 function loadSeqViewerSize() {
@@ -68,24 +71,32 @@ class MutAnnotEditorInner extends React.Component {
     annotationData: PropTypes.object.isRequired
   }
 
-  constructor() {
-    super(...arguments);
-    const {
+  getDefaultState() {
+    let {
       annotations,
       positions,
       citations
     } = this.props.annotationData;
+    annotations = clone(annotations);
+    positions = clone(positions);
+    citations = clone(citations);
     const curAnnot = annotations[0] || null;
-    this.state = {
-      annotations: [...annotations],
-      positions: [...positions],
-      citations: {...citations},
+    return {
+      annotations,
+      positions,
+      citations,
       curAnnot,
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
-      extraReferredCitationIds: []
+      extraReferredCitationIds: [],
+      changed: false
     };
+  }
+
+  constructor() {
+    super(...arguments);
+    this.state = this.getDefaultState();
   }
 
   get referredCitationIds() {
@@ -144,6 +155,7 @@ class MutAnnotEditorInner extends React.Component {
     });
     this.setState({
       ...state,
+      changed: true,
       selectedPositions: []
     });
   }
@@ -152,9 +164,15 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({selectedPositions: []});
   }
 
+  handleRevertAll = () => {
+    this.setState(this.getDefaultState());
+
+  }
+
   render() {
     const {
-      refSeq
+      refSeq,
+      annotationData: {gene, taxonomy}
     } = this.props;
     const {
       annotations,
@@ -162,7 +180,9 @@ class MutAnnotEditorInner extends React.Component {
       selectedPositions,
       seqViewerSize,
       displayCitationIds,
-      curAnnot
+      curAnnot,
+      positions,
+      changed
     } = this.state;
     const {
       referredCitationIds,
@@ -170,6 +190,16 @@ class MutAnnotEditorInner extends React.Component {
     } = this;
 
     return <section className={style.editor}>
+      <EditorMenu
+       className={style['menu']}
+       onRevertAll={this.handleRevertAll}
+       {...{
+         gene,
+         taxonomy,
+         annotations,
+         positions,
+         citations,
+         changed}} />
       <SequenceViewer
        size={seqViewerSize}
        sequence={refSeq}
