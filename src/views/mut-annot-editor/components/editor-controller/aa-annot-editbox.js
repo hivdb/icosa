@@ -141,8 +141,7 @@ export default class AAAnnotEditBox extends React.Component {
     }
     return {
       aminoAcids: getKnownAAs(props),
-      selectedPosition,
-      prevActiveElement: null
+      selectedPosition
     };
   }
 
@@ -166,12 +165,6 @@ export default class AAAnnotEditBox extends React.Component {
   handleGlobalKeyUp = (evt) => {
     const {key} = evt;
     switch (key) {
-      case 'Enter':
-        this.setState({
-          prevActiveElement: document.activeElement
-        });
-        this.aaRefs[AMINO_ACIDS[0]].current.focus();
-        break;
       case 'Backspace':
         this.handleRemove();
         break;
@@ -259,20 +252,11 @@ export default class AAAnnotEditBox extends React.Component {
     this.aaRefs[newAA].current.focus();
   }
 
-  restorePrevActiveElement() {
-    const {prevActiveElement} = this.state;
-    if (prevActiveElement) {
-      prevActiveElement.focus();
-      this.setState({prevActiveElement: null});
-    }
-  }
-
   handleReset = () => {
     this.setState({
       aminoAcids: getKnownAAs(this.props)
     });
     this.props.onReset();
-    this.restorePrevActiveElement();
   }
 
   handleSave = () => {
@@ -290,7 +274,6 @@ export default class AAAnnotEditBox extends React.Component {
       aminoAcids,
       citationIds: displayCitationIds
     });
-    this.restorePrevActiveElement();
   }
 
   handleRemove = () => {
@@ -307,7 +290,6 @@ export default class AAAnnotEditBox extends React.Component {
       aminoAcids: [],
       citationIds: displayCitationIds
     });
-    this.restorePrevActiveElement();
   }
 
   render() {
@@ -336,6 +318,10 @@ export default class AAAnnotEditBox extends React.Component {
       </div>;
     }
 
+    setTimeout(() => {
+      this.aaRefs[AMINO_ACIDS[0]].current.focus();
+    }, 0);
+
     return (
       <div className={style['input-group']}>
         <div className={style['dialog']}>
@@ -356,7 +342,8 @@ export default class AAAnnotEditBox extends React.Component {
             </div>
           </> : null}
           <p>
-            Select the amino acid(s) / indel(s) for this annotation:
+            Select annotated amino acid(s) / indel(s) at position{' '}
+            <strong>{selectedPosition}</strong>:
           </p>
           <div className={style['amino-acids']}>
             {AMINO_ACIDS.map(aa => (

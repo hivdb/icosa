@@ -1,5 +1,6 @@
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
+import randomColor from 'randomcolor';
 import makeClassNames from 'classnames';
 import xor from 'lodash/xor';
 import range from 'lodash/range';
@@ -9,6 +10,8 @@ import PositionItem from './position-item';
 import style from './style.module.scss';
 
 import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
+
+const RANDOM_COLOR_SEED = 'WV*iP_DmK76ULy9Uzjs@4bFbuF!kNFWN!B';
 
 
 function getPositionFromTarget(target) {
@@ -103,9 +106,26 @@ export default class SequenceViewer extends React.Component {
     }
   }
 
+  restoreActivePosItem() {
+    const {activePos} = this.state;
+    if (activePos) {
+      this.posItemRefs[activePos - 1].current.focus();
+    }
+  }
+
   componentDidMount() {
     document.addEventListener('keydown', this.handleGlobalKeyDown, false);
     document.addEventListener('keyup', this.handleGlobalKeyUp, false);
+  }
+
+  componentDidUpdate() {
+    const {selectedPositions} = this.props;
+    if (
+      selectedPositions.length === 0 &&
+      document.activeElement.tagName === 'BODY'
+    ) {
+      this.restoreActivePosItem();
+    }
   }
 
   componentWillUnmount() {
@@ -145,6 +165,58 @@ export default class SequenceViewer extends React.Component {
 
   get numPosPerPage() {
     return this.numPosPerRow * 10;
+  }
+
+  get colorScheme() {
+    const {
+      curAnnot: {
+        name: annotName,
+        level: annotLevel
+      },
+      positionLookup
+    } = this.props;
+    if (annotLevel !== 'position') {
+      return {};
+    }
+    const annotVals = [];
+    for (const posdata of Object.values(positionLookup)) {
+      const {annotations} = posdata;
+      const posAnnot = annotations.find(({name}) => name === annotName);
+      if (!posAnnot) {
+        continue;
+      }
+      const annotVal = posAnnot.value;
+      if (!annotVals.includes(annotVal)) {
+        annotVals.push(annotVal);
+      }
+    }
+    const borderColors = randomColor({
+      count: annotVals.length,
+      luminosity: 'dark',
+      seed: RANDOM_COLOR_SEED
+    });
+    const activeColors = randomColor({
+      count: annotVals.length,
+      luminosity: 'brighter',
+      format: 'rgba',
+      alpha: .9,
+      seed: RANDOM_COLOR_SEED
+    });
+    const hoverColors = randomColor({
+      count: annotVals.length,
+      luminosity: 'dark',
+      format: 'rgba',
+      alpha: .5,
+      seed: RANDOM_COLOR_SEED
+    });
+    return annotVals.reduce((acc, val, idx) => {
+      acc[val] = {
+        border: borderColors[idx],
+        active: activeColors[idx],
+        hover: hoverColors[idx]
+      };
+      return acc;
+    }, {});
   }
 
   handleGlobalKeyDown = (evt) => {
@@ -190,6 +262,7 @@ export default class SequenceViewer extends React.Component {
         }, 0);
         break;
       case 'Escape':
+        this.restoreActivePosItem();
         this.setSelection([]);
         break;
       default:
@@ -346,12 +419,16 @@ export default class SequenceViewer extends React.Component {
     const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
     const {mouseDown, activePos, prevSelecteds} = this.state;
     this.setState({mouseDown: false});
-    if (!mouseDown || annotLevel === 'amino acid') {
+    if (!mouseDown) {
       return;
     }
     let posStart = mouseDown;
     const posEnd = getPositionFromTarget(evt.target);
     if (!posEnd) {
+      return;
+    }
+    if (annotLevel === 'amino acid') {
+      this.setState({activePos: posEnd});
       return;
     }
     if (rangeSel && activePos) {
@@ -379,6 +456,7 @@ export default class SequenceViewer extends React.Component {
   }
 
   render() {
+    const {colorScheme} = this;
     const {
       className, sequence, size,
       curAnnot, selectedPositions,
@@ -400,6 +478,7 @@ export default class SequenceViewer extends React.Component {
            key={pos0} size={size}
            selectableRef={this.posItemRefs[pos0]}
            curAnnot={curAnnot}
+           colorScheme={colorScheme}
            onDirectionKeyUp={this.handleDirectionKeyUp}
            onDirectionKeyDown={this.handleDirectionKeyDown}
            onToggleSelect={this.handleToggleSelect}

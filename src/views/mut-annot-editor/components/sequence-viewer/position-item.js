@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import CustomColors from '../../../../components/custom-colors';
+
 import style from './style.module.scss';
 import {annotShape, posShape} from '../../prop-types';
 
@@ -29,6 +31,13 @@ export default class PositionItem extends React.Component {
   static propTypes = {
     selectableRef: PropTypes.object.isRequired,
     size: PropTypes.oneOf(['large', 'middle', 'small']).isRequired,
+    colorScheme: PropTypes.objectOf(
+      PropTypes.shape({
+        border: PropTypes.string.isRequired,
+        hover: PropTypes.string.isRequired,
+        active: PropTypes.string.isRequired
+      })
+    ).isRequired,
     position: PropTypes.number.isRequired,
     curAnnot: annotShape,
     posAnnot: posShape,
@@ -96,6 +105,23 @@ export default class PositionItem extends React.Component {
     return annotVal !== null && postAnnotVal !== annotVal;
   }
 
+  get colors() {
+    const {posAnnot, curAnnot, colorScheme} = this.props;
+    if (!posAnnot || !curAnnot) {
+      return {};
+    }
+    const {name: annotName, level} = curAnnot;
+    if (level !== 'position') {
+      return {};
+    }
+    const annot = posAnnot.annotations.find(({name}) => name === annotName);
+    if (!annot) {
+      return {};
+    }
+    return colorScheme[annot.value];
+    
+  }
+
   get aaHighlights() {
     const {posAnnot, curAnnot, displayCitationIds} = this.props;
     if (!posAnnot || !curAnnot) {
@@ -148,6 +174,7 @@ export default class PositionItem extends React.Component {
 
   handleKeyUp = evt => {
     const {
+      curAnnot: {level},
       onDirectionKeyUp,
       onToggleSelect
     } = this.props;
@@ -165,6 +192,11 @@ export default class PositionItem extends React.Component {
       case ' ':
         onToggleSelect(evt);
         break;
+      case 'Enter':
+        if (level === 'amino acid') {
+          onToggleSelect(evt);
+        }
+        break;
       default:
         // pass
     }
@@ -177,12 +209,18 @@ export default class PositionItem extends React.Component {
     } = this.props;
     const {
       posHighlight, aaHighlights,
-      isAnnotStart, isAnnotEnd
+      isAnnotStart, isAnnotEnd, colors
     } = this;
     const highlight = !!(posHighlight || aaHighlights.length > 0);
 
     return (
-      <div
+      <CustomColors
+       as="div"
+       colors={{
+         'seqviewer-position-item-active-border': colors.border,
+         'seqviewer-position-item-active-bg': colors.active,
+         'seqviewer-position-item-hover-bg': colors.hover,
+       }}
        className={style[`position-item-${size}`]}
        onContextMenu={evt => evt.preventDefault()}
        data-active={active}
@@ -212,7 +250,7 @@ export default class PositionItem extends React.Component {
               <AA position={position} aa={aa} key={aa} />
             ))}
           </div> : null}
-      </div>
+      </CustomColors>
     );
 
   }

@@ -1,6 +1,7 @@
 @import "../../../../styles/colors";
 
 .sequence-viewer {
+  transform: transale3d(0,0,0); // enable GPU
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -38,9 +39,6 @@
       top: 0;
       left: $size / 16;
     }
-    &:hover, &:focus {
-      border-color: color(seqviewer-position-item-hover-border);
-    }
   }
 
   > .position-item-annot-range {
@@ -70,20 +68,40 @@
         background-color: color(seqviewer-amino-acid-hover-bg);
       }
     }
-  }
-  &[data-active="true"] {
-    > .position-item-box {
-      background-color: color(seqviewer-position-item-active-bg);
-      &:hover, &:focus {
+    &[data-active="true"] {
+      > .position-item-box {
         background-color: color(seqviewer-position-item-active-bg);
+        &:hover, &:focus {
+          background-color: color(seqviewer-position-item-hover-bg);
+        }
       }
-    }
-    > .position-item-amino-acids > .amino-acid {
-      background-color: color(seqviewer-amino-acid-active-bg);
-    }
-    &:hover {
       > .position-item-amino-acids > .amino-acid {
         background-color: color(seqviewer-amino-acid-active-bg);
+      }
+      &:hover {
+        > .position-item-amino-acids > .amino-acid {
+          background-color: color(seqviewer-amino-acid-active-bg);
+        }
+      }
+    }
+  }
+  &[data-highlight="false"] {
+    > .position-item-box {
+      background: repeating-linear-gradient(
+        -45deg,
+        color(seqviewer-position-item-border),
+        color(seqviewer-position-item-border) 5px,
+        white 0,
+        white calc(50% - 2.5px)
+      );
+      &:hover, &:focus {
+        border-color: color(seqviewer-position-item-hover-border);
+      }
+    }
+    &[data-active="true"] {
+      > .position-item-box {
+        border-color: color(seqviewer-position-item-hover-border);
+        background: color(seqviewer-position-item-border);
       }
     }
   }
