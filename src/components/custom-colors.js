@@ -5,6 +5,7 @@ export default function CustomColors({
   children,
   as = 'div',
   style = {},
+  match, route,
   ...props
 } = {}) {
   const colorStyle = {...style};
