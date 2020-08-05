@@ -14,6 +14,7 @@ import style from './style.module.scss';
 export default class AnnotationFilter extends React.Component {
 
   static propTypes = {
+    allowEditing: PropTypes.bool.isRequired,
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
@@ -159,6 +160,7 @@ export default class AnnotationFilter extends React.Component {
       editAnnotName, editAnnotLevel,
       warningText
     } = this.state;
+    const {allowEditing} = this.props;
     const AddIcon = editMode === 'add' ? FaAngleUp : FaPlus;
     const EditIcon = editMode === 'edit' ? FaAngleUp : FaRegEdit;
 
@@ -171,24 +173,26 @@ export default class AnnotationFilter extends React.Component {
          name="annotation"
          className={style['dropdown-annotations']}
          onChange={this.handleChange} />
-        <Button
-         disabled={editMode === 'edit'}
-         name="expand-add-annotation"
-         btnStyle="primary"
-         className={style['edit-annotation']}
-         title="Create a new annotation group"
-         onClick={this.toggle('add')}>
-          <AddIcon className={style['btn-icon']} />
-        </Button>
-        <Button
-         disabled={editMode === 'add' || !this.props.curAnnot}
-         name="expand-edit-annotation"
-         btnStyle="light"
-         className={style['edit-annotation']}
-         title="Edit current annotation gorup"
-         onClick={this.toggle('edit')}>
-          <EditIcon className={style['btn-icon']} />
-        </Button>
+        {allowEditing ? <>
+          <Button
+           disabled={editMode === 'edit'}
+           name="expand-add-annotation"
+           btnStyle="primary"
+           className={style['edit-annotation']}
+           title="Create a new annotation group"
+           onClick={this.toggle('add')}>
+            <AddIcon className={style['btn-icon']} />
+          </Button>
+          <Button
+           disabled={editMode === 'add' || !this.props.curAnnot}
+           name="expand-edit-annotation"
+           btnStyle="light"
+           className={style['edit-annotation']}
+           title="Edit current annotation gorup"
+           onClick={this.toggle('edit')}>
+            <EditIcon className={style['btn-icon']} />
+          </Button>
+        </> : null}
         {inputExpanded ? (
           <div className={style.dialog}>
             <p>

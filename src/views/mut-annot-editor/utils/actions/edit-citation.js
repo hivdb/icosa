@@ -65,13 +65,17 @@ export function editCitation({
     };
     extraState.citations = {...citations};
   }
+  let newDisplayCitationIds = [resultCiteId];
+  if (citeId) {
+    newDisplayCitationIds = addCitationId(
+      displayCitationIds, resultCiteId
+    );
+  }
   return {
     ...extraState,
     extraReferredCitationIds: addCitationId(
       extraReferredCitationIds, resultCiteId
     ),
-    displayCitationIds: addCitationId(
-      displayCitationIds, resultCiteId
-    )
+    displayCitationIds: newDisplayCitationIds
   };
 }

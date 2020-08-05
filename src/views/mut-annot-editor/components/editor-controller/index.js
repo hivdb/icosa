@@ -18,6 +18,7 @@ import AAAnnotEditBox from './aa-annot-editbox';
 export default class EditorController extends React.Component {
 
   static propTypes = {
+    allowEditing: PropTypes.bool.isRequired,
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
@@ -52,8 +53,8 @@ export default class EditorController extends React.Component {
   }
 
   get isEditing() {
-    const {selectedPositions} = this.props;
-    return selectedPositions.length > 0;
+    const {allowEditing, selectedPositions} = this.props;
+    return allowEditing && selectedPositions.length > 0;
   }
 
   render() {
@@ -62,6 +63,7 @@ export default class EditorController extends React.Component {
       isEditing
     } = this;
     const {
+      allowEditing,
       positionLookup,
       selectedPositions,
       referredCitationIds,
@@ -87,14 +89,18 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          onChange={onSeqViewerSizeChange} />
         <AnnotationFilter
-         curAnnot={curAnnot}
-         annotations={annotations}
          onChange={onAnnotationChange}
-         onSave={onSave} />
+         {...{
+           onSave,
+           allowEditing,
+           curAnnot,
+           annotations
+         }} />
         <CitationFilter
          onChange={onDisplayCitationIdsChange}
          {...{
            onSave,
+           allowEditing,
            citations,
            referredCitationIds,
            displayCitationIds}} />

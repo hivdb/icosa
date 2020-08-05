@@ -4,6 +4,7 @@ import makeClassNames from 'classnames';
 import {FaDownload} from 'react-icons/fa';
 
 import Button from '../../../../components/button';
+import CheckboxInput from '../../../../components/checkbox-input';
 import {makeDownload} from '../../../../utils/download';
 
 import {
@@ -24,6 +25,8 @@ export default class EditorMenu extends React.Component {
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     changed: PropTypes.bool.isRequired,
     onRevertAll: PropTypes.func.isRequired,
+    onToggleAllowEditing: PropTypes.func.isRequired,
+    allowEditing: PropTypes.bool.isRequired,
     className: PropTypes.string
   }
 
@@ -45,8 +48,12 @@ export default class EditorMenu extends React.Component {
       data);
   }
 
+  handleToggleAllowEditing = ({currentTarget: {checked}}) => {
+    this.props.onToggleAllowEditing(checked);
+  }
+
   render() {
-    const {className, changed} = this.props;
+    const {className, allowEditing, changed} = this.props;
 
     return (
       <nav className={makeClassNames(style['editor-menu'], className)}>
@@ -68,6 +75,16 @@ export default class EditorMenu extends React.Component {
              onClick={this.handleRevertAll}>
               Revert all changes
             </Button>
+          </li>
+          <li className={style['pull-right']}>
+            <CheckboxInput
+             name="edit-mode"
+             id="edit-mode-toggler"
+             value=""
+             onChange={this.handleToggleAllowEditing}
+             checked={allowEditing}>
+              Allow editing
+            </CheckboxInput>
           </li>
         </ul>
       </nav>

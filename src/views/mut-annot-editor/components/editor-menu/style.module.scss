@@ -16,6 +16,9 @@
       &:not(:first-child) {
         margin-left: 1rem;
       }
+      &.pull-right {
+        float: right;
+      }
     }
   }
 }

@@ -90,6 +90,7 @@ class MutAnnotEditorInner extends React.Component {
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
       extraReferredCitationIds: [],
+      allowEditing: false,
       changed: false
     };
   }
@@ -166,7 +167,10 @@ class MutAnnotEditorInner extends React.Component {
 
   handleRevertAll = () => {
     this.setState(this.getDefaultState());
+  }
 
+  handleToggleAllowEditing = (allowEditing) => {
+    this.setState({allowEditing});
   }
 
   render() {
@@ -182,6 +186,7 @@ class MutAnnotEditorInner extends React.Component {
       displayCitationIds,
       curAnnot,
       positions,
+      allowEditing,
       changed
     } = this.state;
     const {
@@ -193,40 +198,47 @@ class MutAnnotEditorInner extends React.Component {
       <EditorMenu
        className={style['menu']}
        onRevertAll={this.handleRevertAll}
+       onToggleAllowEditing={this.handleToggleAllowEditing}
        {...{
          gene,
          taxonomy,
          annotations,
          positions,
          citations,
+         allowEditing,
          changed}} />
       <SequenceViewer
        size={seqViewerSize}
        sequence={refSeq}
-       curAnnot={curAnnot}
-       positionLookup={positionLookup}
-       citations={citations}
-       displayCitationIds={displayCitationIds}
-       selectedPositions={selectedPositions}
        onChange={this.handlePositionsSelect}
-       className={style.seqviewer} />
+       className={style.seqviewer}
+       {...{
+         curAnnot,
+         positionLookup,
+         citations,
+         displayCitationIds,
+         selectedPositions
+       }} />
       <div className={style['controller-container']}>
         <EditorController
-         annotations={annotations}
-         curAnnot={curAnnot}
          sequence={refSeq}
-         positionLookup={positionLookup}
-         citations={citations}
-         referredCitationIds={referredCitationIds}
-         displayCitationIds={displayCitationIds}
          onAnnotationChange={this.handleAnnotChange}
          onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
          onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
          onSave={this.handleSave}
          onReset={this.handleReset}
-         seqViewerSize={seqViewerSize}
-         selectedPositions={selectedPositions}
-         className={style['controller']} />
+         className={style['controller']}
+         {...{
+           allowEditing,
+           annotations,
+           curAnnot,
+           positionLookup,
+           citations,
+           referredCitationIds,
+           displayCitationIds,
+           seqViewerSize,
+           selectedPositions
+         }} />
       </div>
     </section>;
   }

@@ -14,7 +14,7 @@ import style from './style.module.scss';
 function CitationCheckbox(props) {
   const {
     citeId, onChange, onEdit, onCancel, editCiteId,
-    citations, displayCitationIds
+    citations, displayCitationIds, allowEditing
   } = props;
   const {author, year, doi, section} = citations[citeId];
   const editing = editCiteId === citeId;
@@ -29,10 +29,13 @@ function CitationCheckbox(props) {
         {author} {year}
       </CheckboxInput>
       (
-      <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>{', '}
-      <a href="#edit-citation" onClick={handleEdit(citeId)}>
-        {editing ? 'cancel edit' : 'edit'}
-      </a>
+      <ExtLink href={`https://doi.org/${doi}`}>paper</ExtLink>
+      {allowEditing ? <>
+        {', '}
+        <a href="#edit-citation" onClick={handleEdit(citeId)}>
+          {editing ? 'cancel edit' : 'edit'}
+        </a>
+      </> : null}
       )
       <span className={style['citation-section']}>
         {section}
@@ -87,6 +90,7 @@ function crossrefExtractAuthor(message) {
 export default class CitationFilter extends React.Component {
 
   static propTypes = {
+    allowEditing: PropTypes.bool.isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     referredCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
@@ -287,6 +291,7 @@ export default class CitationFilter extends React.Component {
 
   render() {
     const {
+      allowEditing,
       referredCitationIds,
       displayCitationIds,
       useInputGroup,
@@ -311,6 +316,7 @@ export default class CitationFilter extends React.Component {
            key={citeId}
            citeId={citeId}
            editCiteId={editCiteId}
+           allowEditing={allowEditing}
            onChange={this.handleChange}
            onEdit={this.handleEditClick}
            onCancel={this.handleCancel}
@@ -336,18 +342,19 @@ export default class CitationFilter extends React.Component {
           {inner}
           {referredCitationIds.length > 0 ? (
             <div className={style['inline-buttons']}>
-              <Button
-               name="add-citation"
-               btnStyle="light"
-               title="Add a new citation"
-               disabled={editMode === 'edit'}
-               onClick={
-                 editMode === 'add' ?
-                   this.handleCancel :
-                   this.handleAddClick
-               }>
-                {addCitationText}
-              </Button>
+              {allowEditing ?
+                <Button
+                 name="add-citation"
+                 btnStyle="light"
+                 title="Add a new citation"
+                 disabled={editMode === 'edit'}
+                 onClick={
+                   editMode === 'add' ?
+                     this.handleCancel :
+                     this.handleAddClick
+                 }>
+                  {addCitationText}
+                </Button> : null}
               <Button
                name="select-all"
                btnStyle="link"
