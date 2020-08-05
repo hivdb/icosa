@@ -11,6 +11,7 @@ import {seqViewerSizeType} from '../../prop-types';
 export default class SizeController extends React.Component {
 
   static propTypes = {
+    allowEditing: PropTypes.bool.isRequired,
     size: seqViewerSizeType.isRequired,
     onChange: PropTypes.func.isRequired
   }
@@ -21,12 +22,13 @@ export default class SizeController extends React.Component {
 
   render() {
     const {
+      allowEditing,
       size: seqViewerSize
     } = this.props;
 
     return (
       <div className={style['input-group']}>
-        <label htmlFor="size">Editor size:</label>
+        <label htmlFor="size">{allowEditing ? 'Editor' : 'Viewer'} size:</label>
         <div className={style['inline-buttons']}>
           {['large', 'middle', 'small'].map(size => (
             <Button

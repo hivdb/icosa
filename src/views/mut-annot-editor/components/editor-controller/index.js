@@ -87,6 +87,7 @@ export default class EditorController extends React.Component {
       <div className={className}>
         <SizeController
          size={seqViewerSize}
+         allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
         <AnnotationFilter
          onChange={onAnnotationChange}

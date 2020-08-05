@@ -58,24 +58,26 @@ export default class EditorMenu extends React.Component {
     return (
       <nav className={makeClassNames(style['editor-menu'], className)}>
         <ul className={style['editor-menu-items']}>
-          <li>
-            <Button
-             name="save"
-             btnStyle="primary"
-             disabled={!changed}
-             onClick={this.handleSaveToLocal}>
-              <FaDownload className={style['btn-icon']} /> Save JSON
-            </Button>
-          </li>
-          <li>
-            <Button
-             name="revert"
-             btnStyle="light"
-             disabled={!changed}
-             onClick={this.handleRevertAll}>
-              Revert all changes
-            </Button>
-          </li>
+          {allowEditing ? <>
+            <li>
+              <Button
+               name="save"
+               btnStyle="primary"
+               disabled={!changed}
+               onClick={this.handleSaveToLocal}>
+                <FaDownload className={style['btn-icon']} /> Save JSON
+              </Button>
+            </li>
+            <li>
+              <Button
+               name="revert"
+               btnStyle="light"
+               disabled={!changed}
+               onClick={this.handleRevertAll}>
+                Revert all changes
+              </Button>
+            </li>
+          </> : null}
           <li className={style['pull-right']}>
             <CheckboxInput
              name="edit-mode"
