@@ -7,26 +7,13 @@ import Button from '../../../../components/button';
 import {
   posShape, citationShape, annotShape
 } from '../../prop-types';
+import {getAnnotation} from '../../utils';
 
 import style from './style.module.scss';
 import CitationFilter from './citation-filter';
 
+const ANNOT_VAL_MAX_SIZE = 8;
 
-
-function isAnnotated(annotations, annotName, displayCitationIds) {
-  for (const {name, value, citationIds} of annotations) {
-    if (name !== annotName) {
-      continue;
-    }
-    if (!citationIds.some(
-      citeId => displayCitationIds.includes(citeId)
-    )) {
-      continue;
-    }
-    return [true, value];
-  }
-  return [false, null];
-}
 
 
 function getDefaultAnnotVal(props) {
@@ -43,10 +30,10 @@ function getDefaultAnnotVal(props) {
       continue;
     }
     const {annotations} = posdata;
-    const [annotatedFlag, annotVal] = isAnnotated(
+    const {annotVal} = getAnnotation(
       annotations, annotName, displayCitationIds
     );
-    if (annotatedFlag) {
+    if (annotVal !== null) {
       annotValCounter[annotVal] = annotValCounter[annotVal] || 0;
       annotValCounter[annotVal] ++;
     }
@@ -62,6 +49,39 @@ function getDefaultAnnotVal(props) {
   }
 }
 
+
+function getDefaultAnnotDesc(props) {
+  const {
+    positionLookup: posLookup,
+    selectedPositions,
+    curAnnot: {name: annotName},
+    displayCitationIds
+  } = props;
+  const annotDescCounter = {};
+  for (const pos of selectedPositions) {
+    const posdata = posLookup[pos];
+    if (!posdata) {
+      continue;
+    }
+    const {annotations} = posdata;
+    const {annotDesc} = getAnnotation(
+      annotations, annotName, displayCitationIds
+    );
+    if (annotDesc !== null) {
+      annotDescCounter[annotDesc] = annotDescCounter[annotDesc] || 0;
+      annotDescCounter[annotDesc] ++;
+    }
+  }
+  if (isEmpty(annotDescCounter)) {
+    return '';
+  }
+  else {
+    return (
+      Object.entries(annotDescCounter)
+        .sort((a, b) => b[1] - a[1])
+    )[0][0];
+  }
+}
 
 export default class PosAnnotEditBox extends React.Component {
 
@@ -90,6 +110,7 @@ export default class PosAnnotEditBox extends React.Component {
     }
     return {
       annotVal: getDefaultAnnotVal(props),
+      annotDesc: getDefaultAnnotDesc(props),
       showSetAnnotValDialog: false,
       selectedPositions: props.selectedPositions
     };
@@ -114,6 +135,9 @@ export default class PosAnnotEditBox extends React.Component {
     const {showSetAnnotValDialog} = this.state;
     switch (key) {
       case 'Enter':
+        if (evt.target.tagName === 'TEXTAREA') {
+          break;
+        }
         if (showSetAnnotValDialog) {
           this.handlePosAnnotUpdate.add();
         }
@@ -145,10 +169,10 @@ export default class PosAnnotEditBox extends React.Component {
         continue;
       }
       const {annotations} = posdata;
-      const [annotatedFlag] = isAnnotated(
+      const {annotVal} = getAnnotation(
         annotations, annotName, displayCitationIds
       );
-      if (annotatedFlag) {
+      if (annotVal !== null) {
         annotateds ++;
       }
     }
@@ -164,12 +188,24 @@ export default class PosAnnotEditBox extends React.Component {
   }
 
   handleAnnotValChange = ({currentTarget: {value}}) => {
+    value = value.slice(0, ANNOT_VAL_MAX_SIZE);
     this.setState({annotVal: value});
+  }
+
+  handleAnnotDescChange = ({currentTarget: {value}}) => {
+    this.setState({annotDesc: value});
+  }
+
+  handleAnnotDescKeyDown = ({key, metaKey, ctrlKey}) => {
+    if (key === 'Enter' && (metaKey || ctrlKey)) {
+      this.handlePosAnnotUpdate.add();
+    }
   }
 
   handleReset = () => {
     this.setState({
       annotVal: getDefaultAnnotVal(this.props),
+      annotDesc: getDefaultAnnotDesc(this.props),
       showSetAnnotValDialog: false
     });
     this.props.onReset();
@@ -181,8 +217,11 @@ export default class PosAnnotEditBox extends React.Component {
         showSetAnnotValDialog: true
       });
       setTimeout(() => {
-        this.annotValInputRef.current.focus();
-        this.annotValInputRef.current.select();
+        const {current} = this.annotValInputRef;
+        if (current) {
+          current.focus();
+          current.select();
+        }
       }, 0);
     },
     editBack: () => {
@@ -197,12 +236,13 @@ export default class PosAnnotEditBox extends React.Component {
         curAnnot,
         displayCitationIds
       } = this.props;
-      const {annotVal} = this.state;
+      const {annotVal, annotDesc} = this.state;
       onSave({
         action: 'addPositions',
         selectedPositions,
         curAnnot,
         annotVal,
+        annotDesc,
         citationIds: displayCitationIds
       });
     },
@@ -231,10 +271,12 @@ export default class PosAnnotEditBox extends React.Component {
       curAnnot: {
         name: curAnnotName,
       },
+      curAnnot,
+      onSave,
       citations
     } = this.props;
     const {
-      annotVal,
+      annotVal, annotDesc,
       showSetAnnotValDialog
     } = this.state;
 
@@ -342,16 +384,21 @@ export default class PosAnnotEditBox extends React.Component {
               </p>
               <div>
                 <CitationFilter
-                 citations={citations}
+                 allowEditing={true}
                  useInputGroup={false}
-                 referredCitationIds={referredCitationIds}
-                 displayCitationIds={displayCitationIds}
-                 onChange={onDisplayCitationIdsChange} />
+                 onChange={onDisplayCitationIdsChange}
+                 {...{
+                   curAnnot,
+                   onSave,
+                   citations,
+                   referredCitationIds,
+                   displayCitationIds
+                 }} />
               </div>
             </> : null}
             <p>
-              Enter an annotation to be showed when moving mouse
-              over the selected positions:
+              Enter a short annotation (maximum letters: {ANNOT_VAL_MAX_SIZE})
+              to be showed when moving mouse over the selected position(s):
             </p>
             <input
              ref={this.annotValInputRef}
@@ -359,6 +406,14 @@ export default class PosAnnotEditBox extends React.Component {
              value={annotVal}
              className={style['text-input']}
              type="text" name="annotVal" />
+            <p>
+              Enter a description for selected position(s):
+            </p>
+            <textarea
+             className={style.textarea}
+             value={annotDesc}
+             name="annotDesc"
+             onChange={this.handleAnnotDescChange} />
             <div className={style['inline-buttons']}>
               <Button
                name="add-positions"

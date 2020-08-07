@@ -24,6 +24,7 @@ const posShape = PropTypes.shape({
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
+      description: PropTypes.string,
       citationIds: PropTypes.arrayOf(
         PropTypes.string.isRequired
       ).isRequired

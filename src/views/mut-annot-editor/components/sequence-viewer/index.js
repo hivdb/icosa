@@ -40,13 +40,13 @@ function rangePos(start, end) {
 
 function xorSelections(curSels, prevSels, newSels) {
   const combined = xor(xor(curSels, prevSels), newSels);
-  return combined.sort();
+  return combined.sort((a, b) => a - b);
 }
 
 
 function unionSelections(curSels, prevSels, newSels) {
   const combined = union(xor(curSels, prevSels), newSels);
-  return combined.sort();
+  return combined.sort((a, b) => a - b);
 }
 
 

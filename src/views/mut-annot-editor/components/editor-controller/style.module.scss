@@ -8,6 +8,11 @@
   $dropdown-height: 26px;
   $button-spacing: 0.5rem;
 
+  &.scrollable {
+    overflow-y: auto;
+    max-height: 25rem;
+  }
+
   > label {
     font-weight: 600;
     display: block;
@@ -118,6 +123,8 @@
     @extend %textarea;
     width: 100%;
     font-family: monospace;
+    resize: vertical;
+    min-height: 10em;
   }
 
   .labeled-input {
@@ -188,4 +195,28 @@
       }
     }
   }
+}
+
+.annot-view-item {
+
+  .annot-view-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: inline-block;
+  }
+
+  .annot-view-positions {
+    color: rgba(0, 0, 0, .5);
+    font-size: .9rem;
+    margin-left: .5rem;
+    display: inline-block;
+  }
+
+  .annot-view-desc {
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+
 }

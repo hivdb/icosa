@@ -116,19 +116,44 @@
       display: none;
       z-index: 1;
       font-size: 1.2rem;
-      top: 0;
+      line-height: 1.2rem;
+      vertical-align: baseline;
+      white-space: nowrap;
+      top: 5px;
       text-align: center;
     }
     &[data-is-annot-start="true"]::before {
-      left: 1rem;
+      left: .75rem;
     }
     &[data-is-annot-end="true"]::before {
       text-align: right;
-      right: 1rem;
+      right: .75rem;
+    }
+    &[data-pos-annot-val-size="1"] {
+      --annot-font-scale: 3;
+    }
+    &[data-pos-annot-val-size="2"] {
+      --annot-font-scale: 2.8;
+    }
+    &[data-pos-annot-val-size="3"] {
+      --annot-font-scale: 2.2;
+    }
+    &[data-pos-annot-val-size="4"] {
+      --annot-font-scale: 1.8;
+    }
+    &[data-pos-annot-val-size="5"] {
+      --annot-font-scale: 1.6;
+    }
+    &[data-is-annot-start="true"][data-is-annot-end="true"]::before {
+      font-size: calc(0.4rem * var(--annot-font-scale));
+      width: 100%;
+      text-align: center;
+      left: 0;
+      right: 0;
     }
     $middle-selector: "+";
     @for $i from 0 through 10 {
-      &[data-is-annot-start="true"] #{$middle-selector} &[data-pos-annot-value]::before {
+      &[data-is-annot-start="true"] #{$middle-selector} &[data-pos-annot-value][data-is-annot-start="false"]::before {
         display: none;
       }
       $middle-selector: #{$middle-selector} '&[data-pos-annot-value][data-is-annot-end="false"] +';

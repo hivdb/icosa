@@ -212,6 +212,13 @@ export default class PositionItem extends React.Component {
       isAnnotStart, isAnnotEnd, colors
     } = this;
     const highlight = !!(posHighlight || aaHighlights.length > 0);
+    let annotValSize = 0;
+    if (posHighlight) {
+      annotValSize = posHighlight.length;
+      if (annotValSize > 5) {
+        annotValSize = 5;
+      }
+    }
 
     return (
       <CustomColors
@@ -228,6 +235,7 @@ export default class PositionItem extends React.Component {
        data-is-annot-start={isAnnotStart}
        data-is-annot-end={isAnnotEnd}
        data-pos-annot-value={posHighlight}
+       data-pos-annot-val-size={annotValSize}
        data-position={position} data-residue={residue}>
         {annotLevel === 'position' ?
           <div className={style['position-item-annot-range']}>

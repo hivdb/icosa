@@ -13,6 +13,7 @@ import AnnotationFilter from './annotation-filter';
 import CitationFilter from './citation-filter';
 import PosAnnotEditBox from './pos-annot-editbox';
 import AAAnnotEditBox from './aa-annot-editbox';
+import PosAnnotViewBox from './pos-annot-viewbox';
 
 
 export default class EditorController extends React.Component {
@@ -118,6 +119,14 @@ export default class EditorController extends React.Component {
              onDisplayCitationIdsChange,
              onReset,
              onSave
+           }} /> : null}
+        {!isEditing && annotLevel === 'position' ?
+          <PosAnnotViewBox
+           {...{
+             positionLookup,
+             curAnnot,
+             displayCitationIds,
+             selectedPositions
            }} /> : null}
         {isEditing && annotLevel === 'amino acid' ?
           <AAAnnotEditBox

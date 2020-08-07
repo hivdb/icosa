@@ -100,6 +100,22 @@ class MutAnnotEditorInner extends React.Component {
     this.state = this.getDefaultState();
   }
 
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.handleBeforeUnload, false);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  }
+
+  handleBeforeUnload = (evt) => {
+    const {changed} = this.state;
+    if (changed) {
+      evt.preventDefault();
+      evt.returnValue = true;
+    }
+  }
+
   get referredCitationIds() {
     const {curAnnot, positions, extraReferredCitationIds} = this.state;
     return union(

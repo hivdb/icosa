@@ -8,6 +8,7 @@ export function addPositions({actionObj, positionLookup}) {
       level: annotLevel
     },
     annotVal,
+    annotDesc,
     selectedPositions,
     citationIds
   } = actionObj;
@@ -35,6 +36,7 @@ export function addPositions({actionObj, positionLookup}) {
       posdata.annotations.push(annotObj);
     }
     annotObj.value = annotVal;
+    annotObj.description = annotDesc;
     annotObj.citationIds = union(annotObj.citationIds, citationIds);
     annotObj.citationIds.sort(citationIdCompare);
   }
