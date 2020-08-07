@@ -101,6 +101,7 @@ export default class EditorController extends React.Component {
          onChange={onDisplayCitationIdsChange}
          {...{
            onSave,
+           curAnnot,
            allowEditing,
            citations,
            referredCitationIds,

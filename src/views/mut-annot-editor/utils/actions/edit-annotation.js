@@ -2,7 +2,9 @@ export function editAnnotation({actionObj, annotations, positionLookup}) {
   const {
     origAnnotName,
     newAnnotName,
-    newAnnotLevel
+    newAnnotLevel,
+    newHideCitations,
+    newColorRules
   } = actionObj;
   let annotObj;
   const extraState = {};
@@ -25,6 +27,8 @@ export function editAnnotation({actionObj, annotations, positionLookup}) {
     annotations.push(annotObj);
   }
   annotObj.name = newAnnotName;
+  annotObj.hideCitations = newHideCitations;
+  annotObj.colorRules = newColorRules;
   return {
     ...extraState,
     annotations,

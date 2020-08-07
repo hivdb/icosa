@@ -11,7 +11,7 @@ import style from './style.module.scss';
 
 import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
 
-const RANDOM_COLOR_SEED = 'WV*iP_DmK76ULy9Uzjs@4bFbuF!kNFWN!B';
+const RANDOM_COLOR_SEED = 126;
 
 
 function getPositionFromTarget(target) {
@@ -171,7 +171,8 @@ export default class SequenceViewer extends React.Component {
     const {
       curAnnot: {
         name: annotName,
-        level: annotLevel
+        level: annotLevel,
+        colorRules = []
       },
       positionLookup
     } = this.props;
@@ -190,26 +191,54 @@ export default class SequenceViewer extends React.Component {
         annotVals.push(annotVal);
       }
     }
+    const annotValGroup = {};
+    let numColors = colorRules.length;
+    if (numColors > 0) {
+      const colorRulePatterns = colorRules.map(r => new RegExp(r));
+      let extraIdx = numColors;
+      for (const annotVal of annotVals) {
+        let matchFlag = false;
+        for (let i = 0; i < numColors; i ++) {
+          const pattern = colorRulePatterns[i];
+          if (pattern.test(annotVal)) {
+            annotValGroup[annotVal] = i;
+            matchFlag = true;
+            break;
+          }
+        }
+        if (!matchFlag) {
+          annotValGroup[annotVal] = extraIdx ++;
+        }
+      }
+      numColors = Object.values(annotValGroup).length;
+    }
+    else {
+      numColors = annotVals.length;
+      for (let i = 0; i < numColors; i ++) {
+        const annotVal = annotVals[i];
+        annotValGroup[annotVal] = i;
+      }
+    }
     const borderColors = randomColor({
-      count: annotVals.length,
+      count: numColors,
       luminosity: 'dark',
       seed: RANDOM_COLOR_SEED
     });
     const activeColors = randomColor({
-      count: annotVals.length,
+      count: numColors,
       luminosity: 'brighter',
       format: 'rgba',
       alpha: .9,
       seed: RANDOM_COLOR_SEED
     });
     const hoverColors = randomColor({
-      count: annotVals.length,
+      count: numColors,
       luminosity: 'dark',
       format: 'rgba',
       alpha: .5,
       seed: RANDOM_COLOR_SEED
     });
-    return annotVals.reduce((acc, val, idx) => {
+    return Object.entries(annotValGroup).reduce((acc, [val, idx]) => {
       acc[val] = {
         border: borderColors[idx],
         active: activeColors[idx],

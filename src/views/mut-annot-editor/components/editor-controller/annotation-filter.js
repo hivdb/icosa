@@ -5,6 +5,7 @@ import {FaPlus, FaAngleUp, FaRegEdit} from 'react-icons/fa';
 
 import Button from '../../../../components/button';
 import RadioInput from '../../../../components/radio-input';
+import CheckboxInput from '../../../../components/checkbox-input';
 
 import {annotShape} from '../../prop-types';
 
@@ -28,12 +29,17 @@ export default class AnnotationFilter extends React.Component {
       annotations,
       curAnnot: {
         name: curAnnotName,
-        level: curAnnotLevel
+        level: curAnnotLevel,
+        hideCitations: curAnnotHideCitations,
+        colorRules: curAnnotColorRules
       } = {}
     } = props;
     if (
       state.curAnnotName === curAnnotName &&
       state.curAnnotLevel === curAnnotLevel &&
+      state.curAnnotHideCitations === curAnnotHideCitations &&
+      JSON.stringify(state.curAnnotColorRules) ===
+      JSON.stringify(curAnnotColorRules) &&
       state.annotations === annotations
     ) {
       return null;
@@ -41,11 +47,15 @@ export default class AnnotationFilter extends React.Component {
     return {
       curAnnotName,
       curAnnotLevel,
+      curAnnotHideCitations,
+      curAnnotColorRules,
       annotations,
       inputExpanded: false,
       editMode: null,
-      editAnnotName: null,
+      editAnnotName: '',
       editAnnotLevel: null,
+      editHideCitations: null,
+      editColorRules: '[]',
       warningText: null
     };
   }
@@ -89,24 +99,41 @@ export default class AnnotationFilter extends React.Component {
     }
   }
 
+  handleToggleHideCitations = ({currentTarget: {checked}}) => {
+    this.setState({editHideCitations: checked});
+  }
+  
+  handleChangeColorRules = ({currentTarget: {value}}) => {
+    this.setState({editColorRules: value});
+  }
+
   toggle(editMode) {
     return () => {
       const {curAnnot: {
         name: annotName,
-        level: annotLevel
+        level: annotLevel,
+        hideCitations = false,
+        colorRules = []
       } = {}} = this.props;
       const {inputExpanded} = this.state;
       this.setState({
         inputExpanded: !inputExpanded,
         editMode: inputExpanded ? null : editMode,
         editAnnotName: editMode === 'edit' ? annotName : '',
-        editAnnotLevel: editMode === 'edit' ? annotLevel : null
+        editAnnotLevel: editMode === 'edit' ? annotLevel : null,
+        editHideCitations: editMode === 'edit' ? hideCitations : null,
+        editColorRules: editMode === 'edit' ?
+          JSON.stringify(colorRules, null, '  ') : null
       });
     };
   }
 
   handleSave = () => {
-    const {editMode, editAnnotName, editAnnotLevel} = this.state;
+    const {
+      editMode, editAnnotName,
+      editAnnotLevel, editHideCitations,
+      editColorRules
+    } = this.state;
     const {
       onSave,
       annotations,
@@ -125,11 +152,33 @@ export default class AnnotationFilter extends React.Component {
       });
       return;
     }
+    let newColorRules;
+    try {
+      newColorRules = JSON.parse(editColorRules);
+    }
+    catch (error) {
+      this.setState({
+        warningText: (
+          `The text of coloring rules is not in valid JSON format: ${error}`
+        )
+      });
+      return;
+    }
+    for (const rule of newColorRules) {
+      try {
+        new RegExp(rule);
+      }
+      catch (error) {
+        this.setState({warningText: `${error}`});
+      }
+    }
     onSave({
       action: 'editAnnotation',
       origAnnotName,
       newAnnotName: editAnnotName,
-      newAnnotLevel: editAnnotLevel
+      newAnnotLevel: editAnnotLevel,
+      newHideCitations: editHideCitations,
+      newColorRules
     });
   }
 
@@ -158,6 +207,7 @@ export default class AnnotationFilter extends React.Component {
     const {
       inputExpanded, editMode,
       editAnnotName, editAnnotLevel,
+      editHideCitations, editColorRules,
       warningText
     } = this.state;
     const {allowEditing} = this.props;
@@ -228,8 +278,31 @@ export default class AnnotationFilter extends React.Component {
              value="amino acid">
               Amino acid annotation
             </RadioInput>
+            <p>
+              Annotation group config:
+            </p>
+            <CheckboxInput
+             id="edit-hide-citations"
+             name="edit-hide-citations"
+             checked={editHideCitations}
+             onChange={this.handleToggleHideCitations}
+             value="">
+              Hide citations
+            </CheckboxInput>
+            <p>
+              Custom color rules: (array of regular expressions,
+              see an example after the textarea)
+            </p>
+            <textarea
+             id="edit-color-rules"
+             name="edit-color-rules"
+             className={style.textarea}
+             onChange={this.handleChangeColorRules}
+             value={editColorRules} />
+            <pre>{`["^β", "^T$", "^α", "^η", "^π"]`}</pre>
             {warningText ?
               <div className={style['warning']}>{warningText}</div> : null}
+            <p />
             <div className={style['inline-buttons']}>
               <Button
                name="save"

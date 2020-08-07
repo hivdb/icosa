@@ -12,6 +12,9 @@
 @mixin position-item($size: 3rem) {
   $border-size: $size / 10;
   $spacing-size: $size / 5;
+  $annot-range-size: 2rem;
+  $annot-range-margin-top-size: ($annot-range-size - $border-size) / 6 * 5;
+  $annot-range-margin-bottom-size: ($annot-range-size - $border-size) / 6 * 1;
   position: relative;
   min-height: 0;
   > .position-item-box {
@@ -47,7 +50,7 @@
     padding: 0;
     box-sizing: border-box;
     background-clip: content-box;
-    margin: $border-size * 4 0 $border-size * 2;
+    margin: $annot-range-margin-top-size 0 $annot-range-margin-bottom-size;
   }
 
   $annot-range-divider-size: 2px;
@@ -112,14 +115,33 @@
       position: absolute;
       display: none;
       z-index: 1;
-      font-size: $size / 3;
+      font-size: 1.2rem;
       top: 0;
-      width: 100%;
       text-align: center;
     }
-    &:hover::before {
-      display: block;
+    &[data-is-annot-start="true"]::before {
+      left: 1rem;
     }
+    &[data-is-annot-end="true"]::before {
+      text-align: right;
+      right: 1rem;
+    }
+    $middle-selector: "+";
+    @for $i from 0 through 10 {
+      &[data-is-annot-start="true"] #{$middle-selector} &[data-pos-annot-value]::before {
+        display: none;
+      }
+      $middle-selector: #{$middle-selector} '&[data-pos-annot-value][data-is-annot-end="false"] +';
+    }
+    // &[data-is-annot-start="true"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value]::before {
+    //   display: none;
+    // }
+    // &[data-is-annot-start="true"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value]::before {
+    //   display: none;
+    // }
+    // &[data-is-annot-start="true"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value][data-is-annot-end="false"] + &[data-pos-annot-value]::before {
+    //   display: none;
+    // }
   }
   &[data-is-annot-start="true"], &[data-is-annot-end="true"] {
     &::before {
@@ -138,13 +160,13 @@
         }
         &::after, &::after {
           content: "";
-          height: $border-size * 7 + $size + $spacing-size;
+          height: $size + $annot-range-size / 3 * 2 + 2 * $border-size;
           background-color: rgba(0, 0, 0, .7);
           width: $annot-range-divider-size;
           position: absolute;
           display: block;
           top: 0;
-          margin-top: -$size / 4 - $border-size;
+          margin-top: - $annot-range-margin-top-size + $annot-range-size / 3;
         }
       }
     }
@@ -218,9 +240,9 @@
 }
 
 .position-item-middle {
-  @include position-item(2.8rem);
+  @include position-item(2.2rem);
 }
 
 .position-item-small {
-  @include position-item(2.2rem);
+  @include position-item(1.35rem);
 }

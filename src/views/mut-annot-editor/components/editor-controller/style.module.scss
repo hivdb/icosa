@@ -113,6 +113,13 @@
     box-sizing: border-box;
   }
 
+  textarea.textarea {
+    display:block;
+    @extend %textarea;
+    width: 100%;
+    font-family: monospace;
+  }
+
   .labeled-input {
     $label-width: 4rem;
     > label {

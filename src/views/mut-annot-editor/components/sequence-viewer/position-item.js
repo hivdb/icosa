@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CustomColors from '../../../../components/custom-colors';
 
 import style from './style.module.scss';
-import {annotShape, posShape} from '../../prop-types';
+import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
 
 
 function AA({aa, position}) {
@@ -30,7 +30,7 @@ export default class PositionItem extends React.Component {
 
   static propTypes = {
     selectableRef: PropTypes.object.isRequired,
-    size: PropTypes.oneOf(['large', 'middle', 'small']).isRequired,
+    size: seqViewerSizeType.isRequired,
     colorScheme: PropTypes.objectOf(
       PropTypes.shape({
         border: PropTypes.string.isRequired,

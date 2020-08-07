@@ -1,7 +1,12 @@
 import PropTypes from 'prop-types';
 
 const annotShape = PropTypes.shape({
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  level: PropTypes.oneOf(['position', 'amino acid']).isRequired,
+  hideCitations: PropTypes.bool,
+  colorRules: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  )
 });
 
 const citationShape = PropTypes.shape({
@@ -43,7 +48,9 @@ const posShape = PropTypes.shape({
   ).isRequired
 });
 
-const seqViewerSizeType = PropTypes.oneOf(['large', 'middle', 'small']);
+const seqViewerSizeType = PropTypes.oneOf([
+  'large', 'middle', 'small'
+]);
 
 export {
   annotShape,

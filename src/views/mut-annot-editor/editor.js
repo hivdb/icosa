@@ -18,7 +18,7 @@ const clone = rfdc();
 
 function loadSeqViewerSize() {
   let size = window.localStorage.getItem(KEY_SEQVIEWER);
-  if (size !== 'large' && size !== 'middle' && size !== 'small') {
+  if (!['large', 'middle', 'small'].includes(size)) {
     size = 'middle';
   }
   return size;

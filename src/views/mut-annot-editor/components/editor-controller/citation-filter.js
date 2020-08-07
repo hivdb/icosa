@@ -6,7 +6,7 @@ import {FaSyncAlt} from 'react-icons/fa';
 import Button from '../../../../components/button';
 import ExtLink from '../../../../components/link/external';
 import CheckboxInput from '../../../../components/checkbox-input';
-import {citationShape} from '../../prop-types';
+import {annotShape, citationShape} from '../../prop-types';
 
 import style from './style.module.scss';
 
@@ -90,6 +90,7 @@ function crossrefExtractAuthor(message) {
 export default class CitationFilter extends React.Component {
 
   static propTypes = {
+    curAnnot: annotShape.isRequired,
     allowEditing: PropTypes.bool.isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     referredCitationIds: PropTypes.arrayOf(
@@ -291,6 +292,7 @@ export default class CitationFilter extends React.Component {
 
   render() {
     const {
+      curAnnot: {hideCitations},
       allowEditing,
       referredCitationIds,
       displayCitationIds,
@@ -308,6 +310,10 @@ export default class CitationFilter extends React.Component {
       editDOIValid,
       fetchingDOI
     } = this.state;
+
+    if (!allowEditing && hideCitations) {
+      return null;
+    }
 
     const inner = (
       <div className={style['scrollable-citation-list']}>
