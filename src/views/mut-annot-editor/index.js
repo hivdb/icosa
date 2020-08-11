@@ -31,7 +31,7 @@ export default function MutAnnotEditorRoutes({
     )} />
     {presets.map(({name, ...preset}, idx) => (
       <Route key={idx} path={`${name}/`} render={({props}) => (
-        <MutAnnotEditor preset={{name, ...preset}} />
+        <MutAnnotEditor {...props} preset={{name, ...preset}} />
       )} />
     ))}
   </Route>;

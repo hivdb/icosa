@@ -2,8 +2,10 @@ import React from 'react';
 import rfdc from 'rfdc';
 import PropTypes from 'prop-types';
 import union from 'lodash/union';
+import {matchShape} from 'found';
 
 import SequenceViewer from './components/sequence-viewer';
+import CanvasSequenceViewer from './components/canvas-sequence-viewer';
 import EditorController from './components/editor-controller';
 import EditorMenu from './components/editor-menu';
 import style from './style.module.scss';
@@ -65,6 +67,7 @@ function getReferredCitationIds(curAnnot, positions) {
 
 class MutAnnotEditorInner extends React.Component {
   static propTypes = {
+    useCanvas: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,
@@ -192,7 +195,8 @@ class MutAnnotEditorInner extends React.Component {
   render() {
     const {
       refSeq,
-      annotationData: {gene, taxonomy}
+      annotationData: {gene, taxonomy},
+      useCanvas
     } = this.props;
     const {
       annotations,
@@ -209,6 +213,7 @@ class MutAnnotEditorInner extends React.Component {
       referredCitationIds,
       positionLookup
     } = this;
+    const MySeqViewer = useCanvas ? CanvasSequenceViewer : SequenceViewer;
 
     return <section className={style.editor}>
       <EditorMenu
@@ -223,7 +228,7 @@ class MutAnnotEditorInner extends React.Component {
          citations,
          allowEditing,
          changed}} />
-      <SequenceViewer
+      <MySeqViewer
        size={seqViewerSize}
        sequence={refSeq}
        onChange={this.handlePositionsSelect}
@@ -269,11 +274,22 @@ export default class MutAnnotEditor extends React.Component {
       display: PropTypes.node.isRequired,
       refSeqLoader: PropTypes.func.isRequired,
       annotationLoader: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    match: matchShape.isRequired
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {name, display, refSeqLoader, annotationLoader} = props.preset;
+    const {
+      match: {
+        location: {
+          query: {use_canvas: useCanvas = false} = {}
+        }
+      },
+      preset: {
+        name, display,
+        refSeqLoader, annotationLoader
+      }
+    } = props;
     if (
       state.refSeqLoader === refSeqLoader &&
       state.annotationLoader === annotationLoader
@@ -285,6 +301,7 @@ export default class MutAnnotEditor extends React.Component {
       annotationLoader,
       promise: (async () => ({
         name, display,
+        useCanvas: useCanvas !== false,  // to boolean
         refSeq: await refSeqLoader(),
         annotationData: await annotationLoader()
       }))()
