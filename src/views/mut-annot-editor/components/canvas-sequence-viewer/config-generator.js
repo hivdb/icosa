@@ -55,7 +55,7 @@ export default class ConfigGenerator {
   initSizeConfig({baseSizePixel}) {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
-    const verticalMarginPixel = baseSizePixel;
+    const verticalMarginPixel = baseSizePixel * 1.5;
 
     Object.assign(this, {
       baseSizePixel,
@@ -75,7 +75,12 @@ export default class ConfigGenerator {
       refAAFontSizePixel: baseSizePixel / 2,
       posNumFontSizePixel: baseSizePixel / 4.5,
       hoverPosNumFontSizePixel: baseSizePixel / 2,
-      nonHighlightBgPathWidthPixel: baseSizePixel / 5
+      nonHighlightBgPathWidthPixel: baseSizePixel / 5,
+
+      annotStrokeWidthPixel: baseSizePixel / 24,
+      annotMarginPixel: baseSizePixel / 8,
+      annotTickLengthPixel: baseSizePixel / 5,
+      annotValFontSizePixel: baseSizePixel / 2
     });
   }
 
@@ -108,6 +113,14 @@ export default class ConfigGenerator {
       hoverPosNumOffsetPixel: {
         x: 0,
         y: baseSizePixel * 1.1
+      },
+      annotValOffsetPixel: {
+        x: this.annotMarginPixel,
+        y: - (
+          this.annotTickLengthPixel +
+          this.annotMarginPixel +
+          this.annotValFontSizePixel
+        )
       }
     });
   }
@@ -124,8 +137,32 @@ export default class ConfigGenerator {
       backgroundDefaultColorHovering: '#ddd',
 
       selectedStrokeColor: '#235fc5',
-      selectedBackgroundColor: 'rgba(35, 95, 197, .1)'
+      selectedBackgroundColor: 'rgba(35, 95, 197, .1)',
+
+      annotStrokeColor: '#222',
+      annotValTextColor: '#111'
     });
+  }
+
+  posRange2CoordPairs = (startPos, endPos) => {
+    const {numCols, posItemSizePixel} = this;
+    const coordPairs = [];
+    let startCoord = this.pos2Coord(startPos);
+    let endCoord;
+    for (
+      let breakPos = Math.ceil(startPos / numCols) * numCols;
+      breakPos < endPos;
+      breakPos += numCols
+    ) {
+      endCoord = this.pos2Coord(breakPos);
+      endCoord.x += posItemSizePixel;
+      coordPairs.push({startCoord, endCoord});
+      startCoord = this.pos2Coord(breakPos + 1);
+    }
+    endCoord = this.pos2Coord(endPos);
+    endCoord.x += posItemSizePixel;
+    coordPairs.push({startCoord, endCoord});
+    return coordPairs;
   }
 
   pos2Coord = (pos) => {

@@ -1,25 +1,22 @@
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
-import makeClassNames from 'classnames';
+import {Stage} from 'react-konva';
 import xor from 'lodash/xor';
 import range from 'lodash/range';
 import union from 'lodash/union';
-import Loader from 'react-loader';
-import {Stage} from 'react-konva';
 import debounce from 'lodash/debounce';
 
 import style from './style.module.scss';
-import ConfigGenerator, {preloadFonts} from './config-generator';
 import StaticBgLayer from './static-bg-layer';
 import StaticFgLayer from './static-fg-layer';
 import SelectedBgLayer from './selected-bg-layer';
 import SelectedFgLayer from './selected-fg-layer';
+import AnnotLayer from './annot-layer';
 import HoverFgLayer from './hover-fg-layer';
 
-import {getHighlightedPositions} from './funcs';
-
 import {annotShape, posShape} from '../../prop-types';
+import {getPositionsByAnnot} from './funcs';
 
 const RANDOM_COLOR_SEED = 126;
 
@@ -29,12 +26,6 @@ function rangePos(start, end) {
     [end, start] = [start, end];
   }
   return range(start, end + 1);
-}
-
-
-function xorSelections(curSels, prevSels, newSels) {
-  const combined = xor(xor(curSels, prevSels), newSels);
-  return combined.sort((a, b) => a - b);
 }
 
 
@@ -78,6 +69,7 @@ export default class SeqViewerStage extends React.Component {
     if (selectedPositions.length === 0) {
       return {
         mouseDown: false,
+        mouseMoved: false,
         activePos: null,
         prevSelecteds: []
       };
@@ -89,6 +81,7 @@ export default class SeqViewerStage extends React.Component {
     super(...arguments);
     this.state = {
       mouseDown: false,
+      mouseMoved: false,
       anchorPos: null,
       activePos: null,
       hoverPos: null,
@@ -106,6 +99,7 @@ export default class SeqViewerStage extends React.Component {
   scrollToPos = (position) => {
     const {config: {
       posItemOuterHeightPixel: posItemHeight,
+      verticalMarginPixel: vMargin,
       pos2Coord
     }} = this.props;
     const {y: posOffsetY} = pos2Coord(position);
@@ -115,12 +109,12 @@ export default class SeqViewerStage extends React.Component {
     const posItemTop = rect.y + posOffsetY;
     const posItemBottom = posItemTop + posItemHeight;
 
-    if (posItemTop < posItemHeight) {
-      window.scrollTo({top: pageYOffset + posItemTop - posItemHeight});
+    if (posItemTop < vMargin) {
+      window.scrollTo({top: pageYOffset + posItemTop - vMargin});
     }
-    else if (posItemBottom > viewportHeight - posItemHeight) {
+    else if (posItemBottom > viewportHeight) {
       window.scrollTo({
-        top: pageYOffset + posItemBottom - viewportHeight + posItemHeight
+        top: pageYOffset + posItemBottom - viewportHeight
       });
     }
   }
@@ -151,6 +145,7 @@ export default class SeqViewerStage extends React.Component {
     if (selecteds.length === 0) {
       this.setState({
         mouseDown: false,
+        mouseMoved: false,
         activePos: null,
         anchorPos: null,
         curSelecteds: [],
@@ -248,30 +243,35 @@ export default class SeqViewerStage extends React.Component {
 
   handleGlobalKeyDown = (evt) => {
     const {key} = evt;
-    let endPos;
+    let endPos = this.state.activePos;
+    const isBodyActive = document.activeElement.tagName === 'BODY';
     switch (key) {
       case 'ArrowUp':
       case 'ArrowRight':
       case 'ArrowDown':
       case 'ArrowLeft':
-      case 'Home':
       case 'PageUp':
       case 'PageDown':
-        if (document.activeElement.tagName === 'BODY') {
-          endPos = 1;
+      case 'Home':
+        if (isBodyActive && endPos) {
+          this.handleKeyDown(evt);
+          return;
+        }
+        if (isBodyActive) {
+          endPos = endPos || 1;
+          break;
         }
         else {
           return;
         }
-        break;
       case 'End':
-        if (document.activeElement.tagName === 'BODY') {
+        if (isBodyActive) {
           endPos = this.props.sequence.length;
+          break;
         }
         else {
           return;
         }
-        break;
       default:
         return;
     }
@@ -303,7 +303,6 @@ export default class SeqViewerStage extends React.Component {
         }, 0);
         break;
       case 'Escape':
-        this.restoreActivePosItem();
         this.setSelection([]);
         break;
       default:
@@ -312,8 +311,6 @@ export default class SeqViewerStage extends React.Component {
   }
 
   handleKeyDown = (evt) => {
-    evt.preventDefault();
-    evt.stopPropagation();
     const {key, shiftKey: rangeSel} = evt;
     const {numCols, numPosPerPage} = this.props.config;
     const {sequence} = this.props;
@@ -353,6 +350,8 @@ export default class SeqViewerStage extends React.Component {
       default:
         return;
     }
+    evt.preventDefault();
+    evt.stopPropagation();
     if (endPos < 1 || endPos > maxPos) {
       return;
     }
@@ -466,7 +465,8 @@ export default class SeqViewerStage extends React.Component {
     let selecteds = rangePos(posStart, posEnd);
     this.setState({
       prevSelecteds: selecteds,
-      activePos: posEnd
+      activePos: posEnd,
+      mouseMoved: true
     });
     if (multiSel) {
       selecteds = unionSelections(
@@ -488,9 +488,12 @@ export default class SeqViewerStage extends React.Component {
   handleMouseUp = ({evt}) => {
     const {curAnnot: {level: annotLevel}} = this.props;
     const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
-    const {mouseDown, anchorPos, prevSelecteds} = this.state;
-    this.setState({mouseDown: false});
-    if (!mouseDown) {
+    const {mouseDown, mouseMoved, anchorPos, prevSelecteds} = this.state;
+    this.setState({
+      mouseDown: false,
+      mouseMoved: false
+    });
+    if (!mouseDown || !mouseMoved) {
       return;
     }
     let posStart = mouseDown;
@@ -526,6 +529,7 @@ export default class SeqViewerStage extends React.Component {
 
   render() {
     const {
+      curAnnot,
       config, sequence,
       positionLookup
     } = this.props;
@@ -537,6 +541,7 @@ export default class SeqViewerStage extends React.Component {
       // than this.props.selectedPositions
       curSelecteds
     } = this.state;
+    const posByAnnot = getPositionsByAnnot(positionLookup, [curAnnot]);
     
     return (
       <div
@@ -560,6 +565,9 @@ export default class SeqViewerStage extends React.Component {
            selectedPositions={curSelecteds}
            anchorPos={anchorPos}
            config={config} />
+          <AnnotLayer
+           config={config}
+           positionsByAnnot={posByAnnot} />
           <StaticFgLayer
            sequence={sequence}
            config={config}

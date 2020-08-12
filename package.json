@@ -5,6 +5,7 @@
   "devDependencies": {
     "@babel/cli": "^7.10.3",
     "@babel/core": "^7.0.0-0",
+    "@babel/node": "^7.10.5",
     "@babel/runtime": "^7.10.3",
     "@testing-library/dom": ">=5",
     "@testing-library/jest-dom": "^4.2.4",
@@ -15,6 +16,7 @@
     "found": "^0.5.3",
     "graphql": "^14.3.1",
     "graphql-tag.macro": "^2.0.1",
+    "iwanthue": "^1.4.0",
     "react": "^16.13.1",
     "react-apollo": "^3.1.5",
     "react-dom": "^16.13.1",
@@ -72,7 +74,8 @@
     "start": "PORT=3009 react-scripts start",
     "build": "NODE_ENV=production npx babel src --out-dir dist --copy-files",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-colors": "node ./scripts/generate-colors.js > src/views/mut-annot-editor/components/canvas-sequence-viewer/colors.json"
   },
   "eslintConfig": {
     "extends": "react-app"
