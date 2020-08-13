@@ -77,6 +77,7 @@ class MutAnnotEditorInner extends React.Component {
   getDefaultState() {
     let {
       annotations,
+      defaultExtraAnnots = [],
       positions,
       citations
     } = this.props.annotationData;
@@ -89,6 +90,9 @@ class MutAnnotEditorInner extends React.Component {
       positions,
       citations,
       curAnnot,
+      extraAnnots: annotations.filter(
+        ({name}) => defaultExtraAnnots.includes(name)
+      ),
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
@@ -145,6 +149,10 @@ class MutAnnotEditorInner extends React.Component {
       extraReferredCitationIds: []
     });
   };
+
+  handleExtraAnnotsChange = (extraAnnots) => {
+    this.setState({extraAnnots});
+  }
   
   handleSeqViewerSizeChange = (seqViewerSize) => {
     this.setState({seqViewerSize});
@@ -205,6 +213,7 @@ class MutAnnotEditorInner extends React.Component {
       seqViewerSize,
       displayCitationIds,
       curAnnot,
+      extraAnnots,
       positions,
       allowEditing,
       changed
@@ -235,6 +244,7 @@ class MutAnnotEditorInner extends React.Component {
        className={style.seqviewer}
        {...{
          curAnnot,
+         extraAnnots,
          positionLookup,
          citations,
          displayCitationIds,
@@ -244,6 +254,7 @@ class MutAnnotEditorInner extends React.Component {
         <EditorController
          sequence={refSeq}
          onAnnotationChange={this.handleAnnotChange}
+         onExtraAnnotsChange={this.handleExtraAnnotsChange}
          onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
          onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
          onSave={this.handleSave}
@@ -253,6 +264,7 @@ class MutAnnotEditorInner extends React.Component {
            allowEditing,
            annotations,
            curAnnot,
+           extraAnnots,
            positionLookup,
            citations,
            referredCitationIds,

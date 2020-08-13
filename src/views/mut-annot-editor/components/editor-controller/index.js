@@ -27,6 +27,9 @@ export default class EditorController extends React.Component {
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
     className: PropTypes.string,
     curAnnot: annotShape.isRequired,
+    extraAnnots: PropTypes.arrayOf(
+      annotShape.isRequired
+    ).isRequired,
     referredCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -40,6 +43,7 @@ export default class EditorController extends React.Component {
     sequence: PropTypes.string.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
     onAnnotationChange: PropTypes.func.isRequired,
+    onExtraAnnotsChange: PropTypes.func.isRequired,
     onDisplayCitationIdsChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
@@ -72,6 +76,7 @@ export default class EditorController extends React.Component {
       seqViewerSize,
       onSeqViewerSizeChange,
       onAnnotationChange,
+      onExtraAnnotsChange,
       onDisplayCitationIdsChange,
       onReset,
       onSave,
@@ -81,7 +86,8 @@ export default class EditorController extends React.Component {
       sequence,
       curAnnot: {
         level: annotLevel
-      }
+      },
+      extraAnnots
     } = this.props;
 
     return (
@@ -92,11 +98,13 @@ export default class EditorController extends React.Component {
          onChange={onSeqViewerSizeChange} />
         <AnnotationFilter
          onChange={onAnnotationChange}
+         onExtraAnnotsChange={onExtraAnnotsChange}
          {...{
            onSave,
            allowEditing,
            curAnnot,
-           annotations
+           annotations,
+           extraAnnots
          }} />
         <CitationFilter
          onChange={onDisplayCitationIdsChange}

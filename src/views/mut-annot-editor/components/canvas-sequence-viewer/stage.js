@@ -53,6 +53,9 @@ export default class SeqViewerStage extends React.Component {
   static propTypes = {
     config: PropTypes.object.isRequired,
     curAnnot: annotShape,
+    extraAnnots: PropTypes.arrayOf(
+      annotShape.isRequired
+    ).isRequired,
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     selectedPositions: PropTypes.arrayOf(
@@ -529,7 +532,7 @@ export default class SeqViewerStage extends React.Component {
 
   render() {
     const {
-      curAnnot,
+      curAnnot, extraAnnots,
       config, sequence,
       positionLookup
     } = this.props;
@@ -541,7 +544,9 @@ export default class SeqViewerStage extends React.Component {
       // than this.props.selectedPositions
       curSelecteds
     } = this.state;
-    const posByAnnot = getPositionsByAnnot(positionLookup, [curAnnot]);
+    const posByAnnot = getPositionsByAnnot(
+      positionLookup, [...[...extraAnnots].reverse(), curAnnot]
+    );
     
     return (
       <div

@@ -33,6 +33,12 @@ class PositionGroup extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    if (this._timeout) {
+      clearTimeout(this._timeout);
+    }
+  }
+
   render() {
     const {
       position,
@@ -50,7 +56,10 @@ class PositionGroup extends React.Component {
     const {current: textElem} = this.posNumTextRef;
     let textColor = hoverPosNumColor;
     if (!textElem || textElem.attrs['data-position'] !== position) {
-      setTimeout(() => this.forceUpdate(), 0);
+      this._timeout = setTimeout(() => {
+        this.forceUpdate();
+        delete this._timeout;
+      }, 0);
       textColor = 'transparent';
     }
 

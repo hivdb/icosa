@@ -19,8 +19,12 @@ export default class AnnotationFilter extends React.Component {
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
+    extraAnnots: PropTypes.arrayOf(
+      annotShape.isRequired
+    ).isRequired,
     curAnnot: annotShape,
     onChange: PropTypes.func.isRequired,
+    onExtraAnnotsChange: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
   }
 
@@ -85,6 +89,23 @@ export default class AnnotationFilter extends React.Component {
     for (const annot of annotations) {
       if (annot.name === value) {
         onChange(annot);
+      }
+    }
+  }
+  
+  handleAddExtraAnnot = ({value}) => {
+    const {
+      extraAnnots,
+      annotations,
+      onExtraAnnotsChange
+    } = this.props;
+    if (extraAnnots.some(({name}) => name === value)) {
+      return;
+    }
+    for (const annot of annotations) {
+      if (annot.name === value) {
+        extraAnnots.push(annot);
+        onExtraAnnotsChange(extraAnnots);
       }
     }
   }
@@ -210,7 +231,7 @@ export default class AnnotationFilter extends React.Component {
       editHideCitations, editColorRules,
       warningText
     } = this.state;
-    const {allowEditing} = this.props;
+    const {allowEditing, extraAnnots} = this.props;
     const AddIcon = editMode === 'add' ? FaAngleUp : FaPlus;
     const EditIcon = editMode === 'edit' ? FaAngleUp : FaRegEdit;
 
@@ -223,7 +244,7 @@ export default class AnnotationFilter extends React.Component {
          name="annotation"
          className={style['dropdown-annotations']}
          onChange={this.handleChange} />
-        {allowEditing ? <>
+        {allowEditing && <>
           <Button
            disabled={editMode === 'edit'}
            name="expand-add-annotation"
@@ -242,7 +263,23 @@ export default class AnnotationFilter extends React.Component {
            onClick={this.toggle('edit')}>
             <EditIcon className={style['btn-icon']} />
           </Button>
-        </> : null}
+        </>}
+        <br /><br />
+        <p>
+          {allowEditing ? 'Default a' : 'A'}
+          dditional annotation groups:
+        </p>
+        <ul>
+          {extraAnnots.map(({name}) => (
+            <li key={name}>{name}</li>
+          ))}
+        </ul>
+        <Dropdown
+         value={null}
+         options={options}
+         name="annotation"
+         className={style['dropdown-annotations']}
+         onChange={this.handleAddExtraAnnot} />
         {inputExpanded ? (
           <div className={style.dialog}>
             <p>

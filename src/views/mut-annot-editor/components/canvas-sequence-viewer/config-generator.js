@@ -19,7 +19,8 @@ export default class ConfigGenerator {
     canvasWidthPixel,
     seqLength,
     highlightedPositions,
-    annotLevel
+    annotLevel,
+    numExtraAnnots
   }) {
     this.fontFamily = FONT_FAMILY;
 
@@ -28,11 +29,12 @@ export default class ConfigGenerator {
       canvasWidthPixel,
       seqLength,
       highlightedPositions,
-      annotLevel
+      annotLevel,
+      numExtraAnnots
     });
 
     const baseSizePixel = BASE_SIZE_PIXEL_MAP[sizeName];
-    this.initSizeConfig({baseSizePixel});
+    this.initSizeConfig({baseSizePixel, numExtraAnnots});
     this.initGridConfig({baseSizePixel, canvasWidthPixel, seqLength});
     this.initCoordConfig({baseSizePixel});
     this.initColorConfig({});
@@ -44,23 +46,30 @@ export default class ConfigGenerator {
       canvasWidthPixel,
       seqLength,
       highlightedPositions,
-      annotLevel
+      annotLevel,
+      numExtraAnnots
     } = this;
     return (
       `${sizeName}$$$${canvasWidthPixel}$$$${seqLength}$$$` +
-      `${highlightedPositions.join(',')}$$$${annotLevel}`
+      `${highlightedPositions.join(',')}$$$${annotLevel}$$$` +
+      `${numExtraAnnots}`
     );
   }
 
-  initSizeConfig({baseSizePixel}) {
+  initSizeConfig({baseSizePixel, numExtraAnnots}) {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
-    const verticalMarginPixel = baseSizePixel * 1.5;
+    const extraAnnotHeightPixel = baseSizePixel * 0.8;
+    const verticalMarginPixel = (
+      baseSizePixel * 1.5 +
+      extraAnnotHeightPixel * numExtraAnnots
+    );
 
     Object.assign(this, {
       baseSizePixel,
       posItemSizePixel,
       horizontalMarginPixel,
+      extraAnnotHeightPixel,
       verticalMarginPixel,
 
       strokeWidthPixel: baseSizePixel / 16,
@@ -121,6 +130,13 @@ export default class ConfigGenerator {
           this.annotMarginPixel +
           this.annotValFontSizePixel
         )
+      },
+      annotValBottomOffsetPixel: {
+        x: this.annotMarginPixel,
+        y: (
+          this.annotTickLengthPixel +
+          this.annotMarginPixel * 2
+        )
       }
     });
   }
@@ -145,7 +161,10 @@ export default class ConfigGenerator {
   }
 
   posRange2CoordPairs = (startPos, endPos) => {
-    const {numCols, posItemSizePixel} = this;
+    const {
+      numCols,
+      posItemSizePixel
+    } = this;
     const coordPairs = [];
     let startCoord = this.pos2Coord(startPos);
     let endCoord;

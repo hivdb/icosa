@@ -18,6 +18,9 @@ export default class CanvasSequenceViewer extends React.Component {
     size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
     curAnnot: annotShape,
+    extraAnnots: PropTypes.arrayOf(
+      annotShape.isRequired
+    ).isRequired,
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     selectedPositions: PropTypes.arrayOf(
@@ -37,7 +40,7 @@ export default class CanvasSequenceViewer extends React.Component {
   get config() {
     const {
       size, sequence,
-      positionLookup,
+      positionLookup, extraAnnots,
       curAnnot, displayCitationIds
     } = this.props;
     const highlightedPositions = getHighlightedPositions(
@@ -50,7 +53,8 @@ export default class CanvasSequenceViewer extends React.Component {
         canvasWidthPixel: containerWidth,
         seqLength: sequence.length,
         annotLevel: curAnnot.level,
-        highlightedPositions
+        highlightedPositions,
+        numExtraAnnots: extraAnnots.length
       });
     }
     return null;
@@ -72,7 +76,8 @@ export default class CanvasSequenceViewer extends React.Component {
     const {config} = this;
     const {
       className, sequence,
-      curAnnot, selectedPositions,
+      curAnnot, extraAnnots,
+      selectedPositions,
       displayCitationIds,
       positionLookup, onChange
     } = this.props;
@@ -89,6 +94,7 @@ export default class CanvasSequenceViewer extends React.Component {
          {...{
            config,
            curAnnot,
+           extraAnnots,
            sequence,
            positionLookup,
            selectedPositions,
