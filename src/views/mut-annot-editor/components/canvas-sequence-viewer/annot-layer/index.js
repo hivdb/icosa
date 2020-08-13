@@ -61,7 +61,7 @@ class PosAnnotGroup extends React.Component {
 
   get topBottom() {
     // 1: top, -1: bottom
-    return this.props.annotIndex % 2 === 0 ? TOP : BOTTOM;
+    return this.props.annotIndex % 2 === 1 ? TOP : BOTTOM;
   }
 
   calcPath = (startCoord, endCoord, isStart, isEnd) => {
@@ -69,13 +69,15 @@ class PosAnnotGroup extends React.Component {
       config: {
         annotMarginPixel: margin,
         annotTickLengthPixel: tickLen,
-        extraAnnotHeightPixel: annotHeight
+        extraAnnotHeightPixel: annotHeight,
+        hoverPosNumFontSizePixel: hoverFontSize
       },
       annotIndex
     } = this.props;
     const {topBottom} = this;
+    const offsetY = topBottom === BOTTOM ? hoverFontSize / 2 : 0;
     const extraTick = annotIndex > 1 ? (
-      Math.floor(annotIndex / 2) * annotHeight - tickLen - margin
+      Math.floor(annotIndex / 2) * annotHeight - tickLen - margin - offsetY
     ) : 0;
     let annotLineLen = endCoord.x - startCoord.x;
     if (!isStart) {
@@ -86,24 +88,24 @@ class PosAnnotGroup extends React.Component {
     const path = [];
     if (isStart) {
       path.push(`m0,${topBottom * (extraTick - margin)}`);
-      path.push(`v${topBottom * (- tickLen - extraTick)}`);
+      path.push(`v${topBottom * (- tickLen - offsetY - extraTick)}`);
     }
     else {
-      path.push(`m${tickLen},${topBottom * (- margin - tickLen)}`);
+      path.push(`m${tickLen},${topBottom * (- margin - tickLen - offsetY)}`);
       extStartPath = (
-        `m0,${topBottom * (- margin - tickLen / 2)}` +
+        `m0,${topBottom * (- margin - offsetY - tickLen / 2)}` +
         `l${tickLen},${- topBottom * tickLen / 2}` +
         `l${- tickLen},${- topBottom * tickLen / 2}`
       );
     }
     path.push(`h${annotLineLen}`);
     if (isEnd) {
-      path.push(`v${topBottom * (tickLen + extraTick)}`);
+      path.push(`v${topBottom * (tickLen + offsetY + extraTick)}`);
     }
     else {
       extEndPath = (
         `m${endCoord.x - startCoord.x - tickLen},` +
-        `${topBottom * (- margin - tickLen / 2)}` +
+        `${topBottom * (- margin - offsetY - tickLen / 2)}` +
         `l${tickLen},${- topBottom * tickLen / 2}` +
         `l${- tickLen},${- topBottom * tickLen / 2}`
       );
@@ -117,6 +119,7 @@ class PosAnnotGroup extends React.Component {
         annotStrokeWidthPixel: strokeWidth,
         annotStrokeColor: strokeColor,
         annotValFontSizePixel: fontSize,
+        hoverPosNumFontSizePixel: hoverFontSize,
         annotValOffsetPixel,
         annotValBottomOffsetPixel,
         annotValTextColor: textColor,
@@ -139,6 +142,7 @@ class PosAnnotGroup extends React.Component {
     const textOffset = (
       topBottom === TOP ? annotValOffsetPixel : annotValBottomOffsetPixel
     );
+    const extraTextOffsetY = topBottom === BOTTOM ? hoverFontSize / 2 : 0;
 
     return <>
       {posByAnnot.map(({annotVal, positions}) => (
@@ -160,7 +164,8 @@ class PosAnnotGroup extends React.Component {
                  opacity={opacity}
                  key={`${idx}-${jdx}`}>
                   <Text
-                   {...textOffset}
+                   x={textOffset.x}
+                   y={textOffset.y + extraTextOffsetY}
                    fontSize={fontSize}
                    fontFamily={fontFamily}
                    fontStyle={
@@ -171,8 +176,8 @@ class PosAnnotGroup extends React.Component {
                    text={annotVal} />
                   {showEndText &&
                     <XEndText
-                     y={textOffset.y}
                      xEnd={endCoord.x - startCoord.x - textOffset.x}
+                     y={textOffset.y + extraTextOffsetY}
                      fontSize={fontSize}
                      fontFamily={fontFamily}
                      fontStyle="bold"
