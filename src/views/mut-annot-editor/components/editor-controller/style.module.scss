@@ -17,6 +17,14 @@
     padding-left: 1.5rem;
   }
 
+  a {
+    color: color(link-text);
+    &:hover {
+      color: color(link-text);
+      text-decoration: underline;
+    }
+  }
+
   > label {
     font-weight: 600;
     display: block;
@@ -26,11 +34,6 @@
     a {
       font-weight: 400;
       font-size: 1rem;
-      color: color(link-text);
-      &:hover {
-        color: color(link-text);
-        text-decoration: underline;
-      }
     }
   }
   > .dropdown-annotations {
@@ -103,13 +106,6 @@
       display: block;
       color: rgba(0, 0, 0, .35);
       font-size: 0.8rem;
-    }
-    a {
-      color: color(link-text);
-      &:hover {
-        color: color(link-text);
-        text-decoration: underline;
-      }
     }
   }
 

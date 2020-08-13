@@ -75,9 +75,12 @@ class PosAnnotGroup extends React.Component {
       annotIndex
     } = this.props;
     const {topBottom} = this;
-    const offsetY = topBottom === BOTTOM ? hoverFontSize / 2 : 0;
+    let offsetY = topBottom === BOTTOM ? hoverFontSize / 2 : 0;
+    offsetY += (
+      annotIndex > 3 ? Math.floor(annotIndex / 2 - 2) * annotHeight : 0
+    );
     const extraTick = annotIndex > 1 ? (
-      Math.floor(annotIndex / 2) * annotHeight - tickLen - margin - offsetY
+      annotHeight - tickLen - margin - offsetY
     ) : 0;
     let annotLineLen = endCoord.x - startCoord.x;
     if (!isStart) {
@@ -232,7 +235,7 @@ export default class AnnotLayer extends React.Component {
     const {config, positionsByAnnot} = this.props;
     const reversed = [...positionsByAnnot].reverse();
     const lastIdx = reversed.length - 1;
-    const opDelim = Math.floor(reversed.length / 2) - 1;
+    const opDelim = Math.ceil(reversed.length / 2) - 1;
 
     return (
       <Layer>

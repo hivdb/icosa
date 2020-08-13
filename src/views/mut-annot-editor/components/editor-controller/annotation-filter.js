@@ -106,8 +106,25 @@ export default class AnnotationFilter extends React.Component {
       if (annot.name === value) {
         extraAnnots.push(annot);
         onExtraAnnotsChange(extraAnnots);
+        break;
       }
     }
+  }
+
+  handleRemoveExtraAnnot(removeName) {
+    return (evt) => {
+      evt.preventDefault();
+      const {
+        extraAnnots,
+        onExtraAnnotsChange
+      } = this.props;
+      const newExtraAnnots = extraAnnots.filter(
+        ({name}) => name !== removeName
+      );
+      if (extraAnnots.length > newExtraAnnots.length) {
+        onExtraAnnotsChange(newExtraAnnots);
+      }
+    };
   }
 
   handleEditName = ({currentTarget: {value}}) => {
@@ -271,7 +288,14 @@ export default class AnnotationFilter extends React.Component {
         </p>
         <ul>
           {extraAnnots.map(({name}) => (
-            <li key={name}>{name}</li>
+            <li key={name}>
+              {name} (
+              <a
+               href="#remove-extra-annot"
+               onClick={this.handleRemoveExtraAnnot(name)}>
+                remove
+              </a>)
+            </li>
           ))}
         </ul>
         <Dropdown
