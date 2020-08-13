@@ -7,7 +7,7 @@ import PositionGroup from './position-group';
 import {posShape} from '../../../prop-types';
 
 
-export default class StaticFgLayer extends React.Component {
+export default class PosItemLayer extends React.Component {
 
   static propTypes = {
     sequence: PropTypes.string.isRequired,

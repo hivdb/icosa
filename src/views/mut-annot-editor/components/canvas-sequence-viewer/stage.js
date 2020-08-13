@@ -8,12 +8,10 @@ import union from 'lodash/union';
 import debounce from 'lodash/debounce';
 
 import style from './style.module.scss';
-import StaticBgLayer from './static-bg-layer';
-import StaticFgLayer from './static-fg-layer';
-import SelectedBgLayer from './selected-bg-layer';
-import SelectedFgLayer from './selected-fg-layer';
+import PosItemLayer from './positem-layer';
+import SelectedLayer from './selected-layer';
 import AnnotLayer from './annot-layer';
-import HoverFgLayer from './hover-fg-layer';
+import HoverLayer from './hover-layer';
 
 import {annotShape, posShape} from '../../prop-types';
 import {getPositionsByAnnot} from './funcs';
@@ -562,27 +560,19 @@ export default class SeqViewerStage extends React.Component {
          onMouseOut={this.handleMouseMove}
          onMouseUp={this.handleMouseUp}
          height={config.canvasHeightPixel}>
-          <StaticBgLayer
-           sequence={sequence}
-           config={config}
-           positionLookup={positionLookup} />
-          <SelectedBgLayer
-           selectedPositions={curSelecteds}
-           anchorPos={anchorPos}
-           config={config} />
           <AnnotLayer
            config={config}
            positionsByAnnot={posByAnnot} />
-          <StaticFgLayer
+          <PosItemLayer
            sequence={sequence}
            config={config}
            positionLookup={positionLookup} />
-          <HoverFgLayer
+          <HoverLayer
            hoverPos={hoverPos}
            activePos={activePos}
            anchorPos={anchorPos}
            config={config} />
-          <SelectedFgLayer
+          <SelectedLayer
            selectedPositions={curSelecteds}
            anchorPos={anchorPos}
            config={config} />

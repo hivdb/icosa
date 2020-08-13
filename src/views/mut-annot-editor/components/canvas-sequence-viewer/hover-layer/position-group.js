@@ -1,9 +1,9 @@
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
-import {Layer, Group, Rect, Text} from 'react-konva';
+import {Group, Rect, Text} from 'react-konva';
 
 
-class PositionGroup extends React.Component {
+export default class PositionGroup extends React.Component {
 
   static propTypes = {
     position: PropTypes.number.isRequired,
@@ -87,51 +87,3 @@ class PositionGroup extends React.Component {
     );
   }
 }
-
-
-export default class HoverFgLayer extends React.Component {
-
-  static propTypes = {
-    hoverPos: PropTypes.number,
-    activePos: PropTypes.number,
-    anchorPos: PropTypes.number,
-    config: PropTypes.object.isRequired
-  }
-
-  constructor() {
-    super(...arguments);
-    this.layerRef = createRef();
-  }
-
-  get positions() {
-    const {
-      hoverPos,
-      activePos,
-      anchorPos
-    } = this.props;
-    const positions = [];
-    if (hoverPos) {
-      positions.push(hoverPos);
-    }
-    if (activePos && activePos !== hoverPos) {
-      positions.push(activePos);
-    }
-    if (anchorPos && !positions.includes(anchorPos)) {
-      positions.push(anchorPos);
-    }
-    return positions;
-  }
-
-  render() {
-    const {config} = this.props;
-    const {positions} = this;
-
-    return <Layer ref={this.layerRef}>
-      {positions.map(pos => (
-        <PositionGroup position={pos} config={config} key={pos} />
-      ))}
-    </Layer>;
-  }
-}
-
-
