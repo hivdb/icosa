@@ -123,20 +123,6 @@ export function getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds = null) {
   return aas;
 }
 
-export function isPosHighlighted(
-  curAnnot, posAnnot, displayCitationIds = null
-) {
-  if (!posAnnot || !curAnnot) {
-    return false;
-  }
-  const {level} = curAnnot;
-  if (level === 'position') {
-    return !!getPosAnnotVal(curAnnot, posAnnot, displayCitationIds);
-  }
-  else {
-    return getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds).length > 0;
-  }
-}
 
 export function getHighlightedPositions(
   curAnnot, positionLookup, displayCitationIds = null
@@ -144,10 +130,36 @@ export function getHighlightedPositions(
   if (!curAnnot) {
     return [];
   }
+  const {level, colorRules = []} = curAnnot;
   const positions = [];
-  for (const posdata of Object.values(positionLookup)) {
-    if (isPosHighlighted(curAnnot, posdata, displayCitationIds)) {
-      positions.push(posdata.position);
+  const colorRulePatterns = colorRules.map(r => new RegExp(r));
+  const colorRulePlains = [];
+  if (level === 'position') {
+    for (const posdata of Object.values(positionLookup)) {
+      const val = getPosAnnotVal(curAnnot, posdata, displayCitationIds);
+      if (!val) {
+        continue;
+      }
+      let colorIdx = colorRulePatterns.findIndex(p => p.test(val));
+      if (colorIdx === -1) {
+        const relIdx = colorRulePlains.indexOf(val);
+        colorIdx = colorRulePatterns.length + relIdx;
+        if (relIdx === -1) {
+          // not found, append to the end of colorRulePlains
+          colorRulePlains.push(val);
+          colorIdx += colorRulePlains.length;
+        }
+      }
+      positions.push([posdata.position, colorIdx]);
+    }
+  }
+  else {
+    for (const posdata of Object.values(positionLookup)) {
+      const aas = getPosAnnotAAs(curAnnot, posdata, displayCitationIds);
+      if (aas.length === 0) {
+        continue;
+      }
+      positions.push([posdata.position, 0]);
     }
   }
   return positions;

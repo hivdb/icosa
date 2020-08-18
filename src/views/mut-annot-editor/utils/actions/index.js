@@ -5,3 +5,4 @@ export {removeAnnotation} from './remove-annotation';
 export {editCitation} from './edit-citation';
 export {removeCitation} from './remove-citation';
 export {editAminoAcids} from './edit-amino-acids';
+export {editDefaultExtraAnnots} from './edit-default-extra-annots';

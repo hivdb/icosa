@@ -74,6 +74,16 @@ class MutAnnotEditorInner extends React.Component {
     annotationData: PropTypes.object.isRequired
   }
 
+  getDefaultExtraAnnots() {
+    const {
+      annotations,
+      defaultExtraAnnots = []
+    } = this.props.annotationData;
+    return annotations.filter(
+      ({name}) => defaultExtraAnnots.includes(name)
+    );
+  }
+
   getDefaultState() {
     let {
       annotations,
@@ -87,12 +97,11 @@ class MutAnnotEditorInner extends React.Component {
     const curAnnot = annotations[0] || null;
     return {
       annotations,
+      defaultExtraAnnots,
       positions,
       citations,
       curAnnot,
-      extraAnnots: annotations.filter(
-        ({name}) => defaultExtraAnnots.includes(name)
-      ),
+      extraAnnots: this.getDefaultExtraAnnots(),
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
@@ -151,6 +160,9 @@ class MutAnnotEditorInner extends React.Component {
   };
 
   handleExtraAnnotsChange = (extraAnnots) => {
+    if (extraAnnots === null) {
+      extraAnnots = this.getDefaultExtraAnnots();
+    }
     this.setState({extraAnnots});
   }
   
@@ -208,6 +220,7 @@ class MutAnnotEditorInner extends React.Component {
     } = this.props;
     const {
       annotations,
+      defaultExtraAnnots,
       citations,
       selectedPositions,
       seqViewerSize,
@@ -233,6 +246,7 @@ class MutAnnotEditorInner extends React.Component {
          gene,
          taxonomy,
          annotations,
+         defaultExtraAnnots,
          positions,
          citations,
          allowEditing,
@@ -264,6 +278,7 @@ class MutAnnotEditorInner extends React.Component {
            allowEditing,
            annotations,
            curAnnot,
+           defaultExtraAnnots,
            extraAnnots,
            positionLookup,
            citations,

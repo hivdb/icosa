@@ -1,3 +1,5 @@
+import COLORS from './colors.json';
+
 const BASE_SIZE_PIXEL_MAP = {
   large: 40,
   middle: 32,
@@ -20,7 +22,7 @@ export default class ConfigGenerator {
     seqLength,
     highlightedPositions,
     annotLevel,
-    numExtraAnnots
+    extraAnnotNames
   }) {
     this.fontFamily = FONT_FAMILY;
 
@@ -30,14 +32,21 @@ export default class ConfigGenerator {
       seqLength,
       highlightedPositions,
       annotLevel,
-      numExtraAnnots
+      extraAnnotNames
     });
 
     const baseSizePixel = BASE_SIZE_PIXEL_MAP[sizeName];
-    this.initSizeConfig({baseSizePixel, numExtraAnnots});
+    this.initSizeConfig({baseSizePixel, extraAnnotNames});
     this.initGridConfig({baseSizePixel, canvasWidthPixel, seqLength});
-    this.initCoordConfig({baseSizePixel});
+    this.initCoordConfig({baseSizePixel, extraAnnotNames});
     this.initColorConfig({});
+
+    this.extraAnnotColorIndexOffset = 0;
+    if (highlightedPositions.length > 0) {
+      this.extraAnnotColorIndexOffset = Math.max(
+        ...highlightedPositions.map(([, idx]) => idx)
+      ) + 1;
+    }
   }
 
   getHash() {
@@ -47,22 +56,23 @@ export default class ConfigGenerator {
       seqLength,
       highlightedPositions,
       annotLevel,
-      numExtraAnnots
+      extraAnnotNames
     } = this;
     return (
       `${sizeName}$$$${canvasWidthPixel}$$$${seqLength}$$$` +
-      `${highlightedPositions.join(',')}$$$${annotLevel}$$$` +
-      `${numExtraAnnots}`
+      `${JSON.stringify(highlightedPositions)}$$$${annotLevel}$$$` +
+      `${JSON.stringify(extraAnnotNames)}`
     );
   }
 
-  initSizeConfig({baseSizePixel, numExtraAnnots}) {
+  initSizeConfig({baseSizePixel, extraAnnotNames}) {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
-    const extraAnnotHeightPixel = baseSizePixel * 0.8;
+    const extraAnnotHeightPixel = baseSizePixel / 5;
+    const annotMarginPixel = baseSizePixel / 8;
     const verticalMarginPixel = (
-      baseSizePixel * 1.5 +
-      extraAnnotHeightPixel * numExtraAnnots
+      baseSizePixel * 0.2 +
+      (annotMarginPixel + extraAnnotHeightPixel) * extraAnnotNames.length
     );
 
     Object.assign(this, {
@@ -87,7 +97,7 @@ export default class ConfigGenerator {
       nonHighlightBgPathWidthPixel: baseSizePixel / 5,
 
       annotStrokeWidthPixel: baseSizePixel / 24,
-      annotMarginPixel: baseSizePixel / 8,
+      annotMarginPixel,
       annotTickLengthPixel: baseSizePixel / 5,
       annotValFontSizePixel: baseSizePixel / 2
     });
@@ -109,7 +119,7 @@ export default class ConfigGenerator {
     });
   }
 
-  initCoordConfig({baseSizePixel}) {
+  initCoordConfig({baseSizePixel, extraAnnotNames}) {
     Object.assign(this, {
       refAAOffsetPixel: {
         x: 0,
@@ -121,7 +131,7 @@ export default class ConfigGenerator {
       },
       hoverPosNumOffsetPixel: {
         x: 0,
-        y: baseSizePixel * 1.1
+        y: baseSizePixel * 1.2
       },
       annotValOffsetPixel: {
         x: this.annotMarginPixel,
@@ -160,12 +170,19 @@ export default class ConfigGenerator {
     });
   }
 
-  posRange2CoordPairs = (startPos, endPos) => {
+  posRange2CoordPairs = (startPos, endPos, annotIndex) => {
     const {
       numCols,
-      posItemSizePixel
+      posItemSizePixel,
+      extraAnnotHeightPixel,
+      annotMarginPixel
     } = this;
     const coordPairs = [];
+    const offsetY = (
+      posItemSizePixel + annotMarginPixel + 
+      annotIndex * (extraAnnotHeightPixel + annotMarginPixel)
+    );
+    const endOffsetY = offsetY + extraAnnotHeightPixel;
     let startCoord = this.pos2Coord(startPos);
     let endCoord;
     for (
@@ -175,11 +192,15 @@ export default class ConfigGenerator {
     ) {
       endCoord = this.pos2Coord(breakPos);
       endCoord.x += posItemSizePixel;
+      startCoord.y += offsetY;
+      endCoord.y += endOffsetY;
       coordPairs.push({startCoord, endCoord});
       startCoord = this.pos2Coord(breakPos + 1);
     }
     endCoord = this.pos2Coord(endPos);
     endCoord.x += posItemSizePixel;
+    startCoord.y += offsetY;
+    endCoord.y += endOffsetY;
     coordPairs.push({startCoord, endCoord});
     return coordPairs;
   }
@@ -197,7 +218,7 @@ export default class ConfigGenerator {
     const colNumber0 = (pos - 1) % numCols;
     const rowNumber0 = Math.floor((pos - 1) / numCols);
     const x = colNumber0 * (hMargin + boxSize) + hMargin;
-    const y = rowNumber0 * (vMargin + boxSize) + vMargin;
+    const y = rowNumber0 * (vMargin + boxSize) + 1;
     return {x, y};
   }
 
@@ -252,7 +273,24 @@ export default class ConfigGenerator {
   }
 
   isPositionHighlighted = (pos) => {
-    return this.highlightedPositions.includes(pos);
+    return this.highlightedPositions.findIndex(([p]) => p === pos) > -1;
+  }
+
+  getColorIndex = (pos) => {
+    const highlighted = this.highlightedPositions.find(([p]) => p === pos);
+    if (highlighted) {
+      const [, colorIdx] = highlighted;
+      return colorIdx % COLORS.length;
+    }
+  }
+
+  getExtraAnnotColorIndex = (annotName) => {
+    const {extraAnnotColorIndexOffset, extraAnnotNames} = this;
+    const colorIdx = (
+      extraAnnotNames.indexOf(annotName) +
+      extraAnnotColorIndexOffset
+    );
+    return colorIdx % COLORS.length;
   }
 
   getStrokeColor = (pos, hovering) => {
@@ -260,6 +298,10 @@ export default class ConfigGenerator {
       return this.strokeDefaultColorHovering;
     }
     else {
+      const colorIdx = this.getColorIndex(pos);
+      if (colorIdx !== undefined) {
+        return COLORS[colorIdx].dark;
+      }
       return this.strokeDefaultColor;
     }
   }
@@ -269,8 +311,17 @@ export default class ConfigGenerator {
       return this.backgroundDefaultColorHovering;
     }
     else {
+      const colorIdx = this.getColorIndex(pos);
+      if (colorIdx !== undefined) {
+        return COLORS[colorIdx].light;
+      }
       return this.backgroundDefaultColor;
     }
+  }
+
+  getExtraAnnotColor = (annotName) => {
+    const colorIdx = this.getExtraAnnotColorIndex(annotName);
+    return COLORS[colorIdx].dark;
   }
 
 }

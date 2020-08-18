@@ -10,6 +10,7 @@ import {
 import style from './style.module.scss';
 import SizeController from './size-controller';
 import AnnotationFilter from './annotation-filter';
+import ExtraAnnotFilter from './extra-annot-filter';
 import CitationFilter from './citation-filter';
 import PosAnnotEditBox from './pos-annot-editbox';
 import AAAnnotEditBox from './aa-annot-editbox';
@@ -22,6 +23,9 @@ export default class EditorController extends React.Component {
     allowEditing: PropTypes.bool.isRequired,
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
+    ).isRequired,
+    defaultExtraAnnots: PropTypes.arrayOf(
+      PropTypes.string.isRequired
     ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
@@ -82,6 +86,7 @@ export default class EditorController extends React.Component {
       onSave,
       curAnnot,
       annotations,
+      defaultExtraAnnots,
       citations,
       sequence,
       curAnnot: {
@@ -98,12 +103,19 @@ export default class EditorController extends React.Component {
          onChange={onSeqViewerSizeChange} />
         <AnnotationFilter
          onChange={onAnnotationChange}
-         onExtraAnnotsChange={onExtraAnnotsChange}
          {...{
            onSave,
            allowEditing,
            curAnnot,
+           annotations
+         }} />
+        <ExtraAnnotFilter
+         onChange={onExtraAnnotsChange}
+         {...{
+           onSave,
+           allowEditing,
            annotations,
+           defaultExtraAnnots,
            extraAnnots
          }} />
         <CitationFilter

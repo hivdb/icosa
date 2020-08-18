@@ -1,5 +1,5 @@
 import React from 'react';
-import {Group, Rect, Text, Path} from 'react-konva';
+import {Group, Rect, Text} from 'react-konva';
 
 
 export default function PositionGroup({
@@ -10,7 +10,6 @@ export default function PositionGroup({
 }) {
   const {
     posItemSizePixel: itemSize,
-    nonHighlightBgPathWidthPixel: pathWidth,
     strokeWidthPixel,
     refAAOffsetPixel: refAAOffset,
     refAAFontSizePixel,
@@ -30,20 +29,7 @@ export default function PositionGroup({
        y={0}
        width={itemSize}
        height={itemSize}
-       fill={config.getBgColor(position)} /> :
-      <Path
-       x={0}
-       y={0}
-       fill={config.getBgColor(position)}
-       data={`
-         m ${itemSize - pathWidth},0
-         l ${pathWidth},0
-         l 0,${pathWidth}
-         l -${itemSize - pathWidth},${itemSize - pathWidth}
-         l -${pathWidth},0
-         l 0,-${pathWidth}
-         l ${itemSize - pathWidth},-${itemSize - pathWidth}
-         z`} />
+       fill={config.getBgColor(position)} /> : null
     }
     {/* foreground:
         rect (border), position text and position ref AA */}

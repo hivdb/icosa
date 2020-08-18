@@ -1,6 +1,5 @@
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
-import randomColor from 'randomcolor';
 import {Stage} from 'react-konva';
 import xor from 'lodash/xor';
 import range from 'lodash/range';
@@ -10,13 +9,11 @@ import debounce from 'lodash/debounce';
 import style from './style.module.scss';
 import PosItemLayer from './positem-layer';
 import SelectedLayer from './selected-layer';
-import AnnotLayer from './annot-layer';
+import ExtraAnnotsLayer from './extra-annots-layer';
 import HoverLayer from './hover-layer';
 
 import {annotShape, posShape} from '../../prop-types';
 import {getPositionsByAnnot} from './funcs';
-
-const RANDOM_COLOR_SEED = 126;
 
 
 function rangePos(start, end) {
@@ -159,87 +156,6 @@ export default class SeqViewerStage extends React.Component {
       });
     }
     this.props.onChange(selecteds);
-  }
-
-  get colorScheme() {
-    const {
-      curAnnot: {
-        name: annotName,
-        level: annotLevel,
-        colorRules = []
-      },
-      positionLookup
-    } = this.props;
-    if (annotLevel !== 'position') {
-      return {};
-    }
-    const annotVals = [];
-    for (const posdata of Object.values(positionLookup)) {
-      const {annotations} = posdata;
-      const posAnnot = annotations.find(({name}) => name === annotName);
-      if (!posAnnot) {
-        continue;
-      }
-      const annotVal = posAnnot.value;
-      if (!annotVals.includes(annotVal)) {
-        annotVals.push(annotVal);
-      }
-    }
-    const annotValGroup = {};
-    let numColors = colorRules.length;
-    if (numColors > 0) {
-      const colorRulePatterns = colorRules.map(r => new RegExp(r));
-      let extraIdx = numColors;
-      for (const annotVal of annotVals) {
-        let matchFlag = false;
-        for (let i = 0; i < numColors; i ++) {
-          const pattern = colorRulePatterns[i];
-          if (pattern.test(annotVal)) {
-            annotValGroup[annotVal] = i;
-            matchFlag = true;
-            break;
-          }
-        }
-        if (!matchFlag) {
-          annotValGroup[annotVal] = extraIdx ++;
-        }
-      }
-      numColors = Object.values(annotValGroup).length;
-    }
-    else {
-      numColors = annotVals.length;
-      for (let i = 0; i < numColors; i ++) {
-        const annotVal = annotVals[i];
-        annotValGroup[annotVal] = i;
-      }
-    }
-    const borderColors = randomColor({
-      count: numColors,
-      luminosity: 'dark',
-      seed: RANDOM_COLOR_SEED
-    });
-    const activeColors = randomColor({
-      count: numColors,
-      luminosity: 'brighter',
-      format: 'rgba',
-      alpha: .9,
-      seed: RANDOM_COLOR_SEED
-    });
-    const hoverColors = randomColor({
-      count: numColors,
-      luminosity: 'dark',
-      format: 'rgba',
-      alpha: .5,
-      seed: RANDOM_COLOR_SEED
-    });
-    return Object.entries(annotValGroup).reduce((acc, [val, idx]) => {
-      acc[val] = {
-        border: borderColors[idx],
-        active: activeColors[idx],
-        hover: hoverColors[idx]
-      };
-      return acc;
-    }, {});
   }
 
   handleGlobalKeyDown = (evt) => {
@@ -530,7 +446,7 @@ export default class SeqViewerStage extends React.Component {
 
   render() {
     const {
-      curAnnot, extraAnnots,
+      extraAnnots,
       config, sequence,
       positionLookup
     } = this.props;
@@ -543,7 +459,7 @@ export default class SeqViewerStage extends React.Component {
       curSelecteds
     } = this.state;
     const posByAnnot = getPositionsByAnnot(
-      positionLookup, [...[...extraAnnots].reverse(), curAnnot]
+      positionLookup, extraAnnots
     );
     
     return (
@@ -560,7 +476,7 @@ export default class SeqViewerStage extends React.Component {
          onMouseOut={this.handleMouseMove}
          onMouseUp={this.handleMouseUp}
          height={config.canvasHeightPixel}>
-          <AnnotLayer
+          <ExtraAnnotsLayer
            config={config}
            positionsByAnnot={posByAnnot} />
           <PosItemLayer
@@ -579,29 +495,6 @@ export default class SeqViewerStage extends React.Component {
         </Stage>
       </div>
     );
-    /*  <div
-       onMouseDown={this.handleMouseDown}
-       onMouseMove={this.handleMouseMove}
-       onMouseUp={this.handleMouseUp}
-       className={combinedClassName}>
-        {Array.from(sequence).map((residue, pos0) => (
-          <PositionItem
-           key={pos0} size={size}
-           selectableRef={this.posItemRefs[pos0]}
-           curAnnot={curAnnot}
-           colorScheme={colorScheme}
-           onDirectionKeyUp={this.handleDirectionKeyUp}
-           onDirectionKeyDown={this.handleDirectionKeyDown}
-           onToggleSelect={this.handleToggleSelect}
-           active={selectedPositions.includes(pos0 + 1)}
-           posAnnot={positionLookup[pos0 + 1]}
-           prevPosAnnot={positionLookup[pos0]}
-           postPosAnnot={positionLookup[pos0 + 2]}
-           displayCitationIds={displayCitationIds}
-           position={pos0 + 1} residue={residue} />
-        ))}
-      </div>
-    </>;*/
   }
 
 }

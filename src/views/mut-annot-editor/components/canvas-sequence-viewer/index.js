@@ -46,6 +46,7 @@ export default class CanvasSequenceViewer extends React.Component {
     const highlightedPositions = getHighlightedPositions(
       curAnnot, positionLookup, displayCitationIds
     );
+    const {colorRules = []} = curAnnot;
     const {containerWidth} = this;
     if (containerWidth) {
       return new ConfigGenerator({
@@ -54,7 +55,8 @@ export default class CanvasSequenceViewer extends React.Component {
         seqLength: sequence.length,
         annotLevel: curAnnot.level,
         highlightedPositions,
-        numExtraAnnots: extraAnnots.length
+        extraAnnotNames: extraAnnots.map(({name}) => name),
+        colorRules
       });
     }
     return null;

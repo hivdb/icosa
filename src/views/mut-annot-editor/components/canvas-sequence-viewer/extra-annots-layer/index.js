@@ -7,7 +7,7 @@ import PosAnnotGroup from './posannot-group';
 import {posByAnnotShape} from './prop-types';
 
 
-export default class AnnotLayer extends React.Component {
+export default class ExtraAnnotsLayer extends React.Component {
 
   static propTypes = {
     config: PropTypes.object.isRequired,
@@ -29,22 +29,18 @@ export default class AnnotLayer extends React.Component {
 
   render() {
     const {config, positionsByAnnot} = this.props;
-    const reversed = [...positionsByAnnot].reverse();
-    const lastIdx = reversed.length - 1;
-    const opDelim = Math.ceil(reversed.length / 2) - 1;
+    const lastIdx = positionsByAnnot.length - 1;
 
     return (
       <Layer>
-        {reversed.map(({
-          annot: {level}, positions
+        {positionsByAnnot.map(({
+          annot: {name, level}, positions
         }, idx) => (level === 'position' ?
           <PosAnnotGroup
            key={idx}
+           annotName={name}
            numAnnots={lastIdx + 1}
            annotIndex={idx}
-           opacity={
-             opDelim === 0 ? 1 : 1 - 0.6 * Math.floor(idx / 2) / opDelim
-           }
            {...{config, positions}} />
           : null
         ))}

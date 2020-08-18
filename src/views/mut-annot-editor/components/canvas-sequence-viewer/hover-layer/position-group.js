@@ -73,6 +73,13 @@ export default class PositionGroup extends React.Component {
          height={posItemSizePixel}
          stroke={getStrokeColor(position, true)}
          strokeWidth={strokeWidthPixel} />
+        <Rect
+         x={0}
+         y={posNumOffset.y}
+         fill="white"
+         opacity={0.5}
+         width={posItemSizePixel}
+         height={hoverPosNumFontSizePixel} />
         <Text
          ref={this.posNumTextRef}
          x={posNumOffset.x}
