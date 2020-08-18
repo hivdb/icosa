@@ -5,6 +5,7 @@ import Dropdown from 'react-dropdown';
 import Button from '../../../../components/button';
 
 import {annotShape} from '../../prop-types';
+import LegendContext from '../legend-context';
 
 import style from './style.module.scss';
 
@@ -122,17 +123,25 @@ export default class ExtraAnnotFilter extends React.Component {
           dditional annotation groups:
         </label>
         <ul>
-          {extraAnnots.map(({name}) => (
-            <li key={name}>
-              {name} (
-              <a
-               href="#remove-extra-annot"
-               data-annot-name={name}
-               onClick={this.handleRemove}>
-                remove
-              </a>)
-            </li>
-          ))}
+          <LegendContext.Consumer>
+            {({extraAnnotColorLookup}) => (
+              extraAnnots.map(({name}) => (
+                <li key={name}>
+                  <span className={style['extra-annot-name']} style={{
+                    'border-bottom-color': extraAnnotColorLookup[name]
+                  }}>
+                    {name}
+                  </span> (
+                  <a
+                   href="#remove-extra-annot"
+                   data-annot-name={name}
+                   onClick={this.handleRemove}>
+                    remove
+                  </a>)
+                </li>
+              ))
+            )}
+          </LegendContext.Consumer>
         </ul>
         <Dropdown
          value={null}

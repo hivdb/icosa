@@ -13,7 +13,6 @@ import ExtraAnnotsLayer from './extra-annots-layer';
 import HoverLayer from './hover-layer';
 
 import {annotShape, posShape} from '../../prop-types';
-import {getPositionsByAnnot} from './funcs';
 
 
 function rangePos(start, end) {
@@ -446,7 +445,6 @@ export default class SeqViewerStage extends React.Component {
 
   render() {
     const {
-      extraAnnots,
       config, sequence,
       positionLookup
     } = this.props;
@@ -458,9 +456,6 @@ export default class SeqViewerStage extends React.Component {
       // than this.props.selectedPositions
       curSelecteds
     } = this.state;
-    const posByAnnot = getPositionsByAnnot(
-      positionLookup, extraAnnots
-    );
     
     return (
       <div
@@ -476,9 +471,7 @@ export default class SeqViewerStage extends React.Component {
          onMouseOut={this.handleMouseMove}
          onMouseUp={this.handleMouseUp}
          height={config.canvasHeightPixel}>
-          <ExtraAnnotsLayer
-           config={config}
-           positionsByAnnot={posByAnnot} />
+          <ExtraAnnotsLayer {...{config}} />
           <PosItemLayer
            sequence={sequence}
            config={config}

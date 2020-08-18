@@ -22,7 +22,8 @@ export default class ConfigGenerator {
     seqLength,
     highlightedPositions,
     annotLevel,
-    extraAnnotNames
+    extraAnnotNames,
+    extraAnnotLocations
   }) {
     this.fontFamily = FONT_FAMILY;
 
@@ -32,21 +33,22 @@ export default class ConfigGenerator {
       seqLength,
       highlightedPositions,
       annotLevel,
-      extraAnnotNames
+      extraAnnotNames,
+      extraAnnotLocations
     });
 
     const baseSizePixel = BASE_SIZE_PIXEL_MAP[sizeName];
     this.initSizeConfig({baseSizePixel, extraAnnotNames});
     this.initGridConfig({baseSizePixel, canvasWidthPixel, seqLength});
+    this.initExtraAnnotsConfig({
+      extraAnnotNames,
+      highlightedPositions,
+      extraAnnotLocations,
+      seqLength
+    });
+    this.initCanvasConfig({seqLength});
     this.initCoordConfig({baseSizePixel, extraAnnotNames});
     this.initColorConfig({});
-
-    this.extraAnnotColorIndexOffset = 0;
-    if (highlightedPositions.length > 0) {
-      this.extraAnnotColorIndexOffset = Math.max(
-        ...highlightedPositions.map(([, idx]) => idx)
-      ) + 1;
-    }
   }
 
   getHash() {
@@ -56,12 +58,14 @@ export default class ConfigGenerator {
       seqLength,
       highlightedPositions,
       annotLevel,
-      extraAnnotNames
+      extraAnnotNames,
+      extraAnnotLocations
     } = this;
     return (
       `${sizeName}$$$${canvasWidthPixel}$$$${seqLength}$$$` +
       `${JSON.stringify(highlightedPositions)}$$$${annotLevel}$$$` +
-      `${JSON.stringify(extraAnnotNames)}`
+      `${JSON.stringify(extraAnnotNames)}$$$` +
+      `${JSON.stringify(extraAnnotLocations)}$$$`
     );
   }
 
@@ -70,10 +74,7 @@ export default class ConfigGenerator {
     const horizontalMarginPixel = baseSizePixel / 5;
     const extraAnnotHeightPixel = baseSizePixel / 5;
     const annotMarginPixel = baseSizePixel / 8;
-    const verticalMarginPixel = (
-      baseSizePixel * 0.2 +
-      (annotMarginPixel + extraAnnotHeightPixel) * extraAnnotNames.length
-    );
+    const verticalMarginPixel = baseSizePixel * 0.2;
 
     Object.assign(this, {
       baseSizePixel,
@@ -97,30 +98,106 @@ export default class ConfigGenerator {
       nonHighlightBgPathWidthPixel: baseSizePixel / 5,
 
       annotStrokeWidthPixel: baseSizePixel / 24,
-      annotMarginPixel,
+      annotMarginPixel,  // TODO: change name to extraAnnotMarginPixel
       annotTickLengthPixel: baseSizePixel / 5,
       annotValFontSizePixel: baseSizePixel / 2
     });
   }
 
   initGridConfig({baseSizePixel, canvasWidthPixel, seqLength}) {
+    const {
+      posItemOuterWidthPixel
+    } = this;
     const numCols = Math.floor(
-      canvasWidthPixel / this.posItemOuterWidthPixel
+      canvasWidthPixel / posItemOuterWidthPixel
     );
     const numRows = Math.ceil(seqLength / numCols);
     Object.assign(this, {
       numCols, numRows,
-      numPosPerPage: numCols * 10,
+      numPosPerPage: numCols * 10
+    });
+  }
+
+  initExtraAnnotsConfig({
+    highlightedPositions,
+    extraAnnotNames,
+    extraAnnotLocations,
+    seqLength
+  }) {
+    const {
+      numCols,
+      numRows,
+      annotMarginPixel,
+      extraAnnotHeightPixel
+    } = this;
+    const {matrix: locMatrix} = extraAnnotLocations;
+    //  + (annotMarginPixel + extraAnnotHeightPixel) * extraAnnotNames.length
+    let extraAnnotColorIndexOffset = 0;
+    /*if (highlightedPositions.length > 0) {
+      extraAnnotColorIndexOffset = Math.max(
+        ...highlightedPositions.map(([, idx]) => idx)
+      ) + 1;
+    }*/
+    const outerSize = annotMarginPixel + extraAnnotHeightPixel;
+    const extraAnnotOffsetYPixelPerRow = [];
+    for (let r = 0; r < numRows; r ++) {
+      const endPos = (r + 1) * numCols;
+      let maxNumLocs = 0;
+      for (let pos = 1 + r * numCols; pos <= endPos; pos ++) {
+        const posLocs = locMatrix[pos - 1];
+        if (posLocs && posLocs.length > maxNumLocs) {
+          maxNumLocs = posLocs.length;
+        }
+      }
+      extraAnnotOffsetYPixelPerRow.push(maxNumLocs * outerSize);
+    }
+    Object.assign(this, {
+      extraAnnotColorIndexOffset,
+      extraAnnotOffsetYPixelPerRow
+    });
+  }
+
+  initCanvasConfig({seqLength}) {
+    const {
+      numCols,
+      posItemOuterHeightPixel,
+      verticalMarginPixel,
+      annotMarginPixel,
+      extraAnnotHeightPixel,
+      extraAnnotNames,
+      extraAnnotOffsetYPixelPerRow
+    } = this;
+    const extraAnnotOuterSize = annotMarginPixel + extraAnnotHeightPixel;
+    Object.assign(this, {
       canvasHeightPixel: (
+        verticalMarginPixel +
         Math.ceil(seqLength / numCols) *
-        this.posItemOuterHeightPixel +
-        this.verticalMarginPixel
+        posItemOuterHeightPixel +
+        extraAnnotOffsetYPixelPerRow.reduce((sum, px) => sum + px, 0) +
+        verticalMarginPixel +
+        extraAnnotNames.length * extraAnnotOuterSize
       )
     });
   }
 
   initCoordConfig({baseSizePixel, extraAnnotNames}) {
+    const {
+      numRows,
+      verticalMarginPixel: vMargin,
+      posItemOuterHeightPixel: boxOuterHeight,
+      extraAnnotOffsetYPixelPerRow
+    } = this;
+    let posItemOffsetY = vMargin;
+    const posItemOffsetYPixelPerRow = [];
+    for (let r = 0; r < numRows; r ++) {
+      if (r > 0) {
+        posItemOffsetY += boxOuterHeight;
+        posItemOffsetY += extraAnnotOffsetYPixelPerRow[r - 1];
+      }
+      posItemOffsetYPixelPerRow.push(posItemOffsetY);
+    }
     Object.assign(this, {
+      posItemOffsetYPixelPerRow,
       refAAOffsetPixel: {
         x: 0,
         y: baseSizePixel / 8
@@ -163,14 +240,14 @@ export default class ConfigGenerator {
       backgroundDefaultColorHovering: '#ddd',
 
       selectedStrokeColor: '#235fc5',
-      selectedBackgroundColor: 'rgba(35, 95, 197, .1)',
+      selectedBackgroundColor: 'rgba(35, 95, 197, .4)',
 
       annotStrokeColor: '#222',
       annotValTextColor: '#111'
     });
   }
 
-  posRange2CoordPairs = (startPos, endPos, annotIndex) => {
+  posRange2CoordPairs = (startPos, endPos, locIndex) => {
     const {
       numCols,
       posItemSizePixel,
@@ -180,7 +257,7 @@ export default class ConfigGenerator {
     const coordPairs = [];
     const offsetY = (
       posItemSizePixel + annotMarginPixel + 
-      annotIndex * (extraAnnotHeightPixel + annotMarginPixel)
+      locIndex * (extraAnnotHeightPixel + annotMarginPixel)
     );
     const endOffsetY = offsetY + extraAnnotHeightPixel;
     let startCoord = this.pos2Coord(startPos);
@@ -211,14 +288,14 @@ export default class ConfigGenerator {
     }
     const {
       horizontalMarginPixel: hMargin,
-      verticalMarginPixel: vMargin,
       posItemSizePixel: boxSize,
+      posItemOffsetYPixelPerRow: offsetYPerRow,
       numCols
     } = this;
     const colNumber0 = (pos - 1) % numCols;
     const rowNumber0 = Math.floor((pos - 1) / numCols);
     const x = colNumber0 * (hMargin + boxSize) + hMargin;
-    const y = rowNumber0 * (vMargin + boxSize) + 1;
+    let y = offsetYPerRow[rowNumber0];
     return {x, y};
   }
 
@@ -227,9 +304,9 @@ export default class ConfigGenerator {
       canvasWidthPixel: canvasWidth,
       canvasHeightPixel: canvasHeight,
       horizontalMarginPixel: hMargin,
-      verticalMarginPixel: vMargin,
       posItemSizePixel: boxSize,
-      numCols, numRows
+      posItemOffsetYPixelPerRow: offsetYPerRow,
+      numCols
     } = this;
     if (
       x < 0 || x > canvasWidth ||
@@ -238,7 +315,6 @@ export default class ConfigGenerator {
       return null;
     }
     x += hMargin / 2;
-    y += vMargin / 2;
     // const offsetX = (x - hMargin) % (hMargin + boxSize);
     // if (offsetX > boxSize) {
     //   return null;
@@ -254,13 +330,11 @@ export default class ConfigGenerator {
     else if (colNumber0 >= numCols) {
       colNumber0 = numCols - 1;
     }
-    let rowNumber0 = Math.floor((y - vMargin) / (vMargin + boxSize));
-    if (rowNumber0 < 0) {
-      rowNumber0 = 0;
+    let rowNumber0 = 0;
+    while (offsetYPerRow[rowNumber0] < y) {
+      rowNumber0 ++;
     }
-    else if (rowNumber0 >= numRows) {
-      rowNumber0 = numRows - 1;
-    }
+    rowNumber0 --;
 
     const pos = rowNumber0 * numCols + colNumber0 + 1;
     if (pos < 1) {
@@ -321,7 +395,27 @@ export default class ConfigGenerator {
 
   getExtraAnnotColor = (annotName) => {
     const colorIdx = this.getExtraAnnotColorIndex(annotName);
-    return COLORS[colorIdx].dark;
+    return COLORS[colorIdx].med;
+  }
+
+  updateLegendContext = ({onUpdate}) => {
+    const mainAnnotColorIdx = {};
+    for (const [, colorIdx, val] of this.highlightedPositions) {
+      mainAnnotColorIdx[val] = colorIdx;
+    }
+    const mainAnnotColorLookup = {};
+    for (let [val, colorIdx] of Object.entries(mainAnnotColorIdx)) {
+      colorIdx = colorIdx % COLORS.length;
+      mainAnnotColorLookup[val] = {
+        stroke: COLORS[colorIdx].dark,
+        bg: COLORS[colorIdx].light
+      };
+    }
+    const extraAnnotColorLookup = {};
+    for (const annotName of this.extraAnnotNames) {
+      extraAnnotColorLookup[annotName] = this.getExtraAnnotColor(annotName);
+    }
+    onUpdate({mainAnnotColorLookup, extraAnnotColorLookup});
   }
 
 }

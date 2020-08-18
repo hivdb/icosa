@@ -6,6 +6,7 @@ import {FaPlus, FaAngleUp, FaRegEdit} from 'react-icons/fa';
 import Button from '../../../../components/button';
 import RadioInput from '../../../../components/radio-input';
 import CheckboxInput from '../../../../components/checkbox-input';
+import LegendContext from '../legend-context';
 
 import {annotShape} from '../../prop-types';
 
@@ -327,6 +328,23 @@ export default class AnnotationFilter extends React.Component {
             </div>
           </div>
         ) : null}
+        {curAnnotName ? <>
+          <p>Annotations:</p>
+          <ul>
+            <LegendContext.Consumer>
+              {({mainAnnotColorLookup}) => Object.entries(mainAnnotColorLookup)
+                .map(([annotVal, color], idx) => (
+                  <li key={idx}>
+                    <span className={style['main-annot-cell']} style={{
+                      'border-color': color.stroke,
+                      'background-color': color.bg
+                    }}>X</span> {annotVal}
+                  </li>
+                )
+              )}
+            </LegendContext.Consumer>
+          </ul>
+        </> : null}
       </div>
     );
   }

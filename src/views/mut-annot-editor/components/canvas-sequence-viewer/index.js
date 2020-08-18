@@ -7,7 +7,12 @@ import style from './style.module.scss';
 import ConfigGenerator, {preloadFonts} from './config-generator';
 import SeqViewerStage from './stage';
 
-import {getHighlightedPositions} from './funcs';
+import {
+  getHighlightedPositions,
+  calcExtraAnnotLocations
+} from './funcs';
+
+import LegendContext from '../legend-context';
 
 import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
 
@@ -46,6 +51,10 @@ export default class CanvasSequenceViewer extends React.Component {
     const highlightedPositions = getHighlightedPositions(
       curAnnot, positionLookup, displayCitationIds
     );
+    const extraAnnotLocations = calcExtraAnnotLocations(
+      positionLookup, extraAnnots, sequence.length
+    );
+
     const {colorRules = []} = curAnnot;
     const {containerWidth} = this;
     if (containerWidth) {
@@ -56,6 +65,7 @@ export default class CanvasSequenceViewer extends React.Component {
         annotLevel: curAnnot.level,
         highlightedPositions,
         extraAnnotNames: extraAnnots.map(({name}) => name),
+        extraAnnotLocations,
         colorRules
       });
     }
@@ -92,16 +102,23 @@ export default class CanvasSequenceViewer extends React.Component {
        ref={this.containerRef}
        className={combinedClassName}>
         {config === null ? <Loader loaded={false} /> :
-        <SeqViewerStage
-         {...{
-           config,
-           curAnnot,
-           extraAnnots,
-           sequence,
-           positionLookup,
-           selectedPositions,
-           displayCitationIds,
-           onChange}} />
+        <LegendContext.Consumer>
+          {(context) => {
+            config.updateLegendContext(context);
+            return (
+              <SeqViewerStage
+               {...{
+                 config,
+                 curAnnot,
+                 extraAnnots,
+                 sequence,
+                 positionLookup,
+                 selectedPositions,
+                 displayCitationIds,
+                 onChange}} />
+            );
+          }}
+        </LegendContext.Consumer>
         }
       </div>
     );

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import union from 'lodash/union';
 import {matchShape} from 'found';
 
-import SequenceViewer from './components/sequence-viewer';
+import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
 import EditorController from './components/editor-controller';
 import EditorMenu from './components/editor-menu';
@@ -67,7 +67,6 @@ function getReferredCitationIds(curAnnot, positions) {
 
 class MutAnnotEditorInner extends React.Component {
   static propTypes = {
-    useCanvas: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,
@@ -215,8 +214,7 @@ class MutAnnotEditorInner extends React.Component {
   render() {
     const {
       refSeq,
-      annotationData: {gene, taxonomy},
-      useCanvas
+      annotationData: {gene, taxonomy}
     } = this.props;
     const {
       annotations,
@@ -235,7 +233,6 @@ class MutAnnotEditorInner extends React.Component {
       referredCitationIds,
       positionLookup
     } = this;
-    const MySeqViewer = useCanvas ? CanvasSequenceViewer : SequenceViewer;
 
     return <section className={style.editor}>
       <EditorMenu
@@ -251,43 +248,45 @@ class MutAnnotEditorInner extends React.Component {
          citations,
          allowEditing,
          changed}} />
-      <MySeqViewer
-       size={seqViewerSize}
-       sequence={refSeq}
-       onChange={this.handlePositionsSelect}
-       className={style.seqviewer}
-       {...{
-         curAnnot,
-         extraAnnots,
-         positionLookup,
-         citations,
-         displayCitationIds,
-         selectedPositions
-       }} />
-      <div className={style['controller-container']}>
-        <EditorController
+      <LegendContext>
+        <CanvasSequenceViewer
+         size={seqViewerSize}
          sequence={refSeq}
-         onAnnotationChange={this.handleAnnotChange}
-         onExtraAnnotsChange={this.handleExtraAnnotsChange}
-         onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
-         onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
-         onSave={this.handleSave}
-         onReset={this.handleReset}
-         className={style['controller']}
+         onChange={this.handlePositionsSelect}
+         className={style.seqviewer}
          {...{
-           allowEditing,
-           annotations,
            curAnnot,
-           defaultExtraAnnots,
            extraAnnots,
            positionLookup,
            citations,
-           referredCitationIds,
            displayCitationIds,
-           seqViewerSize,
            selectedPositions
          }} />
-      </div>
+        <div className={style['controller-container']}>
+          <EditorController
+           sequence={refSeq}
+           onAnnotationChange={this.handleAnnotChange}
+           onExtraAnnotsChange={this.handleExtraAnnotsChange}
+           onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
+           onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
+           onSave={this.handleSave}
+           onReset={this.handleReset}
+           className={style['controller']}
+           {...{
+             allowEditing,
+             annotations,
+             curAnnot,
+             defaultExtraAnnots,
+             extraAnnots,
+             positionLookup,
+             citations,
+             referredCitationIds,
+             displayCitationIds,
+             seqViewerSize,
+             selectedPositions
+           }} />
+        </div>
+      </LegendContext>
     </section>;
   }
 }
@@ -307,11 +306,6 @@ export default class MutAnnotEditor extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const {
-      match: {
-        location: {
-          query: {use_canvas: useCanvas = false} = {}
-        }
-      },
       preset: {
         name, display,
         refSeqLoader, annotationLoader
@@ -328,7 +322,6 @@ export default class MutAnnotEditor extends React.Component {
       annotationLoader,
       promise: (async () => ({
         name, display,
-        useCanvas: useCanvas !== false,  // to boolean
         refSeq: await refSeqLoader(),
         annotationData: await annotationLoader()
       }))()
