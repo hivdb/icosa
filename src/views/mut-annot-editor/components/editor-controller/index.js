@@ -101,6 +101,14 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
+        <AnnotationFilter
+         onChange={onCurAnnotChange}
+         {...{
+           onSave,
+           allowEditing,
+           curAnnot,
+           annotations
+         }} />
         {!isEditing && annotLevel === 'position' ?
           <PosAnnotViewBox
            {...{
@@ -110,14 +118,6 @@ export default class EditorController extends React.Component {
              displayCitationIds,
              selectedPositions
            }} /> : null}
-        <AnnotationFilter
-         onChange={onCurAnnotChange}
-         {...{
-           onSave,
-           allowEditing,
-           curAnnot,
-           annotations
-         }} />
         <ExtraAnnotFilter
          onChange={onExtraAnnotsChange}
          {...{
