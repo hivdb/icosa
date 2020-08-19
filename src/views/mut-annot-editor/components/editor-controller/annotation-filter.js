@@ -156,6 +156,9 @@ export default class AnnotationFilter extends React.Component {
     let newColorRules;
     try {
       newColorRules = JSON.parse(editColorRules);
+      if (!newColorRules) {
+        newColorRules = [];
+      }
     }
     catch (error) {
       this.setState({
@@ -336,8 +339,8 @@ export default class AnnotationFilter extends React.Component {
                 .map(([annotVal, color], idx) => (
                   <li key={idx}>
                     <span className={style['main-annot-cell']} style={{
-                      'border-color': color.stroke,
-                      'background-color': color.bg
+                      borderColor: color.stroke,
+                      backgroundColor: color.bg
                     }}>X</span> {annotVal}
                   </li>
                 )

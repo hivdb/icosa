@@ -128,7 +128,7 @@ export default class ExtraAnnotFilter extends React.Component {
               extraAnnots.map(({name}) => (
                 <li key={name}>
                   <span className={style['extra-annot-name']} style={{
-                    'border-bottom-color': extraAnnotColorLookup[name]
+                    borderBottomColor: extraAnnotColorLookup[name]
                   }}>
                     {name}
                   </span> (
