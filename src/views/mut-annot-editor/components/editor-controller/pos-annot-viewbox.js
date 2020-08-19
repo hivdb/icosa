@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
+import range from 'lodash/range';
 
 import {posShape, annotShape} from '../../prop-types';
 import {getAnnotation} from '../../utils';
+import LegendContext from '../legend-context';
 
 import style from './style.module.scss';
 
@@ -12,12 +14,18 @@ function getAllAnnotations(props) {
   const {
     positionLookup: posLookup,
     selectedPositions,
+    seqLength,
     curAnnot: {name: annotName},
     displayCitationIds
   } = props;
   const annotObjs = [];
   const annotLookup = {};
-  for (const pos of selectedPositions) {
+  const allPos = (
+    selectedPositions.length > 0 ?
+      selectedPositions :
+      range(1, seqLength + 1)
+  );
+  for (const pos of allPos) {
     const posdata = posLookup[pos];
     if (!posdata) {
       continue;
@@ -94,12 +102,22 @@ function nl2br(content) {
 }
 
 
-function AnnotDesc({positions, annotVal, annotDesc}) {
+function AnnotDesc({positions, annotVal, annotDesc, color}) {
   const rangeStr = integersToRangeString(positions);
   return <div className={style['annot-view-item']}>
-    <div className={style['annot-view-value']}>{annotVal}</div>
-    <div className={style['annot-view-positions']}>(POS {rangeStr})</div>
-    <div className={style['annot-view-desc']}>{nl2br(annotDesc)}</div>
+    <div
+     style={{
+       borderColor: color.stroke,
+       backgroundColor: color.bg
+     }}
+     className={style['annot-view-legend']}>
+      X
+    </div>
+    <div className={style['annot-view-text']}>
+      <div className={style['annot-view-value']}>{annotVal}</div>
+      <div className={style['annot-view-positions']}>(POS {rangeStr})</div>
+      <div className={style['annot-view-desc']}>{nl2br(annotDesc)}</div>
+    </div>
   </div>;
 }
 
@@ -107,6 +125,7 @@ function AnnotDesc({positions, annotVal, annotDesc}) {
 export default class PosAnnotViewBox extends React.Component {
 
   static propTypes = {
+    seqLength: PropTypes.number.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     curAnnot: annotShape.isRequired,
     displayCitationIds: PropTypes.arrayOf(
@@ -131,18 +150,26 @@ export default class PosAnnotViewBox extends React.Component {
   render() {
     const {selectedPositions} = this.props;
     const {annotObjs} = this.state;
-    if (selectedPositions.length === 0) {
-      return null;
-    }
+    const showAll = selectedPositions.length === 0;
     return (
       <div className={
         makeClassNames(style['input-group'], style['scrollable'])
       }>
-        <label>Annotations of selected positions:</label>
-        {annotObjs.map((annotation, idx) => (
-          <AnnotDesc key={idx} {...annotation} />
-        ))}
-        {annotObjs.length === 0 ? "None" : null}
+        <label>
+          {showAll ?
+            'Position annotations:' :
+            'Annotations of selected positions:'}
+        </label>
+        <LegendContext.Consumer>
+          {({mainAnnotColorLookup}) => (
+            annotObjs.map((annot, idx) => (
+              <AnnotDesc
+               key={idx}
+               color={mainAnnotColorLookup[annot.annotVal] || {}}
+               {...annot} />
+            ))
+          )}
+        </LegendContext.Consumer>
       </div>
     );
   }

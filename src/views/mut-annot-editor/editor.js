@@ -148,10 +148,11 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({selectedPositions});
   }
 
-  handleAnnotChange = (curAnnot) => {
-    const {positions} = this.state;
+  handleCurAnnotChange = (curAnnot) => {
+    const {positions, extraAnnots} = this.state;
     this.setState({
       curAnnot,
+      extraAnnots: extraAnnots.filter(({name}) => name !== curAnnot.name),
       displayCitationIds: getReferredCitationIds(curAnnot, positions),
       selectedPositions: [],
       extraReferredCitationIds: []
@@ -265,7 +266,7 @@ class MutAnnotEditorInner extends React.Component {
         <div className={style['controller-container']}>
           <EditorController
            sequence={refSeq}
-           onAnnotationChange={this.handleAnnotChange}
+           onCurAnnotChange={this.handleCurAnnotChange}
            onExtraAnnotsChange={this.handleExtraAnnotsChange}
            onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
            onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}

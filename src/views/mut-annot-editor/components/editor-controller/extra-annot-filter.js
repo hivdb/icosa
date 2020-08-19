@@ -14,6 +14,7 @@ export default class ExtraAnnotFilter extends React.Component {
 
   static propTypes = {
     allowEditing: PropTypes.bool.isRequired,
+    curAnnot: annotShape,
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
@@ -51,8 +52,22 @@ export default class ExtraAnnotFilter extends React.Component {
   }
 
   get options() {
-    const {annotations} = this.props;
-    return annotations.map(({name}) => name);
+    const {
+      curAnnot: {name: curAnnotName},
+      extraAnnots,
+      annotations
+    } = this.props;
+    const excludes = [
+      curAnnotName, ...extraAnnots.map(({name}) => name)
+    ];
+    return (
+      annotations
+        .filter(({name, level}) => (
+          level === 'position' &&
+          !excludes.includes(name)
+        ))
+        .map(({name}) => name)
+    );
   }
 
   get canSave() {
@@ -122,7 +137,30 @@ export default class ExtraAnnotFilter extends React.Component {
           {allowEditing ? 'Editing default a' : 'A'}
           dditional annotation groups:
         </label>
-        <ul>
+        <Dropdown
+         value={null}
+         options={options}
+         name="annotation"
+         placeholder="Select more group..."
+         className={style['dropdown-annotations']}
+         onChange={this.handleAdd} />
+        {allowEditing && canSave ? (
+          <div className={style['inline-buttons']}>
+            <Button
+             name="save"
+             btnStyle="primary"
+             onClick={this.handleSave}>
+              Save
+            </Button>
+            <Button
+             name="cancel"
+             btnStyle="light"
+             onClick={this.handleReset}>
+              Reset
+            </Button>
+          </div>
+        ) : null}
+        <ul className={style['scrollable']}>
           <LegendContext.Consumer>
             {({extraAnnotColorLookup}) => (
               extraAnnots.map(({name}) => (
@@ -143,28 +181,6 @@ export default class ExtraAnnotFilter extends React.Component {
             )}
           </LegendContext.Consumer>
         </ul>
-        <Dropdown
-         value={null}
-         options={options}
-         name="annotation"
-         className={style['dropdown-annotations']}
-         onChange={this.handleAdd} />
-        {allowEditing && canSave ? (
-          <div className={style['inline-buttons']}>
-            <Button
-             name="save"
-             btnStyle="primary"
-             onClick={this.handleSave}>
-              Save
-            </Button>
-            <Button
-             name="cancel"
-             btnStyle="light"
-             onClick={this.handleReset}>
-              Reset
-            </Button>
-          </div>
-        ) : null}
       </div>
     );
   }

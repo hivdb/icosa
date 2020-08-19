@@ -46,7 +46,7 @@ export default class EditorController extends React.Component {
     ).isRequired,
     sequence: PropTypes.string.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
-    onAnnotationChange: PropTypes.func.isRequired,
+    onCurAnnotChange: PropTypes.func.isRequired,
     onExtraAnnotsChange: PropTypes.func.isRequired,
     onDisplayCitationIdsChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
@@ -79,7 +79,7 @@ export default class EditorController extends React.Component {
       displayCitationIds,
       seqViewerSize,
       onSeqViewerSizeChange,
-      onAnnotationChange,
+      onCurAnnotChange,
       onExtraAnnotsChange,
       onDisplayCitationIdsChange,
       onReset,
@@ -101,8 +101,17 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
+        {!isEditing && annotLevel === 'position' ?
+          <PosAnnotViewBox
+           {...{
+             seqLength: sequence.length,
+             positionLookup,
+             curAnnot,
+             displayCitationIds,
+             selectedPositions
+           }} /> : null}
         <AnnotationFilter
-         onChange={onAnnotationChange}
+         onChange={onCurAnnotChange}
          {...{
            onSave,
            allowEditing,
@@ -114,6 +123,7 @@ export default class EditorController extends React.Component {
          {...{
            onSave,
            allowEditing,
+           curAnnot,
            annotations,
            defaultExtraAnnots,
            extraAnnots
@@ -139,14 +149,6 @@ export default class EditorController extends React.Component {
              onDisplayCitationIdsChange,
              onReset,
              onSave
-           }} /> : null}
-        {!isEditing && annotLevel === 'position' ?
-          <PosAnnotViewBox
-           {...{
-             positionLookup,
-             curAnnot,
-             displayCitationIds,
-             selectedPositions
            }} /> : null}
         {isEditing && annotLevel === 'amino acid' ?
           <AAAnnotEditBox

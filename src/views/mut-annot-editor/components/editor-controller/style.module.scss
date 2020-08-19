@@ -15,6 +15,10 @@
 
   ul {
     padding-left: 1.5rem;
+    &.scrollable {
+      overflow: auto;
+      max-height: 20rem;
+    }
   }
 
   a {
@@ -31,20 +35,6 @@
     padding-bottom: 0.2rem;
     margin-bottom: 0.3rem;
     display: inline-block;
-  }
-
-  li > span.main-annot-cell {
-    width: 1.2rem;
-    height: 1.2rem;
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-align: center;
-    line-height: 1.2rem;
-    display: inline-block;
-    border-width: 2px;
-    border-style: solid;
-    margin-right: 0.5rem;
-    margin-bottom: 0.3rem;
   }
 
   > label {
@@ -220,6 +210,25 @@
 }
 
 .annot-view-item {
+  display: flex;
+  align-items: flex-start;
+
+  .annot-view-legend {
+    width: 1.2rem;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    line-height: 1.2rem;
+    border-width: 2px;
+    border-style: solid;
+    margin-right: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .annot-view-text {
+  }
 
   .annot-view-value {
     font-size: 1.2rem;
