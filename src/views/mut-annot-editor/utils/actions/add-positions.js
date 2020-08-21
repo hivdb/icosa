@@ -22,8 +22,7 @@ export function addPositions({actionObj, positionLookup}) {
     if (!posdata) {
       posdata = {
         'position': pos,
-        'annotations': [],
-        'aminoAcids': []
+        'annotations': []
       };
       positionLookup[pos] = posdata;
     }

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 const annotShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
-  level: PropTypes.oneOf(['position', 'amino acid']).isRequired,
+  level: PropTypes.oneOf(['position', 'aminoAcid']).isRequired,
   hideCitations: PropTypes.bool,
   colorRules: PropTypes.arrayOf(
     PropTypes.string.isRequired
@@ -23,27 +23,17 @@ const posShape = PropTypes.shape({
   annotations: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
+      value: PropTypes.string,
       description: PropTypes.string,
+      aminoAcids: PropTypes.arrayOf(
+        PropTypes.oneOf([
+          'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
+          'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y',
+          '*', 'i', 'd'
+        ]).isRequired
+      ),
       citationIds: PropTypes.arrayOf(
         PropTypes.string.isRequired
-      ).isRequired
-    }).isRequired
-  ).isRequired,
-  aminoAcids: PropTypes.arrayOf(
-    PropTypes.shape({
-      aminoAcid: PropTypes.oneOf([
-        'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
-        'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y',
-        '*', 'i', 'd'
-      ]).isRequired,
-      annotations: PropTypes.arrayOf(
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          citationIds: PropTypes.arrayOf(
-            PropTypes.string.isRequired
-          ).isRequired
-        }).isRequired
       ).isRequired
     }).isRequired
   ).isRequired

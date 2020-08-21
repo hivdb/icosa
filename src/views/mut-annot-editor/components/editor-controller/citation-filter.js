@@ -341,9 +341,7 @@ export default class CitationFilter extends React.Component {
       return (
         <div className={style['input-group']}>
           {referredCitationIds.length > 0 ? (
-            <label>
-              Citations:
-            </label>
+            <h3>Citations:</h3>
           ) : null}
           {inner}
           {referredCitationIds.length > 0 ? (

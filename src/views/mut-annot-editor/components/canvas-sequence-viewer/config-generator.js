@@ -100,7 +100,8 @@ export default class ConfigGenerator {
       annotStrokeWidthPixel: baseSizePixel / 24,
       annotMarginPixel,  // TODO: change name to extraAnnotMarginPixel
       annotTickLengthPixel: baseSizePixel / 5,
-      annotValFontSizePixel: baseSizePixel / 2
+      annotValFontSizePixel: baseSizePixel / 2,
+      extraAnnotDotFontSizePixel: baseSizePixel / 1.5
     });
   }
 

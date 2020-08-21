@@ -30,7 +30,7 @@ function unionSelections(curSels, prevSels, newSels) {
 
 
 function getKeyCmd({ctrlKey, metaKey, shiftKey}, annotLevel) {
-  if (annotLevel === 'amino acid') {
+  if (annotLevel === 'aminoAcid') {
     return {multiSel: false, rangeSel: false};
   }
   let multiSel = ctrlKey || metaKey;
@@ -367,7 +367,7 @@ export default class SeqViewerStage extends React.Component {
     const {curAnnot: {level: annotLevel}} = this.props;
     const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
     const {mouseDown, anchorPos, prevSelecteds} = this.state;
-    if (!mouseDown || annotLevel === 'amino acid') {
+    if (!mouseDown || annotLevel === 'aminoAcid') {
       return;
     }
     let posStart = mouseDown;
@@ -417,7 +417,7 @@ export default class SeqViewerStage extends React.Component {
     if (!posEnd) {
       return;
     }
-    if (annotLevel === 'amino acid') {
+    if (annotLevel === 'aminoAcid') {
       // this.setState({activePos: posEnd, anchorPos: posEnd});
       return;
     }

@@ -34,37 +34,22 @@ export function getPositionsByAnnot(posLookup, displayAnnots) {
   for (const annot of displayAnnots) {
     const {level} = annot;
     const result = {annot};
-    if (level === 'position') {
-      const posByAnnotVal = {};
-      for (const posdata of Object.values(posLookup)) {
-        const annotVal = getPosAnnotVal(annot, posdata, null);
-        if (annotVal === null) {
-          continue;
-        }
-        posByAnnotVal[annotVal] = posByAnnotVal[annotVal] || [];
-        posByAnnotVal[annotVal].push(posdata.position);
+
+    const positions = [];
+    for (const posdata of Object.values(posLookup)) {
+      let annotVal = null;
+      if (level === 'position') {
+        annotVal = getPosAnnotVal(annot, posdata, null);
       }
-      result.positions = Object.entries(posByAnnotVal).map(
-        ([annotVal, positions]) => ({
-          annotVal,
-          positions: positions.sort((a, b) => a - b)
-        })
-      );
-    }
-    else {
-      const aminoAcids = [];
-      for (const posdata of Object.values(posLookup)) {
-        const annotAAs = getPosAnnotAAs(annot, posdata, null);
-        if (annotAAs.length === 0) {
-          continue;
-        }
-        aminoAcids.push({
-          position: posdata.position,
-          annotAAs
-        });
+      else if (getPosAnnotAAs(annot, posdata, null).length > 0) {
+        annotVal = 'X';
       }
-      result.aminoAcids = aminoAcids.sort((a, b) => a.position - b.position);
+      if (annotVal === null) {
+        continue;
+      }
+      positions.push(posdata.position);
     }
+    result.positions = positions;
     results.push(result);
   }
   return results;
@@ -99,7 +84,7 @@ export function getPosAnnotVal(curAnnot, posAnnot, displayCitationIds = null) {
     name: annotName,
     level
   } = curAnnot;
-  if (level === 'amino acid') {
+  if (level === 'aminoAcid') {
     return null;
   }
   for (const {name, value, citationIds} of posAnnot.annotations) {
@@ -125,22 +110,19 @@ export function getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds = null) {
   if (level === 'position') {
     return [];
   }
-  const aas = [];
-  for (const {aminoAcid, annotations} of posAnnot.aminoAcids) {
-    for (const {name, citationIds} of annotations) {
-      if (name !== annotName) {
-        continue;
-      }
-      if (
-        displayCitationIds !== null &&
-        !citationIds.some(citeId => displayCitationIds.includes(citeId))
-      ) {
-        continue;
-      }
-      aas.push(aminoAcid);
+  for (const {name, aminoAcids, citationIds} of posAnnot.annotations) {
+    if (name !== annotName) {
+      continue;
     }
+    if (
+      displayCitationIds !== null &&
+      !citationIds.some(citeId => displayCitationIds.includes(citeId))
+    ) {
+      continue;
+    }
+    return aminoAcids;
   }
-  return aas;
+  return [];
 }
 
 
@@ -194,36 +176,28 @@ export function calcExtraAnnotLocations(
   const locations = [];
   for (const {annot, positions} of posByAnnot) {
     const {name: annotName, level: annotLevel} = annot;
-    if (annotLevel !== 'position') {
-      continue;
-    }
-    for (const {positions: partPos} of positions) {
-      for (const [startPos, endPos] of integersToRange(partPos)) {
-        const usedLocs = [];
-        let maxAvailableLoc = 0;
-        for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
-          matrix[pos0] = matrix[pos0] || [];
-          for (const idx in matrix[pos0]) {
-            if (matrix[pos0][idx]) {
-              usedLocs[idx] = true;
-            }
-          }
-          if (matrix[pos0].length > maxAvailableLoc) {
-            maxAvailableLoc = matrix[pos0].length;
-          }
-        }
-        let minAvailableLoc = usedLocs.findIndex(val => !val);
-        if (minAvailableLoc < 0) {
-          minAvailableLoc = maxAvailableLoc;
-        }
-        for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
-          matrix[pos0][minAvailableLoc] = annotName;
-        }
+    if (annotLevel === 'position') {
+      for (const [startPos, endPos] of integersToRange(positions)) {
+        const minAvailableLoc = matrixFindMinAvailableLoc(
+          startPos, endPos, annotName);
         locations.push({
           startPos,
           endPos,
           locIndex: minAvailableLoc,
-          annotName
+          annotName,
+          annotLevel
+        });
+      }
+    }
+    else {
+      for (const pos of positions) {
+        const minAvailableLoc = matrixFindMinAvailableLoc(pos, pos, annotName);
+        locations.push({
+          startPos: pos,
+          endPos: pos,
+          locIndex: minAvailableLoc,
+          annotName,
+          annotLevel
         });
       }
     }
@@ -232,4 +206,28 @@ export function calcExtraAnnotLocations(
     locations,
     matrix
   };
+
+  function matrixFindMinAvailableLoc(startPos, endPos, annotName) {
+    const usedLocs = [];
+    let maxAvailableLoc = 0;
+    for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
+      matrix[pos0] = matrix[pos0] || [];
+      for (const idx in matrix[pos0]) {
+        if (matrix[pos0][idx]) {
+          usedLocs[idx] = true;
+        }
+      }
+      if (matrix[pos0].length > maxAvailableLoc) {
+        maxAvailableLoc = matrix[pos0].length;
+      }
+    }
+    let minAvailableLoc = usedLocs.findIndex(val => !val);
+    if (minAvailableLoc < 0) {
+      minAvailableLoc = maxAvailableLoc;
+    }
+    for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
+      matrix[pos0][minAvailableLoc] = annotName;
+    }
+    return minAvailableLoc;
+  }
 }

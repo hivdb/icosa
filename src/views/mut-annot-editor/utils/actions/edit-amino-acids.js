@@ -13,11 +13,14 @@ export function editAminoAcids({actionObj, positionLookup}) {
     selectedPosition,
     citationIds
   } = actionObj;
-  if (annotLevel !== 'amino acid') {
+  if (annotLevel !== 'aminoAcid') {
     throw new Error(
       `Annotation group "${annotName}" is not ` +
       'for amino acid level annotation.');
   }
+  throw new Error(
+    'TODO: editing amino acid is disabled temporarily ' +
+    'due to data structure changes.');
   let posdata = positionLookup[selectedPosition];
   if (!posdata) {
     posdata = {

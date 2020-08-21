@@ -28,7 +28,7 @@ export default class SizeController extends React.Component {
 
     return (
       <div className={style['input-group']}>
-        <label htmlFor="size">{allowEditing ? 'Editor' : 'Viewer'} size:</label>
+        <h3>{allowEditing ? 'Editor' : 'Viewer'} size:</h3>
         <div className={style['inline-buttons']}>
           {['large', 'middle', 'small'].map(size => (
             <Button

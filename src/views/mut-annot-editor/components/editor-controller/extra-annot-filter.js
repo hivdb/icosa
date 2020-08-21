@@ -63,7 +63,6 @@ export default class ExtraAnnotFilter extends React.Component {
     return (
       annotations
         .filter(({name, level}) => (
-          level === 'position' &&
           !excludes.includes(name)
         ))
         .map(({name}) => name)
@@ -133,10 +132,10 @@ export default class ExtraAnnotFilter extends React.Component {
 
     return (
       <div className={style['input-group']}>
-        <label htmlFor="extra-annot">
+        <h3>
           {allowEditing ? 'Editing default a' : 'A'}
           dditional annotation groups:
-        </label>
+        </h3>
         <Dropdown
          value={null}
          options={options}
@@ -163,11 +162,11 @@ export default class ExtraAnnotFilter extends React.Component {
         <ul className={style['scrollable']}>
           <LegendContext.Consumer>
             {({extraAnnotColorLookup}) => (
-              extraAnnots.map(({name}) => (
+              extraAnnots.map(({name, level}) => (
                 <li key={name}>
                   <span className={style['extra-annot-name']} style={{
                     borderBottomColor: extraAnnotColorLookup[name]
-                  }}>
+                  }} data-annot-level={level}>
                     {name}
                   </span> (
                   <a

@@ -30,7 +30,7 @@ async function popRefAminoAcid(dataURI) {
 
 
 const repoSierraSARS2 = (
-  'https://raw.githubusercontent.com/hivdb/sierra-sars2/master'
+  'https://raw.githubusercontent.com/hivdb/sierra-sars2/dev'
 );
 
 

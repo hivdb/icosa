@@ -36,32 +36,20 @@ function getReferredCitationIds(curAnnot, positions) {
   if (!curAnnot) {
     return [];
   }
-  const {
-    name: annotName, level: annotLevel
-  } = curAnnot;
+  const {name: annotName} = curAnnot;
   let referredCitationIds = [];
 
-  if (annotLevel === 'position') {
-    unionCitations(positions);
-  }
-  else {
-    for (const {aminoAcids} of positions) {
-      unionCitations(aminoAcids);
-    }
-  }
-  return referredCitationIds;
-
-  function unionCitations(items) {
-    for (const {annotations} of items) {
-      for (const {name, citationIds} of annotations) {
-        if (name === annotName) {
-          referredCitationIds = union(
-            referredCitationIds, citationIds
-          );
-        }
+  for (const {annotations} of positions) {
+    for (const {name, citationIds} of annotations) {
+      if (name === annotName) {
+        referredCitationIds = union(
+          referredCitationIds, citationIds
+        );
       }
     }
   }
+
+  return referredCitationIds;
 }
 
 

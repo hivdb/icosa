@@ -2,18 +2,8 @@ import difference from 'lodash/difference';
 
 
 export function cleanPositions(positions) {
-  positions.forEach((posdata) => {
-    const {aminoAcids} = posdata;
-    posdata.aminoAcids = aminoAcids.filter(
-      ({annotations}) => annotations.length > 0
-    );
-  });
-  return (
-    positions
-      .filter(({annotations, aminoAcids}) => (
-        annotations.length > 0 ||
-        aminoAcids.length > 0
-      ))
+  return positions.filter(
+    ({annotations}) => annotations.length > 0
   );
 }
 

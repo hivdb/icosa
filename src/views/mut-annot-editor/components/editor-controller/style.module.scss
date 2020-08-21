@@ -10,7 +10,7 @@
 
   &.scrollable {
     overflow-y: auto;
-    max-height: 25rem;
+    max-height: 35rem;
   }
 
   ul {
@@ -30,14 +30,20 @@
   }
 
   li > span.extra-annot-name {
-    border-bottom-width: 0.3rem;
-    border-bottom-style: solid;
     padding-bottom: 0.2rem;
     margin-bottom: 0.3rem;
     display: inline-block;
+    &[data-annot-level="position"] {
+      border-bottom-style: solid;
+      border-bottom-width: 0.3rem;
+    }
+    &[data-annot-level="aminoAcid"] {
+      border-bottom-style: dotted;
+      border-bottom-width: 0.45rem;
+    }
   }
 
-  > label {
+  h3 {
     font-weight: 600;
     display: block;
     margin: .5rem 0;
@@ -237,17 +243,33 @@
   }
 
   .annot-view-positions {
-    color: rgba(0, 0, 0, .5);
     font-size: .9rem;
     margin-left: .5rem;
     display: inline-block;
   }
 
   .annot-view-desc {
+    color: rgba(0, 0, 0, .5);
+    font-size: .9rem;
   }
 
   &:not(:last-child) {
-    margin-bottom: 1rem;
+    margin-bottom: .35rem;
   }
 
+}
+
+.annot-view-pos-detail {
+  margin-top: 1rem;
+  > h4 {
+    font-weight: 600;
+    margin-bottom: .3rem;
+  }
+  > ul {
+    margin-top: 0;
+  }
+  .annot-view-desc {
+    color: rgba(0, 0, 0, .5);
+    font-size: .9rem;
+  }
 }

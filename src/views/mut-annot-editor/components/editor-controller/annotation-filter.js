@@ -219,7 +219,7 @@ export default class AnnotationFilter extends React.Component {
 
     return (
       <div className={style['input-group']}>
-        <label htmlFor="annotation">Annotation group:</label>
+        <h3>Annotation group:</h3>
         <Dropdown
          value={curAnnotName}
          options={options}
@@ -275,10 +275,10 @@ export default class AnnotationFilter extends React.Component {
             <RadioInput
              id="edit-annot-level-aa"
              name="edit-annot-level"
-             checked={editAnnotLevel === 'amino acid'}
+             checked={editAnnotLevel === 'aminoAcid'}
              onChange={this.handleEditLevel}
              disabled={editMode === 'edit'}
-             value="amino acid">
+             value="aminoAcid">
               Amino acid annotation
             </RadioInput>
             <p>

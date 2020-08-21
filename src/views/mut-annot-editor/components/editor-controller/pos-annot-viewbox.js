@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import range from 'lodash/range';
+import capitalize from 'lodash/capitalize';
 
 import {posShape, annotShape} from '../../prop-types';
 import {getAnnotation} from '../../utils';
@@ -14,10 +15,11 @@ function getAllAnnotations(props) {
   const {
     positionLookup: posLookup,
     selectedPositions,
-    seqLength,
+    sequence,
     curAnnot: {name: annotName},
     displayCitationIds
   } = props;
+  const seqLength = sequence.length;
   const annotObjs = [];
   const annotLookup = {};
   const allPos = (
@@ -102,6 +104,54 @@ function nl2br(content) {
 }
 
 
+function PosDetail({refAA, posdata, extraAnnots, extraAnnotColorLookup}) {
+  if (!posdata) {
+    return null;
+  }
+  const {position, annotations} = posdata;
+  const extraAnnotNames = extraAnnots.map(({name}) => name);
+  const displayAnnots = annotations
+    .filter(({name}) => extraAnnotNames.includes(name));
+  if (displayAnnots.length === 0) {
+    return null;
+  }
+  return <div className={style['annot-view-pos-detail']}>
+    <h4>Annotations of position {refAA}{position}:</h4>
+    <ul>
+      {displayAnnots
+       .map(({name, value, aminoAcids, description}) => (
+         <li>
+           <span
+            className={style['extra-annot-name']}
+            style={{
+              borderBottomColor: extraAnnotColorLookup[name]
+            }}
+            data-annot-level={
+              aminoAcids && aminoAcids.length > 0 ?
+              'aminoAcid': 'position'
+            }>
+             {name}
+           </span>
+           {aminoAcids && aminoAcids.length > 0 ? <>
+             {' '}({refAA}{position}{
+               aminoAcids
+               .join('/')
+               .replace('i', 'ins')
+               .replace('d', 'del')
+             })
+           </> : null}
+           {description ? <>
+             <div className={style['annot-view-desc']}>
+               {description}
+             </div>
+           </> : null}
+         </li>
+      ))}
+    </ul>
+  </div>;
+}
+
+
 function AnnotDesc({positions, annotVal, annotDesc, color}) {
   const rangeStr = integersToRangeString(positions);
   return <div className={style['annot-view-item']}>
@@ -125,9 +175,10 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
 export default class PosAnnotViewBox extends React.Component {
 
   static propTypes = {
-    seqLength: PropTypes.number.isRequired,
+    sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     curAnnot: annotShape.isRequired,
+    extraAnnots: PropTypes.arrayOf(annotShape.isRequired).isRequired,
     displayCitationIds: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -148,27 +199,39 @@ export default class PosAnnotViewBox extends React.Component {
   }
 
   render() {
-    const {selectedPositions} = this.props;
+    const {
+      curAnnot: {name: annotName},
+      positionLookup, sequence,
+      extraAnnots, selectedPositions
+    } = this.props;
     const {annotObjs} = this.state;
     const showAll = selectedPositions.length === 0;
+    const showDetail = selectedPositions.length === 1;
     return (
       <div className={
         makeClassNames(style['input-group'], style['scrollable'])
       }>
-        <label>
-          {showAll ?
-            'Position annotations:' :
-            'Annotations of selected positions:'}
-        </label>
+        <h3>
+          {capitalize(annotName)}s
+          {showAll ? null : ' of selected positions'}
+          :
+        </h3>
         <LegendContext.Consumer>
-          {({mainAnnotColorLookup}) => (
-            annotObjs.map((annot, idx) => (
+          {({mainAnnotColorLookup, extraAnnotColorLookup}) => <>
+            {annotObjs.length > 0 ? annotObjs.map((annot, idx) => (
               <AnnotDesc
                key={idx}
                color={mainAnnotColorLookup[annot.annotVal] || {}}
                {...annot} />
-            ))
-          )}
+            )) : 'None'}
+            {showDetail ? (
+              <PosDetail
+               refAA={sequence[selectedPositions[0] - 1]}
+               extraAnnotColorLookup={extraAnnotColorLookup}
+               posdata={positionLookup[selectedPositions[0]]}
+               extraAnnots={extraAnnots} />
+            ) : null}
+          </>}
         </LegendContext.Consumer>
       </div>
     );
