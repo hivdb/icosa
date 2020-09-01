@@ -43,9 +43,40 @@ const seqViewerSizeType = PropTypes.oneOf([
   'large', 'middle', 'small'
 ]);
 
+const annotStyleType = PropTypes.oneOf([
+  'colorBox', 'circleInBox', 'underscore', 'aminoAcids', 'hide'
+]);
+
+const annotCategoryShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  display: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.bool.isRequired
+  ]),
+  dropdown: PropTypes.bool.isRequired,
+  multiSelect: PropTypes.bool.isRequired,
+  defaultAnnot: PropTypes.string,
+  defaultAnnots: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
+  annotStyle: annotStyleType.isRequired
+});
+
+const versionType = PropTypes.oneOf(['20200831173134']);
+
+const curAnnotNamesArray = PropTypes.arrayOf(PropTypes.string.isRequired);
+
+const curAnnotNameLookupShape = PropTypes.objectOf(
+  curAnnotNamesArray.isRequired);
+
 export {
   annotShape,
   citationShape,
   posShape,
-  seqViewerSizeType
+  seqViewerSizeType,
+  annotStyleType,
+  annotCategoryShape,
+  versionType,
+  curAnnotNamesArray,
+  curAnnotNameLookupShape
 };

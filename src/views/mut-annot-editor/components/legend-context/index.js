@@ -10,8 +10,9 @@ export default class LegendContext extends React.Component {
   constructor() {
     super(...arguments);
     this.state = {
-      mainAnnotColorLookup: {},
-      extraAnnotColorLookup: {}
+      colorBoxAnnotColorLookup: {},
+      underscoreAnnotColorLookup: {},
+      aminoAcidsCatColorLookup: {}
     };
   }
 

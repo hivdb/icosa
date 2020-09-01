@@ -20,10 +20,12 @@ export default class ConfigGenerator {
     sizeName,
     canvasWidthPixel,
     seqLength,
-    highlightedPositions,
-    annotLevel,
-    extraAnnotNames,
-    extraAnnotLocations
+    colorBoxPositions,
+    circleInBoxPositions,
+    underscoreAnnotLocations,
+    underscoreAnnotNames,
+    aminoAcidsAnnotPositions,
+    aminoAcidsCatNames
   }) {
     this.fontFamily = FONT_FAMILY;
 
@@ -31,23 +33,36 @@ export default class ConfigGenerator {
       sizeName,
       canvasWidthPixel,
       seqLength,
-      highlightedPositions,
-      annotLevel,
-      extraAnnotNames,
-      extraAnnotLocations
+      colorBoxPositions,
+      circleInBoxPositions,
+      underscoreAnnotLocations,
+      underscoreAnnotNames,
+      aminoAcidsAnnotPositions,
+      aminoAcidsCatNames
     });
 
     const baseSizePixel = BASE_SIZE_PIXEL_MAP[sizeName];
-    this.initSizeConfig({baseSizePixel, extraAnnotNames});
-    this.initGridConfig({baseSizePixel, canvasWidthPixel, seqLength});
-    this.initExtraAnnotsConfig({
-      extraAnnotNames,
-      highlightedPositions,
-      extraAnnotLocations,
+    this.initSizeConfig({
+      baseSizePixel
+    });
+    this.initGridConfig({
+      baseSizePixel,
+      canvasWidthPixel,
       seqLength
     });
-    this.initCanvasConfig({seqLength});
-    this.initCoordConfig({baseSizePixel, extraAnnotNames});
+    this.initAnnotsConfig({
+      underscoreAnnotLocations,
+      aminoAcidsAnnotPositions
+    });
+    this.initCanvasConfig({
+      seqLength,
+      underscoreAnnotNames
+    });
+    this.initCoordConfig({
+      baseSizePixel,
+      underscoreAnnotNames,
+      aminoAcidsAnnotPositions
+    });
     this.initColorConfig({});
   }
 
@@ -56,32 +71,41 @@ export default class ConfigGenerator {
       sizeName,
       canvasWidthPixel,
       seqLength,
-      highlightedPositions,
-      annotLevel,
-      extraAnnotNames,
-      extraAnnotLocations
+      colorBoxPositions,
+      circleInBoxPositions,
+      underscoreAnnotLocations,
+      underscoreAnnotNames,
+      aminoAcidsAnnotPositions,
+      aminoAcidsCatNames
     } = this;
     return (
       `${sizeName}$$$${canvasWidthPixel}$$$${seqLength}$$$` +
-      `${JSON.stringify(highlightedPositions)}$$$${annotLevel}$$$` +
-      `${JSON.stringify(extraAnnotNames)}$$$` +
-      `${JSON.stringify(extraAnnotLocations)}$$$`
+      `${JSON.stringify(colorBoxPositions)}$$$` +
+      `${JSON.stringify(circleInBoxPositions)}$$$` +
+      `${JSON.stringify(underscoreAnnotNames)}$$$` +
+      `${JSON.stringify(underscoreAnnotLocations)}$$$` +
+      `${JSON.stringify(aminoAcidsAnnotPositions)}$$$` +
+      `${JSON.stringify(aminoAcidsCatNames)}$$$`
     );
   }
 
-  initSizeConfig({baseSizePixel, extraAnnotNames}) {
+  initSizeConfig({
+    baseSizePixel
+  }) {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
-    const extraAnnotHeightPixel = baseSizePixel / 5;
-    const annotMarginPixel = baseSizePixel / 8;
-    const verticalMarginPixel = baseSizePixel * 0.2;
+    const underscoreAnnotHeightPixel = baseSizePixel / 8;
+    const underscoreAnnotMarginPixel = baseSizePixel / 12;
+    const verticalMarginPixel = baseSizePixel / 3;
 
     Object.assign(this, {
       baseSizePixel,
       posItemSizePixel,
       horizontalMarginPixel,
-      extraAnnotHeightPixel,
+      underscoreAnnotHeightPixel,
       verticalMarginPixel,
+
+      circleInBoxRadiusPixel: baseSizePixel * 0.3,
 
       strokeWidthPixel: baseSizePixel / 16,
 
@@ -95,13 +119,12 @@ export default class ConfigGenerator {
       refAAFontSizePixel: baseSizePixel / 2,
       posNumFontSizePixel: baseSizePixel / 4.5,
       hoverPosNumFontSizePixel: baseSizePixel / 2,
-      nonHighlightBgPathWidthPixel: baseSizePixel / 5,
 
-      annotStrokeWidthPixel: baseSizePixel / 24,
-      annotMarginPixel,  // TODO: change name to extraAnnotMarginPixel
-      annotTickLengthPixel: baseSizePixel / 5,
-      annotValFontSizePixel: baseSizePixel / 2,
-      extraAnnotDotFontSizePixel: baseSizePixel / 1.5
+      underscoreAnnotMarginPixel,
+
+      aminoAcidAnnotFontSizePixel: baseSizePixel * 0.45,
+      aminoAcidAnnotHeightPixel: baseSizePixel * 0.35,
+      aminoAcidAnnotMarginPixel: baseSizePixel / 32
     });
   }
 
@@ -119,81 +142,98 @@ export default class ConfigGenerator {
     });
   }
 
-  initExtraAnnotsConfig({
-    highlightedPositions,
-    extraAnnotNames,
-    extraAnnotLocations,
-    seqLength
+  initAnnotsConfig({
+    underscoreAnnotLocations,
+    aminoAcidsAnnotPositions
   }) {
     const {
       numCols,
       numRows,
-      annotMarginPixel,
-      extraAnnotHeightPixel
+      underscoreAnnotMarginPixel,
+      underscoreAnnotHeightPixel,
+      aminoAcidAnnotMarginPixel,
+      aminoAcidAnnotHeightPixel
     } = this;
-    const {matrix: locMatrix} = extraAnnotLocations;
-    //  + (annotMarginPixel + extraAnnotHeightPixel) * extraAnnotNames.length
-    let extraAnnotColorIndexOffset = 0;
-    /*if (highlightedPositions.length > 0) {
-      extraAnnotColorIndexOffset = Math.max(
-        ...highlightedPositions.map(([, idx]) => idx)
-      ) + 1;
-    }*/
-    const outerSize = annotMarginPixel + extraAnnotHeightPixel;
-    const extraAnnotOffsetYPixelPerRow = [];
+    const {matrix: usLocMatrix} = underscoreAnnotLocations;
+    let underscoreAnnotColorIndexOffset = 0;
+    const usOuterSize = (
+      underscoreAnnotMarginPixel + underscoreAnnotHeightPixel
+    );
+    const aaOuterSize = (
+      aminoAcidAnnotMarginPixel + aminoAcidAnnotHeightPixel
+    );
+    const underscoreAnnotOffsetYPixelPerRow = [];
     for (let r = 0; r < numRows; r ++) {
+      const startPos = r * numCols + 1;
       const endPos = (r + 1) * numCols;
-      let maxNumLocs = 0;
-      for (let pos = 1 + r * numCols; pos <= endPos; pos ++) {
-        const posLocs = locMatrix[pos - 1];
-        if (posLocs && posLocs.length > maxNumLocs) {
-          maxNumLocs = posLocs.length;
+      const annotHeightPerPos = new Array(numCols).fill(0);
+      for (let pos = startPos; pos <= endPos; pos ++) {
+        const posLocs = usLocMatrix[pos - 1];
+        if (posLocs && posLocs.length > 0) {
+          annotHeightPerPos[pos - startPos] += posLocs.length * usOuterSize;
         }
       }
-      extraAnnotOffsetYPixelPerRow.push(maxNumLocs * outerSize);
+      for (const positions of aminoAcidsAnnotPositions) {
+        for (const [pos,, aas] of Object.values(positions)) {
+          if (pos < startPos) {
+            continue;
+          }
+          else if (pos > endPos) {
+            break;
+          }
+          if (aas && aas.length > 0) {
+            annotHeightPerPos[pos - startPos] += aas.length * aaOuterSize;
+          }
+        }
+      }
+      const maxHeight = Math.max(...annotHeightPerPos);
+      underscoreAnnotOffsetYPixelPerRow.push(maxHeight);
     }
     Object.assign(this, {
-      extraAnnotColorIndexOffset,
-      extraAnnotOffsetYPixelPerRow
+      underscoreAnnotColorIndexOffset,
+      underscoreAnnotOffsetYPixelPerRow
     });
   }
 
-  initCanvasConfig({seqLength}) {
+  initCanvasConfig({seqLength, underscoreAnnotNames}) {
     const {
       numCols,
       posItemOuterHeightPixel,
       verticalMarginPixel,
-      annotMarginPixel,
-      extraAnnotHeightPixel,
-      extraAnnotNames,
-      extraAnnotOffsetYPixelPerRow
+      underscoreAnnotMarginPixel,
+      underscoreAnnotHeightPixel,
+      underscoreAnnotOffsetYPixelPerRow
     } = this;
-    const extraAnnotOuterSize = annotMarginPixel + extraAnnotHeightPixel;
+    const underscoreAnnotOuterSize = (
+      underscoreAnnotMarginPixel + underscoreAnnotHeightPixel
+    );
     Object.assign(this, {
       canvasHeightPixel: (
         verticalMarginPixel +
         Math.ceil(seqLength / numCols) *
         posItemOuterHeightPixel +
-        extraAnnotOffsetYPixelPerRow.reduce((sum, px) => sum + px, 0) +
+        underscoreAnnotOffsetYPixelPerRow.reduce((sum, px) => sum + px, 0) +
         verticalMarginPixel +
-        extraAnnotNames.length * extraAnnotOuterSize
+        underscoreAnnotNames.length * underscoreAnnotOuterSize
       )
     });
   }
 
-  initCoordConfig({baseSizePixel, extraAnnotNames}) {
+  initCoordConfig({
+    baseSizePixel
+  }) {
     const {
       numRows,
       verticalMarginPixel: vMargin,
       posItemOuterHeightPixel: boxOuterHeight,
-      extraAnnotOffsetYPixelPerRow
+      underscoreAnnotOffsetYPixelPerRow
     } = this;
     let posItemOffsetY = vMargin;
     const posItemOffsetYPixelPerRow = [];
     for (let r = 0; r < numRows; r ++) {
       if (r > 0) {
         posItemOffsetY += boxOuterHeight;
-        posItemOffsetY += extraAnnotOffsetYPixelPerRow[r - 1];
+        posItemOffsetY += underscoreAnnotOffsetYPixelPerRow[r - 1];
       }
       posItemOffsetYPixelPerRow.push(posItemOffsetY);
     }
@@ -211,20 +251,9 @@ export default class ConfigGenerator {
         x: 0,
         y: baseSizePixel * 1.2
       },
-      annotValOffsetPixel: {
-        x: this.annotMarginPixel,
-        y: - (
-          this.annotTickLengthPixel +
-          this.annotMarginPixel +
-          this.annotValFontSizePixel
-        )
-      },
-      annotValBottomOffsetPixel: {
-        x: this.annotMarginPixel,
-        y: (
-          this.annotTickLengthPixel +
-          this.annotMarginPixel * 2
-        )
+      circleInBoxOffsetPixel: {
+        x: baseSizePixel / 2,
+        y: baseSizePixel / 2 + baseSizePixel / 12
       }
     });
   }
@@ -234,17 +263,20 @@ export default class ConfigGenerator {
       posNumColor: '#444',
       hoverPosNumColor: '#222',
 
+      refAADarkColor: '#000',
+      refAALightColor: '#fff',
+
       strokeDefaultColor: '#ddd',
       strokeDefaultColorHovering: '#777',
 
       backgroundDefaultColor: '#ddd',
       backgroundDefaultColorHovering: '#ddd',
 
-      selectedStrokeColor: '#235fc5',
-      selectedBackgroundColor: 'rgba(35, 95, 197, .4)',
+      circleInBoxLightColor: '#fff',
+      circleInBoxDarkColor: '#000',
 
-      annotStrokeColor: '#222',
-      annotValTextColor: '#111'
+      selectedStrokeColor: '#235fc5',
+      selectedBackgroundColor: 'rgba(35, 95, 197, .4)'
     });
   }
 
@@ -252,15 +284,15 @@ export default class ConfigGenerator {
     const {
       numCols,
       posItemSizePixel,
-      extraAnnotHeightPixel,
-      annotMarginPixel
+      underscoreAnnotHeightPixel,
+      underscoreAnnotMarginPixel
     } = this;
     const coordPairs = [];
     const offsetY = (
-      posItemSizePixel + annotMarginPixel + 
-      locIndex * (extraAnnotHeightPixel + annotMarginPixel)
+      posItemSizePixel + underscoreAnnotMarginPixel + 
+      locIndex * (underscoreAnnotHeightPixel + underscoreAnnotMarginPixel)
     );
-    const endOffsetY = offsetY + extraAnnotHeightPixel;
+    const endOffsetY = offsetY + underscoreAnnotHeightPixel;
     let startCoord = this.pos2Coord(startPos);
     let endCoord;
     for (
@@ -281,6 +313,33 @@ export default class ConfigGenerator {
     endCoord.y += endOffsetY;
     coordPairs.push({startCoord, endCoord});
     return coordPairs;
+  }
+
+  posAA2Coord = (pos, aaOffsetIndex) => {
+    const {
+      posItemSizePixel,
+      underscoreAnnotLocations,
+      underscoreAnnotHeightPixel,
+      underscoreAnnotMarginPixel,
+      aminoAcidAnnotHeightPixel,
+      aminoAcidAnnotMarginPixel
+    } = this;
+    const {matrix: usLocMatrix} = underscoreAnnotLocations;
+    const usOuterSize = (
+      underscoreAnnotHeightPixel + underscoreAnnotMarginPixel
+    );
+    const aaOuterSize = (
+      aminoAcidAnnotHeightPixel + aminoAcidAnnotMarginPixel
+    );
+    const posLocs = usLocMatrix[pos - 1] || [];
+    return {
+      x: 0,
+      y: (
+        posItemSizePixel + underscoreAnnotMarginPixel + 
+        posLocs.length * usOuterSize +
+        aaOffsetIndex * aaOuterSize
+      )
+    };
   }
 
   pos2Coord = (pos) => {
@@ -347,33 +406,71 @@ export default class ConfigGenerator {
     return pos;
   }
 
-  isPositionHighlighted = (pos) => {
-    return this.highlightedPositions.findIndex(([p]) => p === pos) > -1;
+  getAnnotPosLookup(annotStyle) {
+    let lookup;
+    switch (annotStyle) {
+      case 'colorBox':
+        lookup = this.colorBoxPositions;
+        break;
+      case 'circleInBox':
+        lookup = this.circleInBoxPositions;
+        break;
+      default:
+        return [];
+    }
+    return lookup;
   }
 
-  getColorIndex = (pos) => {
-    const highlighted = this.highlightedPositions.find(([p]) => p === pos);
-    if (highlighted) {
-      const [, colorIdx] = highlighted;
+  getAnnotatedAAs = (pos) => {
+    const aaDefs = [];
+    for (const lookup of this.aminoAcidsAnnotPositions) {
+      const posDef = lookup[pos];
+      if (!posDef) {
+        continue;
+      }
+      const [, colorIdx, aas] = posDef;
+      const colorGrp = COLORS[colorIdx % COLORS.length];
+      for (const idx in aas) {
+        const aminoAcid = aas[idx];
+        aaDefs.push({
+          aminoAcid,
+          offsetPixel: this.posAA2Coord(pos, idx),
+          color: colorGrp.dark
+        });
+      }
+    }
+    return aaDefs;
+  }
+
+  isPositionAnnotated = (pos, annotStyle) => {
+    const lookup = this.getAnnotPosLookup(annotStyle);
+    return pos in lookup;
+  }
+
+  getColorIndex = (pos, annotStyle) => {
+    const lookup = this.getAnnotPosLookup(annotStyle);
+    const posDef = lookup[pos];
+    if (posDef) {
+      const [, colorIdx] = posDef;
       return colorIdx % COLORS.length;
     }
   }
 
-  getExtraAnnotColorIndex = (annotName) => {
-    const {extraAnnotColorIndexOffset, extraAnnotNames} = this;
+  getUnderscoreAnnotColorIndex = (annotName) => {
+    const {underscoreAnnotColorIndexOffset, underscoreAnnotNames} = this;
     const colorIdx = (
-      extraAnnotNames.indexOf(annotName) +
-      extraAnnotColorIndexOffset
+      underscoreAnnotNames.indexOf(annotName) +
+      underscoreAnnotColorIndexOffset
     );
     return colorIdx % COLORS.length;
   }
 
-  getStrokeColor = (pos, hovering) => {
+  getStrokeColor = (pos, hovering, annotStyle) => {
     if (hovering) {
       return this.strokeDefaultColorHovering;
     }
     else {
-      const colorIdx = this.getColorIndex(pos);
+      const colorIdx = this.getColorIndex(pos, annotStyle);
       if (colorIdx !== undefined) {
         return COLORS[colorIdx].dark;
       }
@@ -381,12 +478,28 @@ export default class ConfigGenerator {
     }
   }
 
-  getBgColor = (pos, hovering) => {
+  getRefAAColor = (pos) => {
+    if (
+      !this.isPositionAnnotated(pos, 'colorBox') &&
+      this.isPositionAnnotated(pos, 'circleInBox')
+    ) {
+      return this.refAALightColor;
+    }
+    return this.refAADarkColor;
+  }
+
+  getBgColor = (pos, hovering, annotStyle) => {
     if (hovering) {
       return this.backgroundDefaultColorHovering;
     }
+    else if (annotStyle === 'circleInBox') {
+      if (this.isPositionAnnotated(pos, 'colorBox')) {
+        return this.circleInBoxLightColor;
+      }
+      return this.circleInBoxDarkColor;
+    }
     else {
-      const colorIdx = this.getColorIndex(pos);
+      const colorIdx = this.getColorIndex(pos, annotStyle);
       if (colorIdx !== undefined) {
         return COLORS[colorIdx].light;
       }
@@ -394,29 +507,40 @@ export default class ConfigGenerator {
     }
   }
 
-  getExtraAnnotColor = (annotName) => {
-    const colorIdx = this.getExtraAnnotColorIndex(annotName);
+  getUnderscoreAnnotColor = (annotName) => {
+    const colorIdx = this.getUnderscoreAnnotColorIndex(annotName);
     return COLORS[colorIdx].med;
   }
 
   updateLegendContext = ({onUpdate}) => {
-    const mainAnnotColorIdx = {};
-    for (const [, colorIdx, val] of this.highlightedPositions) {
-      mainAnnotColorIdx[val] = colorIdx;
+    const colorBoxAnnotColorIdx = {};
+    for (const [, colorIdx, val] of Object.values(this.colorBoxPositions)) {
+      colorBoxAnnotColorIdx[val] = colorIdx;
     }
-    const mainAnnotColorLookup = {};
-    for (let [val, colorIdx] of Object.entries(mainAnnotColorIdx)) {
+    const colorBoxAnnotColorLookup = {};
+    for (let [val, colorIdx] of Object.entries(colorBoxAnnotColorIdx)) {
       colorIdx = colorIdx % COLORS.length;
-      mainAnnotColorLookup[val] = {
+      colorBoxAnnotColorLookup[val] = {
         stroke: COLORS[colorIdx].dark,
         bg: COLORS[colorIdx].light
       };
     }
-    const extraAnnotColorLookup = {};
-    for (const annotName of this.extraAnnotNames) {
-      extraAnnotColorLookup[annotName] = this.getExtraAnnotColor(annotName);
+    const underscoreAnnotColorLookup = {};
+    for (const annotName of this.underscoreAnnotNames) {
+      underscoreAnnotColorLookup[annotName] = (
+        this.getUnderscoreAnnotColor(annotName)
+      );
     }
-    onUpdate({mainAnnotColorLookup, extraAnnotColorLookup});
+    onUpdate({
+      colorBoxAnnotColorLookup,
+      underscoreAnnotColorLookup,
+      aminoAcidsCatColorLookup: this.aminoAcidsCatNames.reduce(
+        (acc, name, idx) => {
+          acc[name] = COLORS[idx % COLORS.length].dark;
+          return acc;
+        }, {}
+      )
+    });
   }
 
 }

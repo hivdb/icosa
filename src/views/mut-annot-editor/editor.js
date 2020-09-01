@@ -1,7 +1,6 @@
 import React from 'react';
 import rfdc from 'rfdc';
 import PropTypes from 'prop-types';
-import union from 'lodash/union';
 import {matchShape} from 'found';
 
 import LegendContext from './components/legend-context';
@@ -32,7 +31,7 @@ function saveSeqViewerSize(size) {
 }
 
 
-function getReferredCitationIds(curAnnot, positions) {
+/* function getReferredCitationIds(curAnnot, positions) {
   if (!curAnnot) {
     return [];
   }
@@ -50,7 +49,7 @@ function getReferredCitationIds(curAnnot, positions) {
   }
 
   return referredCitationIds;
-}
+} */
 
 
 class MutAnnotEditorInner extends React.Component {
@@ -61,38 +60,35 @@ class MutAnnotEditorInner extends React.Component {
     annotationData: PropTypes.object.isRequired
   }
 
-  getDefaultExtraAnnots() {
-    const {
-      annotations,
-      defaultExtraAnnots = []
-    } = this.props.annotationData;
-    return annotations.filter(
-      ({name}) => defaultExtraAnnots.includes(name)
-    );
-  }
-
   getDefaultState() {
     let {
+      annotCategories,
       annotations,
-      defaultExtraAnnots = [],
       positions,
       citations
     } = this.props.annotationData;
+    annotCategories = clone(annotCategories);
+    const curAnnotNameLookup = annotCategories.reduce((acc, cat) => {
+      if (cat.multiSelect) {
+        acc[cat.name] = cat.defaultAnnots;
+      }
+      else if (cat.defaultAnnot) {
+        acc[cat.name] = [cat.defaultAnnot];
+      }
+      return acc;
+    }, {});
     annotations = clone(annotations);
     positions = clone(positions);
     citations = clone(citations);
-    const curAnnot = annotations[0] || null;
     return {
+      annotCategories,
+      curAnnotNameLookup,
       annotations,
-      defaultExtraAnnots,
       positions,
       citations,
-      curAnnot,
-      extraAnnots: this.getDefaultExtraAnnots(),
-      displayCitationIds: getReferredCitationIds(curAnnot, positions),
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
-      extraReferredCitationIds: [],
+      // extraReferredCitationIds: [],
       allowEditing: false,
       changed: false
     };
@@ -119,13 +115,13 @@ class MutAnnotEditorInner extends React.Component {
     }
   }
 
-  get referredCitationIds() {
+  /* get referredCitationIds() {
     const {curAnnot, positions, extraReferredCitationIds} = this.state;
     return union(
       getReferredCitationIds(curAnnot, positions),
       extraReferredCitationIds
     );
-  }
+  } */
 
   get positionLookup() {
     const {positions} = this.state;
@@ -136,7 +132,7 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({selectedPositions});
   }
 
-  handleCurAnnotChange = (curAnnot) => {
+  /* handleCurAnnotChange = (curAnnot) => {
     const {positions, extraAnnots} = this.state;
     this.setState({
       curAnnot,
@@ -145,13 +141,17 @@ class MutAnnotEditorInner extends React.Component {
       selectedPositions: [],
       extraReferredCitationIds: []
     });
-  };
+  }; */
 
-  handleExtraAnnotsChange = (extraAnnots) => {
+  /* handleExtraAnnotsChange = (extraAnnots) => {
     if (extraAnnots === null) {
       extraAnnots = this.getDefaultExtraAnnots();
     }
     this.setState({extraAnnots});
+  } */
+
+  handleCurAnnotNameLookupChange = (curAnnotNameLookup) => {
+    this.setState({curAnnotNameLookup});
   }
   
   handleSeqViewerSizeChange = (seqViewerSize) => {
@@ -159,9 +159,9 @@ class MutAnnotEditorInner extends React.Component {
     saveSeqViewerSize(seqViewerSize);
   };
 
-  handleDisplayCitationIdsChange = (displayCitationIds) => {
+  /* handleDisplayCitationIdsChange = (displayCitationIds) => {
     this.setState({displayCitationIds});
-  }
+  } */
 
   handleSave = ({action, ...actionObj}) => {
     const {positionLookup} = this;
@@ -169,7 +169,7 @@ class MutAnnotEditorInner extends React.Component {
       curAnnot,
       annotations,
       citations,
-      displayCitationIds,
+      // displayCitationIds,
       extraReferredCitationIds
     } = this.state;
     const state = actions[action]({
@@ -179,7 +179,7 @@ class MutAnnotEditorInner extends React.Component {
       annotations,
       citations,
       extraReferredCitationIds,
-      displayCitationIds
+      // displayCitationIds
     });
     this.setState({
       ...state,
@@ -203,23 +203,20 @@ class MutAnnotEditorInner extends React.Component {
   render() {
     const {
       refSeq,
-      annotationData: {gene, taxonomy}
+      annotationData: {gene, taxonomy, version}
     } = this.props;
     const {
+      annotCategories,
+      curAnnotNameLookup,
       annotations,
-      defaultExtraAnnots,
       citations,
       selectedPositions,
       seqViewerSize,
-      displayCitationIds,
-      curAnnot,
-      extraAnnots,
       positions,
       allowEditing,
       changed
     } = this.state;
     const {
-      referredCitationIds,
       positionLookup
     } = this;
 
@@ -229,10 +226,11 @@ class MutAnnotEditorInner extends React.Component {
        onRevertAll={this.handleRevertAll}
        onToggleAllowEditing={this.handleToggleAllowEditing}
        {...{
+         version,
          gene,
          taxonomy,
+         annotCategories,
          annotations,
-         defaultExtraAnnots,
          positions,
          citations,
          allowEditing,
@@ -244,33 +242,29 @@ class MutAnnotEditorInner extends React.Component {
          onChange={this.handlePositionsSelect}
          className={style.seqviewer}
          {...{
-           curAnnot,
-           extraAnnots,
+           annotCategories,
+           curAnnotNameLookup,
+           annotations,
            positionLookup,
            citations,
-           displayCitationIds,
            selectedPositions
          }} />
         <div className={style['controller-container']}>
           <EditorController
            sequence={refSeq}
-           onCurAnnotChange={this.handleCurAnnotChange}
-           onExtraAnnotsChange={this.handleExtraAnnotsChange}
            onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
            onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
            onSave={this.handleSave}
            onReset={this.handleReset}
+           onCurAnnotNameLookupChange={this.handleCurAnnotNameLookupChange}
            className={style['controller']}
            {...{
              allowEditing,
+             annotCategories,
+             curAnnotNameLookup,
              annotations,
-             curAnnot,
-             defaultExtraAnnots,
-             extraAnnots,
              positionLookup,
              citations,
-             referredCitationIds,
-             displayCitationIds,
              seqViewerSize,
              selectedPositions
            }} />

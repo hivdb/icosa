@@ -76,7 +76,7 @@ export function getExtraAnnotNamesByPositions(posLookup, displayAnnots) {
 }
 
 
-export function getPosAnnotVal(curAnnot, posAnnot, displayCitationIds = null) {
+export function getPosAnnotVal(curAnnot, posAnnot) {
   if (!posAnnot || !curAnnot) {
     return null;
   }
@@ -87,14 +87,8 @@ export function getPosAnnotVal(curAnnot, posAnnot, displayCitationIds = null) {
   if (level === 'aminoAcid') {
     return null;
   }
-  for (const {name, value, citationIds} of posAnnot.annotations) {
+  for (const {name, value} of posAnnot.annotations) {
     if (name !== annotName) {
-      continue;
-    }
-    if (
-      displayCitationIds !== null && 
-      !citationIds.some(citeId => displayCitationIds.includes(citeId))
-    ) {
       continue;
     }
     return value;
@@ -102,7 +96,7 @@ export function getPosAnnotVal(curAnnot, posAnnot, displayCitationIds = null) {
   return null;
 }
 
-export function getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds = null) {
+export function getPosAnnotAAs(curAnnot, posAnnot) {
   if (!posAnnot || !curAnnot) {
     return [];
   }
@@ -110,14 +104,8 @@ export function getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds = null) {
   if (level === 'position') {
     return [];
   }
-  for (const {name, aminoAcids, citationIds} of posAnnot.annotations) {
+  for (const {name, aminoAcids} of posAnnot.annotations) {
     if (name !== annotName) {
-      continue;
-    }
-    if (
-      displayCitationIds !== null &&
-      !citationIds.some(citeId => displayCitationIds.includes(citeId))
-    ) {
       continue;
     }
     return aminoAcids;
@@ -126,19 +114,20 @@ export function getPosAnnotAAs(curAnnot, posAnnot, displayCitationIds = null) {
 }
 
 
-export function getHighlightedPositions(
-  curAnnot, positionLookup, displayCitationIds = null
+export function getAnnotPositions(
+  curAnnot, positionLookup, aaColorIdx = 0
 ) {
   if (!curAnnot) {
     return [];
   }
   const {level, colorRules = []} = curAnnot;
-  const positions = [];
+  const positions = {};
   const colorRulePatterns = colorRules.map(r => new RegExp(r));
   const colorRulePlains = [];
   if (level === 'position') {
     for (const posdata of Object.values(positionLookup)) {
-      const val = getPosAnnotVal(curAnnot, posdata, displayCitationIds);
+      const {position: curPos} = posdata;
+      const val = getPosAnnotVal(curAnnot, posdata);
       if (!val) {
         continue;
       }
@@ -152,26 +141,27 @@ export function getHighlightedPositions(
           colorIdx += colorRulePlains.length;
         }
       }
-      positions.push([posdata.position, colorIdx, val]);
+      positions[curPos] = [curPos, colorIdx, val];
     }
   }
   else {
     for (const posdata of Object.values(positionLookup)) {
-      const aas = getPosAnnotAAs(curAnnot, posdata, displayCitationIds);
+      const {position: curPos} = posdata;
+      const aas = getPosAnnotAAs(curAnnot, posdata);
       if (aas.length === 0) {
         continue;
       }
-      positions.push([posdata.position, 0, aas]);
+      positions[curPos] = [curPos, aaColorIdx, aas];
     }
   }
   return positions;
 }
 
 
-export function calcExtraAnnotLocations(
-  positionLookup, extraAnnots, seqLength
+export function calcUnderscoreAnnotLocations(
+  positionLookup, underscoreAnnots, seqLength
 ) {
-  const posByAnnot = getPositionsByAnnot(positionLookup, extraAnnots);
+  const posByAnnot = getPositionsByAnnot(positionLookup, underscoreAnnots);
   const matrix = new Array(seqLength);
   const locations = [];
   for (const {annot, positions} of posByAnnot) {

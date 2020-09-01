@@ -8,13 +8,16 @@ import ConfigGenerator, {preloadFonts} from './config-generator';
 import SeqViewerStage from './stage';
 
 import {
-  getHighlightedPositions,
-  calcExtraAnnotLocations
+  getAnnotPositions,
+  calcUnderscoreAnnotLocations
 } from './funcs';
 
 import LegendContext from '../legend-context';
 
-import {annotShape, posShape, seqViewerSizeType} from '../../prop-types';
+import {
+  curAnnotNameLookupShape,
+  annotCategoryShape,
+  posShape, seqViewerSizeType} from '../../prop-types';
 
 
 export default class CanvasSequenceViewer extends React.Component {
@@ -22,17 +25,14 @@ export default class CanvasSequenceViewer extends React.Component {
   static propTypes = {
     size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
-    curAnnot: annotShape,
-    extraAnnots: PropTypes.arrayOf(
-      annotShape.isRequired
+    curAnnotNameLookup: curAnnotNameLookupShape,
+    annotCategories: PropTypes.arrayOf(
+      annotCategoryShape.isRequired
     ).isRequired,
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
-    ).isRequired,
-    displayCitationIds: PropTypes.arrayOf(
-      PropTypes.string.isRequired
     ).isRequired,
     onChange: PropTypes.func.isRequired
   }
@@ -44,29 +44,68 @@ export default class CanvasSequenceViewer extends React.Component {
 
   get config() {
     const {
-      size, sequence,
-      positionLookup, extraAnnots,
-      curAnnot, displayCitationIds
+      size,
+      sequence,
+      annotations,
+      positionLookup,
+      curAnnotNameLookup,
+      annotCategories
     } = this.props;
-    const highlightedPositions = getHighlightedPositions(
-      curAnnot, positionLookup, displayCitationIds
-    );
-    const extraAnnotLocations = calcExtraAnnotLocations(
-      positionLookup, extraAnnots, sequence.length
-    );
+    let colorBoxPositions = [];
+    let circleInBoxPositions = [];
+    let underscoreAnnotLocations = [];
+    let underscoreAnnotNames = [];
+    const aminoAcidsAnnotPositions = [];
+    const aminoAcidsCatNames = [];
+    let aaAnnotIdx = 0;
+    for (const cat of annotCategories) {
+      const {name: catName, annotStyle} = cat;
+      const curAnnotNames = curAnnotNameLookup[catName] || [];
+      const curAnnot = (
+        annotations.find(({name}) => curAnnotNames.includes(name))
+      );
+      switch (annotStyle) {
+        case 'colorBox':
+          colorBoxPositions = getAnnotPositions(
+            curAnnot, positionLookup
+          );
+          break;
+        case 'circleInBox':
+          circleInBoxPositions = getAnnotPositions(
+            curAnnot, positionLookup
+          );
+          break;
+        case 'underscore':
+          underscoreAnnotLocations = calcUnderscoreAnnotLocations(
+            positionLookup,
+            annotations.filter(({name}) => curAnnotNames.includes(name)),
+            sequence.length
+          );
+          underscoreAnnotNames = [...curAnnotNames];
+          break;
+        case 'aminoAcids':
+          aminoAcidsAnnotPositions[aaAnnotIdx] = getAnnotPositions(
+            curAnnot, positionLookup, aaAnnotIdx ++
+          );
+          aminoAcidsCatNames.push(catName);
+          break;
+        default:
+          break;
+      }
+    }
 
-    const {colorRules = []} = curAnnot;
     const {containerWidth} = this;
     if (containerWidth) {
       return new ConfigGenerator({
         sizeName: size,
         canvasWidthPixel: containerWidth,
         seqLength: sequence.length,
-        annotLevel: curAnnot.level,
-        highlightedPositions,
-        extraAnnotNames: extraAnnots.map(({name}) => name),
-        extraAnnotLocations,
-        colorRules
+        colorBoxPositions,
+        circleInBoxPositions,
+        underscoreAnnotLocations,
+        underscoreAnnotNames,
+        aminoAcidsAnnotPositions,
+        aminoAcidsCatNames
       });
     }
     return null;
@@ -88,9 +127,8 @@ export default class CanvasSequenceViewer extends React.Component {
     const {config} = this;
     const {
       className, sequence,
-      curAnnot, extraAnnots,
       selectedPositions,
-      displayCitationIds,
+      annotCategories,
       positionLookup, onChange
     } = this.props;
     const combinedClassName = makeClassNames(
@@ -109,12 +147,10 @@ export default class CanvasSequenceViewer extends React.Component {
               <SeqViewerStage
                {...{
                  config,
-                 curAnnot,
-                 extraAnnots,
                  sequence,
+                 annotCategories,
                  positionLookup,
                  selectedPositions,
-                 displayCitationIds,
                  onChange}} />
             );
           }}

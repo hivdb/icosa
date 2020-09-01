@@ -29,18 +29,12 @@
     }
   }
 
-  li > span.extra-annot-name {
+  li > span.us-annot-name {
     padding-bottom: 0.2rem;
     margin-bottom: 0.3rem;
     display: inline-block;
-    &[data-annot-level="position"] {
-      border-bottom-style: solid;
-      border-bottom-width: 0.3rem;
-    }
-    &[data-annot-level="aminoAcid"] {
-      border-bottom-style: dotted;
-      border-bottom-width: 0.45rem;
-    }
+    border-bottom-style: solid;
+    border-bottom-width: 0.2rem;
   }
 
   h3 {

@@ -9,10 +9,10 @@ import debounce from 'lodash/debounce';
 import style from './style.module.scss';
 import PosItemLayer from './positem-layer';
 import SelectedLayer from './selected-layer';
-import ExtraAnnotsLayer from './extra-annots-layer';
+import AnnotsLayer from './annots-layer';
 import HoverLayer from './hover-layer';
 
-import {annotShape, posShape} from '../../prop-types';
+import {annotCategoryShape, posShape} from '../../prop-types';
 
 
 function rangePos(start, end) {
@@ -29,10 +29,7 @@ function unionSelections(curSels, prevSels, newSels) {
 }
 
 
-function getKeyCmd({ctrlKey, metaKey, shiftKey}, annotLevel) {
-  if (annotLevel === 'aminoAcid') {
-    return {multiSel: false, rangeSel: false};
-  }
+function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
   let multiSel = ctrlKey || metaKey;
   let rangeSel = shiftKey;
   if (multiSel && rangeSel) {
@@ -46,9 +43,8 @@ export default class SeqViewerStage extends React.Component {
 
   static propTypes = {
     config: PropTypes.object.isRequired,
-    curAnnot: annotShape,
-    extraAnnots: PropTypes.arrayOf(
-      annotShape.isRequired
+    annotCategories: PropTypes.arrayOf(
+      annotCategoryShape.isRequired
     ).isRequired,
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
@@ -283,9 +279,8 @@ export default class SeqViewerStage extends React.Component {
   }
 
   handleKeySelection = debounce((rangeSel, nextState) => {
-    const {curAnnot: {level: annotLevel}} = this.props;
     const {anchorPos, activePos: endPos} = nextState;
-    if (annotLevel === 'position' && rangeSel) {
+    if (rangeSel) {
       let selecteds = rangePos(anchorPos, endPos);
       const {prevSelecteds} = this.state;
       this.setState({prevSelecteds: selecteds});
@@ -301,24 +296,8 @@ export default class SeqViewerStage extends React.Component {
     }
   },50)
 
-  /*handleToggleSelect = ({currentTarget}) => {
-    const endPos = getPositionFromTarget(currentTarget);
-    const {curAnnot: {level: annotLevel}} = this.props;
-    let selected;
-    if (annotLevel === 'position') {
-      const {selectedPositions} = this.props;
-      selected = xor(selectedPositions, [endPos]);
-    }
-    else {
-      selected = [endPos];
-    }
-    this.setState({activePos: endPos, prevSelecteds: []});
-    this.setSelection(selected);
-  }*/
-
   handleMouseDown = ({evt}) => {
-    const {curAnnot: {level: annotLevel}} = this.props;
-    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    const {multiSel, rangeSel} = getKeyCmd(evt);
     let {anchorPos, prevSelecteds} = this.state;
     const position = this.getPositionFromMouseEvent(evt);
     if (!position) {
@@ -364,10 +343,9 @@ export default class SeqViewerStage extends React.Component {
     this.setState({hoverPos});
     // end
 
-    const {curAnnot: {level: annotLevel}} = this.props;
-    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    const {multiSel, rangeSel} = getKeyCmd(evt);
     const {mouseDown, anchorPos, prevSelecteds} = this.state;
-    if (!mouseDown || annotLevel === 'aminoAcid') {
+    if (!mouseDown) {
       return;
     }
     let posStart = mouseDown;
@@ -402,8 +380,7 @@ export default class SeqViewerStage extends React.Component {
   }
 
   handleMouseUp = ({evt}) => {
-    const {curAnnot: {level: annotLevel}} = this.props;
-    const {multiSel, rangeSel} = getKeyCmd(evt, annotLevel);
+    const {multiSel, rangeSel} = getKeyCmd(evt);
     const {mouseDown, mouseMoved, anchorPos, prevSelecteds} = this.state;
     this.setState({
       mouseDown: false,
@@ -415,10 +392,6 @@ export default class SeqViewerStage extends React.Component {
     let posStart = mouseDown;
     const posEnd = this.getPositionFromMouseEvent(evt);
     if (!posEnd) {
-      return;
-    }
-    if (annotLevel === 'aminoAcid') {
-      // this.setState({activePos: posEnd, anchorPos: posEnd});
       return;
     }
     if (rangeSel && anchorPos) {
@@ -471,7 +444,7 @@ export default class SeqViewerStage extends React.Component {
          onMouseOut={this.handleMouseMove}
          onMouseUp={this.handleMouseUp}
          height={config.canvasHeightPixel}>
-          <ExtraAnnotsLayer {...{config}} />
+          <AnnotsLayer {...{config}} />
           <PosItemLayer
            sequence={sequence}
            config={config}

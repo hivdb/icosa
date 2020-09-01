@@ -4,51 +4,36 @@ import makeClassNames from 'classnames';
 
 import {
   posShape, citationShape,
+  annotCategoryShape, curAnnotNameLookupShape,
   annotShape, seqViewerSizeType
 } from '../../prop-types';
 
 import style from './style.module.scss';
 import SizeController from './size-controller';
-import AnnotationFilter from './annotation-filter';
-import ExtraAnnotFilter from './extra-annot-filter';
-import CitationFilter from './citation-filter';
-import PosAnnotEditBox from './pos-annot-editbox';
-// import AAAnnotEditBox from './aa-annot-editbox';
-import PosAnnotViewBox from './pos-annot-viewbox';
+import AnnotCategory from './annot-category';
 
 
 export default class EditorController extends React.Component {
 
   static propTypes = {
     allowEditing: PropTypes.bool.isRequired,
+    className: PropTypes.string,
+    annotCategories: PropTypes.arrayOf(
+      annotCategoryShape.isRequired
+    ).isRequired,
+    curAnnotNameLookup: curAnnotNameLookupShape.isRequired,
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
-    defaultExtraAnnots: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
-    className: PropTypes.string,
-    curAnnot: annotShape.isRequired,
-    extraAnnots: PropTypes.arrayOf(
-      annotShape.isRequired
-    ).isRequired,
-    referredCitationIds: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    displayCitationIds: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
     seqViewerSize: seqViewerSizeType.isRequired,
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
     sequence: PropTypes.string.isRequired,
+    onCurAnnotNameLookupChange: PropTypes.func.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
-    onCurAnnotChange: PropTypes.func.isRequired,
-    onExtraAnnotsChange: PropTypes.func.isRequired,
-    onDisplayCitationIdsChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
   }
@@ -66,33 +51,33 @@ export default class EditorController extends React.Component {
     return allowEditing && selectedPositions.length > 0;
   }
 
+  handleCurAnnotNamesChange(catName) {
+    return (newCurAnnotNames) => {
+      const {curAnnotNameLookup, onCurAnnotNameLookupChange} = this.props;
+      const {curAnnotNames} = curAnnotNameLookup[catName];
+      if (JSON.stringify(newCurAnnotNames) !== JSON.stringify(curAnnotNames)) {
+        curAnnotNameLookup[catName] = newCurAnnotNames;
+        onCurAnnotNameLookupChange(curAnnotNameLookup);
+      }
+    };
+  }
+
   render() {
     const {
-      className,
-      isEditing
+      className
+      // isEditing
     } = this;
     const {
       allowEditing,
-      positionLookup,
-      selectedPositions,
-      referredCitationIds,
-      displayCitationIds,
+      curAnnotNameLookup,
+      // positionLookup,
+      // selectedPositions,
       seqViewerSize,
       onSeqViewerSizeChange,
-      onCurAnnotChange,
-      onExtraAnnotsChange,
-      onDisplayCitationIdsChange,
-      onReset,
+      // onReset,
       onSave,
-      curAnnot,
-      annotations,
-      defaultExtraAnnots,
-      citations,
-      sequence,
-      curAnnot: {
-        level: annotLevel
-      },
-      extraAnnots
+      annotCategories,
+      annotations
     } = this.props;
 
     return (
@@ -101,70 +86,16 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
-        <AnnotationFilter
-         onChange={onCurAnnotChange}
-         {...{
-           onSave,
-           allowEditing,
-           curAnnot,
-           annotations
-         }} />
-        {!isEditing && annotLevel === 'position' ?
-          <PosAnnotViewBox
-           {...{
-             sequence,
-             positionLookup,
-             curAnnot,
-             extraAnnots,
-             displayCitationIds,
-             selectedPositions
-           }} /> : null}
-        <ExtraAnnotFilter
-         onChange={onExtraAnnotsChange}
-         {...{
-           onSave,
-           allowEditing,
-           curAnnot,
-           annotations,
-           defaultExtraAnnots,
-           extraAnnots
-         }} />
-        <CitationFilter
-         onChange={onDisplayCitationIdsChange}
-         {...{
-           onSave,
-           curAnnot,
-           allowEditing,
-           citations,
-           referredCitationIds,
-           displayCitationIds}} />
-        {isEditing && annotLevel === 'position' ?
-          <PosAnnotEditBox
-           {...{
-             positionLookup,
-             citations,
-             curAnnot,
-             referredCitationIds,
-             displayCitationIds,
-             selectedPositions,
-             onDisplayCitationIdsChange,
-             onReset,
-             onSave
-           }} /> : null}
-        {/*isEditing && annotLevel === 'aminoAcid' ?
-          <AAAnnotEditBox
-           {...{
-             positionLookup,
-             citations,
-             curAnnot,
-             referredCitationIds,
-             displayCitationIds,
-             selectedPosition: selectedPositions[0],
-             sequence,
-             onDisplayCitationIdsChange,
-             onReset,
-             onSave
-           }} /> : null*/}
+        {annotCategories.map((cat, idx) => (
+          <AnnotCategory
+           key={idx}
+           annotCategory={cat}
+           curAnnotNames={curAnnotNameLookup[cat.name]}
+           annotations={annotations}
+           onChange={this.handleCurAnnotNamesChange(cat.name)}
+           onSave={onSave}
+           allowEditing={allowEditing} />
+        ))}
       </div>
     );
   }
