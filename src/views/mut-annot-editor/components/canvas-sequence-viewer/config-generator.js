@@ -19,7 +19,7 @@ export default class ConfigGenerator {
   constructor({
     sizeName,
     canvasWidthPixel,
-    seqLength,
+    seqFragment,
     colorBoxPositions,
     circleInBoxPositions,
     underscoreAnnotLocations,
@@ -32,7 +32,7 @@ export default class ConfigGenerator {
     Object.assign(this, {
       sizeName,
       canvasWidthPixel,
-      seqLength,
+      seqFragment,
       colorBoxPositions,
       circleInBoxPositions,
       underscoreAnnotLocations,
@@ -48,14 +48,14 @@ export default class ConfigGenerator {
     this.initGridConfig({
       baseSizePixel,
       canvasWidthPixel,
-      seqLength
+      seqFragment
     });
     this.initAnnotsConfig({
       underscoreAnnotLocations,
       aminoAcidsAnnotPositions
     });
     this.initCanvasConfig({
-      seqLength,
+      seqFragment,
       underscoreAnnotNames
     });
     this.initCoordConfig({
@@ -70,7 +70,7 @@ export default class ConfigGenerator {
     const {
       sizeName,
       canvasWidthPixel,
-      seqLength,
+      seqFragment,
       colorBoxPositions,
       circleInBoxPositions,
       underscoreAnnotLocations,
@@ -79,7 +79,8 @@ export default class ConfigGenerator {
       aminoAcidsCatNames
     } = this;
     return (
-      `${sizeName}$$$${canvasWidthPixel}$$$${seqLength}$$$` +
+      `${sizeName}$$$${canvasWidthPixel}$$$` +
+      `${JSON.stringify(seqFragment)}$$$` +
       `${JSON.stringify(colorBoxPositions)}$$$` +
       `${JSON.stringify(circleInBoxPositions)}$$$` +
       `${JSON.stringify(underscoreAnnotNames)}$$$` +
@@ -128,14 +129,16 @@ export default class ConfigGenerator {
     });
   }
 
-  initGridConfig({baseSizePixel, canvasWidthPixel, seqLength}) {
+  initGridConfig({baseSizePixel, canvasWidthPixel, seqFragment}) {
     const {
       posItemOuterWidthPixel
     } = this;
+    const [posStart, posEnd] = seqFragment;
+    const seqFragmentLen = posEnd - posStart + 1;
     const numCols = Math.floor(
       canvasWidthPixel / posItemOuterWidthPixel
     );
-    const numRows = Math.ceil(seqLength / numCols);
+    const numRows = Math.ceil(seqFragmentLen / numCols);
     Object.assign(this, {
       numCols, numRows,
       numPosPerPage: numCols * 10
@@ -152,7 +155,8 @@ export default class ConfigGenerator {
       underscoreAnnotMarginPixel,
       underscoreAnnotHeightPixel,
       aminoAcidAnnotMarginPixel,
-      aminoAcidAnnotHeightPixel
+      aminoAcidAnnotHeightPixel,
+      seqFragment: [absPosStart]
     } = this;
     const {matrix: usLocMatrix} = underscoreAnnotLocations;
     let underscoreAnnotColorIndexOffset = 0;
@@ -164,8 +168,8 @@ export default class ConfigGenerator {
     );
     const underscoreAnnotOffsetYPixelPerRow = [];
     for (let r = 0; r < numRows; r ++) {
-      const startPos = r * numCols + 1;
-      const endPos = (r + 1) * numCols;
+      const startPos = r * numCols + absPosStart;
+      const endPos = (r + 1) * numCols + absPosStart - 1;
       const annotHeightPerPos = new Array(numCols).fill(0);
       for (let pos = startPos; pos <= endPos; pos ++) {
         const posLocs = usLocMatrix[pos - 1];
@@ -195,7 +199,7 @@ export default class ConfigGenerator {
     });
   }
 
-  initCanvasConfig({seqLength, underscoreAnnotNames}) {
+  initCanvasConfig({seqFragment, underscoreAnnotNames}) {
     const {
       numCols,
       posItemOuterHeightPixel,
@@ -207,10 +211,12 @@ export default class ConfigGenerator {
     const underscoreAnnotOuterSize = (
       underscoreAnnotMarginPixel + underscoreAnnotHeightPixel
     );
+    const [posStart, posEnd] = seqFragment;
+    const seqFragmentLen = posEnd - posStart + 1;
     Object.assign(this, {
       canvasHeightPixel: (
         verticalMarginPixel +
-        Math.ceil(seqLength / numCols) *
+        Math.ceil(seqFragmentLen / numCols) *
         posItemOuterHeightPixel +
         underscoreAnnotOffsetYPixelPerRow.reduce((sum, px) => sum + px, 0) +
         verticalMarginPixel +
@@ -285,8 +291,14 @@ export default class ConfigGenerator {
       numCols,
       posItemSizePixel,
       underscoreAnnotHeightPixel,
-      underscoreAnnotMarginPixel
+      underscoreAnnotMarginPixel,
+      seqFragment: [absPosStart, absPosEnd]
     } = this;
+    startPos = Math.max(absPosStart, startPos);
+    endPos = Math.min(absPosEnd, endPos);
+    if (endPos < startPos) {
+      return [];
+    }
     const coordPairs = [];
     const offsetY = (
       posItemSizePixel + underscoreAnnotMarginPixel + 
@@ -296,7 +308,10 @@ export default class ConfigGenerator {
     let startCoord = this.pos2Coord(startPos);
     let endCoord;
     for (
-      let breakPos = Math.ceil(startPos / numCols) * numCols;
+      let breakPos = (
+        Math.ceil((startPos - absPosStart + 1) / numCols) *
+        numCols + absPosStart - 1
+      );
       breakPos < endPos;
       breakPos += numCols
     ) {
@@ -343,7 +358,8 @@ export default class ConfigGenerator {
   }
 
   pos2Coord = (pos) => {
-    if (!pos || pos < 1 || pos > this.seqLength) {
+    const [posStart, posEnd] = this.seqFragment;
+    if (!pos || pos < posStart || pos > posEnd) {
       return {};
     }
     const {
@@ -352,8 +368,8 @@ export default class ConfigGenerator {
       posItemOffsetYPixelPerRow: offsetYPerRow,
       numCols
     } = this;
-    const colNumber0 = (pos - 1) % numCols;
-    const rowNumber0 = Math.floor((pos - 1) / numCols);
+    const colNumber0 = (pos - posStart) % numCols;
+    const rowNumber0 = Math.floor((pos - posStart) / numCols);
     const x = colNumber0 * (hMargin + boxSize) + hMargin;
     let y = offsetYPerRow[rowNumber0];
     return {x, y};
@@ -366,6 +382,7 @@ export default class ConfigGenerator {
       horizontalMarginPixel: hMargin,
       posItemSizePixel: boxSize,
       posItemOffsetYPixelPerRow: offsetYPerRow,
+      seqFragment: [posStart, posEnd],
       numCols
     } = this;
     if (
@@ -396,12 +413,12 @@ export default class ConfigGenerator {
     }
     rowNumber0 --;
 
-    const pos = rowNumber0 * numCols + colNumber0 + 1;
-    if (pos < 1) {
-      return 1;
+    const pos = rowNumber0 * numCols + colNumber0 + posStart;
+    if (pos < posStart) {
+      return posStart;
     }
-    else if (pos > this.seqLength) {
-      return this.seqLength;
+    else if (pos > posEnd) {
+      return posEnd;
     }
     return pos;
   }

@@ -1,12 +1,11 @@
 import React from 'react';
 import rfdc from 'rfdc';
 import PropTypes from 'prop-types';
-import {matchShape} from 'found';
+import {matchShape, routerShape} from 'found';
 
 import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
 import EditorController from './components/editor-controller';
-import EditorMenu from './components/editor-menu';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
@@ -54,6 +53,9 @@ function saveSeqViewerSize(size) {
 
 class MutAnnotEditorInner extends React.Component {
   static propTypes = {
+    location: PropTypes.object.isRequired,
+    router: routerShape.isRequired,
+    region: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,
@@ -61,12 +63,15 @@ class MutAnnotEditorInner extends React.Component {
   }
 
   getDefaultState() {
+    const {region} = this.props;
     let {
+      fragmentOptions,
       annotCategories,
       annotations,
       positions,
       citations
     } = this.props.annotationData;
+    fragmentOptions = clone(fragmentOptions);
     annotCategories = clone(annotCategories);
     const curAnnotNameLookup = annotCategories.reduce((acc, cat) => {
       if (cat.multiSelect) {
@@ -80,7 +85,14 @@ class MutAnnotEditorInner extends React.Component {
     annotations = clone(annotations);
     positions = clone(positions);
     citations = clone(citations);
+    const {seqFragment} = (
+      fragmentOptions.find(
+        ({name}) => name === region
+      ) || fragmentOptions[0]
+    );
     return {
+      fragmentOptions,
+      seqFragment,
       annotCategories,
       curAnnotNameLookup,
       annotations,
@@ -159,6 +171,21 @@ class MutAnnotEditorInner extends React.Component {
     saveSeqViewerSize(seqViewerSize);
   };
 
+  handleSeqFragmentChange = (region) => {
+    const {router, location} = this.props;
+    const {fragmentOptions} = this.state;
+    const newLoc = {
+      ...location,
+      query: {
+        ...location.query,
+        region
+      }
+    };
+    router.push(newLoc);
+    const {seqFragment} = fragmentOptions.find(({name}) => name === region);
+    this.setState({seqFragment});
+  };
+
   /* handleDisplayCitationIdsChange = (displayCitationIds) => {
     this.setState({displayCitationIds});
   } */
@@ -201,40 +228,23 @@ class MutAnnotEditorInner extends React.Component {
   }
 
   render() {
+    const {refSeq} = this.props;
     const {
-      refSeq,
-      annotationData: {gene, taxonomy, version}
-    } = this.props;
-    const {
+      seqFragment,
+      fragmentOptions,
       annotCategories,
       curAnnotNameLookup,
       annotations,
       citations,
       selectedPositions,
       seqViewerSize,
-      positions,
-      allowEditing,
-      changed
+      allowEditing
     } = this.state;
     const {
       positionLookup
     } = this;
 
     return <section className={style.editor}>
-      <EditorMenu
-       className={style['menu']}
-       onRevertAll={this.handleRevertAll}
-       onToggleAllowEditing={this.handleToggleAllowEditing}
-       {...{
-         version,
-         gene,
-         taxonomy,
-         annotCategories,
-         annotations,
-         positions,
-         citations,
-         allowEditing,
-         changed}} />
       <LegendContext>
         <CanvasSequenceViewer
          size={seqViewerSize}
@@ -242,6 +252,7 @@ class MutAnnotEditorInner extends React.Component {
          onChange={this.handlePositionsSelect}
          className={style.seqviewer}
          {...{
+           seqFragment,
            annotCategories,
            curAnnotNameLookup,
            annotations,
@@ -253,12 +264,15 @@ class MutAnnotEditorInner extends React.Component {
           <EditorController
            sequence={refSeq}
            onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
+           onSeqFragmentChange={this.handleSeqFragmentChange}
            onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
            onSave={this.handleSave}
            onReset={this.handleReset}
            onCurAnnotNameLookupChange={this.handleCurAnnotNameLookupChange}
            className={style['controller']}
            {...{
+             seqFragment,
+             fragmentOptions,
              allowEditing,
              annotCategories,
              curAnnotNameLookup,
@@ -284,7 +298,8 @@ export default class MutAnnotEditor extends React.Component {
       refSeqLoader: PropTypes.func.isRequired,
       annotationLoader: PropTypes.func.isRequired
     }).isRequired,
-    match: matchShape.isRequired
+    match: matchShape.isRequired,
+    router: routerShape.isRequired
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -292,21 +307,36 @@ export default class MutAnnotEditor extends React.Component {
       preset: {
         name, display,
         refSeqLoader, annotationLoader
-      }
+      },
+      router,
+      match: {location}
     } = props;
+    let region = null;
+    if (location.query && location.query.region) {
+      region = location.query.region;
+    }
     if (
+      state.region === region &&
       state.refSeqLoader === refSeqLoader &&
       state.annotationLoader === annotationLoader
     ) {
       return null;
     }
+    let extraProps = {
+      location, router
+    };
+    if (region) {
+      extraProps.region = region;
+    }
+    
     return {
       refSeqLoader,
       annotationLoader,
       promise: (async () => ({
         name, display,
         refSeq: await refSeqLoader(),
-        annotationData: await annotationLoader()
+        annotationData: await annotationLoader(),
+        ...extraProps
       }))()
     };
   }

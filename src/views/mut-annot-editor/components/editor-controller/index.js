@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 
 import {
-  posShape, citationShape,
+  posShape, citationShape, fragmentOptionShape,
   annotCategoryShape, curAnnotNameLookupShape,
   annotShape, seqViewerSizeType
 } from '../../prop-types';
 
 import style from './style.module.scss';
 import SizeController from './size-controller';
+import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
 
 
@@ -18,6 +19,12 @@ export default class EditorController extends React.Component {
   static propTypes = {
     allowEditing: PropTypes.bool.isRequired,
     className: PropTypes.string,
+    fragmentOptions: PropTypes.arrayOf(
+      fragmentOptionShape.isRequired
+    ).isRequired,
+    seqFragment: PropTypes.arrayOf(
+      PropTypes.number.isRequired
+    ).isRequired,
     annotCategories: PropTypes.arrayOf(
       annotCategoryShape.isRequired
     ).isRequired,
@@ -33,6 +40,7 @@ export default class EditorController extends React.Component {
     ).isRequired,
     sequence: PropTypes.string.isRequired,
     onCurAnnotNameLookupChange: PropTypes.func.isRequired,
+    onSeqFragmentChange: PropTypes.func.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
@@ -70,10 +78,13 @@ export default class EditorController extends React.Component {
     const {
       allowEditing,
       curAnnotNameLookup,
+      fragmentOptions,
+      seqFragment,
       // positionLookup,
       // selectedPositions,
       seqViewerSize,
       onSeqViewerSizeChange,
+      onSeqFragmentChange,
       // onReset,
       onSave,
       annotCategories,
@@ -86,6 +97,10 @@ export default class EditorController extends React.Component {
          size={seqViewerSize}
          allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
+        <FragmentDropdown
+         fragmentOptions={fragmentOptions}
+         seqFragment={seqFragment}
+         onChange={onSeqFragmentChange} />
         {annotCategories.map((cat, idx) => (
           <AnnotCategory
            key={idx}

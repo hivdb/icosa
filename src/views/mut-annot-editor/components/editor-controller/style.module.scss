@@ -48,7 +48,7 @@
       font-size: 1rem;
     }
   }
-  > .dropdown-annotations {
+  > :global(.Dropdown-root) {
     display: inline-block;
     vertical-align: middle;
     width: calc(calc(100% - #{2 * $dropdown-height}) - #{2 * $button-spacing});

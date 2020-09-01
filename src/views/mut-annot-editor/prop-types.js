@@ -62,7 +62,14 @@ const annotCategoryShape = PropTypes.shape({
   annotStyle: annotStyleType.isRequired
 });
 
-const versionType = PropTypes.oneOf(['20200831173134']);
+const versionType = PropTypes.oneOf(['20200901153542']);
+
+const fragmentOptionShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  seqFragment: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired
+});
 
 const curAnnotNamesArray = PropTypes.arrayOf(PropTypes.string.isRequired);
 
@@ -78,5 +85,6 @@ export {
   annotCategoryShape,
   versionType,
   curAnnotNamesArray,
-  curAnnotNameLookupShape
+  curAnnotNameLookupShape,
+  fragmentOptionShape
 };

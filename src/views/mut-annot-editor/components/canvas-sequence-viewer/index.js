@@ -25,6 +25,9 @@ export default class CanvasSequenceViewer extends React.Component {
   static propTypes = {
     size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
+    seqFragment: PropTypes.arrayOf(
+      PropTypes.number.isRequired
+    ).isRequired,
     curAnnotNameLookup: curAnnotNameLookupShape,
     annotCategories: PropTypes.arrayOf(
       annotCategoryShape.isRequired
@@ -46,6 +49,7 @@ export default class CanvasSequenceViewer extends React.Component {
     const {
       size,
       sequence,
+      seqFragment,
       annotations,
       positionLookup,
       curAnnotNameLookup,
@@ -98,6 +102,7 @@ export default class CanvasSequenceViewer extends React.Component {
     if (containerWidth) {
       return new ConfigGenerator({
         sizeName: size,
+        seqFragment,
         canvasWidthPixel: containerWidth,
         seqLength: sequence.length,
         colorBoxPositions,

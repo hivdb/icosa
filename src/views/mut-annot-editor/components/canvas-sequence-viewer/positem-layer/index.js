@@ -27,16 +27,20 @@ export default class PosItemLayer extends React.Component {
     const {
       sequence,
       positionLookup,
+      config: {
+        seqFragment: [posStart, posEnd]
+      },
       config
     } = this.props;
+    const seqFragment = sequence.slice(posStart - 1, posEnd);
   
     return (
       <Layer>
-        {Array.from(sequence).map((residue, pos0) => (
+        {Array.from(seqFragment).map((residue, pos0) => (
           <PositionGroup
            key={pos0} config={config}
-           posAnnot={positionLookup[pos0 + 1]}
-           position={pos0 + 1}
+           posAnnot={positionLookup[pos0 + posStart]}
+           position={pos0 + posStart}
            residue={residue} />
         ))}
       </Layer>
