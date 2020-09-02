@@ -118,7 +118,7 @@ export default class SeqViewerStage extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('mouseup', this.handleGlobalMouseUp, false);
+    document.addEventListener('mousedown', this.handleGlobalMouseDown, false);
     document.addEventListener('keydown', this.handleGlobalKeyDown, false);
     document.addEventListener('keyup', this.handleGlobalKeyUp, false);
   }
@@ -131,7 +131,7 @@ export default class SeqViewerStage extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mouseup', this.handleGlobalMouseUp);
+    document.removeEventListener('mousedown', this.handleGlobalMouseDown);
     document.removeEventListener('keydown', this.handleGlobalKeyDown);
     document.removeEventListener('keyup', this.handleGlobalKeyUp);
   }
@@ -422,7 +422,7 @@ export default class SeqViewerStage extends React.Component {
     this.setSelection(selecteds);
   }
 
-  handleGlobalMouseUp = evt => {
+  handleGlobalMouseDown = evt => {
     const isCanvasClicked = evt.target.tagName === 'CANVAS';
     if (!isCanvasClicked) {
       const {curSelecteds} = this.state;
