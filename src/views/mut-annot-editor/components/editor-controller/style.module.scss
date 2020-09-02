@@ -19,6 +19,9 @@
       overflow: auto;
       max-height: 20rem;
     }
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   a {
@@ -238,13 +241,18 @@
 
   .annot-view-positions {
     font-size: .9rem;
-    margin-left: .5rem;
+    margin-left: .2rem;
     display: inline-block;
   }
 
   .annot-view-desc {
     color: rgba(0, 0, 0, .5);
+    display: inline-block;
     font-size: .9rem;
+    &::before {
+      content: ": ";
+      color: rgb(0, 0, 0);
+    }
   }
 
   &:not(:last-child) {

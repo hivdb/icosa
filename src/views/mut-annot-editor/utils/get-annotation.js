@@ -1,13 +1,6 @@
-export default function getAnnotation(
-  annotations, annotName, displayCitationIds
-) {
-  for (const {name, value, description = '', citationIds} of annotations) {
+export default function getAnnotation(annotations, annotName) {
+  for (const {name, value, description = ''} of annotations) {
     if (name !== annotName) {
-      continue;
-    }
-    if (!citationIds.some(
-      citeId => displayCitationIds.includes(citeId)
-    )) {
       continue;
     }
     return {

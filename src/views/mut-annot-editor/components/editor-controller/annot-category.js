@@ -176,7 +176,7 @@ export default class AnnotCategory extends React.Component {
                placeholder={`Select ${displayName}...`}
                className={style['dropdown-annotations']}
                onChange={this.handleAdd} /> : null}
-            {annotStyle === 'underscore' ?
+            {annotStyle === 'underscore' && curAnnotNames.length > 0 ?
               <ul className={style['scrollable']}>
                 {curAnnotNames.map((name) => (
                   <li key={name}>

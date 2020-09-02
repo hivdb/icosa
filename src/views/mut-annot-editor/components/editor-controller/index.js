@@ -9,6 +9,7 @@ import {
 } from '../../prop-types';
 
 import style from './style.module.scss';
+import ColorBoxLegend from './color-box-legend';
 import SizeController from './size-controller';
 import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
@@ -59,6 +60,14 @@ export default class EditorController extends React.Component {
     return allowEditing && selectedPositions.length > 0;
   }
 
+  get colorBoxAnnotName() {
+    return (
+      this.props.annotCategories
+        .find(({annotStyle}) => annotStyle === 'colorBox')
+        .name
+    );
+  }
+
   handleCurAnnotNamesChange(catName) {
     return (newCurAnnotNames) => {
       const {curAnnotNameLookup, onCurAnnotNameLookupChange} = this.props;
@@ -80,7 +89,7 @@ export default class EditorController extends React.Component {
       curAnnotNameLookup,
       fragmentOptions,
       seqFragment,
-      // positionLookup,
+      positionLookup,
       // selectedPositions,
       seqViewerSize,
       onSeqViewerSizeChange,
@@ -111,6 +120,10 @@ export default class EditorController extends React.Component {
            onSave={onSave}
            allowEditing={allowEditing} />
         ))}
+        <ColorBoxLegend
+         seqFragment={seqFragment}
+         annotName={this.colorBoxAnnotName}
+         positionLookup={positionLookup} />
       </div>
     );
   }
