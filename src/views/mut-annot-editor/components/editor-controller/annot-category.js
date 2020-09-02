@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
-import capitalize from 'lodash/capitalize';
 
 import {
   annotShape, curAnnotNamesArray,
   annotCategoryShape} from '../../prop-types';
 import LegendContext from '../legend-context';
+import {sentenceCase} from '../../utils';
 
 import style from './style.module.scss';
 
@@ -75,7 +75,7 @@ export default class AnnotCategory extends React.Component {
       catAnnots
         .map(({name, label}) => ({
           value: name,
-          label: label ? label : capitalize(name)
+          label: label ? label : sentenceCase(name)
         }))
     );
   }
@@ -159,7 +159,7 @@ export default class AnnotCategory extends React.Component {
                 color: aminoAcidsCatColorLookup[catName]
               } : null
             }>
-              {capitalize(displayName)}
+              {sentenceCase(displayName)}
               {multiSelect && curAnnotNames.length > 0 ? <>
                 {' ('}<a
                  href="#remove-all-annots"

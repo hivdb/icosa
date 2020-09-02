@@ -118,6 +118,7 @@ export default class SeqViewerStage extends React.Component {
   }
 
   componentDidMount() {
+    document.addEventListener('mouseup', this.handleGlobalMouseUp, false);
     document.addEventListener('keydown', this.handleGlobalKeyDown, false);
     document.addEventListener('keyup', this.handleGlobalKeyUp, false);
   }
@@ -130,6 +131,7 @@ export default class SeqViewerStage extends React.Component {
   }
 
   componentWillUnmount() {
+    document.removeEventListener('mouseup', this.handleGlobalMouseUp);
     document.removeEventListener('keydown', this.handleGlobalKeyDown);
     document.removeEventListener('keyup', this.handleGlobalKeyUp);
   }
@@ -155,6 +157,9 @@ export default class SeqViewerStage extends React.Component {
 
   handleGlobalKeyDown = (evt) => {
     const {key} = evt;
+    const {config: {
+      seqFragment: [absPosStart, absPosEnd]
+    }} = this.props;
     let endPos = this.state.activePos;
     const isBodyActive = document.activeElement.tagName === 'BODY';
     switch (key) {
@@ -170,7 +175,7 @@ export default class SeqViewerStage extends React.Component {
           return;
         }
         if (isBodyActive) {
-          endPos = endPos || 1;
+          endPos = endPos || absPosStart;
           break;
         }
         else {
@@ -178,7 +183,7 @@ export default class SeqViewerStage extends React.Component {
         }
       case 'End':
         if (isBodyActive) {
-          endPos = this.props.sequence.length;
+          endPos = absPosEnd;
           break;
         }
         else {
@@ -224,9 +229,10 @@ export default class SeqViewerStage extends React.Component {
 
   handleKeyDown = (evt) => {
     const {key, shiftKey: rangeSel} = evt;
-    const {numCols, numPosPerPage} = this.props.config;
-    const {sequence} = this.props;
-    const maxPos = sequence.length;
+    const {
+      numCols, numPosPerPage,
+      seqFragment: [absPosStart, absPosEnd]
+    } = this.props.config;
     let endPos = this.state.activePos;
     switch(key) {
       case 'ArrowLeft':
@@ -245,18 +251,18 @@ export default class SeqViewerStage extends React.Component {
         endPos = 1;
         break;
       case 'End':
-        endPos = maxPos;
+        endPos = absPosEnd;
         break;
       case 'PageUp':
         endPos -= numPosPerPage;
-        if (endPos < 1) {
-          endPos = 1;
+        if (endPos < absPosStart) {
+          endPos = absPosStart;
         }
         break;
       case 'PageDown':
         endPos += numPosPerPage;
-        if (endPos > maxPos) {
-          endPos = maxPos;
+        if (endPos > absPosEnd) {
+          endPos = absPosEnd;
         }
         break;
       default:
@@ -264,7 +270,7 @@ export default class SeqViewerStage extends React.Component {
     }
     evt.preventDefault();
     evt.stopPropagation();
-    if (endPos < 1 || endPos > maxPos) {
+    if (endPos < absPosStart || endPos > absPosEnd) {
       return;
     }
     const nextState = {
@@ -414,6 +420,16 @@ export default class SeqViewerStage extends React.Component {
       );
     }
     this.setSelection(selecteds);
+  }
+
+  handleGlobalMouseUp = evt => {
+    const isCanvasClicked = evt.target.tagName === 'CANVAS';
+    if (!isCanvasClicked) {
+      const {curSelecteds} = this.state;
+      if (curSelecteds.length > 0) {
+        this.setSelection([]);
+      }
+    }
   }
 
   render() {

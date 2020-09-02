@@ -228,6 +228,25 @@
     border-style: solid;
     margin-right: 0.5rem;
     margin-bottom: 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > div {
+      line-height: 1em;
+      height: 70%;
+      width: 70%;
+    }
+
+    &.annot-view-legend_circle {
+      border-color: #777;
+      background-color: #bbb;
+      position: relative;
+      > .circle {
+        border-radius: 50%;
+        background-color: #fff;
+      }
+    }
   }
 
   .annot-view-text {
@@ -237,6 +256,9 @@
     font-size: 1.2rem;
     font-weight: 700;
     display: inline-block;
+    & + .annot-view-desc {
+      margin-left: .2rem;
+    }
   }
 
   .annot-view-positions {
@@ -249,10 +271,10 @@
     color: rgba(0, 0, 0, .5);
     display: inline-block;
     font-size: .9rem;
-    &::before {
-      content: ": ";
-      color: rgb(0, 0, 0);
-    }
+  }
+  .annot-view-positions + .annot-view-desc::before {
+    content: ": ";
+    color: rgb(0, 0, 0);
   }
 
   &:not(:last-child) {

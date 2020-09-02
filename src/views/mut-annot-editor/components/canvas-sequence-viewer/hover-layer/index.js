@@ -23,7 +23,10 @@ export default class HoverLayer extends React.Component {
     const {
       hoverPos,
       activePos,
-      anchorPos
+      anchorPos,
+      config: {
+        seqFragment: [posStart, posEnd]
+      }
     } = this.props;
     const positions = [];
     if (hoverPos) {
@@ -35,7 +38,7 @@ export default class HoverLayer extends React.Component {
     if (anchorPos && !positions.includes(anchorPos)) {
       positions.push(anchorPos);
     }
-    return positions;
+    return positions.filter(p => p >= posStart && p <= posEnd);
   }
 
   render() {

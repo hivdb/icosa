@@ -9,7 +9,7 @@ import {
 } from '../../prop-types';
 
 import style from './style.module.scss';
-import ColorBoxLegend from './color-box-legend';
+import ColorLegend from './color-legend';
 import SizeController from './size-controller';
 import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
@@ -61,11 +61,23 @@ export default class EditorController extends React.Component {
   }
 
   get colorBoxAnnotName() {
-    return (
-      this.props.annotCategories
+    const {curAnnotNameLookup, annotCategories} = this.props;
+    const catName = (
+      annotCategories
         .find(({annotStyle}) => annotStyle === 'colorBox')
         .name
     );
+    return curAnnotNameLookup[catName][0];
+  }
+
+  get circleInBoxAnnotName() {
+    const {curAnnotNameLookup, annotCategories} = this.props;
+    const catName = (
+      annotCategories
+        .find(({annotStyle}) => annotStyle === 'circleInBox')
+        .name
+    );
+    return curAnnotNameLookup[catName][0];
   }
 
   handleCurAnnotNamesChange(catName) {
@@ -120,9 +132,10 @@ export default class EditorController extends React.Component {
            onSave={onSave}
            allowEditing={allowEditing} />
         ))}
-        <ColorBoxLegend
+        <ColorLegend
          seqFragment={seqFragment}
-         annotName={this.colorBoxAnnotName}
+         colorBoxAnnotName={this.colorBoxAnnotName}
+         circleInBoxAnnotName={this.circleInBoxAnnotName}
          positionLookup={positionLookup} />
       </div>
     );

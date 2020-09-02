@@ -96,7 +96,7 @@ export default class ConfigGenerator {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
     const underscoreAnnotHeightPixel = baseSizePixel / 8;
-    const underscoreAnnotMarginPixel = baseSizePixel / 12;
+    const underscoreAnnotMarginPixel = baseSizePixel / 8;
     const verticalMarginPixel = baseSizePixel / 3;
 
     Object.assign(this, {
@@ -124,7 +124,7 @@ export default class ConfigGenerator {
       underscoreAnnotMarginPixel,
 
       aminoAcidAnnotFontSizePixel: baseSizePixel * 0.45,
-      aminoAcidAnnotHeightPixel: baseSizePixel * 0.35,
+      aminoAcidAnnotHeightPixel: baseSizePixel * 0.45,
       aminoAcidAnnotMarginPixel: baseSizePixel / 32
     });
   }
@@ -440,6 +440,7 @@ export default class ConfigGenerator {
 
   getAnnotatedAAs = (pos) => {
     const aaDefs = [];
+    let globalIdxOffset = 0;
     for (const lookup of this.aminoAcidsAnnotPositions) {
       const posDef = lookup[pos];
       if (!posDef) {
@@ -447,14 +448,15 @@ export default class ConfigGenerator {
       }
       const [, colorIdx, aas] = posDef;
       const colorGrp = COLORS[colorIdx % COLORS.length];
-      for (const idx in aas) {
+      for (let idx = 0; idx < aas.length; idx ++) {
         const aminoAcid = aas[idx];
         aaDefs.push({
           aminoAcid,
-          offsetPixel: this.posAA2Coord(pos, idx),
+          offsetPixel: this.posAA2Coord(pos, idx + globalIdxOffset),
           color: colorGrp.dark
         });
       }
+      globalIdxOffset += aas.length;
     }
     return aaDefs;
   }

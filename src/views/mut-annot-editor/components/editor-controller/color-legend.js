@@ -14,7 +14,7 @@ function getAllAnnotations(props) {
   const {
     positionLookup: posLookup,
     seqFragment: [posStart, posEnd],
-    annotName
+    colorBoxAnnotName: annotName
   } = props;
   const annotObjs = [];
   const annotLookup = {};
@@ -90,6 +90,26 @@ function isShortDesc(content) {
 }
 
 
+function CircleInBoxDesc({annotName}) {
+  return <div className={style['annot-view-item']}>
+    <div className={makeClassNames(
+      style['annot-view-legend'],
+      style['annot-view-legend_circle']
+    )}>
+      <div className={style.circle}>X</div>
+    </div>
+    <div className={style['annot-view-text']}>
+      <div className={style['annot-view-value']}>
+        {annotName}
+      </div>
+      <div className={style['annot-view-desc']}>
+        (any color with a circle)
+      </div>
+    </div>
+  </div>;
+}
+
+
 function AnnotDesc({positions, annotVal, annotDesc, color}) {
   const rangeStr = integersToRangeString(positions);
   const short = isShortDesc(annotDesc);
@@ -100,7 +120,7 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
        backgroundColor: color.bg
      }}
      className={style['annot-view-legend']}>
-      X
+      <div>X</div>
     </div>
     <div className={style['annot-view-text']}>
       <div className={style['annot-view-value']}>{annotVal}</div>
@@ -113,14 +133,15 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
 }
 
 
-export default class ColorBoxLegend extends React.Component {
+export default class ColorLegend extends React.Component {
 
   static propTypes = {
     seqFragment: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-    annotName: PropTypes.string.isRequired
+    colorBoxAnnotName: PropTypes.string.isRequired,
+    circleInBoxAnnotName: PropTypes.string.isRequired
   }
 
   static getDerivedStateFromProps(props) {
@@ -135,6 +156,7 @@ export default class ColorBoxLegend extends React.Component {
   }
 
   render() {
+    const {circleInBoxAnnotName} = this.props;
     const {annotObjs} = this.state;
     return (
       <div className={
@@ -150,6 +172,8 @@ export default class ColorBoxLegend extends React.Component {
             )) : 'None'}
           </>}
         </LegendContext.Consumer>
+        <hr />
+        <CircleInBoxDesc annotName={circleInBoxAnnotName} />
       </div>
     );
   }
