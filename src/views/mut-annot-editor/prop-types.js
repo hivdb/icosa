@@ -58,11 +58,12 @@ const annotCategoryShape = PropTypes.shape({
   defaultAnnot: PropTypes.string,
   defaultAnnots: PropTypes.arrayOf(
     PropTypes.string.isRequired
-  ).isRequired,
-  annotStyle: annotStyleType.isRequired
+  ),
+  annotStyle: annotStyleType.isRequired,
+  color: PropTypes.string
 });
 
-const versionType = PropTypes.oneOf(['20200901153542']);
+const versionType = PropTypes.oneOf(['20200910120644']);
 
 const fragmentOptionShape = PropTypes.shape({
   name: PropTypes.string.isRequired,

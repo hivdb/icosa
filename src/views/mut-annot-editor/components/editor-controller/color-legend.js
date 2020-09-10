@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import range from 'lodash/range';
 
-import {posShape} from '../../prop-types';
+import {posShape, annotCategoryShape} from '../../prop-types';
 import {getAnnotation} from '../../utils';
 import LegendContext from '../legend-context';
 
@@ -103,7 +103,32 @@ function CircleInBoxDesc({annotName}) {
         {annotName}
       </div>
       <div className={style['annot-view-desc']}>
-        (any color with a circle)
+        (position with a circle)
+      </div>
+    </div>
+  </div>;
+}
+
+
+function AAColorDesc({catName, display, color}) {
+  return <div className={style['annot-view-item']}>
+    <div className={makeClassNames(
+      style['annot-view-legend'],
+      style['annot-view-legend_with-aa']
+    )}>
+      X
+    </div>
+    <div
+     className={makeClassNames(
+       style['annot-view-legend'],
+       style['annot-view-legend_aa']
+     )}
+     style={{color}}>
+      X
+    </div>
+    <div className={style['annot-view-text']}>
+      <div className={style['annot-view-value']} style={{color}}>
+        ← {display || catName}
       </div>
     </div>
   </div>;
@@ -141,6 +166,9 @@ export default class ColorLegend extends React.Component {
     ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     colorBoxAnnotName: PropTypes.string.isRequired,
+    aminoAcidsCats: PropTypes.arrayOf(
+      annotCategoryShape.isRequired
+    ).isRequired,
     circleInBoxAnnotName: PropTypes.string.isRequired
   }
 
@@ -156,24 +184,32 @@ export default class ColorLegend extends React.Component {
   }
 
   render() {
-    const {circleInBoxAnnotName} = this.props;
+    const {circleInBoxAnnotName, aminoAcidsCats} = this.props;
     const {annotObjs} = this.state;
     return (
       <div className={
         makeClassNames(style['input-group'], style['scrollable'])
       }>
         <LegendContext.Consumer>
-          {({colorBoxAnnotColorLookup}) => <>
+          {({colorBoxAnnotColorLookup, aminoAcidsCatColorLookup}) => <>
             {annotObjs.length > 0 ? annotObjs.map((annot, idx) => (
               <AnnotDesc
                key={idx}
                color={colorBoxAnnotColorLookup[annot.annotVal] || {}}
                {...annot} />
             )) : 'None'}
+            <hr />
+            <CircleInBoxDesc annotName={circleInBoxAnnotName} />
+            <hr />
+            {aminoAcidsCats.map(({name, display}, idx) => (
+              <AAColorDesc
+               key={idx}
+               catName={name}
+               display={display}
+               color={aminoAcidsCatColorLookup[name]} />
+            ))}
           </>}
         </LegendContext.Consumer>
-        <hr />
-        <CircleInBoxDesc annotName={circleInBoxAnnotName} />
       </div>
     );
   }

@@ -150,16 +150,9 @@ export default class AnnotCategory extends React.Component {
     return (
       <div className={style['input-group']}>
         <LegendContext.Consumer>
-          {({
-            aminoAcidsCatColorLookup,
-            underscoreAnnotColorLookup
-          }) => <>
-            <h3 style={
-              annotStyle === 'aminoAcids' ? {
-                color: aminoAcidsCatColorLookup[catName]
-              } : null
-            }>
-              {sentenceCase(displayName)}
+          {({underscoreAnnotColorLookup}) => <>
+            <h3>
+              Select {displayName}
               {multiSelect && curAnnotNames.length > 0 ? <>
                 {' ('}<a
                  href="#remove-all-annots"

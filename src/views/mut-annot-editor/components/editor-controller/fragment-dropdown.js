@@ -48,7 +48,7 @@ export default class FragmentDropdown extends React.Component {
 
     return (
       <div className={style['input-group']}>
-        <h3>Display region:</h3>
+        <h3>Select a region:</h3>
         <Dropdown
          value={curValue}
          options={options}

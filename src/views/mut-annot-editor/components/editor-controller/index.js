@@ -136,6 +136,10 @@ export default class EditorController extends React.Component {
          seqFragment={seqFragment}
          colorBoxAnnotName={this.colorBoxAnnotName}
          circleInBoxAnnotName={this.circleInBoxAnnotName}
+         aminoAcidsCats={
+           annotCategories
+           .filter(({annotStyle}) => annotStyle === 'aminoAcids')
+         }
          positionLookup={positionLookup} />
       </div>
     );

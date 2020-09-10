@@ -215,6 +215,8 @@
 .annot-view-item {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
+  position: relative;
 
   .annot-view-legend {
     width: 1.2rem;
@@ -239,13 +241,26 @@
     }
 
     &.annot-view-legend_circle {
-      border-color: #777;
-      background-color: #bbb;
+      border-color: #999;
+      background-color: #ddd;
       position: relative;
       > .circle {
         border-radius: 50%;
         background-color: #fff;
       }
+    }
+
+    &.annot-view-legend_with-aa {
+      border-color: #999;
+      background-color: #ddd;
+      color: #999;
+      position: relative;
+      margin-right: calc(100% - 1.2rem);
+      margin-bottom: -.2rem;
+    }
+
+    &.annot-view-legend_aa {
+      border-color: transparent;
     }
   }
 

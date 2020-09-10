@@ -25,7 +25,8 @@ export default class ConfigGenerator {
     underscoreAnnotLocations,
     underscoreAnnotNames,
     aminoAcidsAnnotPositions,
-    aminoAcidsCatNames
+    aminoAcidsCatNames,
+    aminoAcidsOverrideColors
   }) {
     this.fontFamily = FONT_FAMILY;
 
@@ -38,7 +39,8 @@ export default class ConfigGenerator {
       underscoreAnnotLocations,
       underscoreAnnotNames,
       aminoAcidsAnnotPositions,
-      aminoAcidsCatNames
+      aminoAcidsCatNames,
+      aminoAcidsOverrideColors
     });
 
     const baseSizePixel = BASE_SIZE_PIXEL_MAP[sizeName];
@@ -76,7 +78,8 @@ export default class ConfigGenerator {
       underscoreAnnotLocations,
       underscoreAnnotNames,
       aminoAcidsAnnotPositions,
-      aminoAcidsCatNames
+      aminoAcidsCatNames,
+      aminoAcidsOverrideColors
     } = this;
     return (
       `${sizeName}$$$${canvasWidthPixel}$$$` +
@@ -86,7 +89,8 @@ export default class ConfigGenerator {
       `${JSON.stringify(underscoreAnnotNames)}$$$` +
       `${JSON.stringify(underscoreAnnotLocations)}$$$` +
       `${JSON.stringify(aminoAcidsAnnotPositions)}$$$` +
-      `${JSON.stringify(aminoAcidsCatNames)}$$$`
+      `${JSON.stringify(aminoAcidsCatNames)}$$$` +
+      `${JSON.stringify(aminoAcidsOverrideColors)}$$$`
     );
   }
 
@@ -441,6 +445,7 @@ export default class ConfigGenerator {
   getAnnotatedAAs = (pos) => {
     const aaDefs = [];
     let globalIdxOffset = 0;
+    const {aminoAcidsOverrideColors} = this;
     for (const lookup of this.aminoAcidsAnnotPositions) {
       const posDef = lookup[pos];
       if (!posDef) {
@@ -448,12 +453,13 @@ export default class ConfigGenerator {
       }
       const [, colorIdx, aas] = posDef;
       const colorGrp = COLORS[colorIdx % COLORS.length];
+      const color = aminoAcidsOverrideColors[colorIdx] || colorGrp.dark;
       for (let idx = 0; idx < aas.length; idx ++) {
         const aminoAcid = aas[idx];
         aaDefs.push({
           aminoAcid,
           offsetPixel: this.posAA2Coord(pos, idx + globalIdxOffset),
-          color: colorGrp.dark
+          color
         });
       }
       globalIdxOffset += aas.length;
@@ -532,6 +538,7 @@ export default class ConfigGenerator {
   }
 
   updateLegendContext = ({onUpdate}) => {
+    const {aminoAcidsOverrideColors} = this;
     const colorBoxAnnotColorIdx = {};
     for (const [, colorIdx, val] of Object.values(this.colorBoxPositions)) {
       colorBoxAnnotColorIdx[val] = colorIdx;
@@ -555,7 +562,10 @@ export default class ConfigGenerator {
       underscoreAnnotColorLookup,
       aminoAcidsCatColorLookup: this.aminoAcidsCatNames.reduce(
         (acc, name, idx) => {
-          acc[name] = COLORS[idx % COLORS.length].dark;
+          acc[name] = (
+            aminoAcidsOverrideColors[idx] ||
+            COLORS[idx % COLORS.length].dark
+          );
           return acc;
         }, {}
       )

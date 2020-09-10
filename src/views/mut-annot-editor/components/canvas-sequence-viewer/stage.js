@@ -51,9 +51,6 @@ export default class SeqViewerStage extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
-    displayCitationIds: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
     onChange: PropTypes.func.isRequired
   }
 

@@ -55,7 +55,7 @@ class MutAnnotEditorInner extends React.Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
     router: routerShape.isRequired,
-    region: PropTypes.string.isRequired,
+    region: PropTypes.string,
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,

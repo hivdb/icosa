@@ -61,6 +61,7 @@ export default class CanvasSequenceViewer extends React.Component {
     let underscoreAnnotNames = [];
     const aminoAcidsAnnotPositions = [];
     const aminoAcidsCatNames = [];
+    const aminoAcidsOverrideColors = [];
     let aaAnnotIdx = 0;
     for (const cat of annotCategories) {
       const {name: catName, annotStyle} = cat;
@@ -92,6 +93,7 @@ export default class CanvasSequenceViewer extends React.Component {
             curAnnot, positionLookup, aaAnnotIdx ++
           );
           aminoAcidsCatNames.push(catName);
+          aminoAcidsOverrideColors.push(cat.color);
           break;
         default:
           break;
@@ -110,7 +112,8 @@ export default class CanvasSequenceViewer extends React.Component {
         underscoreAnnotLocations,
         underscoreAnnotNames,
         aminoAcidsAnnotPositions,
-        aminoAcidsCatNames
+        aminoAcidsCatNames,
+        aminoAcidsOverrideColors
       });
     }
     return null;
@@ -147,7 +150,7 @@ export default class CanvasSequenceViewer extends React.Component {
         {config === null ? <Loader loaded={false} /> :
         <LegendContext.Consumer>
           {(context) => {
-            config.updateLegendContext(context);
+            setTimeout(() => config.updateLegendContext(context));
             return (
               <SeqViewerStage
                {...{
