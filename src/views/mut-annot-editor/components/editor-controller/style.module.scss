@@ -217,11 +217,13 @@
   align-items: flex-start;
   flex-wrap: wrap;
   position: relative;
+  line-height: 1.15;
 
   .annot-view-legend {
     width: 1.2rem;
     min-width: 1.2rem;
     height: 1.2rem;
+    box-sizing: content-box;
     font-weight: 700;
     font-size: 0.8rem;
     text-align: center;
