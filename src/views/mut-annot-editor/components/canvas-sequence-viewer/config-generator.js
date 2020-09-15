@@ -122,7 +122,7 @@ export default class ConfigGenerator {
       ),
 
       refAAFontSizePixel: baseSizePixel / 2,
-      posNumFontSizePixel: baseSizePixel / 4.5,
+      posNumFontSizePixel: baseSizePixel / 3,
       hoverPosNumFontSizePixel: baseSizePixel / 2,
 
       underscoreAnnotMarginPixel,
@@ -255,11 +255,11 @@ export default class ConfigGenerator {
       },
       posNumOffsetPixel: {
         x: baseSizePixel / 12,
-        y: baseSizePixel / 12
+        y: baseSizePixel / 20
       },
       hoverPosNumOffsetPixel: {
         x: 0,
-        y: baseSizePixel * 1.2
+        y: baseSizePixel * -0.2
       },
       circleInBoxOffsetPixel: {
         x: baseSizePixel / 2,

@@ -60,24 +60,26 @@ export default class EditorController extends React.Component {
     return allowEditing && selectedPositions.length > 0;
   }
 
-  get colorBoxAnnotName() {
-    const {curAnnotNameLookup, annotCategories} = this.props;
+  get colorBoxAnnotDef() {
+    const {curAnnotNameLookup, annotCategories, annotations} = this.props;
     const catName = (
       annotCategories
         .find(({annotStyle}) => annotStyle === 'colorBox')
         .name
     );
-    return curAnnotNameLookup[catName][0];
+    const annotName = curAnnotNameLookup[catName][0];
+    return annotations.find(({name}) => name === annotName);
   }
 
-  get circleInBoxAnnotName() {
-    const {curAnnotNameLookup, annotCategories} = this.props;
+  get circleInBoxAnnotDef() {
+    const {curAnnotNameLookup, annotCategories, annotations} = this.props;
     const catName = (
       annotCategories
         .find(({annotStyle}) => annotStyle === 'circleInBox')
         .name
     );
-    return curAnnotNameLookup[catName][0];
+    const annotName = curAnnotNameLookup[catName][0];
+    return annotations.find(({name}) => name === annotName);
   }
 
   handleCurAnnotNamesChange(catName) {
@@ -106,6 +108,7 @@ export default class EditorController extends React.Component {
       seqViewerSize,
       onSeqViewerSizeChange,
       onSeqFragmentChange,
+      citations,
       // onReset,
       onSave,
       annotCategories,
@@ -134,8 +137,9 @@ export default class EditorController extends React.Component {
         ))}
         <ColorLegend
          seqFragment={seqFragment}
-         colorBoxAnnotName={this.colorBoxAnnotName}
-         circleInBoxAnnotName={this.circleInBoxAnnotName}
+         citations={citations}
+         colorBoxAnnotDef={this.colorBoxAnnotDef}
+         circleInBoxAnnotDef={this.circleInBoxAnnotDef}
          aminoAcidsCats={
            annotCategories
            .filter(({annotStyle}) => annotStyle === 'aminoAcids')

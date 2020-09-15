@@ -257,6 +257,7 @@
       background-color: #ddd;
       color: #999;
       position: relative;
+      flex-basis: 100%;
       margin-right: calc(100% - 1.2rem);
       margin-bottom: -.2rem;
     }
@@ -267,6 +268,11 @@
   }
 
   .annot-view-text {
+  }
+
+  ul.citation-list {
+    margin-top: 0;
+    flex-basis: 100%;
   }
 
   .annot-view-value {
@@ -288,6 +294,9 @@
     color: rgba(0, 0, 0, .5);
     display: inline-block;
     font-size: .9rem;
+  }
+  span.annot-view-desc {
+    display: inline;
   }
   .annot-view-positions + .annot-view-desc::before {
     content: ": ";

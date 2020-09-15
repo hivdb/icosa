@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import range from 'lodash/range';
 
-import {posShape, annotCategoryShape} from '../../prop-types';
+import ExtLink from '../../../../components/link/external';
+import {
+  posShape, annotShape,
+  citationShape,
+  annotCategoryShape
+} from '../../prop-types';
 import {getAnnotation} from '../../utils';
 import LegendContext from '../legend-context';
 
@@ -14,7 +19,7 @@ function getAllAnnotations(props) {
   const {
     positionLookup: posLookup,
     seqFragment: [posStart, posEnd],
-    colorBoxAnnotName: annotName
+    colorBoxAnnotDef: {name: annotName}
   } = props;
   const annotObjs = [];
   const annotLookup = {};
@@ -90,7 +95,36 @@ function isShortDesc(content) {
 }
 
 
-function CircleInBoxDesc({annotName}) {
+function CitationList({positionLookup, citations, annotName}) {
+  const citationIds = {};
+  for (const posdata of Object.values(positionLookup)) {
+    const annot = posdata.annotations.find(({name}) => name === annotName);
+    if (annot) {
+      for (const cid of annot.citationIds) {
+        citationIds[cid] = citationIds[cid] || [];
+        citationIds[cid].push(posdata.position);
+      }
+    }
+  }
+  const referreds = Object.keys(citationIds).map(cid => citations[cid]);
+  return <ul className={style['citation-list']}>
+    {referreds.map(({citationId, sectionId, doi, author, year}, idx) => (
+      <li key={idx}>
+        <ExtLink href={`https://doi.org/${doi}`}>{author} {year}</ExtLink>
+        <span className={style['annot-view-desc']}>
+          {' ('}{citationIds[`${citationId}.${sectionId}`].join(', ')})
+        </span>
+      </li>
+    ))}
+  </ul>;
+}
+
+
+function CircleInBoxDesc({
+  annot: {name: annotName, hideCitations},
+  positionLookup,
+  citations
+}) {
   return <div className={style['annot-view-item']}>
     <div className={makeClassNames(
       style['annot-view-legend'],
@@ -106,6 +140,8 @@ function CircleInBoxDesc({annotName}) {
         (position with a circle)
       </div>
     </div>
+    {hideCitations ? null :
+    <CitationList {...{annotName, positionLookup, citations}} />}
   </div>;
 }
 
@@ -165,11 +201,12 @@ export default class ColorLegend extends React.Component {
       PropTypes.number.isRequired
     ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-    colorBoxAnnotName: PropTypes.string.isRequired,
+    colorBoxAnnotDef: annotShape.isRequired,
     aminoAcidsCats: PropTypes.arrayOf(
       annotCategoryShape.isRequired
     ).isRequired,
-    circleInBoxAnnotName: PropTypes.string.isRequired
+    circleInBoxAnnotDef: annotShape.isRequired,
+    citations: PropTypes.objectOf(citationShape.isRequired).isRequired
   }
 
   static getDerivedStateFromProps(props) {
@@ -184,7 +221,12 @@ export default class ColorLegend extends React.Component {
   }
 
   render() {
-    const {circleInBoxAnnotName, aminoAcidsCats} = this.props;
+    const {
+      circleInBoxAnnotDef,
+      aminoAcidsCats,
+      positionLookup,
+      citations
+    } = this.props;
     const {annotObjs} = this.state;
     return (
       <div className={
@@ -199,7 +241,10 @@ export default class ColorLegend extends React.Component {
                {...annot} />
             )) : 'None'}
             <hr />
-            <CircleInBoxDesc annotName={circleInBoxAnnotName} />
+            <CircleInBoxDesc
+             positionLookup={positionLookup}
+             annot={circleInBoxAnnotDef}
+             citations={citations} />
             <hr />
             {aminoAcidsCats.map(({name, display}, idx) => (
               <AAColorDesc

@@ -115,6 +115,11 @@ export default class AnnotCategory extends React.Component {
     }
   }
 
+  handleSelectAll = evt => {
+    evt.preventDefault();
+    this.props.onChange(this.options.map(({value}) => value));
+  }
+
   handleRemoveAll = evt => {
     evt.preventDefault();
     this.props.onChange([]);
@@ -153,13 +158,28 @@ export default class AnnotCategory extends React.Component {
           {({underscoreAnnotColorLookup}) => <>
             <h3>
               Select {displayName}
+              {multiSelect && curAnnotNames.length === 0 ? <>
+                {' ('}<a
+                 href="#select-all-annots"
+                 onClick={this.handleSelectAll}>
+                  select all
+                </a>)
+              </> : null}
               {multiSelect && curAnnotNames.length > 0 ? <>
                 {' ('}<a
                  href="#remove-all-annots"
                  onClick={this.handleRemoveAll}>
                   remove all
                 </a>)
-              </> : null}:
+              </> : null}
+              {!multiSelect && curAnnotNames.length === 1 ? <>
+                {' ('}<a
+                 href="#remove-all-annots"
+                 onClick={this.handleRemoveAll}>
+                  remove selection
+                </a>)
+              </> : null}
+              :
             </h3>
             {dropdown ?
               <Dropdown
