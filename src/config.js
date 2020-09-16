@@ -67,6 +67,12 @@ const mutAnnotEditorConfig = {
       display: "SARS-CoV-2 Spike gene",
       refSeqLoader: makeGeneRefSeqLoader('SARS2S'),
       annotationLoader: makeMutationAnnotationLoader('SARS2S')
+    },
+    {
+      name: 'SARS2RdRP',
+      display: "SARS-CoV-2 RNA-dependent RNA polymerase",
+      refSeqLoader: makeGeneRefSeqLoader('SARS2RdRP'),
+      annotationLoader: makeMutationAnnotationLoader('SARS2RdRP')
     }
   ]
 };
