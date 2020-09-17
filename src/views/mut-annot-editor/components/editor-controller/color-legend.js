@@ -228,6 +228,8 @@ export default class ColorLegend extends React.Component {
       citations
     } = this.props;
     const {annotObjs} = this.state;
+
+    const showCirleInBoxDesc = !!circleInBoxAnnotDef;
     return (
       <div className={
         makeClassNames(style['input-group'], style['scrollable'])
@@ -241,11 +243,15 @@ export default class ColorLegend extends React.Component {
                {...annot} />
             )) : 'None'}
             <hr />
-            <CircleInBoxDesc
-             positionLookup={positionLookup}
-             annot={circleInBoxAnnotDef}
-             citations={citations} />
-            <hr />
+            { showCirleInBoxDesc ?
+            <>
+              <CircleInBoxDesc
+              positionLookup={positionLookup}
+              annot={circleInBoxAnnotDef}
+              citations={citations} />
+              <hr />
+            </> : null
+            }
             {aminoAcidsCats.map(({name, display}, idx) => (
               <AAColorDesc
                key={idx}

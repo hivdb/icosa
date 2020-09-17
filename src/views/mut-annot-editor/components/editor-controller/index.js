@@ -73,11 +73,14 @@ export default class EditorController extends React.Component {
 
   get circleInBoxAnnotDef() {
     const {curAnnotNameLookup, annotCategories, annotations} = this.props;
-    const catName = (
+    const category = (
       annotCategories
         .find(({annotStyle}) => annotStyle === 'circleInBox')
-        .name
     );
+    if (!category) {
+      return null;
+    }
+    const catName = category.name;
     const annotName = curAnnotNameLookup[catName][0];
     return annotations.find(({name}) => name === annotName);
   }
