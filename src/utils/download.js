@@ -15,6 +15,8 @@ export function makeZip(fileName, files) {
     .then(data => makeDownload(fileName, 'application/zip', data, true));
 }
 
+const utf8Encoder = new TextEncoder();
+
 export function makeDownload(fileName, mediaType, data, isBlob = false) {
   if (typeof(document) === 'undefined') {
     return;
@@ -22,7 +24,7 @@ export function makeDownload(fileName, mediaType, data, isBlob = false) {
   const ts = new Date().getTime();
   fileName = fileName.replace(/(\.[^.]+$|$)/, `_${ts}$1`);
   if (!isBlob) {
-    data = new Uint8Array(Array.from(data).map((c) => c.charCodeAt(0)));
+    data = utf8Encoder.encode(data);
     data = new Blob([data], {type: mediaType});
   }
   let uri = URL.createObjectURL(data);
