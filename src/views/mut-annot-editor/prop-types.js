@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 
 const annotShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
+  label: PropTypes.string,
   level: PropTypes.oneOf(['position', 'aminoAcid']).isRequired,
   hideCitations: PropTypes.bool,
   colorRules: PropTypes.arrayOf(
@@ -63,7 +64,7 @@ const annotCategoryShape = PropTypes.shape({
   color: PropTypes.string
 });
 
-const versionType = PropTypes.oneOf(['20200910120644']);
+const versionType = PropTypes.oneOf(['20200924115632']);
 
 const fragmentOptionShape = PropTypes.shape({
   name: PropTypes.string.isRequired,

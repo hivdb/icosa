@@ -29,31 +29,15 @@ async function popRefAminoAcid(dataURI) {
 }
 
 
-const repoSierraSARS2 = (
-  'https://raw.githubusercontent.com/hivdb/sierra-sars2/dev'
+const cmsPrefix = (
+  'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev/pages'
 );
 
 
-function makeGeneRefSeqLoader(gene) {
+function makeMutationAnnotationLoader(name) {
   return async() => {
     const resp = await fetch(
-      `${repoSierraSARS2}/src/main/resources/genes.json`
-    );
-    const data = await resp.json();
-    for (const {name, refSequence} of data) {
-      if (name === gene) {
-        return refSequence;
-      }
-    }
-    return null;
-  };
-}
-
-
-function makeMutationAnnotationLoader(gene) {
-  return async() => {
-    const resp = await fetch(
-      `${repoSierraSARS2}/src/main/resources/mutation-annotations_${gene}.json`
+      `${cmsPrefix}/${name}.json`
     );
     return await resp.json();
   };
@@ -65,14 +49,12 @@ const mutAnnotEditorConfig = {
     {
       name: 'SARS2S',
       display: "SARS-CoV-2 Spike gene",
-      refSeqLoader: makeGeneRefSeqLoader('SARS2S'),
-      annotationLoader: makeMutationAnnotationLoader('SARS2S')
+      annotationLoader: makeMutationAnnotationLoader('mutannot-spike')
     },
     {
       name: 'SARS2RdRP',
       display: "SARS-CoV-2 RNA-dependent RNA polymerase",
-      refSeqLoader: makeGeneRefSeqLoader('SARS2RdRP'),
-      annotationLoader: makeMutationAnnotationLoader('SARS2RdRP')
+      annotationLoader: makeMutationAnnotationLoader('mutannot-rdrp')
     }
   ]
 };

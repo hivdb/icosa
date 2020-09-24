@@ -295,7 +295,6 @@ export default class MutAnnotEditor extends React.Component {
     preset: PropTypes.shape({
       name: PropTypes.string.isRequired,
       display: PropTypes.node.isRequired,
-      refSeqLoader: PropTypes.func.isRequired,
       annotationLoader: PropTypes.func.isRequired
     }).isRequired,
     match: matchShape.isRequired,
@@ -306,7 +305,7 @@ export default class MutAnnotEditor extends React.Component {
     const {
       preset: {
         name, display,
-        refSeqLoader, annotationLoader
+        annotationLoader
       },
       router,
       match: {location}
@@ -317,7 +316,6 @@ export default class MutAnnotEditor extends React.Component {
     }
     if (
       state.region === region &&
-      state.refSeqLoader === refSeqLoader &&
       state.annotationLoader === annotationLoader
     ) {
       return null;
@@ -330,14 +328,16 @@ export default class MutAnnotEditor extends React.Component {
     }
     
     return {
-      refSeqLoader,
       annotationLoader,
-      promise: (async () => ({
-        name, display,
-        refSeq: await refSeqLoader(),
-        annotationData: await annotationLoader(),
-        ...extraProps
-      }))()
+      promise: (async () => {
+        const {refSequence, ...annotationData} = await annotationLoader();
+        return {
+          name, display,
+          refSeq: refSequence,
+          annotationData,
+          ...extraProps
+        };
+      })()
     };
   }
 

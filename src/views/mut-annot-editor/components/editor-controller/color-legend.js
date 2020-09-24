@@ -243,15 +243,14 @@ export default class ColorLegend extends React.Component {
                {...annot} />
             )) : 'None'}
             <hr />
-            { showCirleInBoxDesc ?
-            <>
-              <CircleInBoxDesc
-              positionLookup={positionLookup}
-              annot={circleInBoxAnnotDef}
-              citations={citations} />
-              <hr />
-            </> : null
-            }
+            {showCirleInBoxDesc ?
+              <>
+                <CircleInBoxDesc
+                 positionLookup={positionLookup}
+                 annot={circleInBoxAnnotDef}
+                 citations={citations} />
+                <hr />
+              </> : null}
             {aminoAcidsCats.map(({name, display}, idx) => (
               <AAColorDesc
                key={idx}

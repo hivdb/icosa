@@ -28,7 +28,7 @@ export default class PresetSelection extends React.Component {
     const {options} = this.props;
     return <section className={style['preset-selection']}>
       <Dropdown
-       placeholder="Choose a gene to edit..."
+       placeholder="Choose a gene to view..."
        options={options}
        name="preset"
        onChange={this.handleChange} />
