@@ -125,7 +125,10 @@ function CircleInBoxDesc({
   positionLookup,
   citations
 }) {
-  return <div className={style['annot-view-item']}>
+  return <div className={makeClassNames(
+    style['annot-view-item'],
+    style.wrap
+  )}>
     <div className={makeClassNames(
       style['annot-view-legend'],
       style['annot-view-legend_circle']
@@ -147,7 +150,10 @@ function CircleInBoxDesc({
 
 
 function AAColorDesc({catName, display, color}) {
-  return <div className={style['annot-view-item']}>
+  return <div className={makeClassNames(
+    style['annot-view-item'],
+    style.wrap
+  )}>
     <div className={makeClassNames(
       style['annot-view-legend'],
       style['annot-view-legend_with-aa']
@@ -184,11 +190,14 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
       <div>X</div>
     </div>
     <div className={style['annot-view-text']}>
-      <div className={style['annot-view-value']}>{annotVal}</div>
-      <div className={style['annot-view-positions']}>
-        ({rangeStr}{short ? `, ${annotDesc}` : null})
-      </div>
-      {!short && <div className={style['annot-view-desc']}>{annotDesc}</div>}
+      <span className={style['annot-view-value']}>{annotVal}</span>
+      <span className={style['annot-view-positions']}>
+        ({rangeStr}{
+          short && annotDesc && annotDesc.length > 0 ?
+            `, ${annotDesc}` : null
+        })
+      </span>
+      {!short && <span className={style['annot-view-desc']}>{annotDesc}</span>}
     </div>
   </div>;
 }

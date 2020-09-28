@@ -215,9 +215,11 @@
 .annot-view-item {
   display: flex;
   align-items: flex-start;
-  flex-wrap: wrap;
   position: relative;
   line-height: 1.15;
+  &.wrap {
+    flex-wrap: wrap;
+  }
 
   .annot-view-legend {
     width: 1.2rem;
