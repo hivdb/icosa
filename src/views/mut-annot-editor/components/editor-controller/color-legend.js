@@ -214,7 +214,7 @@ export default class ColorLegend extends React.Component {
     aminoAcidsCats: PropTypes.arrayOf(
       annotCategoryShape.isRequired
     ).isRequired,
-    circleInBoxAnnotDef: annotShape.isRequired,
+    circleInBoxAnnotDef: annotShape,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired
   }
 

@@ -2,6 +2,12 @@ import React from 'react';
 import {Group, Rect, Circle, Text} from 'react-konva';
 
 
+
+function getDisplayAA(aa) {
+  return aa.replace('i', 'ins').replace('d', 'del');
+}
+
+
 export default function PositionGroup({
   config,
   posAnnot,
@@ -87,7 +93,7 @@ export default function PositionGroup({
        width={itemSize}
        height={aaAnnotHeight}
        lineHeight={aaAnnotHeight / aaAnnotFontSize}
-       text={aa.replace('i', 'ins').replace('d', 'del')} />
+       text={getDisplayAA(aa)} />
     ))}
   </Group>;
 }

@@ -27,11 +27,7 @@ const posShape = PropTypes.shape({
       value: PropTypes.string,
       description: PropTypes.string,
       aminoAcids: PropTypes.arrayOf(
-        PropTypes.oneOf([
-          'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
-          'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y',
-          '*', 'i', 'd'
-        ]).isRequired
+        PropTypes.string.isRequired
       ),
       citationIds: PropTypes.arrayOf(
         PropTypes.string.isRequired
