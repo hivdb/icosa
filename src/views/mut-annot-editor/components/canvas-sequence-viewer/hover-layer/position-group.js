@@ -45,8 +45,8 @@ export default class PositionGroup extends React.Component {
       config: {
         posItemSizePixel,
         strokeWidthPixel,
-        hoverPosNumFontSizePixel,
-        hoverPosNumColor,
+        hoverTextFontSizePixel,
+        hoverTextColor,
         fontFamily,
         pos2Coord,
         getStrokeColor
@@ -54,7 +54,7 @@ export default class PositionGroup extends React.Component {
     } = this.props;
     const {posNumOffset} = this;
     const {current: textElem} = this.posNumTextRef;
-    let textColor = hoverPosNumColor;
+    let textColor = hoverTextColor;
     if (!textElem || textElem.attrs['data-position'] !== position) {
       this._timeout = setTimeout(() => {
         this.forceUpdate();
@@ -74,13 +74,11 @@ export default class PositionGroup extends React.Component {
          stroke={getStrokeColor(position, true)}
          strokeWidth={strokeWidthPixel} />
         <Text
-         ref={this.posNumTextRef}
          x={posNumOffset.x}
          y={posNumOffset.y}
          stroke="white"
          strokeWidth={4}
-         data-position={position}
-         fontSize={hoverPosNumFontSizePixel}
+         fontSize={hoverTextFontSizePixel}
          fontFamily={fontFamily}
          fill={textColor}
          align="center"
@@ -90,7 +88,7 @@ export default class PositionGroup extends React.Component {
          x={posNumOffset.x}
          y={posNumOffset.y}
          data-position={position}
-         fontSize={hoverPosNumFontSizePixel}
+         fontSize={hoverTextFontSizePixel}
          fontFamily={fontFamily}
          fill={textColor}
          align="center"

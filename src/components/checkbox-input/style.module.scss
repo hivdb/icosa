@@ -7,6 +7,13 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
 
 .general-checkbox-input {
 
+  &:focus {
+    outline: none;
+    label::before {
+      outline: rgb(0, 95, 204) auto 1px;
+    }
+  }
+
   &.use-polygon {
     label::after {
       color: transparent;

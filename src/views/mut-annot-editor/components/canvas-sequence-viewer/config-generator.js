@@ -123,7 +123,7 @@ export default class ConfigGenerator {
 
       refAAFontSizePixel: baseSizePixel / 2,
       posNumFontSizePixel: baseSizePixel / 3,
-      hoverPosNumFontSizePixel: baseSizePixel / 2,
+      hoverTextFontSizePixel: baseSizePixel / 2,
 
       underscoreAnnotMarginPixel,
 
@@ -261,6 +261,10 @@ export default class ConfigGenerator {
         x: 0,
         y: baseSizePixel * -0.2
       },
+      hoverUnderscoreAnnotOffsetPixel: {
+        x: 0,
+        y: baseSizePixel * -0.5
+      },
       circleInBoxOffsetPixel: {
         x: baseSizePixel / 2,
         y: baseSizePixel / 2 + baseSizePixel / 12
@@ -271,7 +275,7 @@ export default class ConfigGenerator {
   initColorConfig() {
     Object.assign(this, {
       posNumColor: '#444',
-      hoverPosNumColor: '#222',
+      hoverTextColor: '#222',
 
       refAADarkColor: '#000',
       refAALightColor: '#fff',
@@ -377,6 +381,31 @@ export default class ConfigGenerator {
     const x = colNumber0 * (hMargin + boxSize) + hMargin;
     let y = offsetYPerRow[rowNumber0];
     return {x, y};
+  }
+
+  coord2UnderscoreAnnot = (x, y) => {
+    const {
+      posItemSizePixel,
+      underscoreAnnotHeightPixel,
+      underscoreAnnotMarginPixel,
+      underscoreAnnotLocations: {matrix}
+    } = this;
+    const offsetY = posItemSizePixel + underscoreAnnotMarginPixel;
+    const usHeight = underscoreAnnotHeightPixel + underscoreAnnotMarginPixel;
+
+    const pos = this.coord2Pos(x, y);
+    const posAnnots = matrix[pos - 1] || [];
+    const {x: baseX, y: baseY} = this.pos2Coord(pos);
+    const relY = y - baseY - offsetY;
+    const locIdx = parseInt(relY / usHeight);
+    if (locIdx >= 0 && locIdx < posAnnots.length) {
+      return {
+        annotName: posAnnots[locIdx],
+        x: baseX,
+        y: baseY + offsetY + locIdx * usHeight
+      };
+    }
+    return {};
   }
 
   coord2Pos = (x, y) => {

@@ -75,6 +75,7 @@ export default class SeqViewerStage extends React.Component {
       anchorPos: null,
       activePos: null,
       hoverPos: null,
+      hoverUSAnnot: {},
       curSelecteds: this.props.selectedPositions,
       prevSelecteds: []
     };
@@ -112,6 +113,11 @@ export default class SeqViewerStage extends React.Component {
   getPositionFromMouseEvent(event) {
     const {offsetX, offsetY} = event;
     return this.props.config.coord2Pos(offsetX, offsetY);
+  }
+
+  getUnderscoreAnnotNameFromMouseEvent(event) {
+    const {offsetX, offsetY} = event;
+    return this.props.config.coord2UnderscoreAnnot(offsetX, offsetY);
   }
 
   componentDidMount() {
@@ -343,7 +349,8 @@ export default class SeqViewerStage extends React.Component {
   handleMouseMove = ({evt}) => {
     // set hovering position
     const hoverPos = this.getPositionFromMouseEvent(evt);
-    this.setState({hoverPos});
+    const hoverUSAnnot = this.getUnderscoreAnnotNameFromMouseEvent(evt);
+    this.setState({hoverPos, hoverUSAnnot});
     // end
 
     const {multiSel, rangeSel} = getKeyCmd(evt);
@@ -436,6 +443,7 @@ export default class SeqViewerStage extends React.Component {
     } = this.props;
     const {
       hoverPos,
+      hoverUSAnnot,
       anchorPos,
       activePos,
       // the internal "curSelecteds" is much faster
@@ -457,16 +465,20 @@ export default class SeqViewerStage extends React.Component {
          onMouseOut={this.handleMouseMove}
          onMouseUp={this.handleMouseUp}
          height={config.canvasHeightPixel}>
-          <AnnotsLayer {...{config}} />
+          <AnnotsLayer
+           hoverUSAnnot={hoverUSAnnot}
+           {...{config}} />
           <PosItemLayer
            sequence={sequence}
            config={config}
            positionLookup={positionLookup} />
           <HoverLayer
            hoverPos={hoverPos}
+           hoverUSAnnot={hoverUSAnnot}
            activePos={activePos}
            anchorPos={anchorPos}
-           config={config} />
+           config={config}
+           positionLookup={positionLookup} />
           <SelectedLayer
            selectedPositions={curSelecteds}
            anchorPos={anchorPos}

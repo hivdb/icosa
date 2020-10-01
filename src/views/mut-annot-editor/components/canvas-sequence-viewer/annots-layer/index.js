@@ -5,22 +5,29 @@ import {Layer} from 'react-konva';
 import PosAnnotGroup from './posannot-group';
 
 
-export default class ExtraAnnotsLayer extends React.Component {
+export default class AnnotsLayer extends React.Component {
 
   static propTypes = {
+    hoverUSAnnot: PropTypes.shape({
+      annotName: PropTypes.string
+    }).isRequired,
     config: PropTypes.object.isRequired
   }
 
   shouldComponentUpdate(nextProps) {
-    return this.props.config.getHash() !== nextProps.config.getHash();
+    return (
+      JSON.stringify(this.props.hoverUSAnnot) !==
+      JSON.stringify(nextProps.hoverUSAnnot) ||
+      this.props.config.getHash() !== nextProps.config.getHash()
+    );
   }
 
   render() {
-    const {config} = this.props;
+    const {hoverUSAnnot, config} = this.props;
 
     return (
       <Layer>
-        <PosAnnotGroup {...{config}} />
+        <PosAnnotGroup {...{hoverUSAnnot, config}} />
       </Layer>
     );
 
