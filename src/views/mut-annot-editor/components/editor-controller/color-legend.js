@@ -121,7 +121,7 @@ function CitationList({positionLookup, citations, annotName}) {
 
 
 function CircleInBoxDesc({
-  annot: {name: annotName, hideCitations},
+  annot: {name: annotName, label, hideCitations},
   positionLookup,
   citations
 }) {
@@ -137,7 +137,7 @@ function CircleInBoxDesc({
     </div>
     <div className={style['annot-view-text']}>
       <div className={style['annot-view-value']}>
-        {annotName}
+        {label || annotName}
       </div>
       <div className={style['annot-view-desc']}>
         (position with a circle)
