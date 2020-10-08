@@ -150,6 +150,9 @@ function CircleInBoxDesc({
 
 
 function AAColorDesc({catName, display, color}) {
+  if (display === false) {
+    return null;
+  }
   return <div className={makeClassNames(
     style['annot-view-item'],
     style.wrap
