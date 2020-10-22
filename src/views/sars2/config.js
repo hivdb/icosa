@@ -1,4 +1,36 @@
+async function popPrevalence(dataURI) {
+  const resp = await fetch(dataURI);
+  const data = await resp.json();
+  const pcntLookup = data.reduce((acc, row) => {
+    acc[`${row.gene}${row.position}${row.aa}`] = row.percent;
+    return acc;
+  }, {});
+  return async (colname, rows) => rows.map((row) => {
+    row[colname] = (
+      `${pcntLookup[`${row.gene}${row.position}${row.aminoAcid}`] * 100 ||
+      .0}%`
+    );
+    return row;
+  });
+}
+
+
+async function popRefAminoAcid(dataURI) {
+  const resp = await fetch(dataURI);
+  const data = await resp.json();
+  const geneLookup = data.reduce((acc, row) => {
+    acc[row.abstractGene] = row.refSequence;
+    return acc;
+  }, {});
+  return async (colname, rows) => rows.map((row) => {
+    row[colname] = geneLookup[row.gene][row.position - 1];
+    return row;
+  });
+}
+
+
 export default {
+  species: 'SARS2',
   graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
@@ -15,6 +47,10 @@ export default {
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%
+  geneDisplay: {
+    RdRP: 'RdRP',
+    S: 'Spike'
+  },
   mutationTypesByGenes: {
     RdRP: {
       Other: 'Other'
@@ -30,5 +66,66 @@ export default {
     S: '#ffffff'
   },
   showCodonCov: true,
-  showLowAbundanceMutsChart: true
+  showLowAbundanceMutsChart: true,
+  sdrmButton: false,
+  showMutationsInSummary: true,
+  mutStatTableColumns: [
+    {
+      name: 'sarsUsualSites',
+      label: '# SARS-CoV-2 >1% Mutations',
+      query: 'usualSitesBy(treatment: "all", subtype: "SARS2")'
+    },
+    {
+      name: 'sarsrUsualSites',
+      label: '# Sarbecovirus ≥2 Mutations',
+      query: 'usualSitesBy(treatment: "all", subtype: "SARSr")'
+    },
+    {
+      name: 'unusualSites',
+      label: '# Other Mutations',
+      query: 'unusualSites',
+      formatter: (count, total) => (
+        `${count} (${(count / total * 100).toFixed(1)}%)`
+      )
+    },
+    {
+      name: 'dividingLine1',
+      type: 'dividingLine'
+    },
+    {
+      name: 'stopCodonSites',
+      label: '# Stops',
+      query: 'stopCodonSites'
+    }
+  ],
+  codFreqExtraColumns: [
+    {
+      name: 'refAminoAcid',
+      callback: popRefAminoAcid(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/genes.json'
+      )
+    },
+    {
+      name: 'covdbSARS2Pcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARS2.json'
+      )
+    },
+    {
+      name: 'covdbSARSPcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARS.json'
+      )
+    },
+    {
+      name: 'covdbSARSrPcnt',
+      callback: popPrevalence(
+        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
+        'main/resources/aapcnt/rx-all_taxon-SARSr.json'
+      )
+    }
+  ]
 };

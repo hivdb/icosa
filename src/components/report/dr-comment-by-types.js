@@ -3,28 +3,8 @@ import PropTypes from 'prop-types';
 import reEscape from 'escape-string-regexp';
 
 import style from './style.module.scss';
+import ConfigContext from './config-context';
 
-
-const mutTypeLabels = {
-  PR: {
-    Major: 'PI Major',
-    Accessory: 'PI Accessory',
-    Other: 'Other',
-    Dosage: 'Dosage Considerations'
-  },
-  RT: {
-    NRTI: 'NRTI',
-    NNRTI: 'NNRTI',
-    Other: 'Other',
-    Dosage: 'Dosage Considerations'
-  },
-  IN: {
-    Major: 'IN Major',
-    Accessory: 'IN Accessory',
-    Other: 'Other',
-    Dosage: 'Dosage Considerations'
-  }
-};
 
 function highlight(key, comment, highlightText) {
   let hls = highlightText.map(hl => {
@@ -72,49 +52,59 @@ export default class DRCommentByTypes extends React.Component {
     const displayTPV = disabledDrugs.indexOf('TPV') === -1;
 
     return (
-      <div className={style['dr-report-comment-by-types']}>
-        <div className={style.title}>
-          {gene.name} comments
-        </div>
-        <dl>
-          {commentsByTypes
-            .filter(({comments}) => (
-              !(comments.length === 0 ||
-             (displayTPV && comments.every(
-               ({name}) => name.startsWith('DRVHighAndTPV'))
-             ))
-            ))
-            .map(({commentType, comments}, idx) => [
-              <dt key={`label-${idx}`}>
-                {mutTypeLabels[gene.name][commentType]}
-              </dt>,
-              <dd key={`list-${idx}`}>
-                <ul>
-                  {(() => {
-                    let commentsByText = {};
-                    for (const cmt of comments) {
-                      if (displayTPV && cmt.name.startsWith('DRVHighAndTPV')) {
-                        continue;
-                      }
-                      if (!commentsByText[cmt.text]) {
-                        commentsByText[cmt.text] = [];
-                      }
-                      commentsByText[cmt.text].push(cmt);
-                    }
-                    commentsByText = Object.values(commentsByText);
-                    return commentsByText.map((cmts, idx) => (
-                      <li key={idx}>
-                        {highlight(idx, cmts[0].text, cmts.reduce((l, cmt) => (
-                          l.concat(cmt.highlightText)
-                        ), []))}
-                      </li>
-                    ));
-                  })()}
-                </ul>
-              </dd>
-            ])}
-        </dl>
-      </div>
+      <ConfigContext.Consumer>
+        {({mutationTypesByGenes}) => (
+          <div className={style['dr-report-comment-by-types']}>
+            <div className={style.title}>
+              {gene.name} comments
+            </div>
+            <dl>
+              {commentsByTypes
+                .filter(({comments}) => (
+                  !(comments.length === 0 ||
+                 (displayTPV && comments.every(
+                   ({name}) => name.startsWith('DRVHighAndTPV'))
+                 ))
+                ))
+                .map(({commentType, comments}, idx) => [
+                  <dt key={`label-${idx}`}>
+                    {mutationTypesByGenes[gene.name][commentType]}
+                  </dt>,
+                  <dd key={`list-${idx}`}>
+                    <ul>
+                      {(() => {
+                        let commentsByText = {};
+                        for (const cmt of comments) {
+                          if (
+                            displayTPV &&
+                            cmt.name.startsWith('DRVHighAndTPV')
+                          ) {
+                            continue;
+                          }
+                          if (!commentsByText[cmt.text]) {
+                            commentsByText[cmt.text] = [];
+                          }
+                          commentsByText[cmt.text].push(cmt);
+                        }
+                        commentsByText = Object.values(commentsByText);
+                        return commentsByText.map((cmts, idx) => (
+                          <li key={idx}>
+                            {highlight(
+                              idx, cmts[0].text,
+                              cmts.reduce((l, cmt) => (
+                                l.concat(cmt.highlightText)
+                              ), [])
+                            )}
+                          </li>
+                        ));
+                      })()}
+                    </ul>
+                  </dd>
+                ])}
+            </dl>
+          </div>
+        )}
+      </ConfigContext.Consumer>
     );
   }
 }

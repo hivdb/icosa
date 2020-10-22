@@ -10,25 +10,29 @@ import SeqAnaForms from './forms';
 import ReportBySequences from './report-by-sequences';
 import ReportBySeqReads from './report-by-reads';
 import style from './style.module.scss';
-import config from './config';
+import defaultConfig from './config';
 
+import ConfigContext, {
+  configWrapper
+} from '../../components/report/config-context';
 import CustomColors from '../../components/custom-colors';
 
 
 export default function SARS2Routes({
   pathPrefix = "sars2/",
-  species = "SARS2",
-  graphqlURI = config.graphqlURI,
+  config = defaultConfig,
   formProps,
   colors,
   className
 } = {}) {
+  const configContext = configWrapper(config);
   const apolloClient = new ApolloClient({
-    link: new HttpLink({uri: graphqlURI}),
+    link: new HttpLink({uri: configContext.graphqlURI}),
     cache: new Hermes(),
     name: 'sierra-frontend-client',
     version: '0.1'
   });
+  const species = configContext.species;
   const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
   return <Route path={pathPrefix} Component={wrapper}>
@@ -55,7 +59,9 @@ export default function SARS2Routes({
 
   function wrapper(props) {
     return <CustomColors className={wrapperClassName} colors={colors}>
-      <ApolloProvider {...props} client={apolloClient} />
+      <ConfigContext.Provider value={configContext}>
+        <ApolloProvider {...props} client={apolloClient} />
+      </ConfigContext.Provider>
     </CustomColors>;
   }
 }
