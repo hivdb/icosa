@@ -20,12 +20,12 @@ import CustomColors from '../../components/custom-colors';
 
 export default function SARS2Routes({
   pathPrefix = "sars2/",
-  config = defaultConfig,
+  config = {},
   formProps,
   colors,
   className
 } = {}) {
-  const configContext = configWrapper(config);
+  const configContext = configWrapper({...defaultConfig, ...config});
   const apolloClient = new ApolloClient({
     link: new HttpLink({uri: configContext.graphqlURI}),
     cache: new Hermes(),
