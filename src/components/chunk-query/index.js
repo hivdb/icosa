@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Query} from 'react-apollo';
-import Loader from 'react-loader';
 
 import ChunkQueryInner from './inner';
 
@@ -55,22 +54,15 @@ export default class ChunkQuery extends React.Component {
     if (done) { return noVariablesMessage; }
     return (
       <Query {...{query, variables, fetchPolicy, client}} returnPartialData>
-        {({loading, error, data, fetchMore}) => {
-          if (loading) {
-            return <>
-              {renderPartialResults ?
-                render(data, /* emptyProps= */true) : null}
-              <Loader loaded={false} />
-            </>;
-          }
-          if (error) {
-            return `Error! ${error.message}`;
-          }
-          return <ChunkQueryInner
+        {({loading, error, data, fetchMore}) => (
+          <ChunkQueryInner
            key="chunk-query-inner"
-           {...{data, render, renderPartialResults, progressText}}
-           onLoadMore={this.handleLoadMore(fetchMore, data)} />;
-        }}
+           {...{
+             data, render, renderPartialResults,
+             progressText, loading, error
+           }}
+           onLoadMore={this.handleLoadMore(fetchMore, data)} />
+        )}
       </Query>
     );
   }

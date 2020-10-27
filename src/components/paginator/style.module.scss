@@ -1,0 +1,280 @@
+@import "../../styles";
+
+$item-size: 2.5rem;
+$hover-opacity: .9;
+$client-width: calc(var(--display-nums) * #{$item-size * 2});
+$scroll-width: calc(var(--total) * #{$item-size * 2});
+$scrollbar-step-width: calc(#{$client-width} / var(--total));
+$scrollbar-offset: calc(
+  #{$scrollbar-step-width} *
+  var(--scroll-offset)
+);
+$scrollbar-width: Max(
+  3rem,
+  calc(
+    #{$scrollbar-step-width} *
+    var(--display-nums)
+  )
+);
+
+.paginator-container {
+  position: relative;
+  width: calc(#{$item-size * 4} + #{$client-width});
+  padding-left: $item-size * 2;
+  padding-right: $item-size * 2;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: 0;
+  --scrollbar-step-width: #{$scrollbar-step-width};
+}
+
+@mixin paginator-item {
+  display: block;
+  width: $item-size;
+  height: $item-size;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: $item-size;
+  vertical-align: middle;
+  transition: all 200ms ease-in-out;
+}
+
+.paginator-container > .paginator-arrow {
+  position: absolute;
+  top: $item-size - .3rem;
+  padding-left: $item-size / 2;
+  padding-right: $item-size / 2;
+  padding-bottom: 0;
+  > .paginator-arrow_desc, &::after {
+    @include paginator-item;
+  }
+
+  &::after {
+    position: absolute;
+    top: 0;
+    color: color(paginator-text);
+    left: $item-size / 2;
+  }
+  
+  > .paginator-arrow_desc {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  &:hover > .paginator-arrow_desc {
+    opacity: $hover-opacity;
+    background-color: color(paginator-text-hover-bg);
+  }
+
+  &[data-direction="-1"] {
+    left: 0;
+    &::after {
+      content: "«";
+    }
+  }
+
+  &[data-direction="1"] {
+    right: 0;
+    &::after {
+      content: "»";
+    }
+  }
+}
+
+.paginator-container > .paginator-scrollable-list {
+  display: inline-block;
+  overflow: hidden;
+  width: $client-width;
+  > .paginator-list {
+    counter-reset: paginator;
+    white-space: nowrap;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    transform: translateX(calc(var(--scroll-offset) * #{-$item-size * 2}));
+    transition: transform 200ms ease-in-out;
+  }
+}
+
+.paginator-list > .paginator-item {
+
+  display: inline-block;
+  list-style-type: none;
+  
+  > .paginator-item_link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    padding-left: $item-size / 2;
+    padding-right: $item-size / 2;
+    padding-bottom: 0;
+  
+    > .paginator-item_desc, &::after {
+      @include paginator-item;
+    }
+
+    &::after {
+      color: color(paginator-text);
+      position: absolute;
+      top: 0;
+      left: $item-size / 2;
+      counter-increment: paginator;
+      content: counter(paginator)"\a0";
+    }
+  
+    > .paginator-item_desc {
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  
+  }
+
+  &[data-is-hovering="true"] > .paginator-item_link {
+    > .paginator-item_desc {
+      opacity: $hover-opacity;
+      background-color: color(paginator-text-hover-bg);
+    }
+    &::after {
+      color: color(paginator-text-hover);
+    }
+  }
+
+  &[data-is-selected="true"] > .paginator-item_link {
+    > .paginator-item_desc {
+      background-color: color(paginator-text-current-bg);
+    }
+    &::after {
+      color: color(paginator-text-current);
+    }
+  }
+
+  &[data-is-hovering="true"][data-is-selected="true"] > .paginator-item_link {
+    > .paginator-item_desc {
+      opacity: 1;
+      background-color: color(paginator-text-current-hover-bg);
+    }
+    ::after {
+      color: color(paginator-text-current);
+    }
+  }
+  
+}
+
+.paginator-container > .paginator-desc {
+  $desc-width: $item-size * 9;
+  position: relative;
+  margin-left: calc(
+    Max(
+      0px,
+      Min(
+        calc(
+          calc(#{$item-size * 2} * var(--offset)) +
+          #{$item-size - $desc-width / 2}
+        ),
+        calc(100% - #{$desc-width})
+      )
+    ) +
+    calc(#{$item-size} * var(--hover-offset))
+  );
+  margin-bottom: -.5rem;
+  display: inline-block;
+  box-sizing: border-box;
+  line-height: $item-size;
+  height: $item-size;
+  max-width: $desc-width;
+  padding-left: $item-size / 3;
+  padding-right: $item-size / 3;
+  color: color(paginator-text-current);
+  transition: all 200ms ease-in-out;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &::before {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: "";
+    transition: background-color 200ms ease-in-out;
+    background-color: color(paginator-text-current-bg);
+    z-index: -1;
+  }
+
+  &[data-is-hovering="true"] {
+    &::before {
+      opacity: $hover-opacity;
+      background-color: color(paginator-text-hover-bg);
+    }
+    color: color(paginator-text-hover);
+    &[data-is-hovering-selected="true"] {
+      &::before {
+        opacity: 1;
+        background-color: color(paginator-text-current-hover-bg);
+      }
+      color: color(paginator-text-current);
+    }
+  }
+}
+
+.paginator-container > .scrollbar-container {
+  margin-top: - $item-size / 3;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  height: 1.25rem;
+  overflow: hidden;
+  &::before {
+    position: absolute;
+    content: '';
+    display: block;
+    top: .5rem;
+    left: 0;
+    right: 0;
+    bottom: .5rem;
+    background-color: color(paginator-scrollbar);
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+  }
+  &:hover::before {
+    opacity: .1;
+  }
+  > .scrollbar {
+    margin-left: $scrollbar-offset;
+    cursor: pointer;
+    display: inline-block;
+    &::before {
+      display: block;
+      content: '';
+      margin-top: .5rem;
+      margin-bottom: 1rem;
+      width: $scrollbar-width;
+      height: .25rem;
+      opacity: .4;
+      background-color: color(paginator-scrollbar);
+      transition: opacity 200ms ease-in-out;
+    }
+    &:hover::before {
+      opacity: .7;
+    }
+  }
+  > .scrollbar-drag-shadow {
+    opacity: 0;
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  > .scrollbar-step {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $scrollbar-step-width;
+    height: 0;
+  }
+}

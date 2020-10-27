@@ -1,15 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Sidebar, {SidebarItem} from '../sidebar';
-
+import Paginator from '../paginator';
 
 
 export default class SequenceSidebar extends React.Component {
-
-  static contextTypes = {
-    sequenceLoader: PropTypes.func
-  }
 
   static propTypes = {
     sequences: PropTypes.array.isRequired,
@@ -20,38 +15,29 @@ export default class SequenceSidebar extends React.Component {
     onSelect: PropTypes.func
   }
 
-  get sequenceLoader() {
-    return this.context.sequenceLoader || (() => {});
-  }
-
   handleClick(e, sequence) {
-    e.preventDefault();
+    e && e.preventDefault();
     const {onSelect} = this.props;
-    this.sequenceLoader(sequence);
     onSelect && onSelect(sequence);
   }
 
   render() {
     const {sequences, currentSelected} = this.props;
-    let isPlural = sequences.length > 1;
 
     return (
-      <Sidebar
-       title={isPlural ?
-         `Found ${sequences.length} sequences` :
-         'Found one sequence'}
+      <Paginator
        currentSelected={currentSelected.header}>
         {sequences
           .map((seq, idx) => (
-            <SidebarItem
+            <Paginator.Item
              key={idx}
              name={seq.header}
              href={`#${seq.header}`}
              onClick={(e) => this.handleClick(e, seq)}>
               {seq.header}
-            </SidebarItem>
+            </Paginator.Item>
         ))}
-      </Sidebar>
+      </Paginator>
     );
   }
 

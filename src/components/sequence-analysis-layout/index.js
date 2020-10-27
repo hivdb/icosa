@@ -164,7 +164,7 @@ class SequenceAnalysisInner extends React.Component {
       const {
         currentVersion,
         currentProgramVersion,
-        sequenceAnalysis,
+        sequenceAnalysis = [],
         ...otherProps2} = props;
       return this.props.render({
         sequences, currentSelected, sequenceAnalysis,

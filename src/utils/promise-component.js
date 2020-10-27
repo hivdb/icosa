@@ -53,7 +53,7 @@ export default class PromiseComponent extends React.Component {
     return state;
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps = (props, state) => {
     const {promise, children, then, component} = props;
     if (state.loaded === promise) {
       return null;
@@ -61,12 +61,12 @@ export default class PromiseComponent extends React.Component {
     else if (promise && promise.then) {
       return {
         loaded: false,
-        childProps: null,
+        // childProps: null,
         children
       };
     }
     else {
-      return PromiseComponent.getStateFromResult(
+      return this.getStateFromResult(
         promise, then, component, promise
       );
     }
