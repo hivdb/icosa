@@ -1,9 +1,10 @@
 @import "../../styles";
 
 $item-size: 2.5rem;
+$item-outer-size: $item-size * 2;
 $hover-opacity: .9;
-$client-width: calc(var(--display-nums) * #{$item-size * 2});
-$scroll-width: calc(var(--total) * #{$item-size * 2});
+$client-width: calc(var(--display-nums) * #{$item-outer-size});
+$scroll-width: calc(var(--total) * #{$item-outer-size});
 $scrollbar-step-width: calc(#{$client-width} / var(--total));
 $scrollbar-offset: calc(
   #{$scrollbar-step-width} *
@@ -19,13 +20,12 @@ $scrollbar-width: Max(
 
 .paginator-container {
   position: relative;
-  width: calc(#{$item-size * 4} + #{$client-width});
-  padding-left: $item-size * 2;
-  padding-right: $item-size * 2;
+  width: calc(#{$item-outer-size * 2} + #{$client-width});
+  padding-left: $item-outer-size;
+  padding-right: $item-outer-size;
   box-sizing: border-box;
   margin-left: auto;
   margin-right: 0;
-  --scrollbar-step-width: #{$scrollbar-step-width};
 }
 
 @mixin paginator-item {
@@ -57,7 +57,7 @@ $scrollbar-width: Max(
   }
   
   > .paginator-arrow_desc {
-    text-indent: 100%;
+    text-indent: 200%;
     white-space: nowrap;
     overflow: hidden;
   }
@@ -92,7 +92,7 @@ $scrollbar-width: Max(
     margin-top: 0;
     margin-bottom: 0;
     padding: 0;
-    transform: translateX(calc(var(--scroll-offset) * #{-$item-size * 2}));
+    transform: translateX(calc(var(--scroll-offset) * #{-$item-outer-size}));
     transition: transform 200ms ease-in-out;
   }
 }
@@ -124,7 +124,7 @@ $scrollbar-width: Max(
     }
   
     > .paginator-item_desc {
-      text-indent: 100%;
+      text-indent: 200%;
       white-space: nowrap;
       overflow: hidden;
     }
@@ -170,7 +170,7 @@ $scrollbar-width: Max(
       0px,
       Min(
         calc(
-          calc(#{$item-size * 2} * var(--offset)) +
+          calc(#{$item-outer-size} * var(--offset)) +
           #{$item-size - $desc-width / 2}
         ),
         calc(100% - #{$desc-width})
@@ -277,4 +277,10 @@ $scrollbar-width: Max(
     width: $scrollbar-step-width;
     height: 0;
   }
+}
+
+.paginator-container > .paginator-footnote {
+  color: color(paginator-footnote-text);
+  opacity: .7;
+  font-size: .85rem;
 }

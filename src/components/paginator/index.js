@@ -11,6 +11,7 @@ import style from './style.module.scss';
 export default class Paginator extends React.Component {
 
   static propTypes = {
+    footnote: PropTypes.node,
     currentSelected: PropTypes.string,
     children: PropTypes.node.isRequired
   }
@@ -35,20 +36,39 @@ export default class Paginator extends React.Component {
     const {currentSelected} = this.props;
     const displayNums = 10;
     const addState = this.constructor.getDerivedStateFromProps(this.props);
-    this.state = {
-      displayNums,
-      currentHovering: null,
-      scrollOffset: Math.min(
+    const itemNums = addState.childItems.length;
+    let scrollOffset = 0;
+    if (itemNums > displayNums) {
+      scrollOffset = Math.min(
         Math.max(
           this.constructor.getIndex(
             currentSelected, addState.childItems
           ) - parseInt(displayNums / 2) + 1,
           0
         ),
-        addState.childItems.length - displayNums
-      ),
+        itemNums - displayNums
+      );
+    }
+    
+    this.state = {
+      displayNums,
+      currentHovering: null,
+      scrollOffset,
       ...addState
     };
+    this.navRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.navRef.current.addEventListener(
+      'wheel', this.handleWheel, {passive: false}
+    );
+  }
+
+  componentWillUnmount() {
+    this.navRef.current.removeEventListener(
+      'wheel', this.handleWheel, {passive: false}
+    );
   }
 
   setCurrentHovering = name => {
@@ -57,19 +77,44 @@ export default class Paginator extends React.Component {
 
   handleScroll = direction => {
     let {scrollOffset, childItems, displayNums} = this.state;
+    if (childItems.length <= displayNums) {
+      return false;
+    }
     scrollOffset += direction;
-    let rejectFlag = false;
+    let acceptFlag = true;
     const maxOffset = childItems.length - displayNums;
     if (scrollOffset < 0) {
       scrollOffset = 0;
-      rejectFlag = true;
+      acceptFlag = false;
     }
     else if (scrollOffset > maxOffset) {
       scrollOffset = maxOffset;
-      rejectFlag = true;
+      acceptFlag = false;
     }
     this.setState({scrollOffset});
-    return rejectFlag;
+    return acceptFlag;
+  }
+
+  handleWheel = event => {
+    let {childItems, displayNums} = this.state;
+    if (childItems.length <= displayNums) {
+      return;
+    }
+    event.preventDefault();
+    if (!this.wheelAccum) {
+      this.wheelAccum = 0;
+    }
+    const wheelStepWidth = 35;
+    const wheelAccum = this.wheelAccum + event.deltaX;
+    if (Math.abs(wheelAccum) > wheelStepWidth) {
+      let steps = wheelAccum / wheelStepWidth;
+      steps = (steps > 0 ? 1 : -1) * Math.floor(Math.sqrt(Math.abs(steps)));
+      this.handleScroll(steps);
+      this.wheelAccum = 0;
+    }
+    else {
+      this.wheelAccum = wheelAccum;
+    }
   }
 
   handleArrowClick = direction => {
@@ -84,7 +129,7 @@ export default class Paginator extends React.Component {
   }
 
   render() {
-    const {currentSelected} = this.props;
+    const {currentSelected, footnote} = this.props;
     const {
       childItems, currentHovering,
       scrollOffset, displayNums
@@ -113,6 +158,7 @@ export default class Paginator extends React.Component {
 
     return (
       <nav
+       ref={this.navRef}
        style={{
          '--offset': offset - scrollOffset,
          '--hover-offset': hoverOffset,
@@ -143,7 +189,13 @@ export default class Paginator extends React.Component {
           </ol>
         </div>
         <PaginatorArrow direction={1} onClick={this.handleArrowClick} />
-        <ScrollBar onScroll={this.handleScroll} />
+        {childItems.length > displayNums ?
+          <ScrollBar onScroll={this.handleScroll} /> : null}
+        {footnote ? (
+          <div className={style['paginator-footnote']}>
+            {footnote}
+          </div>
+        ) : null}
       </nav>
     );
   }

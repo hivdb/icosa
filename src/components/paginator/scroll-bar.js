@@ -42,20 +42,31 @@ export default class ScrollBar extends React.Component {
 
   handleDragStart = evt => {
     this.xStart = evt.clientX;
+    this.prevClientX = evt.clientX;
     this.stepOffset = 0;
     evt.dataTransfer.setDragImage(this.dragShadowRef.current, 0, 0);
   }
 
   handleDrag = evt => {
     const {xStart} = this;
-    if (evt.buttons === 0) {
+    const {buttons, clientX} = evt;
+    const halfClientWidth = document.body.clientWidth / 2;
+    if (buttons === 0) {
       return;
     }
-    const xOffset = evt.clientX - xStart;
+    if (Math.abs(clientX - this.prevClientX) > halfClientWidth) {
+      // Ignores when clientX is suddenly changed (more than half
+      // of the window width). This is usually caused by mouse moving
+      // out of the window
+      return;
+    }
+    this.prevClientX = clientX;
+
+    const xOffset = clientX - xStart;
     const stepOffset = Math.ceil(xOffset / this.getStepWidth());
     if (stepOffset !== this.stepOffset) {
-      const rejected = this.props.onScroll(stepOffset - this.stepOffset);
-      if (!rejected) {
+      const accepted = this.props.onScroll(stepOffset - this.stepOffset);
+      if (accepted) {
         this.stepOffset = stepOffset;
       }
     }

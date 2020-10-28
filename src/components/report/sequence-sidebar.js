@@ -26,6 +26,9 @@ export default class SequenceSidebar extends React.Component {
 
     return (
       <Paginator
+       footnote={<>
+         This submission contains {sequences.length} sequences.
+       </>}
        currentSelected={currentSelected.header}>
         {sequences
           .map((seq, idx) => (
