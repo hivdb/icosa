@@ -34,9 +34,12 @@ export default function memoize(method) {
   const cachedMethod = _memoize(
     (self, args) => method.apply(self, args),
     {
-      serializer: ([self, args]) => (
-        JSON.stringify([self.__hash__(), args])
-      )
+      serializer: ([self, args]) => {
+        if (self === undefined) {
+          return 'undefined';
+        }
+        return JSON.stringify([self.__hash__(), args]);
+      }
     }
   );
   return function() {

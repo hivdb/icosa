@@ -27,7 +27,9 @@ export default function SARS2Routes({
 } = {}) {
   const configContext = configWrapper({...defaultConfig, ...config});
   const apolloClient = new ApolloClient({
-    link: new HttpLink({uri: configContext.graphqlURI}),
+    link: new HttpLink({
+      uri: configContext.graphqlURI
+    }),
     cache: new Hermes(),
     name: 'sierra-frontend-client',
     version: '0.1'

@@ -8,26 +8,33 @@
   }
 }
 
-section.section {
+article.sequence-article {
   width: 100%;
   margin-top: 2rem;
   margin-bottom: 6rem;
   padding-top: 2rem;
-  h1.sequence-title {
+  header.sequence-header {
     color: color(seq-title);
     padding: 1rem 0;
     position: relative;
-    > .sequence-title_text {
-      font-weight: 700;
-      display: block;
-      text-overflow: ellipsis;
+    display: flex;
+    align-items: flex-end;
+    > h1 {
       white-space: nowrap;
+      font-size: 2rem;
+      padding-right: 1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    > p.desc {
+      margin: 0;
+      line-height: 2rem;
+      font-size: 1.1rem;
+      font-weight: 300;
+      display: inline;
       overflow: hidden;
-      > .title-description {
-        margin-left: 0.5rem;
-        font-size: 1.2rem;
-        font-weight: 300;
-      }
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     &::before {
       position: absolute;

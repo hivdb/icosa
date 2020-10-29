@@ -19,17 +19,113 @@ import query from './report-by-sequences.graphql';
 const pageTitlePrefix = 'Sequence Analysis Report';
 
 
-function HLFirstWord({children}) {
+function HLFirstWord({children, index}) {
   children = children.split(' ');
   return <>
-    {children[0]}
-    {children.length > 1 ? <>
-      {' '}
-      <span className={style['title-description']}>
-        {children.slice(1).join(' ')}
-      </span>
-    </> : null}
+    <h1>{index + 1}. {children[0]}</h1>
+    {children.length > 1 ? (
+      <p className={style.desc}>{children.slice(1).join(' ')}</p>
+    ) : null}
   </>;
+}
+
+
+class SingleSequenceReport extends React.Component {
+
+  static propTypes = {
+    currentSelected: PropTypes.object.isRequired,
+    onSelect: PropTypes.func.isRequired,
+    species: PropTypes.string.isRequired,
+    match: matchShape.isRequired,
+    sequenceResult: PropTypes.object.isRequired,
+    output: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired
+  }
+
+  static defaultProps = {
+    output: 'default'
+  }
+
+  constructor() {
+    super(...arguments);
+    this.articleRef = React.createRef();
+  }
+
+  componentDidMount() {
+    const {
+      sequenceResult: {
+        inputSequence: {header}
+      },
+      index,
+      onSelect,
+      currentSelected: {index: curIndex}
+    } = this.props;
+    const options = {
+      root: document,
+      rootMargin: '0px',
+      threshold: 0.5
+    };
+    const articleNode = this.articleRef.current;
+    this.observer = new IntersectionObserver(observerCallback, options);
+    this.observer.observe(articleNode);
+    if (index === curIndex) {
+      const {top} = articleNode.getBoundingClientRect();
+      window.scrollTo(0, top - 150);
+    }
+
+    function observerCallback(entries) {
+      const [entry] = entries;
+      const ratio = entry.intersectionRatio;
+      const isIntersecting = entry.isIntersecting;
+      if (ratio > 0 && isIntersecting) {
+        onSelect({header});
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.observer.disconnect();
+  }
+
+  render() {
+    const {
+      sequenceResult,
+      output,
+      index,
+      species,
+      match: {
+        location: {state: {disabledDrugs}}
+      }
+    } = this.props;
+    const {
+      inputSequence: {header},
+      strain: {name: strain},
+      validationResults, drugResistance
+    } = sequenceResult;
+    const isCritical = validationResults.some(
+      ({level}) => level === 'CRITICAL');
+
+    return (
+      <article
+       ref={this.articleRef}
+       className={style['sequence-article']}>
+        <header className={style['sequence-header']} id={header}>
+          <HLFirstWord index={index}>{header}</HLFirstWord>
+        </header>
+        <SequenceSummary {...{sequenceResult, output, strain}} />
+        <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
+        <ValidationReport {...sequenceResult} {...{output, strain}} />
+        {isCritical ? null :
+          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            <DRInterpretation
+             suppressLevels={species === 'SARS2'}
+             {...{geneDR, output, disabledDrugs, strain}} />
+            {species === 'SARS2' ? null : <DRMutationScores
+             {...{geneDR, output, disabledDrugs, strain}} />}
+          </React.Fragment>)}
+      </article>
+    );
+  }
 }
 
 
@@ -39,7 +135,6 @@ export default class ReportBySequences extends React.Component {
     species: PropTypes.string.isRequired,
     match: matchShape.isRequired,
     router: routerShape.isRequired
-
   }
 
   getPageTitle(sequenceAnalysis, output) {
@@ -57,41 +152,9 @@ export default class ReportBySequences extends React.Component {
     return pageTitle;
   }
 
-  renderSingle(sequenceResult, output, index) {
-    const {
-      strain: {name: strain},
-      validationResults, drugResistance
-    } = sequenceResult;
-    const {
-      species,
-      match: {
-        location: {state: {disabledDrugs}}
-      }
-    } = this.props;
-    const {inputSequence: {header}} = sequenceResult;
-    const isCritical = validationResults.some(
-      ({level}) => level === 'CRITICAL');
-
-    return (
-      <section className={style.section}>
-        <h1 className={style['sequence-title']} id={header}>
-          <span className={style['sequence-title_text']}>
-            {index + 1}. <HLFirstWord>{header}</HLFirstWord>
-          </span>
-        </h1>
-        <SequenceSummary {...{sequenceResult, output, strain}} />
-        <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
-        <ValidationReport {...sequenceResult} {...{output, strain}} />
-        {isCritical ? null :
-          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
-            <DRInterpretation
-             suppressLevels={species === 'SARS2'}
-             {...{geneDR, output, disabledDrugs, strain}} />
-            {species === 'SARS2' ? null : <DRMutationScores
-             {...{geneDR, output, disabledDrugs, strain}} />}
-          </React.Fragment>)}
-      </section>
-    );
+  constructor() {
+    super(...arguments);
+    this.mainRef = React.createRef();
   }
 
   get output() {
@@ -108,7 +171,7 @@ export default class ReportBySequences extends React.Component {
     sequenceAnalysis, onSelectSequence
   }) => {
     const {output} = this;
-    const {species} = this.props;
+    const {species, match} = this.props;
     const pageTitle = this.getPageTitle(sequenceAnalysis, output);
     setTitle(pageTitle);
     let indexOffset = sequenceAnalysis.findIndex(
@@ -116,6 +179,10 @@ export default class ReportBySequences extends React.Component {
     );
     if (indexOffset > -1) {
       indexOffset = currentSelected.index - indexOffset;
+    }
+
+    if (!this.mainRef.current) {
+      setTimeout(this.initObserver);
     }
 
     return <>
@@ -126,13 +193,22 @@ export default class ReportBySequences extends React.Component {
          onSelect={onSelectSequence}
          sequences={sequences} />
       }
-      <article className={style.article}>
-        {sequenceAnalysis.map((seqResult, idx) => <React.Fragment key={idx}>
-          {this.renderSingle(seqResult, output, indexOffset + idx)}
-          {idx + 1 < sequenceAnalysis.length ?
-            <PageBreak /> : null}
-        </React.Fragment>)}
-      </article>
+      <main ref={this.mainRef} className={style.main}>
+        {sequenceAnalysis.map((seqResult, idx) => (
+          <React.Fragment key={indexOffset + idx}>
+            <SingleSequenceReport
+             currentSelected={currentSelected}
+             onSelect={onSelectSequence}
+             sequenceResult={seqResult}
+             output={output}
+             index={indexOffset + idx}
+             species={species}
+             match={match} />
+            {idx + 1 < sequenceAnalysis.length ?
+              <PageBreak /> : null}
+          </React.Fragment>
+        ))}
+      </main>
     </>;
   }
 
