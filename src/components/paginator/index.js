@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import PseudoItem from './pseudo-item';
 import PaginatorItem from './paginator-item';
@@ -13,6 +14,7 @@ export default class Paginator extends React.Component {
   static propTypes = {
     footnote: PropTypes.node,
     currentSelected: PropTypes.string,
+    className: PropTypes.string,
     children: PropTypes.node.isRequired
   }
 
@@ -129,7 +131,7 @@ export default class Paginator extends React.Component {
   }
 
   render() {
-    const {currentSelected, footnote} = this.props;
+    const {className, currentSelected, footnote} = this.props;
     const {
       childItems, currentHovering,
       scrollOffset, displayNums
@@ -166,7 +168,7 @@ export default class Paginator extends React.Component {
          '--total': childItems.length,
          '--display-nums': displayNums
        }}
-       className={style['paginator-container']}>
+       className={classNames(className, style['paginator-container'])}>
         <div
          className={style['paginator-desc']}
          data-is-hovering={!!currentHovering}

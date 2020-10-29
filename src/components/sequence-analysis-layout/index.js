@@ -51,12 +51,14 @@ class SequenceAnalysisInner extends React.Component {
     onSaveCache: PropTypes.func,
     cachedProps: PropTypes.object,
     onRequireVariables: PropTypes.func.isRequired,
+    preLoad: PropTypes.bool.isRequired,
     lazyLoad: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
     renderPartialResults: false,
     onRequireVariables: (d) => d,
+    preLoad: false,
     lazyLoad: false
   }
 
@@ -86,19 +88,26 @@ class SequenceAnalysisInner extends React.Component {
   }
 
   handleRequireVariables = (data) => {
-    const {sequences, lazyLoad, onRequireVariables} = this.props;
+    const {sequences, preLoad, lazyLoad, onRequireVariables} = this.props;
     let offset, limit, total, done;
     if (lazyLoad) {
       const {currentSelected} = this;
       offset = currentSelected.index;
-      limit = 1;
-      total = 1;
+      if (preLoad) {
+        offset = Math.max(0, offset - 2);
+        limit = 5;
+        total = 3;
+      }
+      else {
+        limit = 1;
+        total = 1;
+      }
       done = typeof data !== 'undefined';
     }
     else {
-      // pre-load first four results
+      // pre-load first five results
       offset = 0;
-      limit = 4;
+      limit = 5;
       if (typeof data !== 'undefined' && 'sequenceAnalysis' in data) {
         offset = data.sequenceAnalysis.length;
         limit = LIMIT;

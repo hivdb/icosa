@@ -1,5 +1,6 @@
 @import "./ext";
 @import "../../styles/tabs";
+@import "../../styles/colors";
 @import "../../styles/dropdown";
 
 .link-style {
@@ -536,5 +537,26 @@ section.alg-comparison {
   margin-top: -40px;
   @media print {
     margin-top: -26px;
+  }
+}
+
+.sequence-paginator-container {
+  position: sticky !important;
+  top: 0px;
+  padding: 1rem 0;
+  z-index: 1000;
+  &::before {
+    content: '';
+    background-color: white;
+    position: absolute;
+    left: calc(50% - 50vw);
+    right: calc(50% - 50vw);
+    top: 0;
+    bottom: 0;
+    transition: background-color 200ms ease-in-out;
+    z-index: -2;
+  }
+  &[data-fixed="true"]::before {
+    background-color: color(paginator-opt-bg);
   }
 }

@@ -19,6 +19,20 @@ import query from './report-by-sequences.graphql';
 const pageTitlePrefix = 'Sequence Analysis Report';
 
 
+function HLFirstWord({children}) {
+  children = children.split(' ');
+  return <>
+    {children[0]}
+    {children.length > 1 ? <>
+      {' '}
+      <span className={style['title-description']}>
+        {children.slice(1).join(' ')}
+      </span>
+    </> : null}
+  </>;
+}
+
+
 export default class ReportBySequences extends React.Component {
 
   static propTypes = {
@@ -43,7 +57,7 @@ export default class ReportBySequences extends React.Component {
     return pageTitle;
   }
 
-  renderSingle(sequenceResult, output) {
+  renderSingle(sequenceResult, output, index) {
     const {
       strain: {name: strain},
       validationResults, drugResistance
@@ -58,11 +72,13 @@ export default class ReportBySequences extends React.Component {
     const isCritical = validationResults.some(
       ({level}) => level === 'CRITICAL');
 
-    const isPrint = output === 'printable';
-
     return (
       <section className={style.section}>
-        {isPrint ? <h2>Sequence {header}</h2> : null}
+        <h1 className={style['sequence-title']} id={header}>
+          <span className={style['sequence-title_text']}>
+            {index + 1}. <HLFirstWord>{header}</HLFirstWord>
+          </span>
+        </h1>
         <SequenceSummary {...{sequenceResult, output, strain}} />
         <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
         <ValidationReport {...sequenceResult} {...{output, strain}} />
@@ -95,6 +111,12 @@ export default class ReportBySequences extends React.Component {
     const {species} = this.props;
     const pageTitle = this.getPageTitle(sequenceAnalysis, output);
     setTitle(pageTitle);
+    let indexOffset = sequenceAnalysis.findIndex(
+      ({inputSequence: {header}}) => header === currentSelected.header
+    );
+    if (indexOffset > -1) {
+      indexOffset = currentSelected.index - indexOffset;
+    }
 
     return <>
       {output === 'printable' ?
@@ -106,7 +128,7 @@ export default class ReportBySequences extends React.Component {
       }
       <article className={style.article}>
         {sequenceAnalysis.map((seqResult, idx) => <React.Fragment key={idx}>
-          {this.renderSingle(seqResult, output)}
+          {this.renderSingle(seqResult, output, indexOffset + idx)}
           {idx + 1 < sequenceAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>)}
@@ -126,6 +148,7 @@ export default class ReportBySequences extends React.Component {
     return (
       <SequenceAnalysisLayout
        {...{match, router, query}}
+       preLoad
        lazyLoad={output !== 'printable'}
        renderPartialResults={output !== 'printable'} 
        onRequireVariables={this.handleRequireVariables}
