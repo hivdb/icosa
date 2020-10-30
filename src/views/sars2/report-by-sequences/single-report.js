@@ -22,7 +22,7 @@ function HLFirstWord({children, index}) {
 }
 
 
-function scrollTo(top, callback, smoothMaxDelta = 4096) {
+function scrollTo(top, callback, smoothMaxDelta = 2048) {
   const enableSmooth = Math.abs(top - window.pageYOffset) < smoothMaxDelta;
   const checkScroll = () => {
     if (Math.abs(window.pageYOffset - top) < 15) {
