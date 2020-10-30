@@ -9,6 +9,7 @@ html {
   color: color(body-text);
   background-color: color(body-bg);
   font-size: $global-font-size;
+  scroll-behavior: smooth;
 }
 
 body {

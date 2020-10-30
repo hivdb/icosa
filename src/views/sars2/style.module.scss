@@ -1,6 +1,10 @@
 @import '../../styles/colors';
 @import '../../styles/default-colors';
 
+html[data-no-smooth-scroll] {
+  scroll-behavior: initial !important;
+}
+
 .sierra-webui {
   @include default-color();
   svg {

@@ -22,6 +22,32 @@ function HLFirstWord({children, index}) {
 }
 
 
+function scrollTo(top, callback, smoothMaxDelta = 4096) {
+  const enableSmooth = Math.abs(top - window.pageYOffset) < smoothMaxDelta;
+  const checkScroll = () => {
+    if (Math.abs(window.pageYOffset - top) < 15) {
+      window.removeEventListener('scroll', checkScroll, false);
+      document.documentElement.dataset.noSmoothScroll = '';
+      setTimeout(() => {
+        window.scrollTo({top, behavior: 'auto'});
+        callback && setTimeout(callback, 500);
+      }, 50);
+      delete document.documentElement.dataset.noSmoothScroll;
+    }
+  };
+  window.addEventListener('scroll', checkScroll, false);
+  let behavior = 'auto';
+  if (enableSmooth) {
+    behavior = 'smooth';
+  }
+  else {
+    // disable global smooth scroll
+    document.documentElement.dataset.noSmoothScroll = '';
+  }
+  window.scrollTo({top, behavior});
+}
+
+
 export default class SingleSequenceReport extends React.Component {
 
   static propTypes = {
@@ -59,8 +85,7 @@ export default class SingleSequenceReport extends React.Component {
       const articleNode = this.articleRef.current;
       let {top} = articleNode.getBoundingClientRect();
       top += window.pageYOffset - 150;
-      window.scrollTo({top});
-      callback && callback();
+      scrollTo(top, callback);
     }
   }
 

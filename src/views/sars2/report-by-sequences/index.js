@@ -135,10 +135,13 @@ class ReportBySequencesInner extends React.Component {
     await onSelectSequence({header});
     const event = new CustomEvent(
       '--sierra-report-reset-scroll',
-      {detail: {header}}
+      {detail: {
+        header,
+        callback: this.resetObserver
+      }}
     );
     window.dispatchEvent(event);
-    this.resetObserver();
+    // this.resetObserver();
   }
 
   render() {
