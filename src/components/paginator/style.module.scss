@@ -165,19 +165,7 @@ $scrollbar-width: css-max(
 .paginator-container > .paginator-desc {
   $desc-width: $item-size * 9;
   position: relative;
-  margin-left: css-calc(
-    css-max(
-      0px,
-      css-min(
-        css-calc(
-          css-calc(#{$item-outer-size} * var(--offset)) +
-          #{$item-size - $desc-width / 2}
-        ),
-        css-calc(100% - #{$desc-width})
-      )
-    ) +
-    css-calc(#{$item-size} * var(--hover-offset))
-  );
+  margin-left: css-calc( css-max( 0px, css-min( css-calc( #{$item-size - $desc-width / 2} + css-calc( #{$item-outer-size} * var(--offset) ) ), css-calc(100% - #{$desc-width}) ) ) + css-calc(#{$item-size} * var(--hover-offset)));
   margin-bottom: -.5rem;
   display: inline-block;
   box-sizing: border-box;
