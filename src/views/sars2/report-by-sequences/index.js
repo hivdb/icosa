@@ -65,11 +65,6 @@ class ReportBySequencesInner extends React.Component {
     };
     this.observer = new IntersectionObserver(this.observerCallback, options);
     this.resetObserver();
-    window.addEventListener(
-      '--sierra-report-scroll-observer-reset',
-      this.resetObserver,
-      false
-    );
   }
 
   resetObserver = () => {
@@ -140,13 +135,10 @@ class ReportBySequencesInner extends React.Component {
     await onSelectSequence({header});
     const event = new CustomEvent(
       '--sierra-report-reset-scroll',
-      {detail: {
-        header,
-        callback: this.resetObserver
-      }}
+      {detail: {header}}
     );
     window.dispatchEvent(event);
-
+    this.resetObserver();
   }
 
   render() {
