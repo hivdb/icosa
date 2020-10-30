@@ -14,7 +14,7 @@ $scrollbar-width: css-max(
   )
 );
 $desc-width: $item-size * 9;
-$desc-offset: css-calc(
+$desc-offset: css-max(-1000px, css-calc(
   css-max(
     0px,
     css-min(
@@ -31,7 +31,7 @@ $desc-offset: css-calc(
   ) +
   #{$item-size} *
   var(--hover-offset)
-);
+));
 
 .paginator-container {
   position: relative;
