@@ -141,7 +141,7 @@ export default class Paginator extends React.Component {
       direction = wheelAccumX > 0 ? -1 : 1;
     }
     else {
-      direction = wheelAccumY > 0 ? 1 : -1;
+      direction = wheelAccumY > 0 ? -1 : 1;
     }
     if (wheelAccum > wheelStepWidth) {
       let steps = wheelAccum / wheelStepWidth;
