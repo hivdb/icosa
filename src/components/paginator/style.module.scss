@@ -14,22 +14,22 @@ $scrollbar-width: css-max(
   )
 );
 $desc-width: $item-size * 9;
-$desc-offset: css-calc(
+$desc-margin-left-main: css-min(
+  css-calc(
+    #{$item-size - $desc-width / 2} #{"+"}
+    #{$item-outer-size} *
+    var(--offset)
+  ),
+  css-calc(
+    100% -
+    #{$desc-width}
+  )
+);
+$desc-margin-left: css-calc(
   #{$item-size} *
   var(--hover-offset) #{"+"}
   css-max(
-    0px,
-    css-min(
-      calc(
-        #{$item-size - $desc-width / 2} #{"+"}
-        #{$item-outer-size} *
-        var(--offset)
-      ),
-      calc(
-        100% -
-        #{$desc-width}
-      )
-    )
+    0px, var(--margin-left-main)
   )
 );
 
@@ -178,8 +178,10 @@ $desc-offset: css-calc(
 }
 
 .paginator-container > .paginator-desc {
+  --margin-left-main: #{$desc-margin-left-main};
+  --margin-left: #{$desc-margin-left};
   position: relative;
-  margin-left: #{$desc-offset};
+  margin-left: var(--margin-left);
   margin-bottom: -.5rem;
   display: inline-block;
   box-sizing: border-box;
