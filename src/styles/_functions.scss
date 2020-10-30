@@ -36,6 +36,10 @@
   @return css-function( max, $values );
 }
 
+@function css-calc( $values... ) {
+  @return css-function( calc, $values );
+}
+
 @function css-clamp( $values... ) {
   @return css-function( clamp, $values );
 }
