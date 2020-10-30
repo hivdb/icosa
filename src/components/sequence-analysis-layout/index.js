@@ -12,6 +12,7 @@ import {
   includeFragment, includeFragmentIfExist
 } from '../../utils/graphql-helper';
 
+const QUICKLOAD_LIMIT = 10;
 const LIMIT = 100;
 
 function getQuery(fragment, extraParams) {
@@ -62,6 +63,30 @@ class SequenceAnalysisInner extends React.Component {
     lazyLoad: false
   }
 
+  static getSeqHeaderIndexLookup(sequences) {
+    return sequences.reduce(
+      (acc, {header}, idx) => {
+        acc[header] = idx;
+        return acc;
+      }, {}
+    );
+  }
+
+  static getDerivedStateFromProps = (props) => {
+    return {
+      seqHeaderIndexLookup: this.getSeqHeaderIndexLookup(props.sequences)
+    };
+  }
+
+  constructor() {
+    super(...arguments);
+    this.state = {
+      seqHeaderIndexLookup: this.constructor.getSeqHeaderIndexLookup(
+        this.props.sequences
+      )
+    };
+  }
+
   hasCache() {
     const {match: {location: loc}} = this.props;
     return loc.query && 'load' in loc.query;
@@ -70,6 +95,7 @@ class SequenceAnalysisInner extends React.Component {
   get currentSelected() {
     const {match: {location}} = this.props;
     const {sequences, lazyLoad} = this.props;
+    const {seqHeaderIndexLookup} = this.state;
     if (!lazyLoad) { return undefined; }
     let {hash} = location;
     hash = (hash || '').replace(/^#/, '').trim();
@@ -77,7 +103,7 @@ class SequenceAnalysisInner extends React.Component {
     if (hash === '') {
       return {index: 0, header: sequences[0].header};
     }
-    const index = Math.max(0, sequences.findIndex(s => s.header === hash));
+    const index = Math.max(0, seqHeaderIndexLookup[hash]);
     return {index, header: sequences[index].header};
   }
 
@@ -85,6 +111,9 @@ class SequenceAnalysisInner extends React.Component {
     const {match: {location}, router} = this.props;
     const loc = recurMerge(location, {hash: `#${header}`});
     router.push(loc);
+    return new Promise(resolve => {
+      this.pendingResolve = resolve;
+    });
   }
 
   handleRequireVariables = (data) => {
@@ -94,9 +123,9 @@ class SequenceAnalysisInner extends React.Component {
       const {currentSelected} = this;
       offset = currentSelected.index;
       if (preLoad) {
-        offset = Math.max(0, offset - 2);
-        limit = 5;
-        total = 3;
+        offset = Math.max(0, offset - Math.floor(QUICKLOAD_LIMIT / 2));
+        limit = QUICKLOAD_LIMIT;
+        total = QUICKLOAD_LIMIT;
       }
       else {
         limit = 1;
@@ -125,16 +154,6 @@ class SequenceAnalysisInner extends React.Component {
     }, this.props);
   }
 
-  handleMergeData = (prevData, nextData) => {
-    return {
-      ...prevData,
-      sequenceAnalysis: [
-        ...prevData.sequenceAnalysis,
-        ...nextData.sequenceAnalysis
-      ]
-    };
-  }
-
   async handleSaveCache(data) {
     const {match: {location}, router} = this.props;
     const {onSaveCache} = this.props;
@@ -156,12 +175,19 @@ class SequenceAnalysisInner extends React.Component {
     if (done && !this.hasCache() && onSaveCache) {
       this.handleSaveCache({sequences, props});
     }
+    if (done && this.pendingResolve) {
+      setTimeout(() => {
+        this.pendingResolve && this.pendingResolve();
+        delete this.pendingResolve;
+      });
+    }
     if (emptyProps) {
       if (renderPartialResults) {
         return this.props.render({
           sequences, currentSelected, sequenceAnalysis: [],
           currentVersion: {}, currentProgramVersion: {},
           onSelectSequence: this.handleSelectSequence,
+          done,
           ...otherProps
         });
       }
@@ -179,12 +205,80 @@ class SequenceAnalysisInner extends React.Component {
         sequences, currentSelected, sequenceAnalysis,
         currentVersion, currentProgramVersion,
         onSelectSequence: this.handleSelectSequence,
+        done,
         ...otherProps, ...otherProps2
       });
     }
     else {
       return <Loader loaded={false} />;
     }
+  }
+
+  handleMergeData = (prevData, nextData) => {
+    const {sequenceAnalysis: prevSeqs, ...prevMisc} = prevData;
+    const {sequenceAnalysis: nextSeqs, ...nextMisc} = nextData;
+    const sequenceAnalysis = [
+      ...(prevSeqs || []), ...(nextSeqs || [])
+    ];
+    const {seqHeaderIndexLookup} = this.state;
+    sequenceAnalysis.sort(
+      (
+        {inputSequence: {header: h_a}},
+        {inputSequence: {header: h_b}}
+      ) => (
+        seqHeaderIndexLookup[h_a] -
+        seqHeaderIndexLookup[h_b]
+      )
+    );
+
+    return {
+      ...prevMisc,
+      ...nextMisc,
+      sequenceAnalysis
+    };
+  }
+
+  handleSaveQueryCache = data => {
+    if (!this.queryCache) {
+      this.queryCache = {};
+    }
+    const {
+      sequenceAnalysis,
+      ...misc
+    } = data;
+    for (const one of sequenceAnalysis) {
+      const {header} = one.inputSequence;
+      this.queryCache[header] = {
+        sequenceAnalysis: [one],
+        ...misc
+      };
+    }
+  }
+
+  handleLoadQueryCache = (variables) => {
+    if (!this.queryCache) {
+      this.queryCache = {};
+    }
+    const {sequences, ...vars} = variables;
+    let cachedData = {};
+    const remainSeqs = [];
+    for (const seq of sequences) {
+      const oneCache = this.queryCache[seq.header];
+      if (oneCache) {
+        cachedData = this.handleMergeData(cachedData, oneCache);
+      }
+      else {
+        remainSeqs.push(seq);
+      }
+    }
+    return {
+      cachedData,
+      variables: {
+        sequences: remainSeqs,
+        ...vars
+      },
+      fullyCached: remainSeqs.length === 0
+    };
   }
 
   render() {
@@ -208,6 +302,8 @@ class SequenceAnalysisInner extends React.Component {
            `Processing sequences... (${progress}/${total})`
          )}
          onRequireVariables={this.handleRequireVariables}
+         onSaveCache={this.handleSaveQueryCache}
+         onLoadCache={this.handleLoadQueryCache}
          onMergeData={this.handleMergeData}
          renderPartialResults />
       );

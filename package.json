@@ -23,6 +23,7 @@
     "react-scripts": "3.4.1"
   },
   "dependencies": {
+    "@apollo/react-hooks": "3.1.5",
     "@vx/axis": "^0.0.197",
     "@vx/scale": "^0.0.197",
     "@vx/tooltip": "^0.0.197",

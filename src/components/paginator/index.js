@@ -33,24 +33,32 @@ export default class Paginator extends React.Component {
     return childItems.findIndex(({name}) => name === findName);
   }
 
-  constructor() {
-    super(...arguments);
+  getInitialScrollOffset({childItems, displayNums=10}) {
     const {currentSelected} = this.props;
-    const displayNums = 10;
-    const addState = this.constructor.getDerivedStateFromProps(this.props);
-    const itemNums = addState.childItems.length;
+    const itemNums = childItems.length;
     let scrollOffset = 0;
     if (itemNums > displayNums) {
       scrollOffset = Math.min(
         Math.max(
           this.constructor.getIndex(
-            currentSelected, addState.childItems
+            currentSelected, childItems
           ) - parseInt(displayNums / 2) + 1,
           0
         ),
         itemNums - displayNums
       );
     }
+    return scrollOffset;
+  }
+
+  constructor() {
+    super(...arguments);
+    const displayNums = 10;
+    const addState = this.constructor.getDerivedStateFromProps(this.props);
+    const scrollOffset = this.getInitialScrollOffset({
+      childItems: addState.childItems,
+      displayNums
+    });
     
     this.state = {
       displayNums,
@@ -65,11 +73,26 @@ export default class Paginator extends React.Component {
     this.navRef.current.addEventListener(
       'wheel', this.handleWheel, {passive: false}
     );
+    window.addEventListener(
+      '--sierra-paginator-reset-scroll',
+      this.resetScrollOffset,
+      false
+    );
+  }
+
+  resetScrollOffset = () => {
+    const scrollOffset = this.getInitialScrollOffset(this.state);
+    this.setState({scrollOffset});
   }
 
   componentWillUnmount() {
     this.navRef.current.removeEventListener(
       'wheel', this.handleWheel, {passive: false}
+    );
+    window.removeEventListener(
+      '--sierra-paginator-reset-scroll',
+      this.resetScrollOffset,
+      false
     );
   }
 

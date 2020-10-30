@@ -6,6 +6,13 @@
   svg {
     vertical-align: middle;
   }
+  :global(.loader) {
+    position: fixed;
+    top: 45vh;
+    left: 0;
+    right: 0;
+    z-index: 500;
+  }
 }
 
 article.sequence-article {

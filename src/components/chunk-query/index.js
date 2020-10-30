@@ -1,32 +1,65 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {Query} from 'react-apollo';
+import {useQuery} from '@apollo/react-hooks';
 
 import ChunkQueryInner from './inner';
 
-export default class ChunkQuery extends React.Component {
-
-  static propTypes = {
-    render: PropTypes.func.isRequired,
-    query: PropTypes.object.isRequired,
-    onRequireVariables: PropTypes.func.isRequired,
-    onMergeData: PropTypes.func.isRequired,
-    renderPartialResults: PropTypes.bool.isRequired,
-    noVariablesMessage: PropTypes.node.isRequired,
-    progressText: PropTypes.func.isRequired,
-    noCache: PropTypes.bool.isRequired
+export default function ChunkQuery(props) {
+  const {
+    query,
+    render,
+    client,
+    onRequireVariables,
+    onMergeData,
+    onLoadCache = variables => ({
+      variables,
+      cachedData: null,
+      fullyCached: false
+    }),
+    onSaveCache = () => null,
+    renderPartialResults,
+    noVariablesMessage = <div>No input data supplied.</div>,
+    progressText = () => null,
+    noCache = false
+  } = props;
+  let {variables, done} = onRequireVariables();
+  const cache = onLoadCache(variables);
+  const {cachedData, fullyCached} = cache;
+  variables = cache.variables;
+  
+  const fetchPolicy = noCache ? 'no-cache' : 'cache-first';
+  let {loading, error, data, fetchMore} = useQuery(
+    query,
+    {
+      variables,
+      fetchPolicy,
+      client,
+      returnPartialData: true,
+      skip: done || fullyCached
+    }
+  );
+  if (done) { return noVariablesMessage; }
+  if (!loading && !error && !fullyCached) {
+    onSaveCache(data);
   }
-
-  static defaultProps = {
-    noCache: false,
-    renderPartialResults: false,
-    onMergeData: prev => prev,
-    progressText: () => null,
-    noVariablesMessage: <div>No input data supplied.</div>
+  if (fullyCached) {
+    data = cachedData;
   }
+  else if (cachedData && data) {
+    data = onMergeData(cachedData, data);
+  }
+  
+  return (
+    <ChunkQueryInner
+     key="chunk-query-inner"
+     {...{
+       data, render, renderPartialResults,
+       progressText, loading, error
+     }}
+     onLoadMore={handleLoadMore(fetchMore, data)} />
+  );
 
-  handleLoadMore(fetchMore, data) {
-    const {onMergeData, onRequireVariables} = this.props;
+  function handleLoadMore(fetchMore, data) {
+    const {onMergeData, onRequireVariables} = props;
     return () => {
       const {
         variables, progress, nextProgress, total, done
@@ -43,28 +76,6 @@ export default class ChunkQuery extends React.Component {
       });
       return [false, progress, nextProgress, total];
     };
-  }
-
-  render() {
-    const {
-      query, render, onRequireVariables, progressText, client,
-      noVariablesMessage, renderPartialResults, noCache} = this.props;
-    const {variables, done} = onRequireVariables();
-    const fetchPolicy = noCache ? 'no-cache' : 'cache-first';
-    if (done) { return noVariablesMessage; }
-    return (
-      <Query {...{query, variables, fetchPolicy, client}} returnPartialData>
-        {({loading, error, data, fetchMore}) => (
-          <ChunkQueryInner
-           key="chunk-query-inner"
-           {...{
-             data, render, renderPartialResults,
-             progressText, loading, error
-           }}
-           onLoadMore={this.handleLoadMore(fetchMore, data)} />
-        )}
-      </Query>
-    );
   }
 
 }
