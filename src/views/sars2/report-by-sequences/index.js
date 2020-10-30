@@ -141,7 +141,8 @@ class ReportBySequencesInner extends React.Component {
       }}
     );
     window.dispatchEvent(event);
-    // this.resetObserver();
+    // fallback if the event is not catched
+    setTimeout(this.resetObserver, 1000);
   }
 
   render() {
