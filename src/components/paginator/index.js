@@ -126,19 +126,33 @@ export default class Paginator extends React.Component {
       return;
     }
     event.preventDefault();
-    if (!this.wheelAccum) {
-      this.wheelAccum = 0;
+    if (!this.wheelAccumX) {
+      this.wheelAccumX = 0;
+      this.wheelAccumY = 0;
     }
-    const wheelStepWidth = 35;
-    const wheelAccum = this.wheelAccum + event.deltaX;
-    if (Math.abs(wheelAccum) > wheelStepWidth) {
-      let steps = wheelAccum / wheelStepWidth;
-      steps = (steps > 0 ? 1 : -1) * Math.floor(Math.sqrt(Math.abs(steps)));
-      this.handleScroll(steps);
-      this.wheelAccum = 0;
+    const wheelStepWidth = 40;
+    const wheelAccumX = this.wheelAccumX + event.wheelDeltaX;
+    const wheelAccumY = this.wheelAccumY + event.wheelDeltaY;
+    const wheelAccum = Math.sqrt(
+      Math.pow(wheelAccumX, 2) + Math.pow(wheelAccumY, 2)
+    );
+    let direction = 1;
+    if (Math.abs(wheelAccumX) > Math.abs(wheelAccumY)) {
+      direction = wheelAccumX > 0 ? -1 : 1;
     }
     else {
-      this.wheelAccum = wheelAccum;
+      direction = wheelAccumY > 0 ? 1 : -1;
+    }
+    if (wheelAccum > wheelStepWidth) {
+      let steps = wheelAccum / wheelStepWidth;
+      steps = direction * Math.floor(Math.sqrt(steps));
+      this.handleScroll(steps);
+      this.wheelAccumX = 0;
+      this.wheelAccumY = 0;
+    }
+    else {
+      this.wheelAccumX = wheelAccumX;
+      this.wheelAccumY = wheelAccumY;
     }
   }
 
