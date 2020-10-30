@@ -178,6 +178,7 @@ $desc-margin-left: css-calc(
 }
 
 .paginator-container > .paginator-desc {
+  // cssnano bug: https://github.com/vercel/next.js/issues/17066#issuecomment-691825013
   --margin-left-main: #{$desc-margin-left-main};
   --margin-left: #{$desc-margin-left};
   position: relative;
