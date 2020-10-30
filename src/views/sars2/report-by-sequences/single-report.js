@@ -67,7 +67,7 @@ export default class SingleSequenceReport extends React.Component {
 
   constructor() {
     super(...arguments);
-    this.articleRef = React.createRef();
+    this.headerRef = React.createRef();
   }
 
   resetScroll = (curHeader) => {
@@ -82,8 +82,8 @@ export default class SingleSequenceReport extends React.Component {
       }
     } = this.props;
     if (header === curHeader) {
-      const articleNode = this.articleRef.current;
-      let {top} = articleNode.getBoundingClientRect();
+      const headerNode = this.headerRef.current;
+      let {top} = headerNode.getBoundingClientRect();
       top += window.pageYOffset - 150;
       scrollTo(top, callback);
     }
@@ -108,8 +108,8 @@ export default class SingleSequenceReport extends React.Component {
       currentSelected: {header: curHeader},
       onObserve
     } = this.props;
-    const articleNode = this.articleRef.current;
-    onObserve(articleNode);
+    const headerNode = this.headerRef.current;
+    onObserve(headerNode);
     this.resetScroll(curHeader);
     window.addEventListener(
       '--sierra-report-reset-scroll',
@@ -146,11 +146,12 @@ export default class SingleSequenceReport extends React.Component {
 
     return (
       <article
-       ref={this.articleRef}
-       data-seq-header={header}
-       data-seq-index={index}
        className={style['sequence-article']}>
-        <header className={style['sequence-header']} id={header}>
+        <header
+         data-seq-header={header}
+         data-seq-index={index}
+         ref={this.headerRef}
+         className={style['sequence-header']} id={header}>
           <HLFirstWord index={index}>{header}</HLFirstWord>
         </header>
         <SequenceSummary {...{sequenceResult, output, strain}} />
