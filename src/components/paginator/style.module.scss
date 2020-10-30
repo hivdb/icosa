@@ -6,13 +6,28 @@ $hover-opacity: .9;
 $client-width: var(--display-nums) * #{$item-outer-size};
 $scrollbar-step-width: #{$client-width} / var(--total);
 $scrollbar-offset: #{$scrollbar-step-width} * var(--scroll-offset);
-$scrollbar-width: Max(
+$scrollbar-width: css-max(
   calc(1rem + 2rem),
   calc(
     #{$scrollbar-step-width} *
     var(--display-nums)
   )
 );
+$desc-width: $item-size * 9;
+$desc-offset: css-max(
+  0px,
+  css-min(
+    calc(
+      #{$item-size - $desc-width / 2} +
+      #{$item-outer-size} *
+      var(--offset)
+    ),
+    calc(
+      100% -
+      #{$desc-width}
+    )
+  )
+) + #{$item-size} * var(--hover-offset);
 
 .paginator-container {
   position: relative;
@@ -159,26 +174,8 @@ $scrollbar-width: Max(
 }
 
 .paginator-container > .paginator-desc {
-  $desc-width: $item-size * 9;
   position: relative;
-  margin-left: calc(
-    Max(
-      0px,
-      Min(
-        calc(
-          #{$item-size - $desc-width / 2} +
-          #{$item-outer-size} *
-          var(--offset)
-        ),
-        calc(
-          100% -
-          #{$desc-width}
-        )
-      )
-    ) +
-    #{$item-size} *
-    var(--hover-offset)
-  );
+  margin-left: calc(#{$desc-offset});
   margin-bottom: -.5rem;
   display: inline-block;
   box-sizing: border-box;
