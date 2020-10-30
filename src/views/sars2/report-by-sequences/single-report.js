@@ -22,7 +22,7 @@ function HLFirstWord({children, index}) {
 }
 
 
-function scrollTo(top, callback, smoothMaxDelta = 2048) {
+function scrollTo(top, callback, smoothMaxDelta = 0) {
   const enableSmooth = Math.abs(top - window.pageYOffset) < smoothMaxDelta;
   const checkScroll = () => {
     if (Math.abs(window.pageYOffset - top) < 15) {
@@ -70,7 +70,7 @@ export default class SingleSequenceReport extends React.Component {
     this.articleRef = React.createRef();
   }
 
-  resetScroll = curHeader => {
+  resetScroll = (curHeader) => {
     let callback = null;
     if (curHeader.detail) {
       callback = curHeader.detail.callback;
