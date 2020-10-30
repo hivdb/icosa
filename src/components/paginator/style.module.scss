@@ -3,16 +3,12 @@
 $item-size: 2.5rem;
 $item-outer-size: $item-size * 2;
 $hover-opacity: .9;
-$client-width: css-calc(var(--display-nums) * #{$item-outer-size});
-$scroll-width: css-calc(var(--total) * #{$item-outer-size});
-$scrollbar-step-width: css-calc(#{$client-width} / var(--total));
-$scrollbar-offset: css-calc(
-  #{$scrollbar-step-width} *
-  var(--scroll-offset)
-);
-$scrollbar-width: css-max(
-  css-calc(1rem + 2rem),
-  css-calc(
+$client-width: var(--display-nums) * #{$item-outer-size};
+$scrollbar-step-width: #{$client-width} / var(--total);
+$scrollbar-offset: #{$scrollbar-step-width} * var(--scroll-offset);
+$scrollbar-width: Max(
+  calc(1rem + 2rem),
+  calc(
     #{$scrollbar-step-width} *
     var(--display-nums)
   )
@@ -20,7 +16,7 @@ $scrollbar-width: css-max(
 
 .paginator-container {
   position: relative;
-  width: css-calc(#{$item-outer-size * 2} + #{$client-width});
+  width: calc(#{$item-outer-size * 2} + #{$client-width});
   padding-left: $item-outer-size;
   padding-right: $item-outer-size;
   box-sizing: border-box;
@@ -85,7 +81,7 @@ $scrollbar-width: css-max(
 .paginator-container > .paginator-scrollable-list {
   display: inline-block;
   overflow: hidden;
-  width: $client-width;
+  width: calc(#{$client-width});
   > .paginator-list {
     counter-reset: paginator;
     white-space: nowrap;
@@ -165,7 +161,24 @@ $scrollbar-width: css-max(
 .paginator-container > .paginator-desc {
   $desc-width: $item-size * 9;
   position: relative;
-  margin-left: css-calc( css-max( 0px, css-min( css-calc( #{$item-size - $desc-width / 2} + css-calc( #{$item-outer-size} * var(--offset) ) ), css-calc(100% - #{$desc-width}) ) ) + css-calc(#{$item-size} * var(--hover-offset)));
+  margin-left: calc(
+    Max(
+      0px,
+      Min(
+        calc(
+          #{$item-size - $desc-width / 2} +
+          #{$item-outer-size} *
+          var(--offset)
+        ),
+        calc(
+          100% -
+          #{$desc-width}
+        )
+      )
+    ) +
+    #{$item-size} *
+    var(--hover-offset)
+  );
   margin-bottom: -.5rem;
   display: inline-block;
   box-sizing: border-box;
@@ -231,7 +244,7 @@ $scrollbar-width: css-max(
     opacity: .1;
   }
   > .scrollbar {
-    margin-left: $scrollbar-offset;
+    margin-left: calc(#{$scrollbar-offset});
     cursor: pointer;
     display: inline-block;
     &::before {
@@ -262,7 +275,7 @@ $scrollbar-width: css-max(
     position: absolute;
     top: 0;
     left: 0;
-    width: $scrollbar-step-width;
+    width: calc(#{$scrollbar-step-width});
     height: 0;
   }
 }
