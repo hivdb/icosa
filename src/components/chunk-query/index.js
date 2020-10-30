@@ -55,27 +55,25 @@ export default function ChunkQuery(props) {
        data, render, renderPartialResults,
        progressText, loading, error
      }}
-     onLoadMore={handleLoadMore(fetchMore, data)} />
+     onLoadMore={handleLoadMore} />
   );
 
-  function handleLoadMore(fetchMore, data) {
+  function handleLoadMore() {
     const {onMergeData, onRequireVariables} = props;
-    return () => {
-      const {
-        variables, progress, nextProgress, total, done
-      } = onRequireVariables(data);
-      if (done) { return [true, progress, nextProgress, total]; }
-      fetchMore({
-        variables,
-        updateQuery: (prev, {fetchMoreResult}) => {
-          if (!fetchMoreResult) {
-            return prev;
-          }
-          return onMergeData(prev, fetchMoreResult);
+    const {
+      variables, progress, nextProgress, total, done
+    } = onRequireVariables(data);
+    if (done) { return [true, progress, nextProgress, total]; }
+    fetchMore({
+      variables,
+      updateQuery: (prev, {fetchMoreResult}) => {
+        if (!fetchMoreResult) {
+          return prev;
         }
-      });
-      return [false, progress, nextProgress, total];
-    };
+        return onMergeData(prev, fetchMoreResult);
+      }
+    });
+    return [false, progress, nextProgress, total];
   }
 
 }

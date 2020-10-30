@@ -17,3 +17,25 @@
   $number: strip-unit($number);
   @return $number * $global-font-size;
 }
+
+// https://github.com/sass/sass/issues/2849#issuecomment-621991522
+@function css-function( $function, $values... ) {
+  @return 
+    $function
+    + unquote( '(' )
+    + $values
+    + unquote( ')' )
+  ;
+}
+
+@function css-min( $values... ) {
+  @return css-function( min, $values );
+}
+
+@function css-max( $values... ) {
+  @return css-function( max, $values );
+}
+
+@function css-clamp( $values... ) {
+  @return css-function( clamp, $values );
+}

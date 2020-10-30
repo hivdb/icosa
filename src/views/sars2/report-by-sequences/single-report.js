@@ -51,7 +51,7 @@ function scrollTo(top, callback, smoothMaxDelta = 0) {
 export default class SingleSequenceReport extends React.Component {
 
   static propTypes = {
-    currentSelected: PropTypes.object.isRequired,
+    currentSelected: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
     species: PropTypes.string.isRequired,
     match: matchShape.isRequired,
@@ -59,10 +59,6 @@ export default class SingleSequenceReport extends React.Component {
     output: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
     onObserve: PropTypes.func.isRequired
-  }
-
-  static defaultProps = {
-    output: 'default'
   }
 
   constructor() {
@@ -105,9 +101,13 @@ export default class SingleSequenceReport extends React.Component {
 
   componentDidMount() {
     const {
-      currentSelected: {header: curHeader},
+      output,
+      currentSelected: {header: curHeader} = {},
       onObserve
     } = this.props;
+    if (output === 'printable') {
+      return;
+    }
     const headerNode = this.headerRef.current;
     onObserve(headerNode);
     this.resetScroll(curHeader);
@@ -119,6 +119,10 @@ export default class SingleSequenceReport extends React.Component {
   }
 
   componentWillUnmount() {
+    const {output} = this.props;
+    if (output === 'printable') {
+      return;
+    }
     window.removeEventListener(
       '--sierra-report-reset-scroll',
       this.resetScroll,

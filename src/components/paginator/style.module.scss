@@ -10,8 +10,8 @@ $scrollbar-offset: calc(
   #{$scrollbar-step-width} *
   var(--scroll-offset)
 );
-$scrollbar-width: Max(
-  3rem,
+$scrollbar-width: css-max(
+  calc(1rem + 2rem),
   calc(
     #{$scrollbar-step-width} *
     var(--display-nums)
@@ -166,9 +166,9 @@ $scrollbar-width: Max(
   $desc-width: $item-size * 9;
   position: relative;
   margin-left: calc(
-    Max(
+    css-max(
       0px,
-      Min(
+      css-min(
         calc(
           calc(#{$item-outer-size} * var(--offset)) +
           #{$item-size - $desc-width / 2}

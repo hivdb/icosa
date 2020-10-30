@@ -22,12 +22,12 @@ const pageTitlePrefix = 'Sequence Analysis Report';
 class ReportBySequencesInner extends React.Component {
 
   static propTypes = {
-    output: PropTypes.string,
+    output: PropTypes.string.isRequired,
     species: PropTypes.string.isRequired,
     match: matchShape.isRequired,
     done: PropTypes.bool.isRequired,
     sequences: PropTypes.array.isRequired,
-    currentSelected: PropTypes.object.isRequired,
+    currentSelected: PropTypes.object,
     sequenceAnalysis: PropTypes.array.isRequired,
     onSelectSequence: PropTypes.func.isRequired
   }
@@ -58,6 +58,10 @@ class ReportBySequencesInner extends React.Component {
   }
 
   componentDidMount() {
+    const {output} = this.props;
+    if (output === 'printable') {
+      return;
+    }
     const options = {
       root: document,
       rootMargin: '-50px 0px -30% 0px',
@@ -122,6 +126,10 @@ class ReportBySequencesInner extends React.Component {
   }
 
   componentWillUnmount() {
+    const {output} = this.props;
+    if (output === 'printable') {
+      return;
+    }
     this.observer.disconnect();
   }
 
@@ -146,8 +154,8 @@ class ReportBySequencesInner extends React.Component {
   }
 
   render() {
-    const {output} = this;
     const {
+      output,
       species, match, done,
       sequences, currentSelected,
       sequenceAnalysis, onSelectSequence
@@ -198,11 +206,9 @@ export default function ReportBySequences({
   match,
   router
 }) {
-  const {location} = match;
-  let output;
-  if (location.query) {
-    output = location.query.output;
-  }
+  const {location: {
+    query: {output = 'default'} = {}
+  } = {}} = match;
 
   return (
     <SequenceAnalysisLayout
