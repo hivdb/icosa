@@ -25,7 +25,7 @@ class ReportBySequencesInner extends React.Component {
     output: PropTypes.string.isRequired,
     species: PropTypes.string.isRequired,
     match: matchShape.isRequired,
-    done: PropTypes.bool.isRequired,
+    loaded: PropTypes.bool.isRequired,
     sequences: PropTypes.array.isRequired,
     currentSelected: PropTypes.object,
     sequenceAnalysis: PropTypes.array.isRequired,
@@ -156,7 +156,7 @@ class ReportBySequencesInner extends React.Component {
   render() {
     const {
       output,
-      species, match, done,
+      species, match, loaded,
       sequences, currentSelected,
       sequenceAnalysis, onSelectSequence
     } = this.props;
@@ -179,7 +179,7 @@ class ReportBySequencesInner extends React.Component {
          onSelect={this.handlePaginatorSelectSeq}
          sequences={sequences} />
       }
-      <main className={style.main} data-loaded={done}>
+      <main className={style.main} data-loaded={loaded}>
         {sequenceAnalysis.map((seqResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSequenceReport
@@ -203,8 +203,7 @@ class ReportBySequencesInner extends React.Component {
 
 export default function ReportBySequences({
   species,
-  match,
-  router
+  match
 }) {
   const {location: {
     query: {output = 'default'} = {}
@@ -212,27 +211,23 @@ export default function ReportBySequences({
 
   return (
     <SequenceAnalysisLayout
-     {...{match, router, query}}
-     preLoad
+     query={query}
+     renderPartialResults={output !== 'printable'}
      lazyLoad={output !== 'printable'}
-     renderPartialResults={output !== 'printable'} 
-     onRequireVariables={handleRequireVariables}
-     render={thenRender} />
+     onExtendVariables={handleExtendVariables}>
+      {props => (
+        <ReportBySequencesInner
+         output={output}
+         species={species}
+         match={match}
+         {...props} />
+      )}
+    </SequenceAnalysisLayout>
   );
 
-  function thenRender(props) {
-    return (
-      <ReportBySequencesInner
-       output={output}
-       species={species}
-       match={match}
-       {...props} />
-    );
-  }
-
-  function handleRequireVariables(data) {
+  function handleExtendVariables(vars) {
     const {location: {state: {algorithm}}} = match;
-    data.variables.algorithm = algorithm;
-    return data;
+    vars.algorithm = algorithm;
+    return vars;
   }
 }

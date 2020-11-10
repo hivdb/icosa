@@ -54,15 +54,13 @@ export default class PromiseComponent extends React.Component {
   }
 
   static getDerivedStateFromProps = (props, state) => {
-    const {promise, children, then, component} = props;
+    const {promise, then, component} = props;
     if (state.loaded === promise) {
       return null;
     }
     else if (promise && promise.then) {
       return {
-        loaded: false,
-        // childProps: null,
-        children
+        loaded: false
       };
     }
     else {

@@ -68,7 +68,10 @@ export default class SmoothProgressBar extends React.Component {
        className={style['progress-bar-container']}
        data-loaded={loaded}>
         {progressText(estProgress, total)}
-        <ProgressBar {...props} completed={completed} />
+        <ProgressBar
+         color="var(--sierra-color-progress-bar)"
+         {...props}
+         completed={completed} />
       </div>
     );
   }

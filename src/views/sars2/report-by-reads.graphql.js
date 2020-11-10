@@ -87,6 +87,7 @@ export default gql`
     }
     drugResistance {
       algorithm {
+        text
         family
         version
         publishDate
