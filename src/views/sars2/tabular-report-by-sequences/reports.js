@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import {makeZip} from '../../../utils/download';
 import {tsvStringify} from '../../../utils/csv';
-import ConfigContext from '../../../components/report/config-context';
 
 import {subOptionProcessors} from './sub-options';
 
@@ -39,6 +38,7 @@ export default class SequenceTabularReports extends React.Component {
   render() {
     const {
       loaded,
+      config,
       // currentVersion,
       // currentProgramVersion,
       subOptionIndices,
@@ -46,40 +46,40 @@ export default class SequenceTabularReports extends React.Component {
       sequenceAnalysis,
       onFinish
     } = this.props;
-    return <ConfigContext.Consumer>
-      {config => {
-        if (loaded) {
-          const files = [];
-          for (const idx of subOptionIndices) {
-            const processor = subOptionProcessors[idx];
-            for (const {
-              tableName,
-              header,
-              rows,
-              missing = 'NA'
-            } of processor({
-              allGenes,
-              sequenceAnalysis,
-              config
-            })) {
-              const tsvHeader = header.join('\t');
-              const tsvRows = rows.map(
-                row => tsvStringify(row, {missing, header})
-              );
-              const tsvText = (
-                `${tsvHeader}\n${tsvRows.join('\n')}`
-              );
-              files.push({
-                fileName: `${tableName}.tsv`,
-                data: tsvText
-              });
-            }
+    if (loaded) {
+      const files = [];
+      for (const idx of subOptionIndices) {
+        const processor = subOptionProcessors[idx];
+        for (
+          const {
+            tableName,
+            header,
+            rows,
+            missing = 'NA'
           }
-          makeZip('analysis-reports.zip', files);
-          onFinish();
+          of
+          processor({
+            allGenes,
+            sequenceAnalysis,
+            config
+          })
+        ) {
+          const tsvHeader = header.join('\t');
+          const tsvRows = rows.map(
+            row => tsvStringify(row, {missing, header})
+          );
+          const tsvText = (
+            `${tsvHeader}\n${tsvRows.join('\n')}`
+          );
+          files.push({
+            fileName: `${tableName}.tsv`,
+            data: tsvText
+          });
         }
-        return null;
-      }}
-    </ConfigContext.Consumer>;
+      }
+      makeZip('analysis-reports.zip', files);
+      onFinish();
+    }
+    return null;
   }
 }

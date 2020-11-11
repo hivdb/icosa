@@ -1,6 +1,7 @@
 import React from 'react';
 import buildApolloClient from '../apollo-client';
 
+import ConfigContext from '../../../components/report/config-context';
 import SequenceAnalysisLayout from 
   '../../../components/sequence-analysis-layout';
 
@@ -17,25 +18,30 @@ export default function TabularReportBySequencesContainer({
   algorithm,
   onFinish
 }) {
-  const client = buildApolloClient();
 
   return (
-    <SequenceAnalysisLayout
-     query={query}
-     client={client}
-     sequences={sequences}
-     currentSelected={{index: 0}}
-     renderPartialResults={false}
-     lazyLoad={false}
-     onExtendVariables={handleExtendVariables}>
-      {props => (
-        <SeqTabularReports
-         species={species}
-         subOptionIndices={subOptionIndices}
-         onFinish={onFinish}
-         {...props} />
-      )}
-    </SequenceAnalysisLayout>
+    <ConfigContext.Consumer>
+      {config => {
+        const client = buildApolloClient(config);
+        return <SequenceAnalysisLayout
+         query={query}
+         client={client}
+         sequences={sequences}
+         currentSelected={{index: 0}}
+         renderPartialResults={false}
+         lazyLoad={false}
+         onExtendVariables={handleExtendVariables}>
+          {props => (
+            <SeqTabularReports
+             config={config}
+             species={species}
+             subOptionIndices={subOptionIndices}
+             onFinish={onFinish}
+             {...props} />
+          )}
+        </SequenceAnalysisLayout>;
+      }}
+    </ConfigContext.Consumer>
   );
 
   function handleExtendVariables(vars) {

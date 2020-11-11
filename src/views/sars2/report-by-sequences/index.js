@@ -2,6 +2,7 @@ import React from 'react';
 import createHash from 'create-hash';
 import buildApolloClient from '../apollo-client';
 
+import ConfigContext from '../../../components/report/config-context';
 import SeqLoader from '../../../components/sequence-loader';
 import SeqAnalysisLayout from 
   '../../../components/sequence-analysis-layout';
@@ -32,31 +33,35 @@ export default function ReportBySequencesContainer({
   const lazyLoad = output !== 'printable';
 
   return (
-    <SeqLoader lazyLoad={lazyLoad}>
-      {({sequences, currentSelected}) => {
-        const seqHash = hashSeqSet(sequences);
-        if (!client || clientHash !== seqHash) {
-          client = buildApolloClient();
-          clientHash = seqHash;
-        }
-        return <SeqAnalysisLayout
-         query={query}
-         client={client}
-         sequences={sequences}
-         currentSelected={currentSelected}
-         renderPartialResults={output !== 'printable'}
-         lazyLoad={lazyLoad}
-         onExtendVariables={handleExtendVariables}>
-          {props => (
-            <SeqReports
-             output={output}
-             species={species}
-             match={match}
-             {...props} />
-          )}
-        </SeqAnalysisLayout>;
-      }}
-    </SeqLoader>
+    <ConfigContext.Consumer>
+      {config => (
+        <SeqLoader lazyLoad={lazyLoad}>
+          {({sequences, currentSelected}) => {
+            const seqHash = hashSeqSet(sequences);
+            if (!client || clientHash !== seqHash) {
+              client = buildApolloClient(config);
+              clientHash = seqHash;
+            }
+            return <SeqAnalysisLayout
+             query={query}
+             client={client}
+             sequences={sequences}
+             currentSelected={currentSelected}
+             renderPartialResults={output !== 'printable'}
+             lazyLoad={lazyLoad}
+             onExtendVariables={handleExtendVariables}>
+              {props => (
+                <SeqReports
+                 output={output}
+                 species={species}
+                 match={match}
+                 {...props} />
+              )}
+            </SeqAnalysisLayout>;
+          }}
+        </SeqLoader>
+      )}
+    </ConfigContext.Consumer>
   );
 
   function handleExtendVariables(vars) {
