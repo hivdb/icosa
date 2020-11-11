@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import SeqLoader from './sequence-loader';
 import SeqAnalysisQuery from './query';
 import SeqAnalysisLayout from './layout';
 
@@ -12,10 +11,11 @@ function SequenceAnalysisContainer(props) {
 
   const {
     query,
+    sequences,
+    currentSelected,
     extraParams,
     client,
     progressText,
-    noCache,
     onExtendVariables,
     lazyLoad,
     renderPartialResults,
@@ -23,33 +23,28 @@ function SequenceAnalysisContainer(props) {
   } = props;
 
   return (
-    <SeqLoader lazyLoad={lazyLoad}>
-      {({sequences, currentSelected}) => (
-        <SeqAnalysisQuery
-         query={query}
-         showProgressBar={!renderPartialResults}
-         extraParams={extraParams}
-         client={client}
-         progressText={progressText}
-         noCache={noCache}
-         onExtendVariables={onExtendVariables}
+    <SeqAnalysisQuery
+     query={query}
+     showProgressBar={!renderPartialResults}
+     extraParams={extraParams}
+     client={client}
+     progressText={progressText}
+     onExtendVariables={onExtendVariables}
+     sequences={sequences}
+     {...calcInitOffsetLimit({sequences, lazyLoad})}>
+      {({data, loaded, onFetchMore}) => (
+        <SeqAnalysisLayout
+         currentSelected={currentSelected}
          sequences={sequences}
-         {...calcInitOffsetLimit({sequences, lazyLoad})}>
-          {({data, loaded, onFetchMore}) => (
-            <SeqAnalysisLayout
-             currentSelected={currentSelected}
-             sequences={sequences}
-             data={data}
-             lazyLoad={lazyLoad}
-             loaded={loaded}
-             renderPartialResults={renderPartialResults}
-             onFetchMore={onFetchMore}>
-              {children}
-            </SeqAnalysisLayout>
-          )}
-        </SeqAnalysisQuery>
+         data={data}
+         lazyLoad={lazyLoad}
+         loaded={loaded}
+         renderPartialResults={renderPartialResults}
+         onFetchMore={onFetchMore}>
+          {children}
+        </SeqAnalysisLayout>
       )}
-    </SeqLoader>
+    </SeqAnalysisQuery>
   );
 
 }
@@ -58,9 +53,18 @@ function SequenceAnalysisContainer(props) {
 SequenceAnalysisContainer.propTypes = {
   query: PropTypes.object.isRequired,
   extraParams: PropTypes.string,
-  client: PropTypes.any,
+  sequences: PropTypes.arrayOf(
+    PropTypes.shape({
+      header: PropTypes.string.isRequired,
+      sequence: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
+  currentSelected: PropTypes.shape({
+    index: PropTypes.number,
+    header: PropTypes.string
+  }),
+  client: PropTypes.any.isRequired,
   progressText: PropTypes.func.isRequired,
-  noCache: PropTypes.bool.isRequired,
   onExtendVariables: PropTypes.func.isRequired,
   lazyLoad: PropTypes.bool.isRequired,
   renderPartialResults: PropTypes.bool.isRequired,
@@ -72,7 +76,6 @@ SequenceAnalysisContainer.defaultProps = {
   progressText: (progress, total) => (
     `Running sequence analysis... (${progress}/${total})`
   ),
-  noCache: false,
   onExtendVariables: vars => vars
 };
 

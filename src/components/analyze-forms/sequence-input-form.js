@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ProgressBar from 'react-progressbar';
 import {routerShape, matchShape} from 'found';
 
 import {parseFasta} from '../../utils/fasta';
@@ -31,7 +30,12 @@ export default class SequenceInputForm extends React.Component {
     childrenPlacement: PropTypes.oneOf(['top', 'bottom']).isRequired,
     exampleFasta: PropTypes.arrayOf(exampleFastaPropType),
     to: PropTypes.string,
-    outputOptions: PropTypes.object,
+    outputOptions: PropTypes.objectOf(PropTypes.shape({
+      label: PropTypes.node.isRequired,
+      subOptions: PropTypes.arrayOf(PropTypes.node.isRequired),
+      defaultSubOptions: PropTypes.arrayOf(PropTypes.number.isRequired),
+      renderer: PropTypes.func.isRequired
+    }).isRequired).isRequired,
     onSubmit: PropTypes.func
   }
 
@@ -45,12 +49,14 @@ export default class SequenceInputForm extends React.Component {
       header: '',
       sequence: '',
       showExamples: false,
-      progress: 0,
-      numProcessedSeqs: 0,
-      numAllSeqs: 0,
+      // progress: 0,
+      // numProcessedSeqs: 0,
+      // numAllSeqs: 0,
       isSubmitting: false,
       outputOption: '__default',
-      outputOptionChildren: null
+      outputSubOptions: null,
+      optionResult: null
+
     };
   }
 
@@ -96,20 +102,18 @@ export default class SequenceInputForm extends React.Component {
       else {
         validated = false; // stop submitting
         this.setState({isSubmitting: true});
-        state.sequences = sequences;
-        state.children = this.state.outputOptionChildren;
-        outputOptions[outputOption].callback(state)
-          .progress(({
-            percent,
-            processedLength: numProcessedSeqs,
-            seqLength: numAllSeqs
-          }) => this.setState({
-            progress: parseInt(percent * 100, 10),
-            numProcessedSeqs, numAllSeqs
-          }))
-          .done(() => this.setState({
-            progress: 0,
-            isSubmitting: false}));
+        state.sequences = sequences.map(
+          ({header, sequence}) => ({header, sequence})
+        );
+        state.subOptionIndices = Array.from(this.state.outputSubOptions);
+        state.onFinish = () => setTimeout(() => this.setState({
+          isSubmitting: false,
+          optionResult: null
+        }));
+        this.setState({
+          isSubmitting: true,
+          optionResult: outputOptions[outputOption].renderer(state)
+        });
       }
     }
     return [validated, state, query];
@@ -139,22 +143,22 @@ export default class SequenceInputForm extends React.Component {
   handleOOChange = (e) => {
     const outputOption = e.currentTarget.value;
     const target = this.outputOptions[outputOption];
-    const outputOptionChildren =
-      target.children ? new Set(target.defaultChildren) : null;
-    this.setState({outputOption, outputOptionChildren});
+    const outputSubOptions =
+      target.subOptions ? new Set(target.defaultSubOptions) : null;
+    this.setState({outputOption, outputSubOptions});
   }
 
   handleOOChildChange = (e) => {
-    let {outputOptionChildren} = this.state;
+    let {outputSubOptions} = this.state;
     const child = parseInt(e.currentTarget.value, 10);
     if (e.currentTarget.checked) {
-      outputOptionChildren.add(child);
+      outputSubOptions.add(child);
     }
     else {
-      outputOptionChildren.delete(child);
+      outputSubOptions.delete(child);
     }
-    outputOptionChildren = new Set(outputOptionChildren);
-    this.setState({outputOptionChildren});
+    outputSubOptions = new Set(outputSubOptions);
+    this.setState({outputSubOptions});
   }
 
   async loadExample(url) {
@@ -188,11 +192,11 @@ export default class SequenceInputForm extends React.Component {
       childrenPlacement, exampleFasta
     } = this.props;
     const {
-      header, sequence, showExamples, outputOption, numProcessedSeqs,
-      numAllSeqs, outputOptionChildren, isSubmitting, progress
+      header, sequence, showExamples, outputOption,
+      outputSubOptions, isSubmitting, optionResult
     } = this.state;
     const hasOptions = Object.keys(outputOptions || {}).length > 1;
-    const hasOptionChild = outputOptionChildren !== null;
+    const hasOptionChild = outputSubOptions !== null;
 
     return (
       <BaseForm
@@ -278,14 +282,14 @@ export default class SequenceInputForm extends React.Component {
                 <label
                  className={style['input-label']}
                  htmlFor="output-options-child">Select outputs: </label>
-                {outputOptions[outputOption].children
+                {outputOptions[outputOption].subOptions
                 .map((label, idx) => (
                   <CheckboxInput
                    id={`output-options-child-${idx}`}
                    name="output-option-children"
                    key={idx} value={idx}
                    onChange={this.handleOOChildChange}
-                   checked={outputOptionChildren.has(idx)}>
+                   checked={outputSubOptions.has(idx)}>
                     {label}
                   </CheckboxInput>
                 ))}
@@ -298,12 +302,7 @@ export default class SequenceInputForm extends React.Component {
           null : style.hidden)
         }>
           <div className={style.inner}>
-            <strong>
-              Analyzing sequence ({numProcessedSeqs}/{numAllSeqs} finished) ...
-            </strong>
-            <ProgressBar
-             className={style['progress-bar']}
-             completed={progress} />
+            {optionResult}
           </div>
         </div>
       </BaseForm>

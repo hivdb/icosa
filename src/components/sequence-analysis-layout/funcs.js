@@ -22,20 +22,3 @@ export function calcInitOffsetLimit({sequences, lazyLoad}) {
   }
   return {initOffset, initLimit};
 }
-
-
-export function getCurrentSelected({
-  match: {location = {query: {}}},
-  lazyLoad,
-  sequences
-}) {
-  if (!lazyLoad) { return sequences[0]; }
-  const {query: {header}} = location;
-  if (!header) {
-    return {index: 0, header: sequences[0].header};
-  }
-  const index = Math.max(
-    0, sequences.findIndex(({header: seqH}) => seqH === header)
-  );
-  return {index, header: sequences[index].header};
-}

@@ -27,6 +27,7 @@
     "@vx/scale": "^0.0.197",
     "@vx/tooltip": "^0.0.197",
     "classnames": "^2.2.6",
+    "create-hash": "1.2.0",
     "farce": "^0.4.1",
     "fast-memoize": "^2.5.2",
     "flexbox-grid-mixins": "^0.2.1",
@@ -50,7 +51,8 @@
     "rfdc": "^1.1.4",
     "sleep-promise": "^8.0.1",
     "typeface-source-sans-pro": "^1.1.5",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "uuid": "^8.3.1"
   },
   "peerDependencies": {
     "@apollo/client": "^3.2.5",

@@ -23,6 +23,16 @@ const Router = createFarceRouter({
   render: createRender({}),
 });
 
+/**
+ * Be aware of the double rendering side effect caused by StrictMode:
+ * https://bit.ly/35g6Fip
+ *
+ * In a nutshell, the double rendering behavior only happens under
+ * development mode. You can temprarily disable the StrictMode to
+ * ensure it's the cause of your problem. However, StrictMode helps
+ * us locate problems. Don't disable it permanently!
+ *
+ */
 ReactDOM.render(
   <React.StrictMode>
     <Router resolver={resolver} />

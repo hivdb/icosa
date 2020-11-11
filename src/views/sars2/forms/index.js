@@ -9,6 +9,8 @@ import AnalyzeForms, {
 } from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
 
+import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
+
 
 const exampleCodonReads = [
   getFullLink('downloads/codfreq-examples/ERR4085387.S.codfreq.txt'),
@@ -79,6 +81,16 @@ export default class SierraForms extends React.Component {
        sequencesOutputOptions={{
          __printable: {
            label: 'Printable HTML'
+         },
+         tsv: {
+           label: "Spreadsheets (TSV)",
+           subOptions,
+           defaultSubOptions: subOptions.map((_, idx) => idx),
+           renderer: props => (
+             <SeqTabularReports
+              species={species}
+              {...props} />
+           )
          }
        }}
       />

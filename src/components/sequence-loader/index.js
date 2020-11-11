@@ -5,7 +5,22 @@ import {matchShape, withRouter} from 'found';
 import BigData from '../../utils/big-data';
 import PromiseComponent from '../../utils/promise-component';
 
-import {getCurrentSelected} from './funcs';
+
+function getCurrentSelected({
+  match: {location = {query: {}}},
+  lazyLoad,
+  sequences
+}) {
+  if (!lazyLoad) { return sequences[0]; }
+  const {query: {header}} = location;
+  if (!header) {
+    return {index: 0, header: sequences[0].header};
+  }
+  const index = Math.max(
+    0, sequences.findIndex(({header: seqH}) => seqH === header)
+  );
+  return {index, header: sequences[index].header};
+}
 
 
 async function prepareChildProps(props) {

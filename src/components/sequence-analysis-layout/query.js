@@ -17,6 +17,7 @@ function getQuery(fragment, extraParams) {
       $sequences: [UnalignedSequenceInput]!
       ${extraParams ? ', ' + extraParams : ''}
     ) {
+      __typename
       currentVersion { text, publishDate }
       currentProgramVersion { text, publishDate }
       sequenceAnalysis(sequences: $sequences) {
@@ -85,6 +86,7 @@ function prepareChildProps({
   limit,
   lookup,
   data = {},
+  loaded,
   ...props
 }) {
   let {
@@ -98,6 +100,9 @@ function prepareChildProps({
       sequenceAnalysis.push(lookup[header]);
     }
   }
+  if (loaded && querySeqs.length > sequenceAnalysis.length) {
+    loaded = false;
+  }
   return {
     sequences,
     offset,
@@ -108,6 +113,7 @@ function prepareChildProps({
       currentProgramVersion: {},
       ...misc
     },
+    loaded,
     ...props
   };
 }
@@ -124,19 +130,18 @@ function SequenceAnalysisQuery(props) {
     client,
     progressText,
     showProgressBar,
-    noCache,
     onExtendVariables
   } = props;
   const [cursor, setCursor] = React.useState({
     offset: initOffset,
     limit: initLimit
   });
-  let [lookup, setLookup] = React.useState({});
-  let [progressObj, setProgressObj] = React.useState({
+  let lookup = {};
+  let progressObj = {
     progress: 0,
     nextProgress: 0,
     total: sequences.length
-  });
+  };
 
   const query = getQuery(queryFragment, extraParams);
   const {variables, needFetchMore} = getVariables({
@@ -155,9 +160,9 @@ function SequenceAnalysisQuery(props) {
     query,
     {
       variables,
-      fetchPolicy: noCache ? 'no-cache' : 'cache-first',
+      fetchPolicy: 'cache-first',
       client,
-      returnPartialData: true
+      returnPartialData: false
     }
   );
 
@@ -168,29 +173,38 @@ function SequenceAnalysisQuery(props) {
   let progressbar = null;
   let loaded = !loading;
 
-  if (data && !loading) {
-    const newLookup = buildResultLookup(data);
-    lazySetLookup(newLookup);
-    if (needFetchMore) {
-      // the MAX_PER_REQUEST is exceeded;
-      // try fetch more
-      const {
-        done,
-        progress,
-        nextProgress,
-        total
-      } = tryFetchMore({
-        ...cursor,
-        extendCursor: true
-      });
-      loaded = done;
-      lazySetProgressObj({
-        progress,
-        nextProgress,
-        total
-      });
-    }
+  if (data) {
+    lookup = buildResultLookup(data);
   }
+  if (!loading && needFetchMore) {
+    // the MAX_PER_REQUEST is exceeded;
+    // try fetch more
+    const {
+      done,
+      progress,
+      nextProgress,
+      total
+    } = tryFetchMore({
+      ...cursor,
+      extendCursor: true
+    });
+    loaded = done;
+    progressObj = {
+      progress,
+      nextProgress,
+      total
+    };
+  }
+  
+  const childProps = prepareChildProps({
+    sequences,
+    ...cursor,
+    lookup,
+    data,
+    loaded,
+    onFetchMore: tryFetchMore
+  });
+  loaded = childProps.loaded;
   if (showProgressBar) {
     progressbar = (
       <SmoothProgressBar
@@ -203,40 +217,8 @@ function SequenceAnalysisQuery(props) {
   return <>
     <Loader loaded={loaded} />
     {progressbar}
-    {children(
-      prepareChildProps({
-        sequences,
-        ...cursor,
-        lookup,
-        data,
-        loaded,
-        onFetchMore: tryFetchMore
-      })
-    )}
+    {children(childProps)}
   </>;
-
-
-  function lazySetProgressObj(newProgressObj) {
-    if (
-      progressObj.progress !== newProgressObj.progress ||
-      progressObj.nextProgress !== newProgressObj.nextProgress ||
-      progressObj.total !== newProgressObj.total
-    ) {
-      setProgressObj(newProgressObj);
-      progressObj = newProgressObj;
-    }
-
-  }
-
-
-  function lazySetLookup(newLookup) {
-    const oldKeys = Array.from(Object.keys(lookup)).sort();
-    const newKeys = Array.from(Object.keys(newLookup)).sort();
-    if (JSON.stringify(oldKeys) !== JSON.stringify(newKeys)) {
-      setLookup(newLookup);
-      lookup = newLookup;
-    }
-  }
 
 
   function tryFetchMore({offset, limit, extendCursor = false}) {
@@ -244,9 +226,14 @@ function SequenceAnalysisQuery(props) {
       variables,
       fetchedCount,
       fetchingCount
-    } = getVariables(
-      {sequences, offset, limit, lookup, data, onExtendVariables}
-    );
+    } = getVariables({
+      sequences,
+      offset,
+      limit,
+      lookup,
+      data,
+      onExtendVariables
+    });
     if (
       !extendCursor && (
         offset !== cursor.offset ||
@@ -265,6 +252,14 @@ function SequenceAnalysisQuery(props) {
       };
     }
     else {
+      /**
+       * A known expected behavior although it is weird:
+       * Under development mode, fetchMore will be executed twice with the
+       * same variables. Don't try to fix it because it is expected. See
+       * https://bit.ly/36k3CFg and https://bit.ly/35g6Fip for explanation.
+       *
+       * TL;DR: useState() triggered StrictMode double rendering behavior
+       */
       fetchMore({variables});
       return {
         done: false, 
@@ -293,7 +288,6 @@ SequenceAnalysisQuery.propTypes = {
   client: PropTypes.any,
   progressText: PropTypes.func.isRequired,
   showProgressBar: PropTypes.bool.isRequired,
-  noCache: PropTypes.bool.isRequired,
   onExtendVariables: PropTypes.func.isRequired
 };
 

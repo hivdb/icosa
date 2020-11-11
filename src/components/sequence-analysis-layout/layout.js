@@ -75,7 +75,8 @@ class SequenceAnalysisLayout extends React.Component {
       data: {
         currentVersion,
         currentProgramVersion,
-        sequenceAnalysis = []
+        sequenceAnalysis = [],
+        ...dataMisc
       },
       currentSelected,
       renderPartialResults,
@@ -98,7 +99,8 @@ class SequenceAnalysisLayout extends React.Component {
         currentVersion,
         currentProgramVersion,
         onSelectSequence: this.handleSelectSequence,
-        loaded
+        loaded,
+        ...dataMisc
       });
     }
     else {
