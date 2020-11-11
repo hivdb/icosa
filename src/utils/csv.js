@@ -89,12 +89,14 @@ function csvStringify(row, options = {missing: '', header: null}) {
 function tsvStringify(row, options = {missing: '', header: null}) {
   if (options.header) {
     return options.header.map(h => (
-      row[h] ? row[h].toString() : options.missing
+      (row[h] !== null && row[h] !== undefined) ?
+        row[h].toString() : options.missing
     )).join('\t');
   }
   else {
     return row.map(c => (
-      c ? c.toString() : options.missing
+      (c !== null && c !== undefined) ?
+        c.toString() : options.missing
     )).join('\t');
   }
 }
