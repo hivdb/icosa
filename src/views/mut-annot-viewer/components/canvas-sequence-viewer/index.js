@@ -1,6 +1,7 @@
 import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
+import debounce from 'lodash/debounce';
 import Loader from 'react-loader';
 
 import style from './style.module.scss';
@@ -42,8 +43,21 @@ export default class CanvasSequenceViewer extends React.Component {
 
   constructor() {
     super(...arguments);
+    this.state = {resizing: false};
     this.containerRef = createRef();
   }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.onWindowResize, false);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize, false);
+  }
+
+  onWindowResize = debounce(() => {
+    this.forceUpdate();
+  }, 200)
 
   get config() {
     const {
@@ -66,18 +80,18 @@ export default class CanvasSequenceViewer extends React.Component {
     for (const cat of annotCategories) {
       const {name: catName, annotStyle} = cat;
       const curAnnotNames = curAnnotNameLookup[catName] || [];
-      const curAnnot = (
-        annotations.find(({name}) => curAnnotNames.includes(name))
+      const curAnnots = annotations.filter(
+        ({name}) => curAnnotNames.includes(name)
       );
       switch (annotStyle) {
         case 'colorBox':
           colorBoxPositions = getAnnotPositions(
-            curAnnot, positionLookup
+            curAnnots, positionLookup
           );
           break;
         case 'circleInBox':
           circleInBoxPositions = getAnnotPositions(
-            curAnnot, positionLookup
+            curAnnots, positionLookup
           );
           break;
         case 'underscore':
@@ -90,7 +104,7 @@ export default class CanvasSequenceViewer extends React.Component {
           break;
         case 'aminoAcids':
           aminoAcidsAnnotPositions[aaAnnotIdx] = getAnnotPositions(
-            curAnnot, positionLookup, aaAnnotIdx ++
+            curAnnots, positionLookup, aaAnnotIdx ++
           );
           aminoAcidsCatNames.push(catName);
           aminoAcidsOverrideColors.push(cat.color);
@@ -128,7 +142,18 @@ export default class CanvasSequenceViewer extends React.Component {
       }, 0);
       return null;
     }
-    return current.clientWidth;
+    const konva = current.querySelector('.konvajs-content');
+    try {
+      if (konva) {
+        konva.style.display = 'none';
+      }
+      return current.clientWidth;
+    }
+    finally {
+      if (konva) {
+        konva.style.display = null;
+      }
+    }
   }
 
   render() {

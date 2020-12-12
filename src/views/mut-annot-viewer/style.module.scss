@@ -1,7 +1,7 @@
 @import "../../styles/default-colors";
 @import "../../styles/dropdown";
 
-.mut-annot-editor {
+.mut-annot-viewer {
   @include default-color();
   .preset-selection {
     @extend %large-dropdown;
@@ -13,18 +13,28 @@
   }
   .editor {
     display: grid;
-    grid-template-columns: auto 24rem;
+    grid-template-columns: 20rem auto 24rem;
     grid-template-rows: auto;
-    > .menu {
-      grid-column-start: 1;
-      grid-column-end: span 2;
-    }
     > .seqviewer {
       grid-row-start: 2;
     }
     > .controller-container {
       grid-row-start: 2;
       > .controller {
+        z-index: 1;
+        max-height: 95vh;
+        height: 95vh;
+        overflow-y: auto;
+        position: sticky;
+        top: 2rem;
+      }
+      pre {
+        opacity: 0.4;
+      }
+    }
+    > .legend-container {
+      grid-row-start: 2;
+      > .legend {
         z-index: 1;
         max-height: 95vh;
         height: 95vh;

@@ -5,11 +5,12 @@ import {matchShape, routerShape} from 'found';
 
 import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
-import EditorController from './components/editor-controller';
+import ViewerController from './components/viewer-controller';
+import ViewerLegend from './components/viewer-legend';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
-import {actions, makePositionLookup} from './utils';
+import {makePositionLookup} from './utils';
 
 
 const KEY_SEQVIEWER = '--sierra-seqviewer-size';
@@ -28,27 +29,6 @@ function loadSeqViewerSize() {
 function saveSeqViewerSize(size) {
   window.localStorage.setItem(KEY_SEQVIEWER, size);
 }
-
-
-/* function getReferredCitationIds(curAnnot, positions) {
-  if (!curAnnot) {
-    return [];
-  }
-  const {name: annotName} = curAnnot;
-  let referredCitationIds = [];
-
-  for (const {annotations} of positions) {
-    for (const {name, citationIds} of annotations) {
-      if (name === annotName) {
-        referredCitationIds = union(
-          referredCitationIds, citationIds
-        );
-      }
-    }
-  }
-
-  return referredCitationIds;
-} */
 
 
 class MutAnnotEditorInner extends React.Component {
@@ -100,8 +80,6 @@ class MutAnnotEditorInner extends React.Component {
       citations,
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
-      // extraReferredCitationIds: [],
-      allowEditing: false,
       changed: false
     };
   }
@@ -127,14 +105,6 @@ class MutAnnotEditorInner extends React.Component {
     }
   }
 
-  /* get referredCitationIds() {
-    const {curAnnot, positions, extraReferredCitationIds} = this.state;
-    return union(
-      getReferredCitationIds(curAnnot, positions),
-      extraReferredCitationIds
-    );
-  } */
-
   get positionLookup() {
     const {positions} = this.state;
     return makePositionLookup(positions);
@@ -143,24 +113,6 @@ class MutAnnotEditorInner extends React.Component {
   handlePositionsSelect = (selectedPositions) => {
     this.setState({selectedPositions});
   }
-
-  /* handleCurAnnotChange = (curAnnot) => {
-    const {positions, extraAnnots} = this.state;
-    this.setState({
-      curAnnot,
-      extraAnnots: extraAnnots.filter(({name}) => name !== curAnnot.name),
-      displayCitationIds: getReferredCitationIds(curAnnot, positions),
-      selectedPositions: [],
-      extraReferredCitationIds: []
-    });
-  }; */
-
-  /* handleExtraAnnotsChange = (extraAnnots) => {
-    if (extraAnnots === null) {
-      extraAnnots = this.getDefaultExtraAnnots();
-    }
-    this.setState({extraAnnots});
-  } */
 
   handleCurAnnotNameLookupChange = (curAnnotNameLookup) => {
     this.setState({curAnnotNameLookup});
@@ -186,47 +138,6 @@ class MutAnnotEditorInner extends React.Component {
     this.setState({seqFragment});
   };
 
-  /* handleDisplayCitationIdsChange = (displayCitationIds) => {
-    this.setState({displayCitationIds});
-  } */
-
-  handleSave = ({action, ...actionObj}) => {
-    const {positionLookup} = this;
-    const {
-      curAnnot,
-      annotations,
-      citations,
-      // displayCitationIds,
-      extraReferredCitationIds
-    } = this.state;
-    const state = actions[action]({
-      actionObj,
-      positionLookup,
-      curAnnot,
-      annotations,
-      citations,
-      extraReferredCitationIds,
-      // displayCitationIds
-    });
-    this.setState({
-      ...state,
-      changed: true,
-      selectedPositions: []
-    });
-  }
-
-  handleReset = () => {
-    this.setState({selectedPositions: []});
-  }
-
-  handleRevertAll = () => {
-    this.setState(this.getDefaultState());
-  }
-
-  handleToggleAllowEditing = (allowEditing) => {
-    this.setState({allowEditing});
-  }
-
   render() {
     const {refSeq} = this.props;
     const {
@@ -237,8 +148,7 @@ class MutAnnotEditorInner extends React.Component {
       annotations,
       citations,
       selectedPositions,
-      seqViewerSize,
-      allowEditing
+      seqViewerSize
     } = this.state;
     const {
       positionLookup
@@ -246,6 +156,23 @@ class MutAnnotEditorInner extends React.Component {
 
     return <section className={style.editor}>
       <LegendContext>
+        <div className={style['controller-container']}>
+          <ViewerController
+           sequence={refSeq}
+           onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
+           onSeqFragmentChange={this.handleSeqFragmentChange}
+           onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
+           onCurAnnotNameLookupChange={this.handleCurAnnotNameLookupChange}
+           className={style['controller']}
+           {...{
+             seqFragment,
+             fragmentOptions,
+             annotCategories,
+             curAnnotNameLookup,
+             annotations,
+             seqViewerSize
+           }} />
+        </div>
         <CanvasSequenceViewer
          size={seqViewerSize}
          sequence={refSeq}
@@ -260,26 +187,17 @@ class MutAnnotEditorInner extends React.Component {
            citations,
            selectedPositions
          }} />
-        <div className={style['controller-container']}>
-          <EditorController
+        <div className={style['legend-container']}>
+          <ViewerLegend
            sequence={refSeq}
-           onSeqViewerSizeChange={this.handleSeqViewerSizeChange}
-           onSeqFragmentChange={this.handleSeqFragmentChange}
-           onDisplayCitationIdsChange={this.handleDisplayCitationIdsChange}
-           onSave={this.handleSave}
-           onReset={this.handleReset}
-           onCurAnnotNameLookupChange={this.handleCurAnnotNameLookupChange}
-           className={style['controller']}
+           className={style['legend']}
            {...{
              seqFragment,
-             fragmentOptions,
-             allowEditing,
              annotCategories,
              curAnnotNameLookup,
              annotations,
              positionLookup,
              citations,
-             seqViewerSize,
              selectedPositions
            }} />
         </div>

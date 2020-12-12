@@ -1,0 +1,147 @@
+@import "../../../../styles";
+@import "../../../../styles/dropdown";
+
+.viewer-legend {
+  margin-left: 1rem;
+}
+
+.color-legend {
+  margin-bottom: 1rem;
+  padding: .5rem 1rem;
+  $dropdown-height: 26px;
+  $button-spacing: 0.5rem;
+
+  overflow-y: auto;
+  max-height: 35rem;
+
+  ul {
+    padding-left: 1.5rem;
+    &.scrollable {
+      overflow: auto;
+      max-height: 20rem;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: color(link-text);
+    &:hover {
+      color: color(link-text);
+      text-decoration: underline;
+    }
+  }
+
+  h3 {
+    font-weight: 600;
+    display: block;
+    margin: .5rem 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    a {
+      font-weight: 400;
+      font-size: 1rem;
+    }
+  }
+
+}
+
+.annot-view-item {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  line-height: 1.15;
+  &.wrap {
+    flex-wrap: wrap;
+  }
+
+  .annot-view-legend {
+    width: 1.2rem;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    box-sizing: content-box;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    line-height: 1.2rem;
+    border-width: 2px;
+    border-style: solid;
+    margin-right: 0.5rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > div {
+      line-height: 1em;
+      height: 70%;
+      width: 70%;
+    }
+
+    &.annot-view-legend_circle {
+      border-color: #999;
+      background-color: #ddd;
+      position: relative;
+      > .circle {
+        border-radius: 50%;
+        background-color: #fff;
+      }
+    }
+
+    &.annot-view-legend_with-aa {
+      border-color: #999;
+      background-color: #ddd;
+      color: #999;
+      position: relative;
+      flex-basis: 100%;
+      margin-right: calc(100% - 1.2rem);
+      margin-bottom: -.2rem;
+    }
+
+    &.annot-view-legend_aa {
+      border-color: transparent;
+    }
+  }
+
+  .annot-view-text {
+  }
+
+  ul.citation-list {
+    margin-top: 0;
+    flex-basis: 100%;
+  }
+
+  .annot-view-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: inline-block;
+    & + .annot-view-desc {
+      margin-left: .2rem;
+    }
+  }
+
+  .annot-view-positions {
+    font-size: .9rem;
+    margin-left: .2rem;
+    display: inline-block;
+  }
+
+  .annot-view-desc {
+    color: rgba(0, 0, 0, .5);
+    display: inline-block;
+    font-size: .9rem;
+  }
+  span.annot-view-desc {
+    display: inline;
+  }
+  .annot-view-positions + .annot-view-desc::before {
+    content: ": ";
+    color: rgb(0, 0, 0);
+  }
+
+  &:not(:last-child) {
+    margin-bottom: .35rem;
+  }
+
+}

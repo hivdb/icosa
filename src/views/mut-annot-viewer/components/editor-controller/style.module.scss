@@ -32,12 +32,63 @@
     }
   }
 
-  li > span.us-annot-name {
-    padding-bottom: 0.2rem;
-    margin-bottom: 0.3rem;
-    display: inline-block;
-    border-bottom-style: solid;
-    border-bottom-width: 0.2rem;
+  ul.fold {
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+
+    > li {
+      line-height: 1.15rem;
+      margin: .1rem .3rem;
+
+      > span.us-annot-name {
+        padding-bottom: 0.2rem;
+        margin-bottom: 0.3rem;
+        display: inline-block;
+        border-bottom-style: solid;
+        border-bottom-width: 0.2rem;
+      }
+
+      > a.remove-annot-button {
+        $container-size: .9rem;
+        $bar-width: $container-size / 5 * 4;
+        $bar-height: $container-size / 5;
+        vertical-align: top;
+        height: $container-size;
+        width: $container-size;
+        text-indent: 100%;
+        overflow: hidden;
+        display: inline-block;
+        position: relative;
+        &::before, &::after {
+          position: absolute;
+          top: ($container-size - $bar-height) / 2;
+          left: ($container-size - $bar-width) / 2;
+          width: $bar-width;
+          height: $bar-height;
+          content: "";
+          background-color: gray;
+          display: block;
+        }
+
+        &::before {
+          transform: rotate(-45deg);
+        }
+
+        &::after {
+          transform: rotate(45deg);
+        }
+
+        &:hover {
+          cursor: pointer;
+          &::before, &::after {
+            background-color: red;
+          }
+        }
+      }
+    }
   }
 
   h3 {

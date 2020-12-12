@@ -16,6 +16,11 @@ function filterAnnotations(annots, {name: curCat}) {
 }
 
 
+function getLabel({name, label}) {
+  return label ? label : sentenceCase(name);
+}
+
+
 export default class AnnotCategory extends React.Component {
 
   static propTypes = {
@@ -75,7 +80,7 @@ export default class AnnotCategory extends React.Component {
       catAnnots
         .map(({name, label}) => ({
           value: name,
-          label: label ? label : sentenceCase(name)
+          label: getLabel({name, label})
         }))
     );
   }
@@ -127,6 +132,7 @@ export default class AnnotCategory extends React.Component {
 
   render() {
     const {
+      annotations,
       curAnnotNames,
       annotCategory: {
         name: catName,
@@ -134,7 +140,7 @@ export default class AnnotCategory extends React.Component {
         dropdown,
         multiSelect,
         annotStyle
-      }
+      },
     } = this.props;
 
     if (display === false) {
@@ -151,13 +157,16 @@ export default class AnnotCategory extends React.Component {
     if (!multiSelect && curAnnotNames && curAnnotNames.length) {
       dropdownValue = curAnnotNames[0];
     }
+    const curAnnots = annotations.filter(
+      ({name}) => curAnnotNames.includes(name)
+    );
 
     return (
       <div className={style['input-group']}>
         <LegendContext.Consumer>
           {({underscoreAnnotColorLookup}) => <>
             <h3>
-              Select {displayName}
+              {displayName}
               {multiSelect && curAnnotNames.length === 0 ? <>
                 {' ('}<a
                  href="#select-all-annots"
@@ -189,23 +198,32 @@ export default class AnnotCategory extends React.Component {
                placeholder={`Select ${displayName}...`}
                className={style['dropdown-annotations']}
                onChange={this.handleAdd} /> : null}
-            {annotStyle === 'underscore' && curAnnotNames.length > 0 ?
-              <ul className={style['scrollable']}>
-                {curAnnotNames.map((name) => (
-                  <li key={name}>
-                    <span className={style['us-annot-name']} style={{
-                      borderBottomColor: underscoreAnnotColorLookup[name]
-                    }}>
-                      {name}
-                    </span> (
+            {multiSelect && curAnnotNames.length > 0 ?
+              <ul className={style['fold']}>
+                {curAnnots.map(({name, label}) => {
+                  let styleProps = {};
+                  if (annotStyle === 'underscore') {
+                    styleProps = {
+                      className: style['us-annot-name'],
+                      style: {
+                        borderBottomColor: underscoreAnnotColorLookup[name]
+                      }
+                    };
+                  }
+                  return <li key={name}>
+                    <span {...styleProps}>
+                      {getLabel({name, label})}
+                    </span>
                     <a
                      href="#remove-annot"
                      data-annot-name={name}
+                     title={`Remove ${label}`}
+                     className={style['remove-annot-button']}
                      onClick={this.handleRemove}>
                       remove
-                    </a>)
-                  </li>
-                ))}
+                    </a>
+                  </li>;
+                })}
               </ul> : null}
           </>}
         </LegendContext.Consumer>

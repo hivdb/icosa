@@ -1,3 +1,5 @@
+import uniq from 'lodash/uniq';
+
 export function integersToRange(numbers) {
   const groups = (numbers
     .sort((a, b) => a - b)
@@ -115,43 +117,52 @@ export function getPosAnnotAAs(curAnnot, posAnnot) {
 
 
 export function getAnnotPositions(
-  curAnnot, positionLookup, aaColorIdx = 0
+  curAnnots, positionLookup, aaColorIdx = 0
 ) {
-  if (!curAnnot) {
+  if (curAnnots.length === 0) {
     return [];
   }
-  const {level, colorRules = []} = curAnnot;
   const positions = {};
-  const colorRulePatterns = colorRules.map(r => new RegExp(r));
-  const colorRulePlains = [];
-  if (level === 'position') {
-    for (const posdata of Object.values(positionLookup)) {
-      const {position: curPos} = posdata;
-      const val = getPosAnnotVal(curAnnot, posdata);
-      if (!val) {
-        continue;
+  for (const curAnnot of curAnnots) {
+    const {level, colorRules = []} = curAnnot;
+    const colorRulePatterns = colorRules.map(r => new RegExp(r));
+    const colorRulePlains = [];
+    if (level === 'position') {
+      for (const posdata of Object.values(positionLookup)) {
+        const {position: curPos} = posdata;
+        const val = getPosAnnotVal(curAnnot, posdata);
+        if (!val) {
+          continue;
+        }
+        let colorIdx = colorRulePatterns.findIndex(p => p.test(val));
+        if (colorIdx === -1) {
+          const relIdx = colorRulePlains.indexOf(val);
+          colorIdx = colorRulePatterns.length + relIdx;
+          if (relIdx === -1) {
+            // not found, append to the end of colorRulePlains
+            colorRulePlains.push(val);
+            colorIdx += colorRulePlains.length;
+          }
+        }
+        positions[curPos] = [curPos, colorIdx, val];
       }
-      let colorIdx = colorRulePatterns.findIndex(p => p.test(val));
-      if (colorIdx === -1) {
-        const relIdx = colorRulePlains.indexOf(val);
-        colorIdx = colorRulePatterns.length + relIdx;
-        if (relIdx === -1) {
-          // not found, append to the end of colorRulePlains
-          colorRulePlains.push(val);
-          colorIdx += colorRulePlains.length;
+    }
+    else {
+      for (const posdata of Object.values(positionLookup)) {
+        const {position: curPos} = posdata;
+        const aas = getPosAnnotAAs(curAnnot, posdata);
+        if (aas.length === 0) {
+          continue;
+        }
+        if (curPos in positions) {
+          positions[curPos][2] = uniq([
+            ...positions[curPos][2], ...aas
+          ]).sort();
+        }
+        else {
+          positions[curPos] = [curPos, aaColorIdx, aas];
         }
       }
-      positions[curPos] = [curPos, colorIdx, val];
-    }
-  }
-  else {
-    for (const posdata of Object.values(positionLookup)) {
-      const {position: curPos} = posdata;
-      const aas = getPosAnnotAAs(curAnnot, posdata);
-      if (aas.length === 0) {
-        continue;
-      }
-      positions[curPos] = [curPos, aaColorIdx, aas];
     }
   }
   return positions;

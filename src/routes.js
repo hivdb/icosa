@@ -3,14 +3,14 @@ import {Route} from 'found';
 
 import Layout from './components/layout';
 import SARS2Routes from './views/sars2';
-import MutAnnotEditorRoutes from './views/mut-annot-editor';
+import MutAnnotViewerRoutes from './views/mut-annot-viewer';
 import config from './config';
 
 const routes = (
   <Route path="/">
     <Route Component={Layout}>
       {SARS2Routes()}
-      {MutAnnotEditorRoutes(config.mutAnnotEditor)}
+      {MutAnnotViewerRoutes(config.mutAnnotViewer)}
     </Route>
   </Route>
 );

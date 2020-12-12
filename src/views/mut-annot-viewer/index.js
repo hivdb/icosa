@@ -3,21 +3,21 @@ import {Route} from 'found';
 import makeClassNames from 'classnames';
 
 import PresetSelection from './preset-selection';
-import MutAnnotEditor from './editor';
+import MutAnnotViewer from './viewer';
 
 import CustomColors from '../../components/custom-colors';
 
 import style from './style.module.scss';
 
 
-export default function MutAnnotEditorRoutes({
-  pathPrefix = "mut-annot-editor/",
+export default function MutAnnotViewerRoutes({
+  pathPrefix = "mut-annot-viewer/",
   presets = [],
   colors,
   className
 } = {}) {
   const wrapperClassName = makeClassNames(
-    style['mut-annot-editor'], className
+    style['mut-annot-viewer'], className
   );
 
   const presetOptions = presets.map(({name, display}) => ({
@@ -31,7 +31,7 @@ export default function MutAnnotEditorRoutes({
     )} />
     {presets.map(({name, ...preset}, idx) => (
       <Route key={idx} path={`${name}/`} render={({props}) => (
-        <MutAnnotEditor {...props} preset={{name, ...preset}} />
+        <MutAnnotViewer {...props} preset={{name, ...preset}} />
       )} />
     ))}
   </Route>;

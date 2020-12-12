@@ -1,0 +1,132 @@
+@import "../../../../styles";
+@import "../../../../styles/dropdown";
+
+.viewer-controller {
+  margin-right: 1rem;
+}
+
+.input-group {
+  @extend %general-dropdown;
+  margin-bottom: 1rem;
+  padding: .5rem 1rem;
+  $dropdown-height: 26px;
+  $button-spacing: 0.5rem;
+
+  &.scrollable {
+    overflow-y: auto;
+    max-height: 35rem;
+  }
+
+  ul {
+    padding-left: 1.5rem;
+    &.scrollable {
+      overflow: auto;
+      max-height: 20rem;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: color(link-text);
+    &:hover {
+      color: color(link-text);
+      text-decoration: underline;
+    }
+  }
+
+  ul.fold {
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+
+    > li {
+      line-height: 1.15rem;
+      margin: .1rem .3rem;
+
+      > span.us-annot-name {
+        padding-bottom: 0.2rem;
+        margin-bottom: 0.3rem;
+        display: inline-block;
+        border-bottom-style: solid;
+        border-bottom-width: 0.2rem;
+      }
+
+      > a.remove-annot-button {
+        $container-size: .9rem;
+        $bar-width: $container-size / 5 * 4;
+        $bar-height: $container-size / 5;
+        vertical-align: top;
+        height: $container-size;
+        width: $container-size;
+        text-indent: 100%;
+        overflow: hidden;
+        display: inline-block;
+        position: relative;
+        &::before, &::after {
+          position: absolute;
+          top: ($container-size - $bar-height) / 2;
+          left: ($container-size - $bar-width) / 2;
+          width: $bar-width;
+          height: $bar-height;
+          content: "";
+          background-color: gray;
+          display: block;
+        }
+
+        &::before {
+          transform: rotate(-45deg);
+        }
+
+        &::after {
+          transform: rotate(45deg);
+        }
+
+        &:hover {
+          cursor: pointer;
+          &::before, &::after {
+            background-color: red;
+          }
+        }
+      }
+    }
+  }
+
+  h3 {
+    font-weight: 600;
+    display: block;
+    margin: .5rem 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    a {
+      font-weight: 400;
+      font-size: 1rem;
+    }
+  }
+  > :global(.Dropdown-root) {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+  }
+  .inline-buttons {
+    display: block;
+    text-align: left;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    > button {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      &[class*="btn-style-link"] {
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+      }
+    }
+    > button:not(:last-child) {
+      margin-right: $button-spacing;
+    }
+  }
+
+}

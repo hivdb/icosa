@@ -44,7 +44,7 @@ function makeMutationAnnotationLoader(name) {
 }
 
 
-const mutAnnotEditorConfig = {
+const mutAnnotViewerConfig = {
   presets: [
     {
       name: 'SARS2S',
@@ -158,5 +158,5 @@ export default {
       )
     }
   ],
-  mutAnnotEditor: mutAnnotEditorConfig
+  mutAnnotViewer: mutAnnotViewerConfig
 };
