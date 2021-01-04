@@ -26,6 +26,7 @@ export default class ViewerFooter extends React.Component {
     super(...arguments);
     this.state = {expanded: false};
     this.defaultBodyOverflow = document.body.style.overflow;
+    this.scrollableRef = React.createRef();
   }
 
   get commentMdText() {
@@ -63,6 +64,7 @@ export default class ViewerFooter extends React.Component {
       document.body.style.overflow = 'hidden';
     }
     else {
+      this.scrollableRef.current.scrollTo({top: 0});
       document.body.style.overflow = this.defaultBodyOverflow;
     }
     this.setState({expanded: !expanded});
@@ -85,7 +87,7 @@ export default class ViewerFooter extends React.Component {
           {expanded ? <FaArrowDown /> : <FaArrowUp />}
           {expanded ? 'Less' : 'More'}
         </button> 
-        <div className={style.scrollable}>
+        <div className={style.scrollable} ref={this.scrollableRef}>
           <Markdown
            disableHeadingTagAnchor
            {...{LoadReferences}}>

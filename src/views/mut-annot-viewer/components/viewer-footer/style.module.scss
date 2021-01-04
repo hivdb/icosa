@@ -8,11 +8,18 @@
   bottom: 0;
   &[data-expanded="true"] {
     position: fixed;
+    top: 0;
+    background-color: rgba(0, 0, 0, .3);
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
   }
 }
 
 .footer {
-  position: relative;
   $color: color(dividing-line-light);
   $color-hover: color(dividing-line-dark);
   $max-height: 90vh;
@@ -49,22 +56,11 @@
       color: $color-hover;
       border-color: $color-hover;
     }
-    &::before {
-      content: '';
-      z-index: -1;
-      display: block;
-      position: absolute;
-      height: 200vh;
-      width: 100vw;
-      left: calc(50% - 50vw);
-      bottom: 0;
-      background-color: rgba(0, 0, 0, .3);
-    }
   }
   > .scrollable {
     position: relative;
     padding: 0 20rem;
-    transition: margin-bottom 450ms ease-in-out;
+    transition: max-height 450ms ease-in-out;
     overflow: auto;
     max-height: $max-height;
     height: max-content;
@@ -80,6 +76,10 @@
     }
     > section:first-of-type > h2[class*="heading-tag"] {
       margin-top: 1rem;
+    }
+
+    > section:last-child {
+      margin-bottom: 3rem;
     }
   }
 
