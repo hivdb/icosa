@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {FaAngleDoubleRight, FaExpand, FaCompress} from 'react-icons/fa';
+import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
+import {FaExpand} from '@react-icons/all-files/fa/FaExpand';
+import {FaCompress} from '@react-icons/all-files/fa/FaCompress';
 
 import nl2br from '../../utils/nl2br';
 import Button from '../button';

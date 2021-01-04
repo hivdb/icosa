@@ -39,7 +39,8 @@ function makeMutationAnnotationLoader(name) {
     const resp = await fetch(
       `${cmsPrefix}/${name}.json`
     );
-    return (await resp.json()).data;
+    const {data, comments = []} = await resp.json();
+    return {...data, comments};
   };
 }
 

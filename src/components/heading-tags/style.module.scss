@@ -1,0 +1,48 @@
+@import '../../styles/colors';
+
+$anchor-width: 1.5rem;
+
+$anchor-font-size: 1rem;
+
+.heading-tag {
+  position: relative;
+  padding-left: $anchor-width;
+  left: - $anchor-width;
+  color: rgba(0,0,0,.8);
+
+  .anchor-link {
+    color: color(link-text);
+    font-size: 1rem;
+    position: absolute;
+    line-height: 1;
+    width: $anchor-width;
+    height: 1rem;
+    text-decoration: none;
+    visibility: hidden;
+    vertical-align: top;
+    top: 5px;
+    left: 0;
+  }
+
+  &:hover .anchor-link {
+    visibility: visible;
+    text-decoration: none;
+  }
+
+}
+
+h2.heading-tag {
+  $padding-bottom: 1.8rem;
+  padding-bottom: $padding-bottom;
+
+  &::after {
+    content: "";
+    width: 100%;
+    display: block;
+    position: absolute;
+    left: $anchor-width;
+    bottom: 0.8rem;
+    border-bottom: 2px solid color(type-main);
+    z-index: -1;
+  }
+}

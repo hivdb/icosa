@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
+import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
+import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
 import Link from '../link';
 import ExtLink from '../link/external';

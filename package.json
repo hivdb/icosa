@@ -20,9 +20,13 @@
     "iwanthue": "^1.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-markdown": "^4.3.1",
+    "react-scripts": "3.4.1",
+    "remark-macro": "^1.0.7",
+    "youtube-url": "^0.5.0"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "@vx/axis": "^0.0.197",
     "@vx/scale": "^0.0.197",
     "@vx/tooltip": "^0.0.197",
@@ -40,16 +44,17 @@
     "normalize-scss": "^7.0.1",
     "object-merge": "^2.5.1",
     "randomcolor": "^0.6.2",
+    "react-children-utilities": "^2.2.2",
     "react-dropdown": "^1.7.0",
     "react-dropzone": "^11.0.1",
-    "react-icons": "^3.10.0",
     "react-konva": "^16.13.0-5",
     "react-loader": "^2.4.7",
     "react-progressbar": "^15.4.1",
     "react-tabs": "^3.1.1",
+    "reactjs-popup": "^2.0.4",
     "resolve-pathname": "^3.0.0",
     "rfdc": "^1.1.4",
-    "sleep-promise": "^8.0.1",
+    "sleep-promise": "^9.0.0",
     "typeface-source-sans-pro": "^1.1.5",
     "typescript": "^3.9.5",
     "uuid": "^8.3.1"
@@ -62,9 +67,13 @@
     "found": "^0.5.3",
     "graphql": "^14.3.1",
     "graphql-tag.macro": "^2.0.1",
+    "query-string": "^6.13.8",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-markdown": "^4.3.1",
+    "react-scripts": "3.4.1",
+    "remark-macro": "^1.0.7",
+    "youtube-url": "^0.5.0"
   },
   "scripts": {
     "start": "PORT=3009 react-scripts start",

@@ -1,0 +1,66 @@
+.toggle-display {
+  display: none;
+}
+
+@mixin collapsable-section($level, $accordion-height: 5rem, $border-width: 4px) {
+  position: relative;
+  clear: both;
+  max-height: $accordion-height;
+  overflow: hidden;
+  border: $border-width solid rgba(0, 0, 0, .05);
+  padding: 0 1rem 1rem;
+  transition: max-height .2s ease-in-out;
+  h#{$level}:first-of-type {
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: calc(100% - 1rem);
+    line-height: 1.1em;
+    padding-top: calc(calc(calc(#{$accordion-height} - #{2 * $border-width}) - 1.1em) / 2);
+    padding-bottom: calc(calc(calc(#{$accordion-height} - #{2 * $border-width}) - 1.1em) / 2);
+    > a[data-anchor-link] {
+      visibility: hidden;
+    }
+    &::after {
+      display: none;
+    }
+  }
+  &:not([data-expanded]) {
+    h#{$level}:first-of-type {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+  > .toggle-display {
+    display: block;
+    color: #6e7779;
+    z-index: 1;
+    text-decoration: none;
+    position: absolute;
+    font-size: 1.5rem;
+    line-height: calc(#{$accordion-height} - #{2 * $border-width});
+    text-align: right;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: $accordion-height;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+
+.collapsable {
+
+  section[data-section-reference] {
+    @include collapsable-section(2);
+  }
+
+  &.collapse-h3 {
+
+    section[data-level="3"] {
+      @include collapsable-section(3);
+    }
+
+  }
+
+}

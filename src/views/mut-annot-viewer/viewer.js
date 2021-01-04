@@ -7,6 +7,7 @@ import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
 import ViewerController from './components/viewer-controller';
 import ViewerLegend from './components/viewer-legend';
+import ViewerFooter from './components/viewer-footer';
 import style from './style.module.scss';
 
 import PromiseComponent from '../../utils/promise-component';
@@ -31,7 +32,7 @@ function saveSeqViewerSize(size) {
 }
 
 
-class MutAnnotEditorInner extends React.Component {
+class MutAnnotViewerInner extends React.Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
     router: routerShape.isRequired,
@@ -39,18 +40,23 @@ class MutAnnotEditorInner extends React.Component {
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,
+    LoadReferences: PropTypes.func,
     annotationData: PropTypes.object.isRequired
   }
 
   getDefaultState() {
     const {region} = this.props;
     let {
-      fragmentOptions,
-      annotCategories,
-      annotations,
-      positions,
-      citations
-    } = this.props.annotationData;
+      annotationData: {
+        fragmentOptions,
+        annotCategories,
+        annotations,
+        positions,
+        citations,
+        comments = []
+      },
+    } = this.props;
+    comments = clone(comments);
     fragmentOptions = clone(fragmentOptions);
     annotCategories = clone(annotCategories);
     const curAnnotNameLookup = annotCategories.reduce((acc, cat) => {
@@ -78,6 +84,7 @@ class MutAnnotEditorInner extends React.Component {
       annotations,
       positions,
       citations,
+      comments,
       seqViewerSize: loadSeqViewerSize(),
       selectedPositions: [],
       changed: false
@@ -103,6 +110,11 @@ class MutAnnotEditorInner extends React.Component {
       evt.preventDefault();
       evt.returnValue = true;
     }
+  }
+
+  get commentLookup() {
+    const {comments: {data}} = this.state;
+    return makePositionLookup(data);
   }
 
   get positionLookup() {
@@ -139,7 +151,7 @@ class MutAnnotEditorInner extends React.Component {
   };
 
   render() {
-    const {refSeq} = this.props;
+    const {refSeq, LoadReferences} = this.props;
     const {
       seqFragment,
       fragmentOptions,
@@ -148,13 +160,15 @@ class MutAnnotEditorInner extends React.Component {
       annotations,
       citations,
       selectedPositions,
-      seqViewerSize
+      seqViewerSize,
+      comments: {references: commentReferences}
     } = this.state;
     const {
-      positionLookup
+      positionLookup,
+      commentLookup
     } = this;
 
-    return <section className={style.editor}>
+    return <section className={style.viewer}>
       <LegendContext>
         <div className={style['controller-container']}>
           <ViewerController
@@ -177,6 +191,7 @@ class MutAnnotEditorInner extends React.Component {
          size={seqViewerSize}
          sequence={refSeq}
          onChange={this.handlePositionsSelect}
+         noBlurSelector={`.${style['footer-container']}, *[role="tooltip"]`}
          className={style.seqviewer}
          {...{
            seqFragment,
@@ -201,13 +216,22 @@ class MutAnnotEditorInner extends React.Component {
              selectedPositions
            }} />
         </div>
+        <div className={style['footer-container']}>
+          <ViewerFooter
+           {...{
+             LoadReferences,
+             commentLookup,
+             commentReferences,
+             selectedPositions
+           }} />
+        </div>
       </LegendContext>
     </section>;
   }
 }
 
 
-export default class MutAnnotEditor extends React.Component {
+export default class MutAnnotViewer extends React.Component {
 
   static propTypes = {
     preset: PropTypes.shape({
@@ -215,6 +239,7 @@ export default class MutAnnotEditor extends React.Component {
       display: PropTypes.node.isRequired,
       annotationLoader: PropTypes.func.isRequired
     }).isRequired,
+    LoadReferences: PropTypes.func,
     match: matchShape.isRequired,
     router: routerShape.isRequired
   }
@@ -225,6 +250,7 @@ export default class MutAnnotEditor extends React.Component {
         name, display,
         annotationLoader
       },
+      LoadReferences,
       router,
       match: {location}
     } = props;
@@ -253,6 +279,7 @@ export default class MutAnnotEditor extends React.Component {
           name, display,
           refSeq: refSequence,
           annotationData,
+          LoadReferences,
           ...extraProps
         };
       })()
@@ -269,7 +296,7 @@ export default class MutAnnotEditor extends React.Component {
     return (
       <PromiseComponent
        promise={promise}
-       component={MutAnnotEditorInner} />
+       component={MutAnnotViewerInner} />
     );
   }
 

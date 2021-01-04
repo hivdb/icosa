@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
-import {FaDownload} from 'react-icons/fa';
+import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
 import Button from '../../../../components/button';
 import CheckboxInput from '../../../../components/checkbox-input';

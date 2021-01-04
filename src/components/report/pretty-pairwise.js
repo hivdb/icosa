@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FaAngleDoubleRight} from 'react-icons/fa';
+import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import style from './style.module.scss';
 

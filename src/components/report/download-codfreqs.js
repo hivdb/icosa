@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '../button';
 import SeqReadsAnalysisLayout from '../seqreads-analysis-layout';
-import {FaDownload} from 'react-icons/fa';
+import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 import config from '../../config';
 import {tsvStringify} from '../../utils/csv';
 import {translateCodon} from '../../utils/codonutils';

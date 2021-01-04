@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
 import ProgressBar from 'react-progressbar';
 import {routerShape, matchShape} from 'found';
-import {FaRegFileAlt, FaTimesCircle} from 'react-icons/fa';
+import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
+import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
 
 import {parseSequenceReads} from '../../utils/sequence-reads';
 import fastq2codfreq from '../../utils/fastq2codfreq';

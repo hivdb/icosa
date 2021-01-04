@@ -5,7 +5,7 @@ import Intro, {
   IntroHeaderSupplement
 } from '../../components/intro';
 import Button from '../../components/button';
-import {FaPrint} from 'react-icons/fa';
+import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
 
 
 import style from './style.module.scss';

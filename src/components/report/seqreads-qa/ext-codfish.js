@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FaDownload, FaEye, FaEyeSlash} from 'react-icons/fa';
+import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
+import {FaEye} from '@react-icons/all-files/fa/FaEye';
+import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash';
 
 
 import Button from '../../button';

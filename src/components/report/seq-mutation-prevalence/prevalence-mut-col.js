@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import '../../../styles/griddle-table.scss';
-import {FaRegPlusSquare, FaRegMinusSquare} from 'react-icons/fa';
+import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
+import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 import {parseMutation} from '../../../utils/mutation';
 import style from '../style.module.scss';
 

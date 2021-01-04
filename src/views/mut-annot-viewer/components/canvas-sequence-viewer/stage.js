@@ -51,6 +51,7 @@ export default class SeqViewerStage extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
+    noBlurSelector: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired
   }
 
@@ -427,6 +428,16 @@ export default class SeqViewerStage extends React.Component {
   }
 
   handleGlobalMouseDown = evt => {
+    const {noBlurSelector} = this.props;
+    let noBlur = evt.target.matches(noBlurSelector);
+    if (!noBlur) {
+      noBlur = Array.from(
+        document.querySelectorAll(noBlurSelector)
+      ).some(parent => parent.contains(evt.target));
+    }
+    if (noBlur) {
+      return;
+    }
     const isCanvasClicked = evt.target.tagName === 'CANVAS';
     if (!isCanvasClicked) {
       const {curSelecteds} = this.state;

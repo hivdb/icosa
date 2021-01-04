@@ -38,6 +38,7 @@ export default class CanvasSequenceViewer extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
+    noBlurSelector: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired
   }
 
@@ -162,7 +163,9 @@ export default class CanvasSequenceViewer extends React.Component {
       className, sequence,
       selectedPositions,
       annotCategories,
-      positionLookup, onChange
+      positionLookup,
+      noBlurSelector,
+      onChange
     } = this.props;
     const combinedClassName = makeClassNames(
       style['canvas-sequence-viewer'], className
@@ -182,6 +185,7 @@ export default class CanvasSequenceViewer extends React.Component {
                  config,
                  sequence,
                  annotCategories,
+                 noBlurSelector,
                  positionLookup,
                  selectedPositions,
                  onChange}} />

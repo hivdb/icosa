@@ -14,7 +14,8 @@ export default function MutAnnotViewerRoutes({
   pathPrefix = "mut-annot-viewer/",
   presets = [],
   colors,
-  className
+  className,
+  LoadReferences
 } = {}) {
   const wrapperClassName = makeClassNames(
     style['mut-annot-viewer'], className
@@ -31,7 +32,10 @@ export default function MutAnnotViewerRoutes({
     )} />
     {presets.map(({name, ...preset}, idx) => (
       <Route key={idx} path={`${name}/`} render={({props}) => (
-        <MutAnnotViewer {...props} preset={{name, ...preset}} />
+        <MutAnnotViewer
+         {...props}
+         preset={{name, ...preset}}
+         LoadReferences={LoadReferences} />
       )} />
     ))}
   </Route>;
