@@ -52,7 +52,12 @@ export default class SeqViewerStage extends React.Component {
       PropTypes.number.isRequired
     ).isRequired,
     noBlurSelector: PropTypes.string.isRequired,
+    footerHeight: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired
+  }
+
+  static defaultProps = {
+    footerHeight: 8 * 14
   }
 
   /* static getDerivedStateFromProps(props, state) {
@@ -93,9 +98,10 @@ export default class SeqViewerStage extends React.Component {
       posItemOuterHeightPixel: posItemHeight,
       verticalMarginPixel: vMargin,
       pos2Coord
-    }} = this.props;
+    }, footerHeight} = this.props;
     const {y: posOffsetY} = pos2Coord(position);
-    const {pageYOffset, innerHeight: viewportHeight} = window;
+    let {pageYOffset, innerHeight: viewportHeight} = window;
+    viewportHeight -= footerHeight;
     const rect = this.containerRef.current.getBoundingClientRect();
     
     const posItemTop = rect.y + posOffsetY;

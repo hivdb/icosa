@@ -168,8 +168,8 @@ class MutAnnotViewerInner extends React.Component {
       commentLookup
     } = this;
 
-    return <section className={style.viewer}>
-      <LegendContext>
+    return <LegendContext>
+      <section className={style.viewer}>
         <div className={style['controller-container']}>
           <ViewerController
            sequence={refSeq}
@@ -216,17 +216,17 @@ class MutAnnotViewerInner extends React.Component {
              selectedPositions
            }} />
         </div>
-        <div className={style['footer-container']}>
-          <ViewerFooter
-           {...{
-             LoadReferences,
-             commentLookup,
-             commentReferences,
-             selectedPositions
-           }} />
-        </div>
-      </LegendContext>
-    </section>;
+      </section>
+      <div className={style['footer-container']}>
+        <ViewerFooter
+         {...{
+           LoadReferences,
+           commentLookup,
+           commentReferences,
+           selectedPositions
+         }} />
+      </div>
+    </LegendContext>;
   }
 }
 

@@ -39,9 +39,16 @@ export default class ViewerFooter extends React.Component {
       buffer.push(`- ${comment}`);
     }
     if (buffer.length > 0) {
-      return `\n## Comments\n\n${buffer.join('\n')}\n\n${commentReferences}`;
+      let leadText = 'Following position has been selected:';
+      if (buffer.length > 1) {
+        leadText = 'Following positions have been selected:';
+      }
+      return (
+        `\n## Comments\n\n${leadText}\n` +
+        `\n${buffer.join('\n')}\n\n${commentReferences}`
+      );
     }
-    return 'Select positions/a position to see the comments.';
+    return 'Select positions/a position to view the comments.';
   }
 
   get hasSelectedComments() {
@@ -78,7 +85,11 @@ export default class ViewerFooter extends React.Component {
           {expanded ? 'Less' : 'More'}
         </button> 
         <div className={style.scrollable}>
-          <Markdown {...{LoadReferences}}>{commentMdText}</Markdown>
+          <Markdown
+           disableHeadingTagAnchor
+           {...{LoadReferences}}>
+            {commentMdText}
+          </Markdown>
         </div>
       </section>
     );

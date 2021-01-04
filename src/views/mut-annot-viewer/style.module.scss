@@ -35,15 +35,12 @@
         top: 2rem;
       }
     }
-    > .footer-container {
-      grid-row-start: 2;
-      grid-column-start: 1;
-      grid-column-end: 4;
-      position: sticky;
-      z-index: 2;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
+  }
+  > .footer-container {
+    position: sticky;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 }
