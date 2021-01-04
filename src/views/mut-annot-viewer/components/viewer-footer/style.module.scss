@@ -1,5 +1,16 @@
 @import "../../../../styles/colors";
 @import "../../../../styles/functions";
+.footer-container {
+  position: sticky;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  &[data-expanded="true"] {
+    position: fixed;
+  }
+}
+
 .footer {
   position: relative;
   $color: color(dividing-line-light);
@@ -11,7 +22,7 @@
   background-color: white;
   padding: 1rem 0;
   min-height: 5rem;
-  &[data-expanded="false"] {
+  .footer-container[data-expanded="false"] & {
     max-height: 5rem;
     &::after {
       content: '';
@@ -30,7 +41,7 @@
       overflow: hidden;
     }
   }
-  &[data-expanded="true"] {
+  .footer-container[data-expanded="true"] & {
     max-height: $max-height;
     height: max-content;
     border-color: $color-hover;
@@ -43,7 +54,7 @@
       z-index: -1;
       display: block;
       position: absolute;
-      height: 100vh;
+      height: 200vh;
       width: 100vw;
       left: calc(50% - 50vw);
       bottom: 0;

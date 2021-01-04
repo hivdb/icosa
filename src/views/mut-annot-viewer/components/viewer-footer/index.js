@@ -73,10 +73,11 @@ export default class ViewerFooter extends React.Component {
     let {expanded} = this.state;
     expanded = hasSelectedComments ? expanded : false;
     const {LoadReferences} = this.props;
-    return (
+    return <div
+     className={style['footer-container']}
+     data-expanded={expanded}>
       <section
-       className={style.footer}
-       data-expanded={expanded}>
+       className={style.footer}>
         <button
          className={style["toggle-button"]}
          disabled={!hasSelectedComments}
@@ -92,7 +93,7 @@ export default class ViewerFooter extends React.Component {
           </Markdown>
         </div>
       </section>
-    );
+    </div>;
   }
 
 }

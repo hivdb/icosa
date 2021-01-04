@@ -191,7 +191,7 @@ class MutAnnotViewerInner extends React.Component {
          size={seqViewerSize}
          sequence={refSeq}
          onChange={this.handlePositionsSelect}
-         noBlurSelector={`.${style['footer-container']}, *[role="tooltip"]`}
+         noBlurSelector={`*[class*="footer-container"], *[role="tooltip"]`}
          className={style.seqviewer}
          {...{
            seqFragment,
@@ -217,15 +217,13 @@ class MutAnnotViewerInner extends React.Component {
            }} />
         </div>
       </section>
-      <div className={style['footer-container']}>
-        <ViewerFooter
-         {...{
-           LoadReferences,
-           commentLookup,
-           commentReferences,
-           selectedPositions
-         }} />
-      </div>
+      <ViewerFooter
+       {...{
+         LoadReferences,
+         commentLookup,
+         commentReferences,
+         selectedPositions
+       }} />
     </LegendContext>;
   }
 }
