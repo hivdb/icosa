@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import "../../styles/constants";
 @import "../../styles/functions";
 
 $header-bgcolor: #f9fafb;
@@ -25,7 +25,7 @@ $padding-v: .7rem;
 
 table.simple-table {
   table-layout: fixed;
-  font-family: Arial Narrow, $font-family;
+  font-family: "Arial Narrow", $base-font-family;
   margin-top: 0;
   margin-bottom: 0;
 
@@ -278,7 +278,7 @@ table.simple-table {
     button {
       vertical-align: baseline;
       color: rgba(0, 0, 0, .6);
-      font-family: Lato,"Helvetica Neue",Arial,Helvetica,sans-serif;
+      font-family: Lato, $base-font-family;
       box-shadow: inset 0 0 0 1px transparent, inset 0 0 0 0 rgba(34,36,38,.15);
       line-height: $line-height;
       font-weight: 700;
