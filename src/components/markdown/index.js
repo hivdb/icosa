@@ -67,7 +67,7 @@ export default class Markdown extends React.Component {
   }
 
   static getDerivedStateFromProps = (props, state = {}) => {
-    let {children, LoadReferences} = this.props;
+    let {children, LoadReferences} = props;
     if (children instanceof Array) {
       children = children.join('');
     }
