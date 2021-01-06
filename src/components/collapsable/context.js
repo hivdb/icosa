@@ -4,7 +4,8 @@ export class CollapsableContextValue {
   #collapsableAnchors;  // private
   #containerRef;  // private
 
-  constructor() {
+  constructor(containerRef) {
+    this.#containerRef = containerRef;
     this.#collapsableAnchors = {};
   }
 
@@ -62,10 +63,6 @@ export class CollapsableContextValue {
       anchor: null,
       shouldCollapseOther: false
     };
-  }
-
-  setContainerRef = (ref) => {
-    this.#containerRef = ref;
   }
 
 }

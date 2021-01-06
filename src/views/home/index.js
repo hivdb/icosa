@@ -17,6 +17,9 @@ export default function Home() {
           <li><Link to="/mut-annot-viewer/SARS2RdRP/">SARS2 RdRP</Link></li>
         </ul>
       </li>
+      <li>
+        <Link to="/markdown-debugger/">Markdown Debugger</Link>
+      </li>
     </ul>
   </div>;
 

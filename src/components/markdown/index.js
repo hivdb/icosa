@@ -66,32 +66,10 @@ export default class Markdown extends React.Component {
     tables: {}
   }
 
-  static getDerivedStateFromProps = (props, state = {}) => {
-    let {children, LoadReferences} = props;
-    if (children instanceof Array) {
-      children = children.join('');
-    }
-    if (
-      children !== state.children &&
-      LoadReferences !== state.LoadReferences
-    ) {
-      return {
-        children,
-        LoadReferences,
-        context: new ReferenceContextValue(LoadReferences)
-      };
-    }
-    return null;
-  }
-
-  constructor() {
-    super(...arguments);
-    this.state = this.constructor.getDerivedStateFromProps(this.props);
-  }
-
   render() {
     let {
       noHeadingStyle, toc,
+      children,
       referenceTitle, inline, tocClassName,
       disableHeadingTagAnchor,
       referenceHeadingTagLevel,
@@ -99,9 +77,12 @@ export default class Markdown extends React.Component {
       imagePrefix,
       cmsPrefix,
       tables,
+      LoadReferences,
       renderers: addRenderers, ...props
     } = this.props;
-    const {children, context} = this.state;
+    if (children instanceof Array) {
+      children = children.join('');
+    }
     const mdProps = {
       parserOptions: {footnotes: true},
       transformLinkUri: false,
@@ -129,6 +110,7 @@ export default class Markdown extends React.Component {
       ...addRenderers
     };
     mdProps.renderers = generalRenderers;
+    const context = new ReferenceContextValue(LoadReferences);
     let jsx = (
       <ReferenceContext.Provider value={context}>
         <OrigMarkdown

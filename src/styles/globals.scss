@@ -4,15 +4,14 @@
 
 @include normalize();
 
---mobile-main-content-width: #{$mobile-main-content-width};
---mobile-main-content-max-width: #{$mobile-main-content-max-width};
-
 html {
   font-weight: 400;
   color: color(body-text);
   background-color: color(body-bg);
   font-size: $global-font-size;
   scroll-behavior: smooth;
+  --mobile-main-content-width: #{$mobile-main-content-width};
+  --mobile-main-content-max-width: #{$mobile-main-content-max-width};
 }
 
 body {
