@@ -14,7 +14,8 @@ import OptReferences from './references';
 import MdHeadingTag from './heading-tags';
 import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
-import macroPlugin, {BadMacroNode, VoidNode} from './macro-plugin';
+import macroPlugin, {BadMacroNode} from './macro-plugin';
+import TableNodeWrapper from './macro-table';
 
 
 /*function parsedHtml({element, escapeHtml, skipHtml, value}) {
@@ -101,7 +102,7 @@ export default class Markdown extends React.Component {
     const renderers = {
       ...generalRenderers,
       BadMacroNode,
-      VoidNode,
+      TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
       // table: SimpleTableContainer,
       // parsedHtml,
       ...(inline ? {} : {root: RootWrapper}),
