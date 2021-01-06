@@ -4,8 +4,8 @@
 
 @include normalize();
 
---mobile-main-content-width: $mobile-main-content-width;
---mobile-main-content-max-width: $mobile-main-content-max-width;
+--mobile-main-content-width: #{$mobile-main-content-width};
+--mobile-main-content-max-width: #{$mobile-main-content-max-width};
 
 html {
   font-weight: 400;
