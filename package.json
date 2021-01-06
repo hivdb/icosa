@@ -18,11 +18,14 @@
     "graphql": "^14.3.1",
     "graphql-tag.macro": "^2.0.1",
     "iwanthue": "^1.4.0",
+    "lodash": "^4.17.19",
+    "query-string": "^6.13.8",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.3.1",
     "react-scripts": "3.4.1",
     "remark-macro": "^1.0.7",
+    "xlsx": "^0.16.9",
     "youtube-url": "^0.5.0"
   },
   "dependencies": {
@@ -39,7 +42,6 @@
     "jszip": "^3.4.0",
     "konva": "^7.0.5",
     "localforage": "^1.7.4",
-    "lodash": "^4.17.19",
     "node-sass": "^4.14.1",
     "normalize-scss": "^7.0.1",
     "object-merge": "^2.5.1",
@@ -67,12 +69,14 @@
     "found": "^0.5.3",
     "graphql": "^14.3.1",
     "graphql-tag.macro": "^2.0.1",
+    "lodash": "^4.17.19",
     "query-string": "^6.13.8",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-markdown": "^4.3.1",
     "react-scripts": "3.4.1",
     "remark-macro": "^1.0.7",
+    "xlsx": "^0.16.9",
     "youtube-url": "^0.5.0"
   },
   "scripts": {
