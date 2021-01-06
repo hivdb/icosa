@@ -5,11 +5,10 @@
 @mixin collapsable-section($level, $accordion-height: 5rem, $border-width: 4px) {
   position: relative;
   clear: both;
-  max-height: $accordion-height;
   overflow: hidden;
   border: $border-width solid rgba(0, 0, 0, .05);
   padding: 0 1rem 1rem;
-  transition: max-height .2s ease-in-out;
+  transition: min-height .2s ease-in-out;
   h#{$level}:first-of-type {
     margin-top: 0;
     margin-bottom: 0;
@@ -24,7 +23,12 @@
       display: none;
     }
   }
+  &[data-expanded] {
+    max-height: max-content;
+  }
   &:not([data-expanded]) {
+    min-height: $accordion-height;
+    max-height: $accordion-height;
     h#{$level}:first-of-type {
       text-overflow: ellipsis;
       white-space: nowrap;

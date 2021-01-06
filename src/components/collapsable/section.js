@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
-import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
+import {FaPlusCircle} from '@react-icons/all-files/fa/FaPlusCircle';
+import {FaMinusCircle} from '@react-icons/all-files/fa/FaMinusCircle';
 import Children from 'react-children-utilities';
 import {withRouter, matchShape, routerShape} from 'found';
 
@@ -103,9 +103,9 @@ class SectionInner extends React.Component {
     this.sectionRef = React.createRef();
   }
 
-  get maxHeight() {
+  get minHeight() {
     if (this.state.isDefaultState) {
-      return 'max-content';
+      return 'fit-content';
     }
     else if (this.sectionRef.current) {
       return this.sectionRef.current.scrollHeight + 20;
@@ -138,7 +138,7 @@ class SectionInner extends React.Component {
       expanded,
       isDefaultState
     } = this.state;
-    const {maxHeight} = this;
+    const {minHeight} = this;
     if (expanded) {
       props['data-expanded'] = '';
     }
@@ -149,13 +149,13 @@ class SectionInner extends React.Component {
       onClick: this.toggleDisplay
     };
     if (expanded) {
-      props.style = {maxHeight};
+      props.style = {minHeight};
     }
     if (isDefaultState) {
       props.style = props.style || {};
       props.style.transition = 'none';
     }
-    if (maxHeight === null) {
+    if (minHeight === null) {
       setTimeout(() => this.forceUpdate(), 0);
     }
 
@@ -166,8 +166,8 @@ class SectionInner extends React.Component {
          className={style['toggle-display']}
          href="#toggle-display">
           {expanded ?
-            <FaRegMinusSquare aria-label="expand" /> :
-            <FaRegPlusSquare aria-label="collapse" />}
+            <FaMinusCircle aria-label="expand" /> :
+            <FaPlusCircle aria-label="collapse" />}
         </a>
         {children}
       </section>
