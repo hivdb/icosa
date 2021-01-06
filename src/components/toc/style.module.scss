@@ -28,6 +28,19 @@
     }
   
   }
+  @media only screen and (min-width: 901px) and (max-width: 1024px) {
+    nav.toc {
+      width: 28rem;
+    }
+  }
+  @media only screen and (max-width: 900px) {
+    float: none;
+    nav.toc {
+      margin-left: auto;
+      margin-right: auto;
+      width: --mobile-main-content-width;
+    }
+  }
   @media print {
     display: none;
   }
