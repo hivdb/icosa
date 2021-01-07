@@ -21,12 +21,14 @@ class SectionInner extends React.Component {
     ]),
     match: matchShape.isRequired,
     router: routerShape.isRequired,
+    alwaysCollapsable: PropTypes.bool.isRequired,
     registerCollapsableAnchor: PropTypes.func.isRequired,
     getClosestCollapsableAnchor: PropTypes.func.isRequired
   }
 
   static defaultProps = {
     registerCollapsableAnchor: () => null,
+    alwaysCollapsable: false,
     getClosestCollapsableAnchor: () => ({
       anchor: null,
       shouldCollapseOther: false
@@ -48,6 +50,8 @@ class SectionInner extends React.Component {
   static getDefaultState = (props, state = {}) => {
     let {
       children,
+      level,
+      alwaysCollapsable,
       registerCollapsableAnchor
     } = props;
     if (state.children) {
@@ -60,7 +64,8 @@ class SectionInner extends React.Component {
     );
     if (headingChild) {
       anchor = getAnchor(headingChild);
-      registerCollapsableAnchor(anchor);
+      registerCollapsableAnchor(
+        anchor, `h${level}`, alwaysCollapsable);
     }
     const {anchor: curAnchor} = this.getCurAnchor(props);
     return {

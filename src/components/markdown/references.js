@@ -10,7 +10,10 @@ export default function OptReferences({
 }) {
   return <ReferenceContext.Consumer>
     {({hasReference}) => hasReference() ? (
-      <Collapsable.Section level={level} data-section-reference="">
+      <Collapsable.Section
+       level={level}
+       alwaysCollapsable
+       data-section-reference="">
         {({onLoad}) => <>
           <HeadingTag {...{disableAnchor, level}}>{referenceTitle}</HeadingTag>
           <References onLoad={onLoad} />

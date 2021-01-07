@@ -1,16 +1,34 @@
 import React from 'react';
 
 export class CollapsableContextValue {
-  #collapsableAnchors;  // private
   #containerRef;  // private
+  #collapsableLevels;  // private
+  #collapsableAnchors;  // private
 
-  constructor(containerRef) {
+  constructor(
+    containerRef,  // React ref to article container
+    levels  // levels (from h1 to h6) that can be collapsed
+  ) {
     this.#containerRef = containerRef;
+    this.#collapsableLevels = levels;
     this.#collapsableAnchors = {};
   }
 
-  registerCollapsableAnchor = (anchor) => {
+  registerCollapsableAnchor = (
+    // name of anchor to be registered
+    anchor,
+
+    // level of the section (from h1 to h6)
+    level,
+
+    // should ignoring the level config and
+    // allow the section always be collapsable?
+    alwaysCollapsable
+  ) => {
     if (anchor === null) {
+      return;
+    }
+    if (!alwaysCollapsable && !this.#collapsableLevels.includes(level)) {
       return;
     }
     if (this.#collapsableAnchors[anchor]) {
