@@ -66,24 +66,44 @@ class SectionInner extends React.Component {
     return {
       expanded: anchor !== null && anchor === curAnchor,
       isDefaultState: true,
+      isJustToggled: false,
       myAnchor: anchor,
       curAnchor
     };
   }
 
   static getDerivedStateFromProps = (props, state) => {
+    /*
+     * Distinguish two types of expansion state changes:
+     *
+     * Case #1: changed by clicking the accordion (toggling)
+     * Case #2: changed by URL anchor
+     * 
+     * For #1, no need to update the state since the props are not changed;
+     * For #2, the whole state should be reset to default if:
+     * 
+     *   a) The current accordion is the `curAnchor`
+     *   b) Although this accordion is not the `curAnchor`, it was explicitly
+     *      required to be collapsed by `shouldCollapseOther`
+     *
+     */
+    if (state.isJustToggled) {
+      // Case #1
+      return {isJustToggled: false};
+    }
+
+    // Case #2
     const {
       anchor: curAnchor,
       shouldCollapseOther
     } = this.getCurAnchor(props);
     if (
       curAnchor !== null &&
-      (shouldCollapseOther || state.myAnchor === curAnchor) &&
-      curAnchor !== state.curAnchor
+      (shouldCollapseOther || state.myAnchor === curAnchor)
     ) {
       return this.getDefaultState(props, state);
     }
-    return state;
+    return null;
   }
 
   constructor() {
@@ -116,14 +136,26 @@ class SectionInner extends React.Component {
   toggleDisplay = (e) => {
     e && e.preventDefault();
     const {expanded} = this.state;
-    this.setState({
+    const newState = {
       expanded: !expanded,
-      isDefaultState: false
-    });
+      isDefaultState: false,
+      isJustToggled: true
+    };
+    this.setState(newState);
   }
 
   onLoad = (e) => {
-    setTimeout(() => this.forceUpdate());
+    setTimeout(() => (
+      this._isMounted && this.forceUpdate()
+    ));
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
