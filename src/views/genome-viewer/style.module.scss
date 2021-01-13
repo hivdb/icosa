@@ -1,0 +1,59 @@
+@import "../../styles/default-colors";
+@import "../../styles/dropdown";
+@import "../../styles/functions";
+
+.genome-viewer {
+  @include default-color();
+  .preset-selection {
+    @extend %large-dropdown;
+    :global(.Dropdown-root) {
+      max-width: 32rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}
+
+line.region {
+  stroke-width: 2px;
+}
+
+rect.region {
+  stroke: rgba(255, 255, 255, .8);
+  stroke-width: 2px;
+}
+
+text.region-label {
+  dominant-baseline: central;
+  &.h-center {
+    text-anchor: middle;
+  }
+}
+
+text.tick-label {
+  fill: black;
+  text-anchor: middle;
+}
+
+line.tick-line {
+  stroke: black;
+  stroke-width: 2px;
+}
+
+path.position-axis {
+  fill: transparent;
+  stroke: black;
+  stroke-width: 2px;
+}
+
+text.position-label {
+  dominant-baseline: central;
+  text-anchor: end;
+  fill: black;
+}
+
+path.position-pointer {
+  fill: transparent;
+  stroke: black;
+  stroke-width: 1px;
+}
