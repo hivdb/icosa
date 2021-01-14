@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {regionShape, positionsShape} from './prop-types';
+import {
+  regionShape,
+  positionGroupsShape,
+  domainsShape,
+  positionAxisShape
+} from './prop-types';
 import RegionGroup from './region-group';
 import Markdown from '../../components/markdown';
 
@@ -19,11 +24,9 @@ export default class GenomeViewer extends React.Component {
       paddingTop: PropTypes.number.isRequired,
       paddingRight: PropTypes.number.isRequired,
       paddingLeft: PropTypes.number.isRequired,
-      posStart: PropTypes.number.isRequired,
-      posEnd: PropTypes.number.isRequired,
-      hlPosStart: PropTypes.number,
-      hlPosEnd: PropTypes.number,
-      positions: positionsShape,
+      domains: domainsShape.isRequired,
+      positionAxis: positionAxisShape,
+      positionGroups: positionGroupsShape,
       regions: PropTypes.arrayOf(
         regionShape.isRequired
       ).isRequired,
@@ -48,11 +51,9 @@ export default class GenomeViewer extends React.Component {
         paddingTop,
         paddingRight,
         paddingLeft,
-        posStart,
-        posEnd,
-        hlPosStart,
-        hlPosEnd,
-        positions,
+        domains,
+        positionAxis,
+        positionGroups,
         regions,
         subregionGroup,
         footnote
@@ -69,11 +70,9 @@ export default class GenomeViewer extends React.Component {
            paddingRight={paddingRight}
            paddingLeft={paddingLeft}
            width={width}
-           posStart={posStart}
-           posEnd={posEnd}
-           hlPosStart={hlPosStart}
-           hlPosEnd={hlPosEnd}
-           positions={positions}
+           domains={domains}
+           positionAxis={positionAxis}
+           positionGroups={positionGroups}
            regions={regions}
            subregionGroup={subregionGroup} />
         </svg>

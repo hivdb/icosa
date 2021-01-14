@@ -1,15 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 
 import {scaleLinear} from 'd3-scale';
 
-import {regionShape, positionsShape} from './prop-types';
-import Region from './region';
-import Position from './position';
+import {
+  regionShape,
+  positionGroupsShape,
+  domainsShape,
+  positionAxisShape
+} from './prop-types';
 import PositionAxis from './position-axis';
+import PositionGroup from './position-group';
+import {removeOverlaps} from './helpers';
 
 
 /* function ExpandSubregion({
@@ -39,33 +43,31 @@ import PositionAxis from './position-axis';
 } */
 
 
-function scaleLinearWithHighlights(domain, range, hlDomain) {
-  const [hlStart, hlEnd] = hlDomain;
-  if (typeof hlStart === 'undefined' || typeof hlEnd === 'undefined') {
-    return scaleLinear().domain(domain).range(range);
-  }
-
-  const [start, end] = domain;
-  const leftRatio = (hlStart - start) / (end - start - hlStart + hlEnd);
+function scaleMultipleLinears(domains, range) {
+  const scales = [];
   const [xStart, xEnd] = range;
   const width = xEnd - xStart;
-  const hlWidth = Math.floor(width * 0.618);
-  const hlXStart = xStart + Math.floor((width - hlWidth) * leftRatio);
-  const hlXEnd = hlXStart + hlWidth;
+  const totalRatio = domains.reduce((acc, {scaleRatio}) => scaleRatio + acc, 0);
+  let xOffset = xStart;
+  for (const {posStart, posEnd, scaleRatio} of domains) {
+    const ratio = scaleRatio / totalRatio;
+    const partWidth = Math.floor(width * ratio);
+    scales.push(
+      scaleLinear()
+        .domain([posStart, posEnd])
+        .range([xOffset, xOffset + partWidth])
+    );
+    xOffset += partWidth;
+  }
+  let [lastXStart, lastXEnd] = scales[scales.length - 1].range();
+  if (lastXEnd !== xEnd) {
+    scales[scales.length - 1].range([lastXStart, xEnd]);
+  }
+  const domain = [
+    scales[0].domain()[0],
+    scales[scales.length - 1].domain()[1]
+  ];
 
-  const leftScale = scaleLinear()
-    .domain([start, hlStart - 1])
-    .range([xStart, hlXStart - 1]);
-
-  const hlScale = scaleLinear()
-    .domain([hlStart, hlEnd])
-    .range([hlXStart, hlXEnd]);
-
-  const rightScale = scaleLinear()
-    .domain([hlEnd + 1, end])
-    .range([hlXEnd + 1, xEnd]);
-
-  const scales = [leftScale, hlScale, rightScale];
   const ret = pos => {
     for (const scale of scales) {
       const [left, right] = scale.domain();
@@ -75,12 +77,12 @@ function scaleLinearWithHighlights(domain, range, hlDomain) {
     }
   };
   ret.domain = () => domain;
-  ret.hlDomain = () => hlDomain;
+  ret.domains = () => scales.map(s => s.domain());
   ret.range = () => range;
   ret.invert = x => {
     for (const scale of scales) {
       const [left, right] = scale.range();
-      if (x >= left && x <= right) {
+      if (x >= left && x < right) {
         return scale.invert(x);
       }
     }
@@ -97,11 +99,9 @@ export default class RegionGroup extends React.Component {
     paddingRight: PropTypes.number.isRequired,
     paddingLeft: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    posStart: PropTypes.number.isRequired,
-    posEnd: PropTypes.number.isRequired,
-    hlPosStart: PropTypes.number,
-    hlPosEnd: PropTypes.number,
-    positions: positionsShape,
+    domains: domainsShape.isRequired,
+    positionGroups: positionGroupsShape,
+    positionAxis: positionAxisShape,
     regions: PropTypes.arrayOf(
       regionShape.isRequired
     ).isRequired,
@@ -125,21 +125,15 @@ export default class RegionGroup extends React.Component {
       paddingLeft,
       paddingRight,
       width,
-      posStart,
-      posEnd,
-      hlPosStart,
-      hlPosEnd
+      domains
     } = props;
-    const domainX = [posStart, posEnd];
-    const hlDomainX = [hlPosStart, hlPosEnd];
     const rangeX = [paddingLeft, width - paddingRight];
     if (
-      !isEqual(domainX, state.domainX) ||
-      !isEqual(hlDomainX, state.hlDomainX) ||
+      !isEqual(domains, state.domains) ||
       !isEqual(rangeX, state.rangeX)
     ) {
-      const scaleX = scaleLinearWithHighlights(domainX, rangeX, hlDomainX);
-      return {domainX, hlDomainX, rangeX, scaleX};
+      const scaleX = scaleMultipleLinears(domains, rangeX);
+      return {domains, rangeX, scaleX};
     }
     return null;
   }
@@ -153,112 +147,38 @@ export default class RegionGroup extends React.Component {
     this.state = this.constructor.getDerivedStateFromProps(this.props);
   }
 
-  get positions() {
-    const {scaleX} = this.state;
-    const [xStart, xEnd] = scaleX.range();
-    const xMiddle = (xStart + xEnd) / 2;
-    const posMiddle = Math.floor(scaleX.invert(xMiddle));
-
-    let {positions} = this.props;
-    positions = sortBy(positions, ['pos']);
-    const hGap = 24;
-    const vGap = 10;
-    let prevX;
-    let maxOffsetY = 0;
-
-    const extendedRight = extendPositions(
-      positions, 1,
-      pos => pos > posMiddle,
-      diff => diff < hGap / 2
-    );
-    const extendedLeft = extendPositions(
-      positions.reverse(), -1,
-      pos => pos <= posMiddle,
-      diff => -diff < hGap / 1.5
-    );
-    const extended = [...extendedLeft.reverse(), ...extendedRight];
-    for (const {turns} of extended) {
-      if (turns.length === 1) {
-        turns[0][1] = maxOffsetY;
-      }
-      else {
-        turns.push([turns[1][0], maxOffsetY, turns[1][2]]);
-      }
-    }
-    return extended;
-
-    function extendPositions(positions, direction, halfFunc, shouldTurn) {
-      const extended = [];
-      for (const {pos, ...posData} of positions) {
-        if (!halfFunc(pos)) {
-          continue;
-        }
-        let x = scaleX(pos);
-        const turns = [[x, 0, direction]];
-        if (typeof prevX !== 'undefined' && shouldTurn(x - prevX)) {
-          if (direction > 0) {
-            x = Math.max(x, prevX) + hGap;
-          }
-          else {
-            x = Math.min(x, prevX) - hGap;
-          }
-          turns.push([x, 0, direction]);
-        }
-        prevX = x;
-        extended.push({pos, turns, ...posData});
-      }
-      let offsetY = 0;
-      for (let i = extended.length - 1; i > -1; i --) {
-        const {pos, turns} = extended[i];
-        if (!halfFunc(pos)) {
-          continue;
-        }
-        if (turns.length === 1) {
-          // no extra turns, reset offsetY
-          offsetY = 0;
-        }
-        for (const turn of turns) {
-          turn[1] += offsetY;
-        }
-        if (turns.length > 1) {
-          offsetY += vGap;
-          maxOffsetY = Math.max(maxOffsetY, offsetY);
-        }
-      }
-      return extended;
-    }
-
-  }
-
   render() {
     const {scaleX} = this.state;
     const {
+      positionAxis,
       paddingTop,
+      positionGroups,
       // paddingRight,
       // paddingLeft,
       // width,
-      regions,
-      posStart, posEnd
+      regions
       // subregionGroup
     } = this.props;
-    const {positions} = this;
+    const [posStart, posEnd] = scaleX.domain();
+    let addOffsetY = 0;
 
     return <g id={`region-group-${posStart}_${posEnd}`}>
-      <PositionAxis offsetY={paddingTop} scaleX={scaleX} />
-      {regions.map((region) => (
-        <Region
-         offsetY={paddingTop + 30}
-         key={`region-${region.name}`}
-         scaleX={scaleX}
-         region={region} />
-      ))}
-      {positions.map(({pos, ...posData}) => (
-        pos >= posStart && pos <= posEnd &&
-        <Position
-         offsetY={paddingTop + 30}
-         key={`position-${pos}`}
-         position={{pos, ...posData}} />
-      ))}
+      <PositionAxis
+       offsetY={paddingTop}
+       scaleX={scaleX}
+       positionAxis={positionAxis} />
+      {positionGroups.map(posGroup => {
+        posGroup = removeOverlaps(posGroup, scaleX);
+        const jsx = <React.Fragment key={`position-group-${posGroup.name}`}>
+          <PositionGroup
+           positionGroup={posGroup}
+           regions={regions}
+           scaleX={scaleX}
+           offsetY={paddingTop + addOffsetY + 30} />
+        </React.Fragment>;
+        addOffsetY += posGroup.addOffsetY + 180;
+        return jsx;
+      })}
       {/*
       unused, just keep for future
       {subregionGroup && (

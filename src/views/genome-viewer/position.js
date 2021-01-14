@@ -6,6 +6,9 @@ import {positionShape} from './prop-types';
 import style from './style.module.scss';
 
 
+const PATH_EXTEND_SIZE = 30;
+
+
 export default class Position extends React.Component {
 
   static propTypes = {
@@ -51,7 +54,7 @@ export default class Position extends React.Component {
       const cr = 5; // corner radius
       pathData = [
         ...pathData,
-        'v', height + 20 + turns[0][1] - cr,
+        'v', height + PATH_EXTEND_SIZE + turns[0][1] - cr,
         'c', 0, cr, 0, cr, cr * di, cr,
         'h', turns[1][0] - turns[0][0] - cr * di * 2,
         'c', cr * di, 0, cr * di, 0, cr * di, cr,
@@ -61,7 +64,7 @@ export default class Position extends React.Component {
     else {
       pathData = [
         ...pathData,
-        'v', height + 20 + turns[0][1]
+        'v', height + PATH_EXTEND_SIZE + turns[0][1]
       ];
     }
     return pathData;
@@ -72,13 +75,16 @@ export default class Position extends React.Component {
       offsetY,
       labelFontSize,
       height,
-      position: {turns, arrows}
+      position: {
+        turns,
+        arrows = []
+      }
     } = this.props;
 
     const x = turns[turns.length - 1][0];
     let y = (
       offsetY + labelFontSize * 1.5 + height +
-      turns[turns.length - 1][1] + 21
+      turns[turns.length - 1][1] + PATH_EXTEND_SIZE + 1
     );
     const propsList = [];
     for (const arrow of arrows) {
@@ -104,13 +110,16 @@ export default class Position extends React.Component {
       position: {
         turns,
         color,
-        arrows,
+        arrows = [],
         fontWeight
       }
     } = this.props;
     let [x, y] = turns[turns.length - 1];
 
-    y += offsetY + labelFontSize * 1.5 + height + 25 + 6 * arrows.length;
+    y += (
+      offsetY + labelFontSize * 1.5 + height
+      + 5 + 6 * arrows.length + PATH_EXTEND_SIZE
+    );
     return {
       transform: `translate(${x}, ${y}) rotate(-60)`,
       style: {fill: color, fontWeight},

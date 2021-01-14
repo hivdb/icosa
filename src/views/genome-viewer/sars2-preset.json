@@ -1,563 +1,504 @@
 {
   "name": "SARS2",
   "label": "SARS-CoV-2",
-  "width": 1960,
-  "height": 500,
-  "paddingLeft": 150,
-  "paddingRight": 410,
+  "width": 1720,
+  "height": 1220,
+  "paddingLeft": 300,
+  "paddingRight": 20,
   "paddingTop": 20,
-  "posStart": 1,
-  "posEnd": 29903,
-  "hlPosStart": 21563,
-  "hlPosEnd": 23633,
-  "footnote": "Lineage colors: <span style=\"color:#ff595e; font-weight: 600; font-size: 1.5rem; vertical-align: text-top;\">^</span>: B1.1.7; <span style=\"color:#ffca3a; font-weight: 600; font-size: 1.5rem; vertical-align: text-top;\">^</span>: B1.351; <span style=\"color:#8ac926; font-weight: 600; font-size: 1.5rem; vertical-align: text-top;\">^</span>: N439K; <span style=\"color:#1982c4; font-weight: 600; font-size: 1.5rem; vertical-align: text-top;\">^</span>: B1.1.28; <span style=\"color:#6a4c93; font-weight: 600; font-size: 1.5rem; vertical-align: text-top;\">^</span>: Cluster 5. **Bold** mutations are observed in more than one lineages, in which **RdRP:P323L** and **S:D614G** are from parent lineage B.1.",
-  "positions": [
+  "positionAxis": {
+    "posOffset": 21562,
+    "posStart": 21563,
+    "posEnd": 25384,
+    "convertToAA": true,
+    "tickCount": 15,
+    "roundToNearest": 5
+  },
+  "domains": [
     {
-      "#name": "T265I",
-      "name": "nsp2:T85I",
-      "pos": 1058,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
+      "#": "preSpike",
+      "posStart": 1,
+      "posEnd": 21562,
+      "scaleRatio": 0.25
+    },
+    {
+      "#": "S1",
+      "posStart": 21563,
+      "posEnd": 23633,
+      "scaleRatio": 0.4
+    },
+    {
+      "#": "S2",
+      "posStart": 23634,
+      "posEnd": 25384,
+      "scaleRatio": 0.2
+    },
+    {
+      "#": "postSpike",
+      "posStart": 25382,
+      "posEnd": 29903,
+      "scaleRatio": 0.15
+    }
+  ],
+  "positionGroups": [
+    {
+      "name": "B.1.1.7",
+      "label": "B.1.1.7",
+      "positions": [
+        {
+          "#name": "T1001I",
+          "name": "PL:T183I",
+          "pos": 3266,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "A1708D",
+          "name": "PL:A890D",
+          "pos": 5387,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "I2230T",
+          "name": "PL:I1412T",
+          "pos": 6953,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "SGF3675-3677del",
+          "name": "nsp6:SGF106-108del",
+          "label": "nsp6:SGF106-108Δ",
+          "pos": 11288,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "HV69-70del",
+          "label": "HV69-70Δ",
+          "pos": 21767
+        },
+        {
+          "name": "Y144del",
+          "label": "Y144Δ",
+          "pos": 21992
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "A570D",
+          "pos": 23270
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "P681H",
+          "pos": 23603
+        },
+        {
+          "name": "T716I",
+          "pos": 23708
+        },
+        {
+          "name": "S982A",
+          "pos": 24506
+        },
+        {
+          "name": "D1118H",
+          "pos": 24914
+        },
+        {
+          "name": "ORF8:Q27stop",
+          "label": "ORF8:Q27*",
+          "pos": 27972,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:R52I",
+          "pos": 28048,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:Y73C",
+          "pos": 28111,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:D3L",
+          "pos": 28280,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:S235F",
+          "pos": 28977,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
       ]
     },
     {
-      "#name": "T1001I",
-      "name": "PL:T183I",
-      "pos": 3266,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
+      "name": "B.1.351",
+      "label": "B.1.351",
+      "positions": [
+        {
+          "#name": "T265I",
+          "name": "nsp2:T85I",
+          "pos": 1058,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "K1655N",
+          "name": "PL:K837N",
+          "pos": 5228,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "H2799Y",
+          "name": "nsp4:H26Y",
+          "pos": 8660,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "S2900L",
+          "name": "nsp4:S137L",
+          "pos": 8963,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "K3353R",
+          "name": "3CL:K90R",
+          "pos": 10322,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "D4527Y",
+          "name": "RdRP:D135Y",
+          "pos": 13843,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "T5912I",
+          "name": "nsp13:T588I",
+          "pos": 17998,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "L18F",
+          "pos": 21614
+        },
+        {
+          "name": "D80A",
+          "pos": 21800
+        },
+        {
+          "name": "D215G",
+          "pos": 22205
+        },
+        {
+          "name": "R246I",
+          "pos": 22298
+        },
+        {
+          "name": "K417N",
+          "pos": 22811
+        },
+        {
+          "name": "N439K",
+          "pos": 22877
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "A701V",
+          "pos": 23663
+        },
+        {
+          "name": "ORF3a:Q57H",
+          "pos": 25563,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF3a:S171L",
+          "pos": 25904,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "E:P71L",
+          "pos": 26456,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:T205I",
+          "pos": 28887,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
       ]
     },
     {
-      "#name": "ORF1a:S1188L",
-      "name": "PL:S370L",
-      "pos": 3827,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
+      "name": "B.1.1.28a",
+      "label": "B.1.1.28 (E484K)",
+      "positions": [
+        {
+          "#name": "ORF1ab:L3468V",
+          "name": "3CL:L205V",
+          "pos": 10667,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:L3930F",
+          "name": "nsp7:L71F",
+          "pos": 12053,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "E484K",
+          "pos": 23012
+        },
+        {
+          "name": "V1176F",
+          "pos": 25088
+        },
+        {
+          "name": "N:A119S",
+          "pos": 28628,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
       ]
     },
     {
-      "#name": "K1655N",
-      "name": "PL:K837N",
-      "pos": 5228,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "#name": "A1708D",
-      "name": "PL:A890D",
-      "pos": 5387,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "#name": "ORF1a:K1795Q",
-      "name": "PL:K977Q",
-      "pos": 5648,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "#name": "I2230T",
-      "name": "PL:I1412T",
-      "pos": 6953,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "#name": "H2799Y",
-      "name": "nsp4:H26Y",
-      "pos": 8660,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "#name": "S2900L",
-      "name": "nsp4:S137L",
-      "pos": 8963,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "#name": "K3353R",
-      "name": "3CL:K90R",
-      "pos": 10322,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "#name": "ORF1ab:L3468V",
-      "name": "3CL:L205V",
-      "pos": 10667,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "#name": "SGF3675-3677del",
-      "name": "nsp6:SGF106-108del",
-      "label": "nsp6:SGF106-108Δ",
-      "pos": 11288,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "#name": "ORF1ab:L3930F",
-      "name": "nsp7:L71F",
-      "pos": 12053,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "#name": "D4527Y",
-      "name": "RdRP:D135Y",
-      "pos": 13843,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "#name": "P4715L",
-      "name": "RdRP:P323L",
-      "pos": 14407,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "fontWeight": "bold",
-      "arrows": [
-        "#ff595e",
-        "#ffca3a",
-        "#8ac926",
-        "#1982c4",
-        "#6a4c93"
-      ]
-    },
-    {
-      "#name": "ORF1b:E1264D",
-      "name": "nsp13:E341D",
-      "pos": 17257,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "#name": "T5912I",
-      "name": "nsp13:T588I",
-      "pos": 17998,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "nsp15:V35A",
-      "pos": 19723,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#8ac926"
-      ]
-    },
-    {
-      "name": "L18F",
-      "pos": 21614,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ffca3a",
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "T20N",
-      "pos": 21620,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "P26S",
-      "pos": 21638,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "HV69-70del",
-      "label": "HV69-70Δ",
-      "pos": 21767,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ff595e",
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "D80A",
-      "pos": 21800,
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "D138Y",
-      "pos": 21974,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "Y144del",
-      "label": "Y144Δ",
-      "pos": 21992,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "R190S",
-      "pos": 22130,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "D215G",
-      "pos": 22205,
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "R246I",
-      "pos": 22298,
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "K417N/T",
-      "pos": 22811,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ffca3a",
-        "#1982c4"
+      "name": "B.1.1.28b",
+      "label": "B.1.1.28 (K417T/E484K/N501Y)",
+      "positions": [
+        {
+          "#name": "ORF1a:S1188L",
+          "name": "PL:S370L",
+          "pos": 3827,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:K1795Q",
+          "name": "PL:K977Q",
+          "pos": 5648,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1b:E1264D",
+          "name": "nsp13:E341D",
+          "pos": 17257,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "L18F",
+          "pos": 21614
+        },
+        {
+          "name": "T20N",
+          "pos": 21620
+        },
+        {
+          "name": "P26S",
+          "pos": 21638
+        },
+        {
+          "name": "D138Y",
+          "pos": 21974
+        },
+        {
+          "name": "R190S",
+          "pos": 22130
+        },
+        {
+          "name": "K417T",
+          "pos": 22811
+        },
+        {
+          "name": "E484K",
+          "pos": 23012
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "H655Y",
+          "pos": 23525
+        },
+        {
+          "name": "T1027I",
+          "pos": 24641
+        },
+        {
+          "name": "V1176F",
+          "pos": 25088
+        },
+        {
+          "name": "ORF3a:S253P",
+          "pos": 26149,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:E92K",
+          "pos": 28167,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:P80R",
+          "pos": 28511,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:R203K",
+          "pos": 28883,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF9b:Q77E",
+          "name": "ORF9b:Q77E",
+          "pos": 29512,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
       ]
     },
     {
       "name": "N439K",
-      "pos": 22877,
-      "arrows": [
-        "#8ac926"
+      "label": "N439K",
+      "positions": [
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "nsp15:V35A",
+          "pos": 19723,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N439K",
+          "pos": 22877
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "ORF10:V6F",
+          "pos": 29573,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
       ]
     },
     {
-      "name": "Y453F",
-      "pos": 22919,
-      "arrows": [
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "E484K",
-      "pos": 23012,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ffca3a",
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "N501Y",
-      "pos": 23063,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ff595e",
-        "#ffca3a",
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "A570D",
-      "pos": 23270,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "D614G",
-      "pos": 23402,
-      "fontWeight": "bold",
-      "arrows": [
-        "#ff595e",
-        "#ffca3a",
-        "#8ac926",
-        "#1982c4",
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "H655Y",
-      "pos": 23525,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "P681H",
-      "pos": 23603,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "I692V",
-      "pos": 23636,
-      "arrows": [
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "A701V",
-      "pos": 23663,
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "T716I",
-      "pos": 23708,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "S982A",
-      "pos": 24506,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "T1027I",
-      "pos": 24641,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "D1118H",
-      "pos": 24914,
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "S1147L",
-      "pos": 25001,
-      "arrows": [
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "V1176F",
-      "pos": 25088,
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "M1229I",
-      "pos": 25247,
-      "arrows": [
-        "#6a4c93"
-      ]
-    },
-    {
-      "name": "ORF3a:Q57H",
-      "pos": 25563,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "ORF3a:S171L",
-      "pos": 25904,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "ORF3a:S253P",
-      "pos": 26149,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "E:P71L",
-      "pos": 26456,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "ORF8:Q27stop",
-      "label": "ORF8:Q27*",
-      "pos": 27972,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "ORF8:R52I",
-      "pos": 28048,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "ORF8:Y73C",
-      "pos": 28111,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "ORF8:E92K",
-      "pos": 28167,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "N:D3L",
-      "pos": 28280,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "name": "N:P80R",
-      "pos": 28511,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "N:A119S",
-      "pos": 28628,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "N:R203K",
-      "pos": 28883,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "N:T205I",
-      "pos": 28887,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ffca3a"
-      ]
-    },
-    {
-      "name": "N:S235F",
-      "pos": 28977,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#ff595e"
-      ]
-    },
-    {
-      "#name": "ORF9b:Q77E",
-      "name": "ORF9b:Q77E",
-      "pos": 29512,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#1982c4"
-      ]
-    },
-    {
-      "name": "ORF10:V6F",
-      "pos": 29573,
-      "stroke": "#e0e0e0",
-      "color": "#a0a0a0",
-      "arrows": [
-        "#8ac926"
+      "name": "Cluster5",
+      "label": "Cluster 5",
+      "positions": [
+        {
+          "#name": "P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "HV69-70del",
+          "label": "HV69-70Δ",
+          "pos": 21767
+        },
+        {
+          "name": "Y453F",
+          "pos": 22919
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "I692V",
+          "pos": 23636
+        },
+        {
+          "name": "S1147L",
+          "pos": 25001
+        },
+        {
+          "name": "M1229I",
+          "pos": 25247
+        }
       ]
     }
-
   ],
   "regions": [
     {
@@ -664,19 +605,6 @@
       "offsetY": 12,
       "shapeType": "rect",
       "labelPosition": "above"
-    },
-    {
-      "name": "S2",
-      "label": "S2",
-      "posStart": 23634,
-      "#posStartAA": 691,
-      "posEnd": 25381,
-      "#posEndAA": 1273,
-      "fill": "#d8d8d8",
-      "color": "#505050",
-      "offsetY": 12,
-      "shapeType": "rect",
-      "labelPosition": "over"
     },
     {
       "name": "ORF3a",
