@@ -16,7 +16,10 @@ const positionShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   pos: PropTypes.number.isRequired,
-  color: PropTypes.string
+  stroke: PropTypes.string,
+  color: PropTypes.string,
+  fontWeight: PropTypes.string,
+  arrows: PropTypes.arrayOf(PropTypes.string.isRequired)
 });
 
 

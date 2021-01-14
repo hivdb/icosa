@@ -12,6 +12,12 @@
       margin-right: auto;
     }
   }
+  .viewer-container {
+    overflow-x: auto;
+  }
+  .footnote {
+    margin-top: 1rem;
+  }
 }
 
 line.region {
@@ -56,4 +62,9 @@ path.position-pointer {
   fill: transparent;
   stroke: black;
   stroke-width: 1px;
+}
+
+path.position-arrow {
+  fill: transparent;
+  stroke-width: 2px;
 }

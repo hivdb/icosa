@@ -66,6 +66,35 @@ export default class Position extends React.Component {
     }
     return pathData;
   }
+
+  get arrowPropsList() {
+    const {
+      offsetY,
+      labelFontSize,
+      height,
+      position: {turns, arrows}
+    } = this.props;
+
+    const x = turns[turns.length - 1][0];
+    let y = (
+      offsetY + labelFontSize * 1.5 + height +
+      turns[turns.length - 1][1] + 21
+    );
+    const propsList = [];
+    for (const arrow of arrows) {
+      propsList.push({
+        d: [
+          'm', x - 4, y + 4,
+          'l', 4, -4,
+          'l', 4, 4
+        ].join(' '),
+        style: {stroke: arrow},
+        className: style['position-arrow']
+      });
+      y += 6;
+    }
+    return propsList;
+  }
   
   get textProps() {
     const {
@@ -73,29 +102,36 @@ export default class Position extends React.Component {
       labelFontSize,
       height,
       position: {
-        turns
+        turns,
+        color,
+        arrows,
+        fontWeight
       }
     } = this.props;
     let [x, y] = turns[turns.length - 1];
 
-    x += 2;
-    y += offsetY + labelFontSize * 1.5 + height + 30;
+    y += offsetY + labelFontSize * 1.5 + height + 25 + 6 * arrows.length;
     return {
-      transform: `translate(${x}, ${y}) rotate(-45)`,
+      transform: `translate(${x}, ${y}) rotate(-60)`,
+      style: {fill: color, fontWeight},
       className: style['position-label']
     };
   }
 
   render() {
-    const {labelText, anchorProps, textProps} = this;
-    const {position: {name}} = this.props;
+    const {labelText, textProps, arrowPropsList} = this;
+    const {position: {
+      name, stroke
+    }} = this.props;
 
     return <g id={`position-${name}`}>
-      <svg {...anchorProps}>
-        <path
-         d={this.pathData.join(' ')}
-         className={style['position-pointer']} />
-      </svg>
+      <path
+       d={this.pathData.join(' ')}
+       style={{stroke}}
+       className={style['position-pointer']} />
+      {arrowPropsList.map((props, idx) => (
+        <path key={idx} {...props} />
+      ))}
       <text {...textProps}>{labelText}</text>
     </g>;
   }

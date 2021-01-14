@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 import {regionShape, positionsShape} from './prop-types';
 import RegionGroup from './region-group';
+import Markdown from '../../components/markdown';
+
+import style from './style.module.scss';
 
 
 export default class GenomeViewer extends React.Component {
@@ -31,7 +34,8 @@ export default class GenomeViewer extends React.Component {
         posEnd: PropTypes.number.isRequired,
         regions: PropTypes.arrayOf(
           regionShape.isRequired
-        ).isRequired
+        ).isRequired,
+        footnote: PropTypes.string
       })
     }).isRequired
   }
@@ -50,28 +54,34 @@ export default class GenomeViewer extends React.Component {
         hlPosEnd,
         positions,
         regions,
-        subregionGroup
+        subregionGroup,
+        footnote
       }
     } = this.props;
-    return (
-      <svg
-       width={`${width}px`}
-       height={`${height}px`}
-       viewBox={`0 0 ${width} ${height}`}>
-        <RegionGroup
-         paddingTop={paddingTop}
-         paddingRight={paddingRight}
-         paddingLeft={paddingLeft}
-         width={width}
-         posStart={posStart}
-         posEnd={posEnd}
-         hlPosStart={hlPosStart}
-         hlPosEnd={hlPosEnd}
-         positions={positions}
-         regions={regions}
-         subregionGroup={subregionGroup} />
-      </svg>
-    );
+    return <div>
+      <div className={style['viewer-container']}>
+        <svg
+         width={`${width}px`}
+         height={`${height}px`}
+         viewBox={`0 0 ${width} ${height}`}>
+          <RegionGroup
+           paddingTop={paddingTop}
+           paddingRight={paddingRight}
+           paddingLeft={paddingLeft}
+           width={width}
+           posStart={posStart}
+           posEnd={posEnd}
+           hlPosStart={hlPosStart}
+           hlPosEnd={hlPosEnd}
+           positions={positions}
+           regions={regions}
+           subregionGroup={subregionGroup} />
+        </svg>
+      </div>
+      {footnote && <div className={style.footnote}>
+        <Markdown escapeHtml={false}>{footnote}</Markdown>
+      </div>}
+    </div>;
   }
 
 

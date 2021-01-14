@@ -161,7 +161,7 @@ export default class RegionGroup extends React.Component {
 
     let {positions} = this.props;
     positions = sortBy(positions, ['pos']);
-    const hGap = 30;
+    const hGap = 24;
     const vGap = 10;
     let prevX;
     let maxOffsetY = 0;
@@ -174,7 +174,7 @@ export default class RegionGroup extends React.Component {
     const extendedLeft = extendPositions(
       positions.reverse(), -1,
       pos => pos <= posMiddle,
-      diff => -diff < hGap / 2
+      diff => -diff < hGap / 1.5
     );
     const extended = [...extendedLeft.reverse(), ...extendedRight];
     for (const {turns} of extended) {
