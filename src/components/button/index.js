@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
+import makeClassNames from 'classnames';
 
 import Link from '../link';
 
@@ -25,7 +25,8 @@ export default class Button extends React.Component {
       PropTypes.number]),
     href: PropTypes.string,
     to: PropTypes.string,
-    type: PropTypes.string
+    type: PropTypes.string,
+    children: PropTypes.node.isRequired
   }
 
   static defaultProps = {
@@ -37,33 +38,28 @@ export default class Button extends React.Component {
   }
 
   render() {
-    const {btnSize, btnStyle, btnHeight, href, to} = this.props;
-    let props = Object.assign({}, this.props);
-    delete props.children;
-    delete props.btnSize;
-    delete props.btnStyle;
-    delete props.btnHeight;
-    props.className = classNames(
+    const {btnSize, btnStyle, btnHeight, children, ...props} = this.props;
+    const {href, to} = props;
+    const classNames = [
       props.className, style.btn, style[`btn-${btnSize}`],
       style[`btn-style-${btnStyle}`]
-    );
+    ];
     if (btnHeight) {
-      props.className = classNames(
-        props.className, style[`btn-height-${btnHeight}`]
-      );
+      classNames.push(style[`btn-height-${btnHeight}`]);
     }
-    let BtnComponent = 'button';
+    props.className = makeClassNames(...classNames);
+    let btnComponent = 'button';
     if (href || to) {
-      BtnComponent = Link;
+      btnComponent = Link;
       props.noDefaultStyle = true;
       delete props.type;
     }
     props.role = 'button';
-    return (
-      <BtnComponent
-       {...props} role="button">
-        <span>{this.props.children}</span>
-      </BtnComponent>);
+    return React.createElement(
+      btnComponent,
+      props, 
+      <span>{this.props.children}</span>
+    );
   }
 
 }

@@ -9,6 +9,7 @@ import {
 } from './prop-types';
 import RegionGroup from './region-group';
 import Markdown from '../../components/markdown';
+import DownloadSVG from '../../components/download-svg';
 
 import style from './style.module.scss';
 
@@ -43,9 +44,15 @@ export default class GenomeViewer extends React.Component {
     }).isRequired
   }
 
+  constructor() {
+    super(...arguments);
+    this.svgRef = React.createRef();
+  }
+
   render() {
     const {
       preset: {
+        name,
         width,
         height,
         paddingTop,
@@ -60,10 +67,15 @@ export default class GenomeViewer extends React.Component {
       }
     } = this.props;
     return <div>
+      <div>
+        <DownloadSVG target={this.svgRef} fileName={`${name}.svg`} />
+      </div>
       <div className={style['viewer-container']}>
         <svg
+         ref={this.svgRef}
          width={`${width}px`}
          height={`${height}px`}
+         className={style['genome-svg']}
          viewBox={`0 0 ${width} ${height}`}>
           <RegionGroup
            paddingTop={paddingTop}

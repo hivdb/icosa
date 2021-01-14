@@ -11488,6 +11488,11 @@ supports-color@^7.0.0, supports-color@^7.1.0:
   dependencies:
     has-flag "^4.0.0"
 
+svg-crowbar@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/svg-crowbar/-/svg-crowbar-0.6.5.tgz#7b6356510fba0cb84e1d373b1c93e1140c973a06"
+  integrity sha512-3vQn7XoIxRa4cSCOgCiwlc3vEj17+ruc83FOO7QO2jPwbPwxOw1ynpMlgXmWUxBC0DKQMFgHFZyMsfMCIhY0Jw==
+
 svg-parser@^2.0.0:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/svg-parser/-/svg-parser-2.0.4.tgz#fdc2e29e13951736140b76cb122c8ee6630eb6b5"

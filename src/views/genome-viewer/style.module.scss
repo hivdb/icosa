@@ -1,3 +1,4 @@
+@import "../../styles/constants";
 @import "../../styles/default-colors";
 @import "../../styles/dropdown";
 @import "../../styles/functions";
@@ -18,6 +19,10 @@
   .footnote {
     margin-top: 1rem;
   }
+}
+
+svg.genome-svg {
+  font-family: $base-font-family;
 }
 
 line.region {

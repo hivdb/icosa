@@ -1,10 +1,10 @@
 {
-  "name": "SARS2",
-  "label": "SARS-CoV-2",
-  "width": 1720,
+  "name": "sars2-major-lineages",
+  "label": "SARS-CoV-2 Major Lineages",
+  "width": 1800,
   "height": 1220,
-  "paddingLeft": 300,
-  "paddingRight": 20,
+  "paddingLeft": 360,
+  "paddingRight": 40,
   "paddingTop": 20,
   "positionAxis": {
     "posOffset": 21562,
