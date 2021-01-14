@@ -169,6 +169,11 @@ export default class RegionGroup extends React.Component {
        positionAxis={positionAxis} />
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
+        const longestPosLabelLen = Math.max(
+          ...posGroup.positions.map(({name, label}) => (
+            typeof label === 'undefined' ? name : label
+          ).length)
+        );
         const jsx = <React.Fragment key={`position-group-${posGroup.name}`}>
           <PositionGroup
            positionGroup={posGroup}
@@ -176,7 +181,7 @@ export default class RegionGroup extends React.Component {
            scaleX={scaleX}
            offsetY={paddingTop + addOffsetY + 30} />
         </React.Fragment>;
-        addOffsetY += posGroup.addOffsetY + 180;
+        addOffsetY += posGroup.addOffsetY + 105 + longestPosLabelLen * 5;
         return jsx;
       })}
       {/*

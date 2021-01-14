@@ -1,0 +1,475 @@
+{
+  "name": "sars2-other-lineages",
+  "label": "SARS-CoV-2 Other Lineages",
+  "width": 1620,
+  "height": 1000,
+  "paddingLeft": 160,
+  "paddingRight": 60,
+  "paddingTop": 20,
+  "positionAxis": {
+    "posOffset": 21562,
+    "posStart": 21563,
+    "posEnd": 25384,
+    "convertToAA": true,
+    "tickCount": 15,
+    "roundToNearest": 5
+  },
+  "domains": [
+    {
+      "#": "preSpike",
+      "posStart": 1,
+      "posEnd": 21562,
+      "scaleRatio": 0.25
+    },
+    {
+      "#": "S1",
+      "posStart": 21563,
+      "posEnd": 23633,
+      "scaleRatio": 0.4
+    },
+    {
+      "#": "S2",
+      "posStart": 23634,
+      "posEnd": 25384,
+      "scaleRatio": 0.2
+    },
+    {
+      "#": "postSpike",
+      "posStart": 25382,
+      "posEnd": 29903,
+      "scaleRatio": 0.15
+    }
+  ],
+  "positionGroups": [
+    {
+      "name": "Kemp",
+      "label": "Kemp",
+      "positions": [
+        {
+          "name": "HV69-70del",
+          "label": "HV69-70Δ",
+          "pos": 21767
+        },
+        {
+          "name": "N439K",
+          "pos": 22877
+        },
+        {
+          "name": "Y453F",
+          "pos": 22919
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "A570D",
+          "pos": 23270
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "P681H",
+          "pos": 23603
+        },
+        {
+          "name": "T716I",
+          "pos": 23708
+        },
+        {
+          "name": "S982A",
+          "pos": 24506
+        },
+        {
+          "name": "D1118H",
+          "pos": 24914
+        }
+      ]
+    },
+    {
+      "name": "McCarthy",
+      "label": "McCarthy",
+      "positions": [
+        {
+          "name": "HV69-70del",
+          "label": "HV69-70Δ",
+          "pos": 21767
+        },
+        {
+          "name": "LGVY141-144del,H146del",
+          "label": "LGVY141-144Δ,H146Δ",
+          "pos": 21983
+        },
+        {
+          "name": "I210del",
+          "label": "I210Δ",
+          "pos": 22190
+        },
+        {
+          "name": "AL243-244del",
+          "label": "AL243-244Δ",
+          "pos": 22289
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        }
+      ]
+    },
+    {
+      "name": "Choi",
+      "label": "Choi",
+      "positions": [
+        {
+          "name": "GVY142-144del",
+          "label": "GVY142-144Δ",
+          "pos": 21986
+        },
+        {
+          "name": "Q183H",
+          "pos": 22109
+        },
+        {
+          "name": "T478K",
+          "pos": 22994
+        },
+        {
+          "name": "Q493K",
+          "pos": 23039
+        },
+        {
+          "name": "S494P",
+          "pos": 23042
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "I870V",
+          "pos": 24170
+        }
+      ]
+    },
+    {
+      "name": "Avanzato",
+      "label": "Avanzato",
+      "positions": [
+        {
+          "name": "PFLGVYY139-145del",
+          "label": "PFLGVYY139-145Δ",
+          "pos": 21977
+        },
+        {
+          "name": "V483A",
+          "pos": 23009
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "R685Q",
+          "pos": 23615
+        }
+      ]
+    },
+    {
+      "name": "Bazykin",
+      "label": "Bazykin",
+      "positions": [
+        {
+          "name": "nsp3:T504A",
+          "pos": 4229,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "nsp3:D821N",
+          "pos": 5180,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "nsp4:T295I",
+          "pos": 9437,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "nsp4:V315I",
+          "pos": 9497,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "nsp7:V58G",
+          "pos": 12014,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "S50L",
+          "pos": 21710
+        },
+        {
+          "name": "HV69-70del",
+          "label": "HV69-70Δ",
+          "pos": 21767
+        },
+        {
+          "name": "LGVY141-144del",
+          "label": "LGVY141-144Δ",
+          "pos": 21983
+        },
+        {
+          "name": "Y453F",
+          "pos": 22919
+        },
+        {
+          "name": "T470N",
+          "pos": 22970
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "D737G",
+          "pos": 23771
+        },
+        {
+          "name": "ORF7b:I2del",
+          "label": "ORF7b:I2Δ",
+          "pos": 27759,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:Q18stop",
+          "label": "ORF8:Q18*",
+          "pos": 27945,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:R195G",
+          "pos": 28856,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "name": "5-UTR",
+      "label": "",
+      "posStart": 1,
+      "posEnd": 265,
+      "shapeType": "line",
+      "labelPostion": "above"
+    },
+    {
+      "name": "ORF1ab",
+      "label": "ORF1ab",
+      "posStart": 266,
+      "posEnd": 21555,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect"
+    },
+    {
+      "name": "S",
+      "label": "Spike",
+      "posStart": 21563,
+      "posEnd": 25384,
+      "fill": "#b2df8a",
+      "color": "#33a02c",
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "NTD",
+      "label": "NTD",
+      "posStart": 21600,
+      "#posStartAA": 13,
+      "posEnd": 22478,
+      "#posEndAA": 305,
+      "fill": "#a6cee3",
+      "color": "#1f78b4",
+      "offsetY": 12,
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "RBD",
+      "label": "RBD",
+      "posStart": 22479,
+      "#posStartAA": 306,
+      "posEnd": 23165,
+      "#posEndAA": 534,
+      "fill": "#fb9a99",
+      "color": "#e31a1c",
+      "offsetY": 12,
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "RBM",
+      "label": "RBM",
+      "posStart": 22872,
+      "#posStartAA": 437,
+      "posEnd": 23087,
+      "#posEndAA": 508,
+      "fill": "#cab2d6",
+      "color": "#6a3d9a",
+      "offsetY": 24,
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "SD1",
+      "label": "SD1",
+      "posStart": 23166,
+      "#posStartAA": 535,
+      "posEnd": 23331,
+      "#posEndAA": 590,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "offsetY": 12,
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "SD2",
+      "label": "SD2",
+      "posStart": 23332,
+      "#posStartAA": 591,
+      "posEnd": 23603,
+      "#posEndAA": 680,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "offsetY": 12,
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "S1-S2",
+      "label": "S1/S2",
+      "posStart": 23604,
+      "#posStartAA": 681,
+      "posEnd": 23633,
+      "#posEndAA": 690,
+      "fill": "#fdbf6f",
+      "color": "#ff7f00",
+      "offsetY": 12,
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "ORF3a",
+      "label": "",
+      "posStart": 25393,
+      "posEnd": 26220,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "E",
+      "label": "",
+      "posStart": 26245,
+      "posEnd": 26472,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "M",
+      "label": "",
+      "posStart": 26523,
+      "posEnd": 27191,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "ORF6",
+      "label": "",
+      "posStart": 27202,
+      "posEnd": 27387,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "ORF7a",
+      "label": "",
+      "posStart": 27394,
+      "posEnd": 27759,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "below"
+    },
+    {
+      "name": "ORF7b",
+      "label": "",
+      "posStart": 27756,
+      "posEnd": 27887,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "ORF8",
+      "label": "",
+      "posStart": 27894,
+      "posEnd": 28259,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "below"
+    },
+    {
+      "name": "N",
+      "label": "N",
+      "posStart": 28274,
+      "posEnd": 29533,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "over"
+    },
+    {
+      "name": "ORF10",
+      "label": "",
+      "posStart": 29558,
+      "posEnd": 29674,
+      "fill": "#d8d8d8",
+      "color": "#505050",
+      "shapeType": "rect",
+      "labelPosition": "above"
+    },
+    {
+      "name": "postORF10",
+      "label": "",
+      "posStart": 29675,
+      "posEnd": 29903,
+      "shapeType": "line",
+      "labelPosition": "over"
+    }
+  ]
+}

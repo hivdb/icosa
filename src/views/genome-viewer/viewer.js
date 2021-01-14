@@ -68,14 +68,17 @@ export default class GenomeViewer extends React.Component {
     } = this.props;
     return <div>
       <div>
-        <DownloadSVG target={this.svgRef} fileName={`${name}.svg`} />
+        <DownloadSVG
+         css="none"
+         target={this.svgRef}
+         fileName={`${name}.svg`} />
       </div>
       <div className={style['viewer-container']}>
         <svg
          ref={this.svgRef}
          width={`${width}px`}
          height={`${height}px`}
-         className={style['genome-svg']}
+         fontFamily='"Source Sans Pro", "Helvetica Neue", Helvetica'
          viewBox={`0 0 ${width} ${height}`}>
           <RegionGroup
            paddingTop={paddingTop}

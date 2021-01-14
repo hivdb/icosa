@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {ticks} from 'd3-array';
 
 import {positionAxisShape} from './prop-types';
-import style from './style.module.scss';
 
 
 function getTicks(scaleX, {
@@ -149,20 +148,22 @@ export default class PositionAxis extends React.Component {
         convertToAA = false
       }
     } = this.props;
-    const [posStart, posEnd] = scaleX.domain();
     const tickOffset = tickFontSize * 1.5;
     const tickPositions = getTicks(scaleX, positionAxis);
-    return <svg id={`position-axis-${posStart}_${posEnd}`} y={offsetY}>
+    return <svg y={offsetY}>
       <path
        d={this.axisPathData.join(' ')}
-       className={style['position-axis']} />
+       fill="none"
+       stroke="#000000"
+       strokeWidth={2} />
       {tickPositions.map(pos => {
         const x = scaleX(pos);
         return <React.Fragment key={`tick-pos-${pos}`}>
           <text
            x={x} y={tickFontSize}
            fontSize={tickFontSize}
-           className={style['tick-label']}>
+           fill="#000000"
+           textAnchor="middle">
             {convertToAA ?
               Math.floor((pos - posOffset + 2) / 3) :
               pos - posOffset}
@@ -170,7 +171,8 @@ export default class PositionAxis extends React.Component {
           <line
            x1={x} x2={x}
            y1={tickOffset - 1} y2={tickOffset + 8}
-           className={style['tick-line']} />
+           stroke="#000000"
+           strokeWidth={2} />
         </React.Fragment>;
       })}
     </svg>;

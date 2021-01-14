@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 import {positionShape} from './prop-types';
 
-import style from './style.module.scss';
-
 
 const PATH_EXTEND_SIZE = 30;
 
@@ -94,8 +92,9 @@ export default class Position extends React.Component {
           'l', 4, -4,
           'l', 4, 4
         ].join(' '),
-        style: {stroke: arrow},
-        className: style['position-arrow']
+        stroke: arrow,
+        fill: 'none',
+        strokeWidth: 2
       });
       y += 6;
     }
@@ -122,22 +121,24 @@ export default class Position extends React.Component {
     );
     return {
       transform: `translate(${x}, ${y}) rotate(-60)`,
-      style: {fill: color, fontWeight},
-      className: style['position-label']
+      fill: color || '#000000',
+      fontWeight,
+      dominantBaseline: 'central',
+      textAnchor: 'end',
+      fontFamily: 'Arial Narrow'
     };
   }
 
   render() {
     const {labelText, textProps, arrowPropsList} = this;
-    const {position: {
-      name, stroke
-    }} = this.props;
+    const {position: {stroke}} = this.props;
 
-    return <g id={`position-${name}`}>
+    return <g>
       <path
        d={this.pathData.join(' ')}
-       style={{stroke}}
-       className={style['position-pointer']} />
+       stroke={stroke || '#000000'}
+       fill="none"
+       strokeWidth={1} />
       {arrowPropsList.map((props, idx) => (
         <path key={idx} {...props} />
       ))}

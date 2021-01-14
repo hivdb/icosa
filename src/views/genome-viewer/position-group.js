@@ -8,8 +8,6 @@ import {
 import Region from './region';
 import Position from './position';
 
-import style from './style.module.scss';
-
 
 export default class PositionGroup extends React.Component {
 
@@ -44,7 +42,8 @@ export default class PositionGroup extends React.Component {
     const [xStart] = scaleX.range();
 
     return <svg id={`position-group-${name}`} y={offsetY}>
-      <text x={xStart - 20} y={64} className={style['position-group-title']}>
+      <text x={xStart - 20} y={64} fill="#000000"
+       textAnchor="end" fontSize={21} fontWeight="bolder">
         {labelText}
       </text>
       {regions.map((region) => (

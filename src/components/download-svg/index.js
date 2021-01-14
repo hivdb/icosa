@@ -19,17 +19,19 @@ export default class DownloadSVG extends React.Component {
       })
     ]),
     fileName: PropTypes.string,
+    css: PropTypes.oneOf(['internal', 'inline', 'none']).isRequired,
     children: PropTypes.node.isRequired
   }
 
   static defaultProps = {
     name: 'download-svg',
+    css: 'inline',
     children: 'Download SVG'
   }
 
   handleClick = async e => {
     e && e.preventDefault();
-    let {target, fileName} = this.props;
+    let {target, fileName, css} = this.props;
     if (target.current) {
       target = target.current;
     }
@@ -42,7 +44,7 @@ export default class DownloadSVG extends React.Component {
         elem.id = `sd-${elem.id}`;
       }
       document.body.appendChild(container);
-      const {source} = getSource(target, {css: 'internal'});
+      const {source} = getSource(target, {css});
       makeDownload(fileName, 'image/svg+xml', source);
       setTimeout(() => document.body.removeChild(container));
     }

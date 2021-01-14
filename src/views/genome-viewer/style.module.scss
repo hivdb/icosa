@@ -1,4 +1,3 @@
-@import "../../styles/constants";
 @import "../../styles/default-colors";
 @import "../../styles/dropdown";
 @import "../../styles/functions";
@@ -19,64 +18,4 @@
   .footnote {
     margin-top: 1rem;
   }
-}
-
-svg.genome-svg {
-  font-family: $base-font-family;
-}
-
-line.region {
-  stroke-width: 2px;
-}
-
-rect.region {
-  stroke: rgba(255, 255, 255, .8);
-  stroke-width: 2px;
-}
-
-text.region-label {
-  dominant-baseline: central;
-  &.h-center {
-    text-anchor: middle;
-  }
-}
-
-text.tick-label {
-  fill: black;
-  text-anchor: middle;
-}
-
-line.tick-line {
-  stroke: black;
-  stroke-width: 2px;
-}
-
-path.position-axis {
-  fill: transparent;
-  stroke: black;
-  stroke-width: 2px;
-}
-
-text.position-label {
-  dominant-baseline: central;
-  text-anchor: end;
-  fill: black;
-}
-
-path.position-pointer {
-  fill: transparent;
-  stroke: black;
-  stroke-width: 1px;
-}
-
-path.position-arrow {
-  fill: transparent;
-  stroke-width: 2px;
-}
-
-text.position-group-title {
-  fill: black;
-  text-anchor: end;
-  font-size: 1.5rem;
-  font-weight: bolder;
 }

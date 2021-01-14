@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
 import capitalize from 'lodash/capitalize';
 
 import {regionShape} from './prop-types';
-
-import style from './style.module.scss';
 
 
 export default class Region extends React.Component {
@@ -55,8 +52,8 @@ export default class Region extends React.Component {
     return {
       x1: x, x2: x + width,
       y1: y, y2: y,
-      className: style.region,
-      style: {stroke: fill}
+      strokeWidth: 2,
+      stroke: fill
     };
   }
 
@@ -81,8 +78,10 @@ export default class Region extends React.Component {
       x,
       y: offsetY + labelFontSize * 1.5 + regionOffsetY,
       width, height, rx, ry: rx,
-      className: style.region,
-      style: {fill}
+      stroke: '#ffffff',
+      strokeOpacity: .8,
+      strokeWidth: 2,
+      fill
     };
   }
 
@@ -101,8 +100,9 @@ export default class Region extends React.Component {
         labelPosition = 'over'
       }
     } = this.props;
+    const attrs = {};
 
-    let x, y, className;
+    let x, y;
     if (labelPosition === 'over' || labelPosition === 'after') {
       y = offsetY + labelFontSize * 1.5 + height / 2 + regionOffsetY;
       if (labelPosition === 'over') {
@@ -111,7 +111,7 @@ export default class Region extends React.Component {
       else { // labelPosition === 'after'
         x = scaleX(posEnd) + labelIndent;
       }
-      className = style['region-label'];
+      attrs.dominantBaseline = 'central';
     }
     else { // labelPosition === above/below
       x = (scaleX(posStart) + scaleX(posEnd)) / 2;
@@ -121,15 +121,14 @@ export default class Region extends React.Component {
       else {
         y = offsetY + labelFontSize * 2.25 + height + regionOffsetY;
       }
-      className = classNames(
-        style['region-label'], style['h-center']
-      );
+      attrs.dominantBaseline = 'central';
+      attrs.textAnchor = 'middle';
     }
     return {
       x, y,
       fontSize: labelFontSize,
-      className,
-      style: {fill: color}
+      ...attrs,
+      fill: color
     };
   }
 
@@ -143,22 +142,24 @@ export default class Region extends React.Component {
       region: {
         posStart,
         posEnd,
-        color = 'black',
+        color = '#000000',
         offsetY: regionOffsetY = 0,
         labelPosition = 'above'
       }
     } = this.props;
 
-    let x, y, className;
+    const attrs = {};
+
+    let x, y;
     if (labelPosition === 'over') {
       x = scaleX(posStart) + labelIndent;
       y = offsetY + labelFontSize * 1.5 + height / 4 + regionOffsetY;
-      className = style['region-label'];
+      attrs.dominantBaseline = 'central';
     }
     else if (labelPosition === 'after') {
       y = offsetY + labelFontSize * 1.5 + height / 2 + regionOffsetY;
       x = scaleX(posEnd) + labelIndent;
-      className = style['region-label'];
+      attrs.dominantBaseline = 'central';
     }
     else {
       // label_position === above
@@ -169,21 +170,20 @@ export default class Region extends React.Component {
       else {
         y = offsetY + labelFontSize * 2.25 + height + regionOffsetY;
       }
-      className = classNames(
-        style['region-label'], style['h-center']
-      );
+      attrs.dominantBaseline = 'central';
+      attrs.textAnchor = 'end';
     }
     return {
       x, y,
       fontSize: labelFontSize,
-      className,
-      style: {fill: color}
+      ...attrs,
+      fill: color
     };
   }
 
   render() {
     const {labelText} = this;
-    const {region: {name, shapeType}} = this.props;
+    const {region: {shapeType}} = this.props;
 
     let shapeProps = {};
     let labelProps = {};
@@ -197,7 +197,7 @@ export default class Region extends React.Component {
     }
 
 
-    return <g id={`region-${name}`}>
+    return <g>
       {React.createElement(shapeType, shapeProps)}
       {labelText && <text {...labelProps}>{labelText}</text>}
     </g>;
