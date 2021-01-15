@@ -19,13 +19,13 @@
       "#": "preSpike",
       "posStart": 1,
       "posEnd": 21562,
-      "scaleRatio": 0.25
+      "scaleRatio": 0.15
     },
     {
       "#": "S1",
       "posStart": 21563,
       "posEnd": 23633,
-      "scaleRatio": 0.4
+      "scaleRatio": 0.5
     },
     {
       "#": "S2",
@@ -237,6 +237,10 @@
           "pos": 22877
         },
         {
+          "name": "E484K",
+          "pos": 23012
+        },
+        {
           "name": "N501Y",
           "pos": 23063
         },
@@ -302,6 +306,10 @@
         {
           "name": "E484K",
           "pos": 23012
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
         },
         {
           "name": "V1176F",

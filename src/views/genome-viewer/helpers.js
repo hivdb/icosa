@@ -13,9 +13,9 @@ export function removeOverlaps(posGroup, scaleX) {
   let prevX;
   let maxOffsetY = 0;
 
-  const extendedRight = extendPositions(
+  let extendedRight = extendPositions(
     positions, 1,
-    pos => pos > posMiddle,
+    pos => pos >= posMiddle,
     diff => diff < hGap / 2
   );
   const extendedLeft = extendPositions(
@@ -23,6 +23,12 @@ export function removeOverlaps(posGroup, scaleX) {
     pos => pos <= posMiddle,
     diff => -diff < hGap / 1.5
   );
+  if (extendedRight.length > 0) {
+    // PosObjs having pos === posMiddle are in both extendedLeft
+    // and extendedRight for comprehensively detecting overlaps.
+    // Then we should remove them from one of the extendedXX
+    extendedRight = extendedRight.filter(({pos}) => pos !== posMiddle);
+  }
   const extended = [...extendedLeft.reverse(), ...extendedRight];
   for (const {turns} of extended) {
     if (turns.length === 1) {

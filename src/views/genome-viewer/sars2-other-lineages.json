@@ -19,13 +19,13 @@
       "#": "preSpike",
       "posStart": 1,
       "posEnd": 21562,
-      "scaleRatio": 0.25
+      "scaleRatio": 0.15
     },
     {
       "#": "S1",
       "posStart": 21563,
       "posEnd": 23633,
-      "scaleRatio": 0.4
+      "scaleRatio": 0.5
     },
     {
       "#": "S2",
@@ -134,6 +134,14 @@
         {
           "name": "T478K",
           "pos": 22994
+        },
+        {
+          "name": "E484A",
+          "pos": 23012
+        },
+        {
+          "name": "F486I",
+          "pos": 23018
         },
         {
           "name": "Q493K",
