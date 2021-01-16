@@ -1,9 +1,9 @@
 {
   "name": "sars2-other-lineages",
   "label": "SARS-CoV-2 Other Lineages",
-  "width": 1620,
-  "height": 1000,
-  "paddingLeft": 160,
+  "width": 1720,
+  "height": 1650,
+  "paddingLeft": 260,
   "paddingRight": 60,
   "paddingTop": 20,
   "positionAxis": {
@@ -45,6 +45,13 @@
       "name": "Kemp",
       "label": "Kemp",
       "positions": [
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
         {
           "name": "HV69-70del",
           "label": "HV69-70Δ",
@@ -93,6 +100,13 @@
       "label": "McCarthy",
       "positions": [
         {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
           "name": "HV69-70del",
           "label": "HV69-70Δ",
           "pos": 21767
@@ -122,6 +136,13 @@
       "name": "Choi",
       "label": "Choi",
       "positions": [
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
         {
           "name": "GVY142-144del",
           "label": "GVY142-144Δ",
@@ -169,6 +190,13 @@
       "name": "Avanzato",
       "label": "Avanzato",
       "positions": [
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
         {
           "name": "PFLGVYY139-145del",
           "label": "PFLGVYY139-145Δ",
@@ -223,6 +251,13 @@
           "color": "#a0a0a0"
         },
         {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
           "name": "S50L",
           "pos": 21710
         },
@@ -269,6 +304,307 @@
         {
           "name": "N:R195G",
           "pos": 28856,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
+      ]
+    },
+    {
+      "name": "Tu-677H",
+      "label": "Tu (COH.20G/677H)",
+      "positions": [
+        {
+          "#name": "ORF1a:M2606I",
+          "name": "PL:M1788I",
+          "pos": 8081,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:L3352F",
+          "name": "3CL:L89F",
+          "pos": 10319,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:N6054D",
+          "name": "nsp14:N129D",
+          "pos": 18424,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:R7014C",
+          "name": "nsp16:R216C",
+          "pos": 21304,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "Q677H",
+          "pos": 23591
+        },
+        {
+          "name": "ORF3a:G172V",
+          "pos": 25906,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "M:A85S",
+          "pos": 26775,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:S24L",
+          "pos": 27963,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:P67S",
+          "pos": 28472,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:P199L",
+          "pos": 28868,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:D377Y",
+          "pos": 29402,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
+      ]
+    },
+    {
+      "name": "Tu-501Y",
+      "label": "Tu (COH.20G/501Y)",
+      "positions": [
+        {
+          "#name": "ORF1a:L3352F",
+          "name": "3CL:L89F",
+          "pos": 10319,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:N6054D",
+          "name": "nsp14:N129D",
+          "pos": 18424,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:R7014C",
+          "name": "nsp16:R216C",
+          "pos": 21304,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N501Y",
+          "pos": 23063
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "ORF3a:G172V",
+          "pos": 25906,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:S24L",
+          "pos": 27963,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "ORF8:R52I",
+          "pos": 28047,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:P67S",
+          "pos": 28472,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:P199L",
+          "pos": 28868,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        }
+      ]
+    },
+    {
+      "name": "Khatamzas",
+      "label": "Khatamzas",
+      "positions": [
+        {
+          "name": "5-UTR:C241T",
+          "label": "5'-UTR:C241T",
+          "pos": 241,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:G98V",
+          "name": "nsp1:G98V",
+          "pos": 557,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:K669E",
+          "name": "nsp2:K489E",
+          "pos": 2270,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:G1100V",
+          "name": "PL:G282V",
+          "pos": 3563,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:T1322I",
+          "name": "PL:T504I",
+          "pos": 4229,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:I1326V",
+          "name": "PL:I508V",
+          "pos": 4241,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:T1638I",
+          "name": "PL:T820I",
+          "pos": 5177,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:N3159S",
+          "name": "nsp4:N396S",
+          "pos": 9740,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:T3284I",
+          "name": "3CL:T21I",
+          "pos": 10115,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:Q3729R",
+          "name": "nsp6:Q160R",
+          "pos": 11450,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1a:V4101F",
+          "name": "nsp8:V159F",
+          "pos": 12566,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:P4715L",
+          "name": "RdRP:P323L",
+          "pos": 14407,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "#name": "ORF1ab:V6521L",
+          "name": "nsp15:V69L",
+          "pos": 19825,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "Y144del",
+          "label": "Y144Δ",
+          "pos": 21992
+        },
+        {
+          "name": "S477N",
+          "pos": 22991
+        },
+        {
+          "name": "E484K",
+          "pos": 23012
+        },
+        {
+          "name": "D614G",
+          "pos": 23402
+        },
+        {
+          "name": "ORF6:V5I",
+          "pos": 27214,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:R203K",
+          "pos": 28880,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:G204R",
+          "pos": 28883,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:T325K",
+          "pos": 29246,
+          "stroke": "#e0e0e0",
+          "color": "#a0a0a0"
+        },
+        {
+          "name": "N:T332I",
+          "pos": 29267,
           "stroke": "#e0e0e0",
           "color": "#a0a0a0"
         }
