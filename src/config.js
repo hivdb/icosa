@@ -70,18 +70,8 @@ const mutAnnotViewerConfig = {
 
 
 const genomeViewerConfig = {
-  presets: [
-    {
-      name: 'sars2-linages',
-      label: "SARS-CoV-2 Lineages",
-      payloadLoader: makeCMSLoader('genome-viewer/sars2-lineages')
-    },
-    {
-      name: 'sars2-case-reports',
-      label: "SARS-CoV-2 Prolonged Case Reports",
-      payloadLoader: makeCMSLoader('genome-viewer/sars2-case-reports')
-    }
-  ]
+  indexLoader: makeCMSLoader('mutation-viewer/index'),
+  makePresetLoader: name => makeCMSLoader(`mutation-viewer/${name}`)
 };
 
 

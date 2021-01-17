@@ -115,35 +115,23 @@ class GenomeViewer extends React.Component {
 export default class GenomeViewerLoader extends React.Component {
 
   static propTypes = {
-    options: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.string.isRequired,
-        label: PropTypes.node.isRequired
-      }).isRequired
-    ).isRequired,
-    preset: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      label: PropTypes.node.isRequired,
-      payloadLoader: PropTypes.func.isRequired
-    }).isRequired
+    presetLoader: PropTypes.func.isRequired
   }
 
   static getDerivedStateFromProps(props, state) {
     const {
-      options,
-      preset: {
-        payloadLoader
-      }
+      presetLoader
     } = props;
-    if (state.payloadLoader === payloadLoader) {
+    if (state.presetLoader === presetLoader) {
       return null;
     }
     
     return {
-      payloadLoader,
+      presetLoader,
       promise: (async () => {
-        const preset = await payloadLoader();
-        return {preset, options};
+        const {presets, ...preset} = await presetLoader();
+        const options = presets.map(({name, label}) => ({value: name, label}));
+        return {options, preset};
       })()
     };
   }
