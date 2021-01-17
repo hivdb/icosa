@@ -78,7 +78,7 @@ const genomeViewerConfig = {
     },
     {
       name: 'sars2-case-reports',
-      display: "SARS-CoV-2 Prolonged Case Reports",
+      label: "SARS-CoV-2 Prolonged Case Reports",
       payloadLoader: makeCMSLoader('genome-viewer/sars2-case-reports')
     }
   ]
