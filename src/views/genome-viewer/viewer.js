@@ -10,11 +10,12 @@ import {
 import RegionGroup from './region-group';
 import Markdown from '../../components/markdown';
 import DownloadSVG from '../../components/download-svg';
+import PromiseComponent from '../../utils/promise-component';
 
 import style from './style.module.scss';
 
 
-export default class GenomeViewer extends React.Component {
+class GenomeViewer extends React.Component {
 
   static propTypes = {
     preset: PropTypes.shape({
@@ -98,5 +99,51 @@ export default class GenomeViewer extends React.Component {
     </div>;
   }
 
+
+}
+
+
+export default class GenomeViewerLoader extends React.Component {
+
+  static propTypes = {
+    preset: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      label: PropTypes.node.isRequired,
+      payloadLoader: PropTypes.func.isRequired
+    }).isRequired
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const {
+      preset: {
+        payloadLoader
+      }
+    } = props;
+    if (state.payloadLoader === payloadLoader) {
+      return null;
+    }
+    
+    return {
+      payloadLoader,
+      promise: (async () => {
+        const preset = await payloadLoader();
+        return {preset};
+      })()
+    };
+  }
+
+  constructor() {
+    super(...arguments);
+    this.state = this.constructor.getDerivedStateFromProps(this.props, {});
+  }
+
+  render() {
+    const {promise} = this.state;
+    return (
+      <PromiseComponent
+       promise={promise}
+       component={GenomeViewer} />
+    );
+  }
 
 }

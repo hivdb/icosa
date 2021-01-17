@@ -34,12 +34,20 @@ const cmsPrefix = (
 );
 
 
-function makeMutationAnnotationLoader(name) {
+function makeCMSLoader(name) {
   return async() => {
     const resp = await fetch(
       `${cmsPrefix}/${name}.json`
     );
-    const {data, comments = []} = await resp.json();
+    return await resp.json();
+  };
+}
+
+
+function makeMutAnnotLoader(name) {
+  const cmsLoader = makeCMSLoader(name);
+  return async() => {
+    const {data, comments = []} = await cmsLoader();
     return {...data, comments};
   };
 }
@@ -50,12 +58,28 @@ const mutAnnotViewerConfig = {
     {
       name: 'SARS2S',
       display: "SARS-CoV-2 Spike gene",
-      annotationLoader: makeMutationAnnotationLoader('mutannot-spike')
+      annotationLoader: makeMutAnnotLoader('mutannot-spike')
     },
     {
       name: 'SARS2RdRP',
       display: "SARS-CoV-2 RNA-dependent RNA polymerase",
-      annotationLoader: makeMutationAnnotationLoader('mutannot-rdrp')
+      annotationLoader: makeMutAnnotLoader('mutannot-rdrp')
+    }
+  ]
+};
+
+
+const genomeViewerConfig = {
+  presets: [
+    {
+      name: 'sars2-linages',
+      label: "SARS-CoV-2 Lineages",
+      payloadLoader: makeCMSLoader('genome-viewer/sars2-lineages')
+    },
+    {
+      name: 'sars2-case-reports',
+      display: "SARS-CoV-2 Prolonged Case Reports",
+      payloadLoader: makeCMSLoader('genome-viewer/sars2-case-reports')
     }
   ]
 };
@@ -159,5 +183,6 @@ export default {
       )
     }
   ],
-  mutAnnotViewer: mutAnnotViewerConfig
+  mutAnnotViewer: mutAnnotViewerConfig,
+  genomeViewer: genomeViewerConfig
 };

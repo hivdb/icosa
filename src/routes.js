@@ -16,7 +16,7 @@ const routes = (
       <Route Component={MarkdownDebugger} path="markdown-debugger" />
       {SARS2Routes()}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}
-      {GenomeViewerRoutes({})}
+      {GenomeViewerRoutes(config.genomeViewer)}
     </Route>
   </Route>
 );

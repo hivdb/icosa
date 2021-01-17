@@ -6,18 +6,12 @@ import PresetSelection from './preset-selection';
 import GenomeViewer from './viewer';
 
 import CustomColors from '../../components/custom-colors';
-
-import sars2MajorLineagesPreset from './sars2-major-lineages.json';
-import sars2OtherLineagesPreset from './sars2-other-lineages.json';
 import style from './style.module.scss';
 
 
 export default function GenomeViewerRoutes({
   pathPrefix = "genome-viewer/",
-  presets = [
-    sars2MajorLineagesPreset,
-    sars2OtherLineagesPreset
-  ],
+  presets = [],
   colors,
   className
 } = {}) {
