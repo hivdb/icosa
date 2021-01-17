@@ -2,20 +2,17 @@
 @import "../../styles/dropdown";
 @import "../../styles/functions";
 
-.genome-viewer {
-  @include default-color();
-  .preset-selection {
-    @extend %large-dropdown;
-    :global(.Dropdown-root) {
-      max-width: 32rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
+.preset-selection {
+  @extend %large-dropdown;
+  :global(.Dropdown-root) {
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .viewer-container {
-    overflow-x: auto;
-  }
-  .footnote {
-    margin-top: 1rem;
-  }
+}
+.viewer-container {
+  overflow-x: auto;
+}
+.footnote {
+  margin-top: 1rem;
 }
