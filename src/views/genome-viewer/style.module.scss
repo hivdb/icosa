@@ -2,19 +2,51 @@
 @import "../../styles/dropdown";
 @import "../../styles/functions";
 
-.preset-selection {
+.genome-viewer {
   @include default-color();
-  @extend %large-dropdown;
-  :global(.Dropdown-root) {
-    max-width: 32rem;
-    margin-left: auto;
-    margin-right: auto;
+  
+  .preset-selection {
+    @extend %base-dropdown;
   }
-}
-.viewer-container {
-  overflow-x: auto;
-}
-.footnote {
-  margin-top: 1rem;
-}
+  .main-preset-selection {
+    @extend %large-dropdown;
+    :global(.Dropdown-root) {
+      max-width: 32rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
 
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .viewer-container {
+    .preset-selection {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 1rem;
+
+      :global .Dropdown-control {
+        padding: 5px 64px 6px 12px;
+        font-size: 1.2rem;
+      }
+      :global .Dropdown-option {
+        padding: 8px 10px;
+        font-size: 1.2rem;
+      }
+      :global .Dropdown-arrow {
+        width: 30px;
+      }
+    }
+
+    .svg-container {
+      overflow-x: auto;
+    }
+  }
+
+  .footnote {
+    margin-top: 1rem;
+  }
+}  

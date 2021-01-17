@@ -26,7 +26,9 @@ export default function GenomeViewerRoutes({
 
   return <Route path={pathPrefix} Component={wrapper}>
     <Route render={({props}) => (
-      <PresetSelection {...props} options={presetOptions} />
+      <PresetSelection {...props}
+       className={style['main-preset-selection']}
+       options={presetOptions} />
     )} />
     {presets.map(({name, ...preset}) => (
       <Route
@@ -35,6 +37,7 @@ export default function GenomeViewerRoutes({
        render={({props}) => (
          <GenomeViewer
           {...props}
+          options={presetOptions}
           preset={{name, ...preset}} />
        )} />
     ))}

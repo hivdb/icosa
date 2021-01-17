@@ -12,12 +12,19 @@ import Markdown from '../../components/markdown';
 import DownloadSVG from '../../components/download-svg';
 import PromiseComponent from '../../utils/promise-component';
 
+import PresetSelection from './preset-selection';
 import style from './style.module.scss';
 
 
 class GenomeViewer extends React.Component {
 
   static propTypes = {
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        label: PropTypes.node.isRequired
+      }).isRequired
+    ).isRequired,
     preset: PropTypes.shape({
       name: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
@@ -52,6 +59,7 @@ class GenomeViewer extends React.Component {
 
   render() {
     const {
+      options,
       preset: {
         name,
         width,
@@ -67,14 +75,15 @@ class GenomeViewer extends React.Component {
         footnote
       }
     } = this.props;
-    return <div>
-      <div>
+    return <div className={style['viewer-container']}>
+      <div className={style['button-group']}>
+        <PresetSelection as="div" options={options} />
         <DownloadSVG
          css="none"
          target={this.svgRef}
          fileName={`${name}.svg`} />
       </div>
-      <div className={style['viewer-container']}>
+      <div className={style['svg-container']}>
         <svg
          ref={this.svgRef}
          width={`${width}px`}
@@ -106,6 +115,12 @@ class GenomeViewer extends React.Component {
 export default class GenomeViewerLoader extends React.Component {
 
   static propTypes = {
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        label: PropTypes.node.isRequired
+      }).isRequired
+    ).isRequired,
     preset: PropTypes.shape({
       name: PropTypes.string.isRequired,
       label: PropTypes.node.isRequired,
@@ -115,6 +130,7 @@ export default class GenomeViewerLoader extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     const {
+      options,
       preset: {
         payloadLoader
       }
@@ -127,7 +143,7 @@ export default class GenomeViewerLoader extends React.Component {
       payloadLoader,
       promise: (async () => {
         const preset = await payloadLoader();
-        return {preset};
+        return {preset, options};
       })()
     };
   }
@@ -139,11 +155,11 @@ export default class GenomeViewerLoader extends React.Component {
 
   render() {
     const {promise} = this.state;
-    return (
+    return <>
       <PromiseComponent
        promise={promise}
        component={GenomeViewer} />
-    );
+    </>;
   }
 
 }

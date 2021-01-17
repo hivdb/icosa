@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRouter} from 'found';
 import classNames from 'classnames';
 import {matchShape, routerShape} from 'found';
 import PropTypes from 'prop-types';
@@ -7,7 +8,7 @@ import Dropdown from 'react-dropdown';
 import style from './style.module.scss';
 
 
-export default class PresetSelection extends React.Component {
+class PresetSelection extends React.Component {
 
   static propTypes = {
     className: PropTypes.string,
@@ -17,8 +18,16 @@ export default class PresetSelection extends React.Component {
       PropTypes.shape({
         value: PropTypes.string.isRequired,
         label: PropTypes.node.isRequired
-      })
-    ).isRequired
+      }).isRequired
+    ).isRequired,
+    as: PropTypes.oneOfType([
+      PropTypes.string.isRequired,
+      PropTypes.func.isRequired
+    ]).isRequired
+  }
+
+  static defaultProps = {
+    as: 'section'
   }
 
   handleChange = ({value}) => {
@@ -27,17 +36,24 @@ export default class PresetSelection extends React.Component {
   }
 
   render() {
-    const {className, options} = this.props;
-    return <section className={classNames(
-      style['preset-selection'],
-      className
-    )}>
+    const {as, className, options} = this.props;
+    return React.createElement(
+      as,
+      {
+        className: classNames(
+          style['preset-selection'],
+          className
+        )
+      },
       <Dropdown
-       placeholder="Choose a virus to view..."
+       placeholder="Choose a genome view..."
        options={options}
        name="preset"
        onChange={this.handleChange} />
-    </section>;
+    );
   }
 
 }
+
+
+export default withRouter(PresetSelection);
