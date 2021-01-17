@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import {matchShape, routerShape} from 'found';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
@@ -9,6 +10,7 @@ import style from './style.module.scss';
 export default class PresetSelection extends React.Component {
 
   static propTypes = {
+    className: PropTypes.string,
     match: matchShape.isRequired,
     router: routerShape.isRequired,
     options: PropTypes.arrayOf(
@@ -25,8 +27,11 @@ export default class PresetSelection extends React.Component {
   }
 
   render() {
-    const {options} = this.props;
-    return <section className={style['preset-selection']}>
+    const {className, options} = this.props;
+    return <section className={classNames(
+      style['preset-selection'],
+      className
+    )}>
       <Dropdown
        placeholder="Choose a virus to view..."
        options={options}

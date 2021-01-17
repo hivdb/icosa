@@ -3,6 +3,7 @@
 @import "../../styles/functions";
 
 .preset-selection {
+  @include default-color();
   @extend %large-dropdown;
   :global(.Dropdown-root) {
     max-width: 32rem;
@@ -16,3 +17,4 @@
 .footnote {
   margin-top: 1rem;
 }
+
