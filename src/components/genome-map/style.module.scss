@@ -1,0 +1,35 @@
+@import "../../styles/default-colors";
+@import "../../styles/functions";
+
+.map-container {
+  position: relative;
+
+  .button-group {
+    display: none;
+    position: sticky;
+    height: 1.5rem;
+    margin-bottom: -1.5rem;
+    right: 10px;
+    top: 10px;
+    justify-content: flex-end;
+  
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+      &:not(last-child) {
+        margin-right: 1rem;
+      }
+    }
+  }
+
+  &:hover {
+    .button-group {
+      display: flex;
+    }
+  }
+
+  .svg-container {
+    overflow-x: auto;
+  }
+
+}

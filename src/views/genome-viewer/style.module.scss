@@ -22,28 +22,26 @@
     justify-content: flex-end;
   }
 
-  .viewer-container {
-    .preset-selection {
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 1rem;
+  .preset-selection:not(.main-preset-selection) {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 1rem;
 
-      :global .Dropdown-control {
-        padding: 5px 64px 6px 12px;
-        font-size: 1.2rem;
-      }
-      :global .Dropdown-option {
-        padding: 8px 10px;
-        font-size: 1.2rem;
-      }
-      :global .Dropdown-arrow {
-        width: 30px;
-      }
+    :global .Dropdown-control {
+      padding: 4px 36px 4px 6px;
+      font-size: .7rem;
     }
+    :global .Dropdown-option {
+      padding: 6px;
+      font-size: .7rem;
+    }
+    :global .Dropdown-arrow {
+      width: 20px;
+    }
+  }
 
-    .svg-container {
-      overflow-x: auto;
-    }
+  .viewer-container .svg-container {
+    overflow-x: auto;
   }
 
   .footnote {

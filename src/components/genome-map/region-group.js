@@ -101,6 +101,7 @@ export default class RegionGroup extends React.Component {
     width: PropTypes.number.isRequired,
     domains: domainsShape.isRequired,
     positionGroups: positionGroupsShape,
+    hidePositionAxis: PropTypes.bool.isRequired,
     positionAxis: positionAxisShape,
     regions: PropTypes.arrayOf(
       regionShape.isRequired
@@ -150,6 +151,7 @@ export default class RegionGroup extends React.Component {
   render() {
     const {scaleX} = this.state;
     const {
+      hidePositionAxis,
       positionAxis,
       paddingTop,
       positionGroups,
@@ -160,13 +162,13 @@ export default class RegionGroup extends React.Component {
       // subregionGroup
     } = this.props;
     const [posStart, posEnd] = scaleX.domain();
-    let addOffsetY = 0;
+    let addOffsetY = hidePositionAxis ? -30 : 0;
 
     return <g id={`region-group-${posStart}_${posEnd}`}>
-      <PositionAxis
+      {hidePositionAxis ? null : <PositionAxis
        offsetY={paddingTop}
        scaleX={scaleX}
-       positionAxis={positionAxis} />
+       positionAxis={positionAxis} />}
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
         const longestPosLabelLen = Math.max(
@@ -181,7 +183,11 @@ export default class RegionGroup extends React.Component {
            scaleX={scaleX}
            offsetY={paddingTop + addOffsetY + 30} />
         </React.Fragment>;
-        addOffsetY += posGroup.addOffsetY + 105 + longestPosLabelLen * 5;
+        addOffsetY += (
+          posGroup.addOffsetY +
+          longestPosLabelLen * 5 +
+          105
+        );
         return jsx;
       })}
       {/*
