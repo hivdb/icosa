@@ -15,6 +15,7 @@ import 'typeface-source-sans-pro';
 
 import routes from './routes';
 import * as serviceWorker from './serviceWorker';
+import './index.module.scss';
 
 const Router = createFarceRouter({
   historyProtocol: new BrowserProtocol(),

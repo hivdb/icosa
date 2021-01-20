@@ -1,9 +1,7 @@
-@import "../../styles/default-colors";
 @import "../../styles/dropdown";
 @import "../../styles/functions";
 
 .genome-viewer {
-  @include default-color();
   
   .preset-selection {
     @extend %base-dropdown;

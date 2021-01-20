@@ -47,6 +47,7 @@
     "normalize-scss": "^7.0.1",
     "object-merge": "^2.5.1",
     "randomcolor": "^0.6.2",
+    "raw-loader": "^4.0.2",
     "react-children-utilities": "^2.2.2",
     "react-dropdown": "^1.7.0",
     "react-dropzone": "^11.0.1",

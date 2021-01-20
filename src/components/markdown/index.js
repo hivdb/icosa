@@ -16,6 +16,7 @@ import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
 import macroPlugin, {BadMacroNode} from './macro-plugin';
 import TableNodeWrapper from './macro-table';
+import GenomeMapNode from './macro-genome-map';
 
 
 /*function parsedHtml({element, escapeHtml, skipHtml, value}) {
@@ -103,6 +104,7 @@ export default class Markdown extends React.Component {
       ...generalRenderers,
       BadMacroNode,
       TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
+      GenomeMapNode,
       // table: SimpleTableContainer,
       // parsedHtml,
       ...(inline ? {} : {root: RootWrapper}),

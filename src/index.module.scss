@@ -1,0 +1,5 @@
+@import "./styles/default-colors";
+
+body {
+  @include default-color;
+}

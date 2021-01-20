@@ -1,9 +1,7 @@
-@import "../../styles/default-colors";
 @import "../../styles/dropdown";
 @import "../../styles/functions";
 
 .mut-annot-viewer {
-  @include default-color();
   .preset-selection {
     @extend %large-dropdown;
     :global(.Dropdown-root) {
