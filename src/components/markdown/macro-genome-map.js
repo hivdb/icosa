@@ -6,11 +6,21 @@ import GenomeMap from '../genome-map';
 macroPlugin.addMacro('genomemap', (content) => {
   return {
     type: 'GenomeMapNode',
-    preset: JSON.parse(content.trim())
+    mapName: content.trim()
   };
 });
 
 
-export default function GenomeMapNode({preset}) {
-  return <GenomeMap preset={preset} />;
+export default function GenomeMapNodeWrapper({genomeMaps}) {
+  return ({mapName}) => {
+    if (mapName in genomeMaps) {
+      const preset = genomeMaps[mapName];
+      return <GenomeMap preset={preset} />;
+    }
+    else {
+      return <div>
+        <strong>Error</strong>: genome-map data of {mapName} is not found.
+      </div>;
+    }
+  };
 }

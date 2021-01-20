@@ -16,7 +16,8 @@ import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
 import macroPlugin, {BadMacroNode} from './macro-plugin';
 import TableNodeWrapper from './macro-table';
-import GenomeMapNode from './macro-genome-map';
+import GenomeMapNodeWrapper from './macro-genome-map';
+import {presetShape as genomeMapPresetShape} from '../genome-map';
 
 
 /*function parsedHtml({element, escapeHtml, skipHtml, value}) {
@@ -49,6 +50,7 @@ export default class Markdown extends React.Component {
     LoadReferences: PropTypes.func,
     imagePrefix: PropTypes.string,
     cmsPrefix: PropTypes.string,
+    genomeMaps: PropTypes.objectOf(genomeMapPresetShape.isRequired),
     tables: PropTypes.objectOf(PropTypes.shape({
       columnDefs: PropTypes.array.isRequired,
       data: PropTypes.array.isRequired
@@ -78,6 +80,7 @@ export default class Markdown extends React.Component {
       imagePrefix,
       cmsPrefix,
       tables,
+      genomeMaps,
       LoadReferences,
       renderers: addRenderers, ...props
     } = this.props;
@@ -104,7 +107,7 @@ export default class Markdown extends React.Component {
       ...generalRenderers,
       BadMacroNode,
       TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
-      GenomeMapNode,
+      GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
       // table: SimpleTableContainer,
       // parsedHtml,
       ...(inline ? {} : {root: RootWrapper}),
