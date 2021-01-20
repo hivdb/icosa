@@ -27,10 +27,12 @@
 
     :global .Dropdown-control {
       padding: 4px 36px 4px 6px;
+      line-height: 1.15;
       font-size: .7rem;
     }
     :global .Dropdown-option {
       padding: 6px;
+      line-height: 1.15;
       font-size: .7rem;
     }
     :global .Dropdown-arrow {
