@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
-
-import PresetSelection from './preset-selection';
-import MutAnnotViewer from './viewer';
+import Loader from 'react-loader';
 
 import CustomColors from '../../components/custom-colors';
 
 import style from './style.module.scss';
+
+const PresetSelection = lazy(() => import('./preset-selection'));
+const MutAnnotViewer = lazy(() => import('./viewer'));
 
 
 export default function MutAnnotViewerRoutes({
@@ -41,11 +42,11 @@ export default function MutAnnotViewerRoutes({
   </Route>;
 
   function wrapper(props) {
-    return (
+    return <Suspense fallback={<Loader loaded={false} />}>
       <CustomColors
        {...props}
        className={wrapperClassName}
        colors={colors} />
-    );
+    </Suspense>;
   }
 }

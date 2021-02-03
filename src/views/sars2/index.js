@@ -1,10 +1,8 @@
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import {Route, Redirect} from 'found';
 import makeClassNames from 'classnames';
+import Loader from 'react-loader';
 
-import SeqAnaForms from './forms';
-import ReportBySequences from './report-by-sequences';
-import ReportBySeqReads from './report-by-reads';
 import style from './style.module.scss';
 import defaultConfig from './config';
 
@@ -12,6 +10,10 @@ import ConfigContext, {
   configWrapper
 } from '../../components/report/config-context';
 import CustomColors from '../../components/custom-colors';
+
+const SeqAnaForms = lazy(() => import('./forms'));
+const ReportBySequences = lazy(() => import('./report-by-sequences'));
+const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
 
 export default function SARS2Routes({
@@ -48,10 +50,12 @@ export default function SARS2Routes({
   </Route>;
 
   function wrapper({children}) {
-    return <CustomColors className={wrapperClassName} colors={colors}>
-      <ConfigContext.Provider value={configContext}>
-        {children}
-      </ConfigContext.Provider>
-    </CustomColors>;
+    return <Suspense fallback={<Loader loaded={false} />}>
+      <CustomColors className={wrapperClassName} colors={colors}>
+        <ConfigContext.Provider value={configContext}>
+          {children}
+        </ConfigContext.Provider>
+      </CustomColors>
+    </Suspense>;
   }
 }

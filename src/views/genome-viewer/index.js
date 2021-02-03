@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
-
-import PresetSelection from './preset-selection';
-import GenomeViewer from './viewer';
+import Loader from 'react-loader';
 
 import PromiseComponent from '../../utils/promise-component';
 import CustomColors from '../../components/custom-colors';
 import style from './style.module.scss';
+
+const PresetSelection = lazy(() => import('./preset-selection'));
+const GenomeViewer = lazy(() => import('./viewer'));
 
 
 export default function GenomeViewerRoutes({
@@ -51,10 +52,12 @@ export default function GenomeViewerRoutes({
 
   function wrapper(props) {
     return (
-      <CustomColors
-       {...props}
-       className={wrapperClassName}
-       colors={colors} />
+      <Suspense fallback={<Loader loaded={false} />}>
+        <CustomColors
+         {...props}
+         className={wrapperClassName}
+         colors={colors} />
+      </Suspense>
     );
   }
 }
