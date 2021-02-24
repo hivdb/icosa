@@ -1,60 +1,77 @@
 import React from 'react';
-import {matchShape} from 'found';
 import PropTypes from 'prop-types';
 
-import {getSeqReadsFromHash} from '../../utils/seqreads-loader';
-import memoize from '../../utils/memoize-decorator';
+import Paginator from '../paginator';
 
-import Sidebar, {SidebarItem} from '../sidebar';
+import style from './style.module.scss';
 
 
 export default class SeqReadsSidebar extends React.Component {
 
   static propTypes = {
-    match: matchShape.isRequired,
     allSequenceReads: PropTypes.array.isRequired,
+    currentSelected: PropTypes.shape({
+      index: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired
+    }),
     onSelect: PropTypes.func
   }
 
-  __hash__() {
-    return 'SeqReadsSidebar';
+  constructor() {
+    super(...arguments);
+    this.containerRef = React.createRef();
+    this.state = {fixed: false};
   }
 
-  getCurrentSelected = memoize((match, allSequenceReads) => {
-    const {location: {hash}} = match;
-    const seqReads = getSeqReadsFromHash(hash, allSequenceReads);
-    return seqReads.name;
-  });
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleWindowScroll, false);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleWindowScroll, false);
+  }
+
+  handleWindowScroll = evt => {
+    const {prevFixed} = this.state;
+    const {top} = this.containerRef.current.getBoundingClientRect();
+    const fixed = top === 0;
+    if (fixed !== prevFixed) {
+      this.setState({fixed});
+    }
+  }
 
   handleClick(e, seqReads) {
-    e.preventDefault();
+    e && e.preventDefault();
     const {onSelect} = this.props;
-
     onSelect && onSelect(seqReads);
   }
 
   render() {
-    const {match, allSequenceReads} = this.props;
-    const currentSelected = this.getCurrentSelected(match, allSequenceReads);
-    let isPlural = allSequenceReads.length > 1;
+    const {fixed} = this.state;
+    const {allSequenceReads, currentSelected} = this.props;
 
     return (
-      <Sidebar
-       title={isPlural ?
-         `Found ${allSequenceReads.length} sequences` :
-         'Found one sequence'}
-       currentSelected={currentSelected}>
-        {allSequenceReads
-          .map((seqReads, idx) => (
-            <SidebarItem
-             key={idx}
-             name={seqReads.name}
-             href={`#${seqReads.name}`}
-             onClick={(e) => this.handleClick(e, seqReads)}>
-              {seqReads.name}
-            </SidebarItem>
-        ))}
-      </Sidebar>
+      <div
+       ref={this.containerRef}
+       data-fixed={fixed}
+       className={style['sequence-paginator-container']}>
+        <Paginator
+         footnote={<>
+           This submission contains {allSequenceReads.length} sequences.
+         </>}
+         currentSelected={currentSelected.name}>
+          {allSequenceReads
+            .map((seqReads, idx) => (
+              <Paginator.Item
+               key={idx}
+               name={seqReads.name}
+               href={`#${seqReads.name}`}
+               onClick={(e) => this.handleClick(e, seqReads)}>
+                {seqReads.name}
+              </Paginator.Item>
+          ))}
+        </Paginator>
+      </div>
     );
   }
 

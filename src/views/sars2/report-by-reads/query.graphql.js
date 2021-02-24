@@ -1,15 +1,15 @@
 import gql from 'graphql-tag';
 import {
   query as seqReadsSummaryFragment
-} from '../../components/report/seqreads-summary';
+} from '../../../components/report/seqreads-summary';
 import {
   query as mutStatsFragment
-} from '../../components/report/mutation-stats';
+} from '../../../components/report/mutation-stats';
 import {
   query as extCodonFragment
-} from '../../components/report/seqreads-qa';
+} from '../../../components/report/seqreads-qa';
 
-import {includeFragment} from '../../utils/graphql-helper';
+import {includeFragment} from '../../../utils/graphql-helper';
 
 export default gql`
   fragment HIVDBReportBySequenceReadsRoot on Root {
