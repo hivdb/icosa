@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import {matchShape} from 'found';
 
 import {
-  DRInterpretation, DRMutationScores,
-  SequenceAnalysisQAChart, ValidationReport,
-  SequenceSummary
+  DRInterpretation,
+  DRMutationScores,
+  SequenceAnalysisQAChart,
+  ValidationReport,
+  SequenceSummary as SeqSummary
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -158,7 +160,12 @@ export default class SingleSequenceReport extends React.Component {
          className={style['sequence-header']} id={header}>
           <HLFirstWord index={index}>{header}</HLFirstWord>
         </header>
-        <SequenceSummary {...{sequenceResult, output, strain}} />
+        <SeqSummary {...{sequenceResult, output, strain}}>
+          <SeqSummary.GeneRange />
+          <SeqSummary.GeneMutations />
+          <SeqSummary.PrettyPairwise />
+          <SeqSummary.PangolinLineage />
+        </SeqSummary>
         <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
         <ValidationReport {...sequenceResult} {...{output, strain}} />
         {isCritical ? null :

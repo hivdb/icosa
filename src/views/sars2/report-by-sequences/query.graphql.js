@@ -1,20 +1,23 @@
 import gql from 'graphql-tag.macro';
 
 export default gql`
-  fragment HIVDBReportBySequences on SequenceAnalysis {
+  fragment SARS2ReportBySequences on SequenceAnalysis {
     inputSequence { header }
     strain { name display }
     bestMatchingSubtype {
       display
       referenceAccession
     }
-    subtypes: subtypesV2(first: 10) {
-      displayWithoutDistance
-      subtype { displayName }
-      distancePcnt
-      referenceAccession
-      referenceCountry
-      referenceYear
+    pangolin {
+      version
+      latestVersion
+      loaded
+      asyncResultsURI
+      taxon
+      lineage
+      probability
+      status
+      note
     }
     availableGenes { name }
     validationResults {
