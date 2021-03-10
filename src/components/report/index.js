@@ -10,11 +10,12 @@ import SeqReadsSummary from './seqreads-summary';
 import SeqMutationPrevalence from './seq-mutation-prevalence';
 import AlgComparison from './alg-comparison';
 import ValidationReport from './validation-report';
+import MutationViewer from './mutation-viewer';
 
 export {
   DRInterpretation, DRMutationScores, SequenceSidebar,
   SeqReadsSidebar, SequenceSummary, SeqReadsSummary,
   SeqMutationPrevalence, AlgComparison, ValidationReport,
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
-  MutationStats
+  MutationStats, MutationViewer
 };

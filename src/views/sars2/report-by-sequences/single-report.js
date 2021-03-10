@@ -7,7 +7,8 @@ import {
   DRMutationScores,
   SequenceAnalysisQAChart,
   ValidationReport,
-  SequenceSummary as SeqSummary
+  SequenceSummary as SeqSummary,
+  MutationViewer as MutViewer
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -166,6 +167,7 @@ export default class SingleSequenceReport extends React.Component {
           <SeqSummary.PrettyPairwise />
           <SeqSummary.PangolinLineage />
         </SeqSummary>
+        <MutViewer {...{sequenceResult, output, strain}} />
         <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
         <ValidationReport {...sequenceResult} {...{output, strain}} />
         {isCritical ? null :

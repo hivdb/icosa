@@ -114,7 +114,8 @@ export default class RegionGroup extends React.Component {
       regions: PropTypes.arrayOf(
         regionShape.isRequired
       ).isRequired
-    })
+    }),
+    moveSVGBorder: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -155,22 +156,32 @@ export default class RegionGroup extends React.Component {
       positionAxis,
       paddingTop,
       positionGroups,
-      // paddingRight,
-      // paddingLeft,
-      // width,
+      width,
       regions
       // subregionGroup
     } = this.props;
     const [posStart, posEnd] = scaleX.domain();
     let addOffsetY = hidePositionAxis ? -30 : 0;
+    let minX = 0;
+    let maxX = width;
 
-    return <g id={`region-group-${posStart}_${posEnd}`}>
+    const jsx = <g id={`region-group-${posStart}_${posEnd}`}>
       {hidePositionAxis ? null : <PositionAxis
        offsetY={paddingTop}
        scaleX={scaleX}
        positionAxis={positionAxis} />}
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
+        for (const {turns} of posGroup.positions) {
+          for (const [x] of turns) {
+            if (x < minX) {
+              minX = x;
+            }
+            else if (x > maxX) {
+              maxX = x;
+            }
+          }
+        }
         const longestPosLabelLen = Math.max(
           ...posGroup.positions.map(({name, label}) => (
             typeof label === 'undefined' ? name : label
@@ -208,5 +219,12 @@ export default class RegionGroup extends React.Component {
       )}
       */}
     </g>;
+    this.props.moveSVGBorder({
+      height: paddingTop + addOffsetY + 50,
+      paddingLeft: -minX + 80,
+      paddingRight: maxX - width + 80,
+      width: maxX - minX + 160
+    });
+    return jsx;
   }
 }

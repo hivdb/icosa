@@ -29,6 +29,16 @@ async function popRefAminoAcid(dataURI) {
 }
 
 
+async function loadRegionPresets() {
+  const url = (
+    'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev/' +
+    'pages/sierra-sars2/sars2-region-presets.json'
+  );
+  const resp = await fetch(url);
+  return await resp.json();
+}
+
+
 export default {
   species: 'SARS2',
   graphqlURI: (
@@ -127,5 +137,6 @@ export default {
         'main/resources/aapcnt/rx-all_taxon-SARSr.json'
       )
     }
-  ]
+  ],
+  loadRegionPresets
 };

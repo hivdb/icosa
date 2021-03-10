@@ -40,6 +40,8 @@ export default gql`
       mutations {
         text
         position
+        reference
+        AAs
         primaryType
         isApobecMutation
         hasStop
