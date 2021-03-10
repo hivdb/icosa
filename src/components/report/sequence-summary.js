@@ -159,8 +159,8 @@ function SequenceSummary(props) {
     children
   } = props;
 
-  const {showSDRMs, setShowSDRMs} = useState(output === 'printable');
-  const {showPrettyPairwise, setShowPrettyPairwise} = useState(false);
+  const [showSDRMs, setShowSDRMs] = useState(output === 'printable');
+  const [showPrettyPairwise, setShowPrettyPairwise] = useState(false);
 
   const disableSDRMs = availableGenes.length === 0;
   const disablePrettyPairwise = availableGenes.length === 0;
