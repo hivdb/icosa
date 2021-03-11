@@ -118,7 +118,8 @@ function RealGeneRangeInline({geneSeqs}) {
                 {size > 0 ? <>
                   {' (missing: '}
                   {regions.map(
-                    ({posStart, posEnd}) => `${posStart}-${posEnd}`
+                    ({posStart, posEnd}) => posStart < posEnd ?
+                      `${posStart}-${posEnd}` : posStart
                   ).join(', ')})
                 </> : null}
               </span>
