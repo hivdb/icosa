@@ -80,7 +80,8 @@ function calcUnseqRegionOffsetY(knownRegions, posStart, posEnd) {
     }
     offsetY = Math.max(offsetY, krOffsetY);
   }
-  return offsetY;
+  // minus 10 to have some overlap with rect regions
+  return offsetY - 10;
 }
 
 

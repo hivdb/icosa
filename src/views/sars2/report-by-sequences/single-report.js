@@ -5,7 +5,6 @@ import {matchShape} from 'found';
 import {
   DRInterpretation,
   DRMutationScores,
-  SequenceAnalysisQAChart,
   ValidationReport,
   SequenceSummary as SeqSummary,
   MutationViewer as MutViewer,
@@ -177,8 +176,6 @@ export default class SingleSequenceReport extends React.Component {
           }} />
           <ValidationReport {...sequenceResult} {...{output, strain}} />
         </ReportSection>
-        <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
-        <ValidationReport {...sequenceResult} {...{output, strain}} />
         {isCritical ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
