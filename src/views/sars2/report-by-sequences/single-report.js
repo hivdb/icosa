@@ -8,7 +8,8 @@ import {
   SequenceAnalysisQAChart,
   ValidationReport,
   SequenceSummary as SeqSummary,
-  MutationViewer as MutViewer
+  MutationViewer as MutViewer,
+  ReportSection
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -136,6 +137,7 @@ export default class SingleSequenceReport extends React.Component {
   render() {
     const {
       sequenceResult,
+      sequenceResult: {alignedGeneSequences},
       output,
       index,
       species,
@@ -162,12 +164,19 @@ export default class SingleSequenceReport extends React.Component {
           <HLFirstWord index={index}>{header}</HLFirstWord>
         </header>
         <SeqSummary {...{sequenceResult, output, strain}}>
-          <SeqSummary.GeneRange />
-          <SeqSummary.GeneMutations />
+          <SeqSummary.GeneRangeInline />
+          {/*<SeqSummary.GeneMutations />*/}
           <SeqSummary.PrettyPairwise />
           <SeqSummary.PangolinLineage />
         </SeqSummary>
-        <MutViewer {...{sequenceResult, output, strain}} />
+        <ReportSection title="Sequence quality assessment">
+          <MutViewer {...{
+            allGeneSeqs: alignedGeneSequences,
+            output,
+            strain
+          }} />
+          <ValidationReport {...sequenceResult} {...{output, strain}} />
+        </ReportSection>
         <SequenceAnalysisQAChart {...sequenceResult} {...{output, strain}} />
         <ValidationReport {...sequenceResult} {...{output, strain}} />
         {isCritical ? null :

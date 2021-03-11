@@ -24,10 +24,33 @@ export default gql`
       level
       message
     }
+    suscResultsForAntibodies {
+      refName
+      refDOI
+      refURL
+      rxName
+      controlStrainName
+      strainName
+      mutations
+      section
+      ordinalNumber
+      foldCmp
+      fold
+      ineffective
+      resistanceLevel
+      cumulativeCount
+      antibodies
+    }
     alignedGeneSequences {
       firstAA
       lastAA
       gene { name length }
+      unsequencedRegions {
+        size
+        regions {
+          posStart posEnd
+        }
+      }
       prettyPairwise {
         positionLine
         refAALine

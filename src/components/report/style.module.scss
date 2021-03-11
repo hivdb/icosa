@@ -15,6 +15,10 @@
   top: -1px;
 }
 
+.report-section {
+  @extend %report-section;
+}
+
 .dr-mutation-scores {
   @extend %report-section;
   position: relative;
@@ -235,6 +239,7 @@ ul.subtype-details {
 
   .desc-list {
     @include desc-list(18rem, $overflow: visible);
+    max-width: 60%;
     .has-dropdown {
       @extend %small-dropdown;
       :global .Dropdown-root {
@@ -244,6 +249,28 @@ ul.subtype-details {
       margin-top: 0.2rem;
       margin-bottom: 0.2rem;
       
+    }
+    dt.warning {
+      font-weight: 600;
+    }
+    dt.warning, dd.warning {
+      background-color: color(validation-severe-warning-bg);
+      color: color(validation-severe-warning-text);
+    }
+    .inline-divider {
+      padding-left: .5rem;
+      padding-right: .5rem;
+    }
+    .inline-gene-range {
+      white-space: nowrap;
+      &.hl { // highlighted
+        > .gene-name {
+          font-weight: 600;
+        }
+      }
+      &:not(.hl) { // not highlighted
+        opacity: .6;
+      }
     }
   }
 

@@ -85,6 +85,55 @@ export default class Region extends React.Component {
     };
   }
 
+  get wavyProps() {
+    const {
+      offsetY,
+      height,
+      labelFontSize,
+      scaleX,
+      region: {
+        posStart,
+        posEnd,
+        fill = '#777',
+        wavyRepeats = 1,
+        offsetY: regionOffsetY = 0
+      }
+    } = this.props;
+
+    const x = scaleX(posStart);
+    const width = scaleX(posEnd) - x;
+    const halfWaveSize = 1.5;
+    let halfWaves = width / halfWaveSize;
+    let direction = -1;
+    const waveData = [];
+    let movePixel;
+    while (halfWaves > 0) {
+      const pcnt = halfWaves > 1 ? 1 : halfWaves;
+      movePixel = pcnt * halfWaveSize;
+      waveData.push('l', movePixel, movePixel * direction);
+      direction = -direction;
+      halfWaves --;
+    }
+    let pathData = [
+      'm', x, offsetY + height + labelFontSize * 1.5 + regionOffsetY + 5,
+      ...waveData
+    ];
+    for (let i = 1; i < wavyRepeats; i ++) {
+      pathData = [
+        ...pathData,
+        'm', - width,
+        2 * halfWaveSize + direction * (movePixel - halfWaveSize / 2),
+        ...waveData
+      ];
+    }
+    return {
+      d: pathData.join(' '),
+      fill: 'none',
+      stroke: fill,
+      strokeWidth: 1
+    };
+  }
+
   get rectLabelProps() {
     const {
       offsetY,
@@ -183,7 +232,7 @@ export default class Region extends React.Component {
 
   render() {
     const {labelText} = this;
-    const {region: {shapeType}} = this.props;
+    let {region: {shapeType}} = this.props;
 
     let shapeProps = {};
     let labelProps = {};
@@ -195,7 +244,10 @@ export default class Region extends React.Component {
       shapeProps = this.lineProps;
       labelProps = this.lineLabelProps;
     }
-
+    else if (shapeType === 'wavy') {
+      shapeType = 'path';
+      shapeProps = this.wavyProps;
+    }
 
     return <g>
       {React.createElement(shapeType, shapeProps)}

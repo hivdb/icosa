@@ -8,7 +8,8 @@ const regionShape = PropTypes.shape({
   fill: PropTypes.string,
   color: PropTypes.string,
   offsetY: PropTypes.number,
-  shapeType: PropTypes.oneOf(['rect', 'line']).isRequired,
+  wavyRepeats: PropTypes.number,
+  shapeType: PropTypes.oneOf(['rect', 'line', 'wavy']).isRequired,
   labelPosition: PropTypes.oneOf(['above', 'over', 'below', 'after'])
 });
 
