@@ -101,7 +101,7 @@ export default class Region extends React.Component {
     } = this.props;
 
     const x = scaleX(posStart);
-    const width = scaleX(posEnd) - x;
+    const width = Math.max(1, scaleX(posEnd) - x);
     const halfWaveSize = 1.5;
     let halfWaves = width / halfWaveSize;
     let direction = -1;

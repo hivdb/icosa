@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {ticks} from 'd3-array';
+import uniq from 'lodash/uniq';
 
 import {positionAxisShape} from './prop-types';
 
@@ -37,7 +38,7 @@ function getTicks(scaleX, {
   else {
     allTicks[lastIdx] = end;
   }
-  return allTicks.map((x, idx) => {
+  const allPositions = allTicks.map((x, idx) => {
     if (idx === 0) {
       return posStart;
     }
@@ -55,6 +56,7 @@ function getTicks(scaleX, {
     }
     return pos + posOffset;
   });
+  return uniq(allPositions);
 }
 
 

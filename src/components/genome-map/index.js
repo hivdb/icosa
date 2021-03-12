@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import {presetShape} from './prop-types';
 import RegionGroup from './region-group';
@@ -15,6 +16,7 @@ export {presetShape} from './prop-types';
 export default class GenomeMap extends React.Component {
 
   static propTypes = {
+    className: PropTypes.string,
     extraButtons: PropTypes.node,
     preset: presetShape.isRequired
   }
@@ -27,7 +29,6 @@ export default class GenomeMap extends React.Component {
   }
 
   moveSVGBorder = ({height, width, paddingLeft, paddingRight}) => {
-    console.log({height, width, paddingLeft, paddingRight});
     if (height > this.state.height) {
       this.setState({height, width, paddingLeft, paddingRight});
     }
@@ -35,6 +36,7 @@ export default class GenomeMap extends React.Component {
 
   render() {
     const {
+      className,
       extraButtons,
       preset: {
         name,
@@ -49,7 +51,9 @@ export default class GenomeMap extends React.Component {
       }
     } = this.props;
     const {height, width, paddingLeft, paddingRight} = this.state;
-    return <div className={style['map-container']}>
+    return <div className={classNames(
+      style['map-container'], className
+    )}>
       <div className={style['button-group']}>
         {extraButtons}
         <DownloadSVG

@@ -29,18 +29,11 @@ async function popRefAminoAcid(dataURI) {
 }
 
 
-async function loadRegionPresets() {
-  const url = (
-    'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev/' +
-    'pages/sierra-sars2/sars2-region-presets.json'
-  );
-  const resp = await fetch(url);
-  return await resp.json();
-}
-
-
 export default {
-  species: 'SARS2',
+  configFromURL: (
+    'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev/' +
+    'pages/sierra-sars2.json'
+  ),
   graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
@@ -57,39 +50,6 @@ export default {
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%
-  allGenes: [
-    'nsp1', 'nsp2', 'PLpro', 'nsp4', '_3CLpro', 'nsp6', 'nsp7', 'nsp8', 'nsp9',
-    'nsp10', 'RdRP', 'nsp13', 'nsp14', 'nsp15', 'nsp16', 'S', 'ORF3a', 'E', 'M',
-    'ORF6', 'ORF7a', 'ORF7b', 'ORF8', 'N', 'ORF10'
-  ],
-  highlightGenes: ['PLpro', '_3CLpro', 'RdRP', 'S'],
-  geneDisplay: {
-    nsp1: 'nsp1',
-    nsp2: 'nsp2',
-    PLpro: 'PLpro',
-    nsp4: 'nsp4',
-    _3CLpro: '3CLpro',
-    nsp6: 'nsp6',
-    nsp7: 'nsp7',
-    nsp8: 'nsp8',
-    nsp9: 'nsp9',
-    nsp10: 'nsp10',
-    RdRP: 'RdRP',
-    nsp13: 'nsp13',
-    nsp14: 'nsp14',
-    nsp15: 'nsp15',
-    nsp16: 'nsp16',
-    S: 'Spike',
-    ORF3a: 'ORF3a',
-    E: 'E',
-    M: 'M',
-    ORF6: 'ORF6',
-    ORF7a: 'ORF7a',
-    ORF7b: 'ORF7b',
-    ORF8: 'ORF8',
-    N: 'N',
-    ORF10: 'ORF10'
-  },
   mutationTypesByGenes: {
     nsp1: {
       Other: 'Other'
@@ -235,6 +195,5 @@ export default {
         'main/resources/aapcnt/rx-all_taxon-SARSr.json'
       )
     }
-  ],
-  loadRegionPresets
+  ]
 };

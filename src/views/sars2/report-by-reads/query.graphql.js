@@ -19,7 +19,6 @@ export default gql`
   fragment HIVDBReportBySequenceReads on SequenceReadsAnalysis {
     name
     strain { display }
-    antibodySuscResults: virusAnnotation(function: antibodySuscResults)
     bestMatchingSubtype {
       display
       referenceAccession

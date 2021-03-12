@@ -9,7 +9,7 @@ import Dropdown from 'react-dropdown';
 import {includeFragment} from '../../utils/graphql-helper';
 import Button from '../button';
 import style from './style.module.scss';
-import config from '../../config';
+import ConfigContext from './config-context';
 import DownloadCodFreqs from './download-codfreqs';
 
 // import CodonGraph from './codon-graph';
@@ -56,9 +56,19 @@ const query = gql`
 export {query};
 
 
-export default class SeqReadsSummary extends React.Component {
+export default function SeqReadsSummaryWrapper(props) {
+
+  return <ConfigContext.Consumer>
+    {config => <SeqReadsSummary {...props} config={config} />}
+  </ConfigContext.Consumer>;
+
+}
+
+
+class SeqReadsSummary extends React.Component {
 
   static propTypes = {
+    config: PropTypes.object.isRequired,
     match: matchShape.isRequired,
     router: routerShape.isRequired,
     sequenceReadsResult: PropTypes.shape({
@@ -83,9 +93,10 @@ export default class SeqReadsSummary extends React.Component {
 
   constructor() {
     super(...arguments);
-    const showSDRMs = this.props.output === 'printable';
+    const {output, config} = this.props;
+    const showSDRMs = output === 'printable';
     let showCodonCov = (
-      this.props.output === 'printable' ||
+      output === 'printable' ||
       config.showCodonCov
     );
     this.state = {showSDRMs, showCodonCov};
@@ -146,6 +157,7 @@ export default class SeqReadsSummary extends React.Component {
   render() {
     const {
       genes,
+      config,
       sequenceReadsResult: {
         bestMatchingSubtype,
         subtypes, minPrevalence,

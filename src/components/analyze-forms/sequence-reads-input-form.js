@@ -7,7 +7,10 @@ import {routerShape, matchShape} from 'found';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
 
-import {parseSequenceReads} from '../../utils/sequence-reads';
+import {
+  parseSequenceReads,
+  buildGeneValidator
+} from '../../utils/sequence-reads';
 import fastq2codfreq from '../../utils/fastq2codfreq';
 import BigData from '../../utils/big-data';
 import readFile from '../../utils/read-file';
@@ -16,7 +19,7 @@ import FileInput from '../file-input';
 import RadioInput from '../radio-input';
 import CheckboxInput from '../checkbox-input';
 import Link from '../link/basic';
-import config from '../../config';
+import ConfigContext from '../report/config-context';
 
 import style from './style.module.scss';
 
@@ -26,11 +29,21 @@ const SUPPORT_FORMATS =
 
 const DEFAULT_CUTOFF = 0.2;  // 20%
 
-export default class SequenceReadsInputForm extends React.Component {
+
+export default function SequenceReadsInputFormWrapper(props) {
+
+  return <ConfigContext.Consumer>
+    {config => <SequenceReadsInputForm {...props} config={config} />}
+  </ConfigContext.Consumer>;
+}
+
+
+class SequenceReadsInputForm extends React.Component {
 
   static propTypes = {
     match: matchShape.isRequired,
     router: routerShape.isRequired,
+    config: PropTypes.object.isRequired,
     children: PropTypes.node,
     to: PropTypes.string,
     outputOptions: PropTypes.object,
@@ -64,7 +77,7 @@ export default class SequenceReadsInputForm extends React.Component {
 
   handleSubmit = async (e) => {
     e && e.persist();
-    const {outputOptions} = this.props;
+    const {config, outputOptions} = this.props;
     let {outputOption, allFastqFiles, allSequenceReads} = this.state;
     let validated = true;
     let state = {};
@@ -89,7 +102,7 @@ export default class SequenceReadsInputForm extends React.Component {
               ...allSequenceReads,
               ...codfreqs.map(cf => ({
                 ...cf,
-                strain: config.seqReadsDefaultStrain,
+                strain: config.defaultStrain,
                 minPrevalence: DEFAULT_CUTOFF
               }))
             ];
@@ -133,21 +146,30 @@ export default class SequenceReadsInputForm extends React.Component {
 
   handleLoadExamples = async (e) => {
     e && e.preventDefault();
-    const {exampleCodonReads} = this.props;
+    const {config, exampleCodonReads} = this.props;
+    const geneValidator = buildGeneValidator(config.geneValidatorDefs);
     const allSequenceReads = [];
     for (const url of exampleCodonReads) {
       const resp = await fetch(url);
       const data = await resp.text();
       let name = url.split('/');
       name = name[name.length - 1];
-      allSequenceReads.push(parseSequenceReads(name, data, DEFAULT_CUTOFF));
+      allSequenceReads.push(parseSequenceReads(
+        name,
+        data,
+        DEFAULT_CUTOFF,
+        config.defaultStrain,
+        geneValidator
+      ));
     }
     this.setState({allSequenceReads});
   }
 
   handleUpload = async (fileList) => {
+    const {config} = this.props;
     const {allSequenceReads, allFastqFiles} = this.state;
     const knownFiles = new Set();
+    const geneValidator = buildGeneValidator(config.geneValidatorDefs);
     for (const {name} of allSequenceReads) {
       knownFiles.add(name);
     }
@@ -171,7 +193,13 @@ export default class SequenceReadsInputForm extends React.Component {
       }
       else {
         const data = await readFile(file);
-        allSequenceReads.push(parseSequenceReads(name, data, DEFAULT_CUTOFF));
+        allSequenceReads.push(parseSequenceReads(
+          name,
+          data,
+          DEFAULT_CUTOFF,
+          config.defaultStrain,
+          geneValidator
+        ));
       }
     }
     if (unsupportedFiles.length > 0) {

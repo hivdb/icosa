@@ -1,4 +1,3 @@
-import config from '../config';
 import {csvParse} from './csv';
 
 
@@ -21,17 +20,29 @@ function tsvrow(row) {
 }
 
 
-function normalizeGene(gene) {
-  if (/^\s*(rdrp)\s*$/i.test(gene)) {
-    return 'RdRP';
+export function buildGeneValidator(geneValidatorDefs) {
+  let patternPairs = [];
+  for (const {
+    regexp,
+    gene,
+    posOffset = 0
+  } of geneValidatorDefs) {
+    patternPairs.push([new RegExp(regexp, 'i'), gene, posOffset]);
   }
-  else if (/^\s*(S|spike)\s*$/i.test(gene)) {
-    return 'S';
-  }
+  return (gene, pos) => {
+    for (const [pattern, normGene, posOffset] of patternPairs) {
+      if (pattern.test(gene)) {
+        return [normGene, pos + posOffset];
+      }
+    }
+    return [null, null];
+  };
 }
 
 
-function parseAAVF(name, rows, minPrevalence) {
+function parseAAVF(
+  name, rows, minPrevalence, defaultStrain, geneValidator
+) {
   const gpMap = {};
   const gpRefMap = {};
   for (let row of rows) {
@@ -47,7 +58,7 @@ function parseAAVF(name, rows, minPrevalence) {
     if (isNaN(pos)) {
       continue;
     }
-    gene = normalizeGene(gene);
+    [gene, pos] = geneValidator(gene, pos);
     if (!gene) {
       continue;
     }
@@ -138,14 +149,16 @@ function parseAAVF(name, rows, minPrevalence) {
   }
   return {
     name,
-    strain: 'HIV1', // TODO: how to support HIV2A and HIV2B?
+    strain: defaultStrain,
     allReads: Object.values(gpMap),
     minPrevalence
   };
 }
 
 
-function parseCodFISH(name, rows, minPrevalence) {
+function parseCodFreq(
+  name, rows, minPrevalence, defaultStrain, geneValidator
+) {
   const gpMap = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
   for (let row of rows) {
@@ -157,13 +170,13 @@ function parseCodFISH(name, rows, minPrevalence) {
       continue;
     }
     codon = codon.toUpperCase();
-    gene = normalizeGene(gene);
-    // skip header and problem rows
-    if (!gene) {
-      continue;
-    }
     aaPos = parseInt(aaPos, 10);
     if (isNaN(aaPos)) {
+      continue;
+    }
+    [gene, aaPos] = geneValidator(gene, aaPos);
+    // skip header and problem rows
+    if (!gene) {
       continue;
     }
     totalReads = parseInt(totalReads, 10);
@@ -188,20 +201,24 @@ function parseCodFISH(name, rows, minPrevalence) {
   }
   return {
     name,
-    strain: config.seqReadsDefaultStrain,
+    strain: defaultStrain,
     allReads: Object.values(gpMap),
     minPrevalence
   };
 }
 
 
-export function parseSequenceReads(name, data, minPrevalence) {
+export function parseSequenceReads(
+  name, data, minPrevalence, defaultStrain, geneValidator
+) {
   const isTSV = testTSV(data);
   let rows;
   if (isTSV) {
     rows = data.split(/[\r\n]+/g);
     if (rows[0].startsWith('##fileformat=AAVF')) {
-      return parseAAVF(name, rows, minPrevalence);
+      return parseAAVF(
+        name, rows, minPrevalence, defaultStrain, geneValidator
+      );
     }
     else {
       rows = rows.map(tsvrow);
@@ -210,5 +227,7 @@ export function parseSequenceReads(name, data, minPrevalence) {
   else {
     rows = csvParse(data, false);
   }
-  return parseCodFISH(name, rows, minPrevalence);
+  return parseCodFreq(
+    name, rows, minPrevalence, defaultStrain, geneValidator
+  );
 }

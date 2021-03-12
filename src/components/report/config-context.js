@@ -1,7 +1,16 @@
-import React from 'react';
+import createAsyncContext from '../../utils/async-context';
 
 
-export function configWrapper(config) {
+export async function configWrapper(config) {
+
+  if (config.configFromURL) {
+    const resp = await fetch(config.configFromURL);
+    const asyncConfig = await resp.json();
+    config = {
+      ...config,
+      ...asyncConfig
+    };
+  }
 
   return new Proxy(config, {
     get(target, name) {
@@ -12,4 +21,4 @@ export function configWrapper(config) {
 }
 
 
-export default React.createContext({});
+export default createAsyncContext();

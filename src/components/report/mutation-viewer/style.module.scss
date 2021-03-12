@@ -1,0 +1,38 @@
+@import "../../../styles/dropdown";
+
+.sierra-genome-map {
+
+  > [class*="svg-container"] {
+    padding-top: 1rem;
+  }
+
+  .preset-selection {
+    @extend %base-dropdown;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 1rem;
+  
+    > label {
+      vertical-align: middle;
+    }
+  
+    :global .Dropdown-root {
+      margin-left: .5rem;
+      display: inline-block;
+    }
+  
+    :global .Dropdown-control {
+      padding: 4px 36px 4px 6px;
+      line-height: 1.15;
+      font-size: .7rem;
+    }
+    :global .Dropdown-option {
+      padding: 6px;
+      line-height: 1.15;
+      font-size: .7rem;
+    }
+    :global .Dropdown-arrow {
+      width: 20px;
+    }
+  }
+}

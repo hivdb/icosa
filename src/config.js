@@ -92,33 +92,6 @@ export default {
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%
-  geneDisplay: {
-    nsp1: 'nsp1',
-    nsp2: 'nsp2',
-    PLpro: 'PLpro',
-    nsp4: 'nsp4',
-    _3CLpro: '3CLpro',
-    nsp6: 'nsp6',
-    nsp7: 'nsp7',
-    nsp8: 'nsp8',
-    nsp9: 'nsp9',
-    nsp10: 'nsp10',
-    RdRP: 'RdRP',
-    nsp13: 'nsp13',
-    nsp14: 'nsp14',
-    nsp15: 'nsp15',
-    nsp16: 'nsp16',
-    S: 'Spike',
-    ORF3a: 'ORF3a',
-    E: 'Envelope',
-    M: 'Membrane',
-    ORF6: 'ORF6',
-    ORF7a: 'ORF7a',
-    ORF7b: 'ORF7b',
-    ORF8: 'ORF8',
-    N: 'Nucleocapsid',
-    ORF10: 'ORF10'
-  },
   mutationTypesByGenes: {
     nsp1: {
       Other: 'Other'

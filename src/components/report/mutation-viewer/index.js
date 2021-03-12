@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import GenomeMap from '../../genome-map';
 import GMRegion from '../../genome-map/region';
-import PromiseComponent from '../../../utils/promise-component';
 import {consecutiveGroupsBy} from '../../../utils/array-groups';
 import ConfigContext from '../config-context';
+import PresetSelection from './preset-selection';
+
+import style from './style.module.scss';
 
 
 function mergeDeletions(positions) {
@@ -125,7 +127,7 @@ function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
 }
 
 
-function getGenomeMapPositions(allGeneSeqs, geneDefs) {
+function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
   geneDefs = geneDefs.reduce((acc, geneDef) => {
     acc[geneDef.gene] = geneDef;
     return acc;
@@ -135,8 +137,9 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs) {
     const {gene: {name: geneName}, mutations} = geneSeq;
     const {
       displayGene, range,
-      readingFrame, stroke, color
+      readingFrame
     } = geneDefs[geneName];
+    const highlight = highlightGenes.includes(geneName);
 
     for (const {
       position,
@@ -153,10 +156,13 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs) {
         gene: displayGene,
         name: text,
         pos: absNAPos,
-        stroke, color,
         aaPos: position,
         refAA,
-        AAs
+        AAs,
+        ...(highlight ? null : {
+          stroke: '#e0e0e0',
+          color: '#a0a0a0'
+        })
       });
     }
   }
@@ -169,36 +175,53 @@ function MutationViewer({
   allGeneSeqs
 }) {
   const {presets, genes} = regionPresets;
-  const [{preset: {minHeight, regions, ...preset}}] = presets;
+  const [preset, setPreset] = useState(presets[0]);
+  const {
+    name: curName,
+    highlightGenes,
+    preset: {minHeight, regions, ...otherPreset}
+  } = preset;
+  const presetOptions = presets.map(({name, label}) => ({
+    value: name, label
+  }));
   const payload = {
-    ...preset,
+    ...otherPreset,
     regions: [
       ...regions,
       ...getUnsequencedRegions(allGeneSeqs, genes, regions)
-    
-       
-      
     ],
     height: minHeight,
     positionGroups: [{
       name: 'NA',
       label: '',
-      positions: getGenomeMapPositions(allGeneSeqs, genes)
+      positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
     }]
   };
-  return <GenomeMap preset={payload} />;
+  return (
+    <GenomeMap
+     key={curName}
+     preset={payload}
+     className={style['sierra-genome-map']}
+     extraButtons={
+       <PresetSelection
+        value={curName}
+        options={presetOptions}
+        onChange={handleChange} />
+     } />
+  );
+
+  function handleChange(value) {
+    const preset = presets.find(({name}) => name === value);
+    setPreset(preset);
+  }
 }
 
 
 export default function MutationViewerLoader(props) {
 
   return <ConfigContext.Consumer>
-    {({loadRegionPresets}) => (
-      <PromiseComponent
-       promise={loadRegionPresets()}
-       then={(regionPresets) => (
-         <MutationViewer {...props} regionPresets={regionPresets} />
-       )} />
+    {({regionPresets}) => (
+      <MutationViewer {...props} regionPresets={regionPresets} />
     )}
   </ConfigContext.Consumer>;
 }
