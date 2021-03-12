@@ -17,7 +17,7 @@ const SequenceReadsPropType = PropTypes.shape({
     }).isRequired
   ).isRequired,
   minPrevalence: PropTypes.number,
-  minReadDepth: PropTypes.number
+  minPositionReads: PropTypes.number
 });
 
 export {SequenceReadsPropType};

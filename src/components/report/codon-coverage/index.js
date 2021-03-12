@@ -15,7 +15,11 @@ export default class CodonReadsCoverage extends React.Component {
   }
 
   render() {
-    const {minReadDepth, internalJsonCodonReadsCoverage, genes} = this.props;
+    const {
+      minPositionReads,
+      internalJsonCodonReadsCoverage,
+      genes
+    } = this.props;
     const codonReadsCoverage = JSON.parse(internalJsonCodonReadsCoverage);
     const width = genes.reduce((acc, {length}) => acc + length * 5, 0);
     const availableGenes = [];
@@ -36,7 +40,7 @@ export default class CodonReadsCoverage extends React.Component {
          genes={availableGenes}
          {...{
            codonReadsCoverage,
-           minReadDepth,
+           minPositionReads,
          }} />
       </div>
     </section>;

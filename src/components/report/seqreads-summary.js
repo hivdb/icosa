@@ -109,7 +109,7 @@ class SeqReadsSummary extends React.Component {
     this.props.router.push(newLoc);
   }
 
-  handleMinReadDepthChange = ({value}) => {
+  handleMinPositionReadsChange = ({value}) => {
     const newLoc = {query: {}, ...this.props.match.location};
     newLoc.query.rd = value;
     this.props.router.push(newLoc);
@@ -163,7 +163,7 @@ class SeqReadsSummary extends React.Component {
         subtypes, minPrevalence,
         allGeneSequenceReads,
         internalJsonCodonReadsCoverage,
-        minReadDepth,/* cutoffSuggestionLooserLimit,
+        minPositionReads,/* cutoffSuggestionLooserLimit,
         cutoffSuggestionStricterLimit,*/
         availableGenes,
         readDepthStats: {median}
@@ -183,7 +183,7 @@ class SeqReadsSummary extends React.Component {
     }
     let curMinReadsDepthOption;
     for (const option of MINREADS_OPTIONS) {
-      if (option.value === minReadDepth) {
+      if (option.value === minPositionReads) {
         curMinReadsDepthOption = option;
         break;
       }
@@ -259,7 +259,7 @@ class SeqReadsSummary extends React.Component {
                value={curMinReadsDepthOption}
                options={MINREADS_OPTIONS}
                name="minread-depth"
-               onChange={this.handleMinReadDepthChange} />
+               onChange={this.handleMinPositionReadsChange} />
             </dd>
             {showSDRMs ? allGeneSequenceReads.map(
               ({gene: {name: gene}, sdrms}, idx) => <>
@@ -292,7 +292,7 @@ class SeqReadsSummary extends React.Component {
       </section>
       {showCodonCov ?
         <CodonReadsCoverage
-         {...{genes, internalJsonCodonReadsCoverage, minReadDepth}} />
+         {...{genes, internalJsonCodonReadsCoverage, minPositionReads}} />
         : null}
     </>;
   }

@@ -44,7 +44,7 @@ class CodonCoverageGraph extends React.Component {
     genes: genesPropType,
     codonReadsCoverage: codonReadsCoveragePropType,
     containerWidth: PropTypes.number.isRequired,
-    minReadDepth: PropTypes.number.isRequired
+    minPositionReads: PropTypes.number.isRequired
   }
 
   static defaultProps = {
@@ -146,7 +146,7 @@ class CodonCoverageGraph extends React.Component {
       tooltipData,
       tooltipTop,
       tooltipLeft,
-      minReadDepth
+      minPositionReads
     } = this.props;
     const {graphProps, genePosRanges} = this;
     const {
@@ -185,7 +185,7 @@ class CodonCoverageGraph extends React.Component {
     const yPoint = compose(yScale, yfunc);
     
     const barWidth = xScaleband.bandwidth();
-    const yCutoff = yScale(minReadDepth);
+    const yCutoff = yScale(minPositionReads);
 
     return <>
       <div className={style.instruction}>

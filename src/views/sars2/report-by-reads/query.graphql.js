@@ -44,7 +44,7 @@ export default gql`
     minPrevalence
     cutoffSuggestionLooserLimit
     cutoffSuggestionStricterLimit
-    minReadDepth
+    minPositionReads
     ${includeFragment(seqReadsSummaryFragment, 'SequenceReadsAnalysis')}
     ${includeFragment(mutStatsFragment)}
     ${includeFragment(extCodonFragment)}

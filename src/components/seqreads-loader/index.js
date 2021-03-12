@@ -61,12 +61,12 @@ async function prepareChildProps(props) {
   } = loc;
   let minPrevalence = parseFloat(cutoff);
   minPrevalence = isNaN(minPrevalence) ? DEFAULT_CUTOFF : minPrevalence;
-  let minReadDepth = parseInt(rd, 10);
-  minReadDepth = isNaN(minReadDepth) ? undefined : minReadDepth;
+  let minPositionReads = parseInt(rd, 10);
+  minPositionReads = isNaN(minPositionReads) ? undefined : minPositionReads;
   allSequenceReads = allSequenceReads.map(sr => {
     sr = {...sr};  // deep-copy to avoid cache
     sr.minPrevalence = minPrevalence;
-    sr.minReadDepth = minReadDepth;
+    sr.minPositionReads = minPositionReads;
     return sr;
   });
 
