@@ -4,10 +4,6 @@ export default gql`
   fragment SARS2ReportBySequences on SequenceAnalysis {
     inputSequence { header }
     strain { name display }
-    bestMatchingSubtype {
-      display
-      referenceAccession
-    }
     pangolin {
       version
       latestVersion

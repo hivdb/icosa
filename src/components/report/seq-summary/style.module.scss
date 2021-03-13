@@ -1,0 +1,96 @@
+@import "../ext";
+@import "../../../styles/tabs";
+@import "../../../styles/colors";
+@import "../../../styles/dropdown";
+@import "../../../styles/functions";
+
+.seq-summary {
+  @extend %report-section;
+
+  .desc-list {
+    @include desc-list(18rem, $overflow: visible);
+    max-width: css-max(60%, 1400px);
+    .has-dropdown {
+      @extend %small-dropdown;
+      :global .Dropdown-root {
+        width: 6rem;
+      }
+      // display: inline-block;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+      @media screen and (max-width: 640px) {
+        margin-left: 0;
+        :global .Dropdown-root {
+          width: 100%;
+        }
+      }
+      
+    }
+    dt.warning {
+      font-weight: 600;
+    }
+    dt.warning, dd.warning {
+      background-color: color(validation-severe-warning-bg);
+      color: color(validation-severe-warning-text);
+    }
+    .inline-divider {
+      padding-left: .5rem;
+      padding-right: .5rem;
+    }
+    .inline-gene-range {
+      white-space: nowrap;
+      &.hl { // highlighted
+        > .gene-name {
+          font-weight: 600;
+        }
+      }
+      &:not(.hl) { // not highlighted
+        opacity: .6;
+      }
+    }
+  }
+
+  ul.subtype-details {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+    > li.best-match {
+      font-weight: 600;
+    }
+  }
+
+  .pretty-pairwise {
+    clear: both;
+    h3 {
+      font-size: 1rem;
+      margin-right: 1rem;
+      margin-bottom: 0;
+      display: inline-block;
+    }
+
+    .instruction {
+      font-size: .8rem;
+      color: color(trivia);
+    }
+
+    pre {
+      margin-top: .24rem;
+      margin-bottom: 0;
+      overflow-x: auto;
+      padding: .5rem;
+      background-color: color(panel-bg);
+      > div {
+        &::after {
+          // an old webkit bug: http://stackoverflow.com/a/22240912
+          content: "";
+        }
+        > span {
+          display: inline-block;
+          width: 3rem;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+}

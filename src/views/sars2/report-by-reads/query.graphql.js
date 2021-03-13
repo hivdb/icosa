@@ -19,31 +19,27 @@ export default gql`
   fragment HIVDBReportBySequenceReads on SequenceReadsAnalysis {
     name
     strain { display }
-    bestMatchingSubtype {
-      display
-      referenceAccession
+    pangolin {
+      version
+      latestVersion
+      loaded
+      asyncResultsURI
+      taxon
+      lineage
+      probability
+      status
+      note
     }
     readDepthStats {
-      iqr25: percentile(p: 25)
       median: percentile(p: 50)
-      iqr75: percentile(p: 75)
     }
     validationResults {
       level
       message
     }
-    subtypes(first: 10) {
-      displayWithoutDistance
-      subtype { displayName }
-      distancePcnt
-      referenceAccession
-      referenceCountry
-      referenceYear
-    }
     availableGenes { name }
     minPrevalence
-    cutoffSuggestionLooserLimit
-    cutoffSuggestionStricterLimit
+    minCodonReads
     minPositionReads
     ${includeFragment(seqReadsSummaryFragment, 'SequenceReadsAnalysis')}
     ${includeFragment(mutStatsFragment)}
@@ -52,6 +48,12 @@ export default gql`
       firstAA
       lastAA
       gene { name length }
+      unsequencedRegions {
+        size
+        regions {
+          posStart posEnd
+        }
+      }
       sdrms: mutations(filterOptions: [SDRM]) {
         text
       }

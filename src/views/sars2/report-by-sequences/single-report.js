@@ -6,7 +6,7 @@ import {
   DRInterpretation,
   DRMutationScores,
   ValidationReport,
-  SequenceSummary as SeqSummary,
+  SeqSummary,
   MutationViewer as MutViewer,
   ReportSection
 } from '../../../components/report';
@@ -162,9 +162,8 @@ export default class SingleSequenceReport extends React.Component {
          className={style['sequence-header']} id={header}>
           <HLFirstWord index={index}>{header}</HLFirstWord>
         </header>
-        <SeqSummary {...{sequenceResult, output, strain}}>
-          <SeqSummary.GeneRangeInline />
-          {/*<SeqSummary.GeneMutations />*/}
+        <SeqSummary {...sequenceResult} {...{output, strain}}>
+          <SeqSummary.InlineGeneRange />
           <SeqSummary.PrettyPairwise />
           <SeqSummary.PangolinLineage />
         </SeqSummary>

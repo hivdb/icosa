@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {matchShape, withRouter} from 'found';
 
-import config from '../../config';
 import BigData from '../../utils/big-data';
 import PromiseComponent from '../../utils/promise-component';
 
+import ConfigContext from '../report/config-context';
+
 
 const SEQ_READS_CACHE = {};
-const DEFAULT_CUTOFF = config.seqReadsDefaultCutoff;
 
 
 function getCurrentSelected({
@@ -32,7 +32,8 @@ async function prepareChildProps(props) {
   let {
     match, lazyLoad,
     match: {location: loc},
-    childProps = {}
+    childProps = {},
+    defaultParams
   } = props;
   /* if (onLoadCache && loc.query && 'load' in loc.query) {
     const cachedData = await onLoadCache(loc.query.load);
@@ -56,17 +57,33 @@ async function prepareChildProps(props) {
   }
   
   // attach query parameters
-  const {
-    query: {cutoff, rd} = {}
-  } = loc;
-  let minPrevalence = parseFloat(cutoff);
-  minPrevalence = isNaN(minPrevalence) ? DEFAULT_CUTOFF : minPrevalence;
-  let minPositionReads = parseInt(rd, 10);
-  minPositionReads = isNaN(minPositionReads) ? undefined : minPositionReads;
+  let {
+    strain,
+    minPrevalence,
+    minCodonReads,
+    minPositionReads
+  } = defaultParams;
+  let {query: {cutoff, cdreads, posreads} = {}} = loc;
+  cutoff = parseFloat(cutoff);
+  if (!isNaN(cutoff)) {
+    minPrevalence = cutoff;
+  }
+  cdreads = parseInt(cdreads, 10);
+  if (!isNaN(cdreads)) {
+    minCodonReads = cdreads;
+  }
+  posreads = parseInt(posreads, 10);
+  if (!isNaN(posreads)) {
+    minPositionReads = posreads;
+  }
   allSequenceReads = allSequenceReads.map(sr => {
-    sr = {...sr};  // deep-copy to avoid cache
-    sr.minPrevalence = minPrevalence;
-    sr.minPositionReads = minPositionReads;
+    sr = {
+      ...sr,  // deep-copy to avoid cache
+      strain,
+      minPrevalence,
+      minCodonReads,
+      minPositionReads
+    };
     return sr;
   });
 
@@ -86,12 +103,19 @@ function BaseSeqReadsLoader(props) {
 
   const {children} = props;
 
-  const promise = prepareChildProps(props);
-  return (
-    <PromiseComponent
-     promise={promise}
-     then={children} />
-  );
+  return <ConfigContext.Consumer>
+    {({seqReadsDefaultParams}) => {
+      const promise = prepareChildProps({
+        ...props,
+        defaultParams: seqReadsDefaultParams
+      });
+      return (
+        <PromiseComponent
+         promise={promise}
+         then={children} />
+      );
+    }}
+  </ConfigContext.Consumer>;
 }
 
 BaseSeqReadsLoader.propTypes = {

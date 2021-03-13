@@ -41,7 +41,7 @@ export function buildGeneValidator(geneValidatorDefs) {
 
 
 function parseAAVF(
-  name, rows, minPrevalence, defaultStrain, geneValidator
+  name, rows, geneValidator
 ) {
   const gpMap = {};
   const gpRefMap = {};
@@ -64,6 +64,9 @@ function parseAAVF(
     }
     coverage = parseInt(coverage, 10);
     if (isNaN(coverage)) {
+      continue;
+    }
+    if (coverage === 0) {
       continue;
     }
 
@@ -149,15 +152,13 @@ function parseAAVF(
   }
   return {
     name,
-    strain: defaultStrain,
-    allReads: Object.values(gpMap),
-    minPrevalence
+    allReads: Object.values(gpMap)
   };
 }
 
 
 function parseCodFreq(
-  name, rows, minPrevalence, defaultStrain, geneValidator
+  name, rows, geneValidator
 ) {
   const gpMap = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
@@ -183,8 +184,14 @@ function parseCodFreq(
     if (isNaN(totalReads)) {
       continue;
     }
+    if (totalReads === 0) {
+      continue;
+    }
     codonReads = parseInt(codonReads, 10);
     if (isNaN(codonReads)) {
+      continue;
+    }
+    if (codonReads === 0) {
       continue;
     }
     if (codon.length < 3) {
@@ -201,15 +208,13 @@ function parseCodFreq(
   }
   return {
     name,
-    strain: defaultStrain,
-    allReads: Object.values(gpMap),
-    minPrevalence
+    allReads: Object.values(gpMap)
   };
 }
 
 
 export function parseSequenceReads(
-  name, data, minPrevalence, defaultStrain, geneValidator
+  name, data, geneValidator
 ) {
   const isTSV = testTSV(data);
   let rows;
@@ -217,7 +222,7 @@ export function parseSequenceReads(
     rows = data.split(/[\r\n]+/g);
     if (rows[0].startsWith('##fileformat=AAVF')) {
       return parseAAVF(
-        name, rows, minPrevalence, defaultStrain, geneValidator
+        name, rows, geneValidator
       );
     }
     else {
@@ -228,6 +233,6 @@ export function parseSequenceReads(
     rows = csvParse(data, false);
   }
   return parseCodFreq(
-    name, rows, minPrevalence, defaultStrain, geneValidator
+    name, rows, geneValidator
   );
 }

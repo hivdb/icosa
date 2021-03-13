@@ -27,8 +27,6 @@ const SUPPORT_FORMATS =
   ".fastq, .gz, application/gzip, text/tsv, text/plain, " +
   ".tsv, .txt, .codfreq, .codfish, .aavf";
 
-const DEFAULT_CUTOFF = 0.2;  // 20%
-
 
 export default function SequenceReadsInputFormWrapper(props) {
 
@@ -77,7 +75,7 @@ class SequenceReadsInputForm extends React.Component {
 
   handleSubmit = async (e) => {
     e && e.persist();
-    const {config, outputOptions} = this.props;
+    const {outputOptions} = this.props;
     let {outputOption, allFastqFiles, allSequenceReads} = this.state;
     let validated = true;
     let state = {};
@@ -100,11 +98,7 @@ class SequenceReadsInputForm extends React.Component {
           if (loaded) {
             allSequenceReads = [
               ...allSequenceReads,
-              ...codfreqs.map(cf => ({
-                ...cf,
-                strain: config.defaultStrain,
-                minPrevalence: DEFAULT_CUTOFF
-              }))
+              ...codfreqs
             ];
             break;
           }
@@ -157,8 +151,6 @@ class SequenceReadsInputForm extends React.Component {
       allSequenceReads.push(parseSequenceReads(
         name,
         data,
-        DEFAULT_CUTOFF,
-        config.defaultStrain,
         geneValidator
       ));
     }
@@ -196,8 +188,6 @@ class SequenceReadsInputForm extends React.Component {
         allSequenceReads.push(parseSequenceReads(
           name,
           data,
-          DEFAULT_CUTOFF,
-          config.defaultStrain,
           geneValidator
         ));
       }

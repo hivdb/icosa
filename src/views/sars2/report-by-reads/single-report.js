@@ -4,7 +4,9 @@ import {matchShape, routerShape} from 'found';
 
 import {
   DRInterpretation, DRMutationScores,
-  SeqReadsAnalysisQA, SeqReadsSummary, MutationStats
+  SeqSummary, MutationStats,
+  MutationViewer as MutViewer,
+  ReportSection
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -127,7 +129,7 @@ export default class SingleSeqReadsReport extends React.Component {
   render() {
     const {
       sequenceReadsResult,
-      genes,
+      sequenceReadsResult: {allGeneSequenceReads},
       output,
       index,
       match, router,
@@ -155,10 +157,24 @@ export default class SingleSeqReadsReport extends React.Component {
          className={style['seqreads-header']} id={seqName}>
           <HLFirstWord index={index}>{seqName}</HLFirstWord>
         </header>
-        <SeqReadsSummary
-         {...{sequenceReadsResult, genes, output, match, router}} />
+        <SeqSummary {...sequenceReadsResult} output={output}>
+          <SeqSummary.InlineGeneRange />
+          <SeqSummary.MedianReadDepth />
+          <SeqSummary.PangolinLineage />
+          <SeqSummary.MinPrevalence />
+          <SeqSummary.MinCodonReads />
+          <SeqSummary.MinPositionReads />
+        </SeqSummary>
+        <ReportSection title="Sequence quality assessment">
+          <MutViewer {...{
+            allGeneSeqs: allGeneSequenceReads,
+            output,
+            strain
+          }} />
+        </ReportSection>
         <MutationStats {...sequenceReadsResult} {...{match, router, output}} />
-        <SeqReadsAnalysisQA {...sequenceReadsResult} output={output} />
+        {/* TODO: RangeError: Maximum call stack size exceeded
+        <SeqReadsAnalysisQA {...sequenceReadsResult} output={output} /> */}
         {/*<ValidationReport {...sequenceReadsResult} output={output} />*/}
         {isCritical ?
           <p>
