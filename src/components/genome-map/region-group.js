@@ -168,14 +168,13 @@ export default class RegionGroup extends React.Component {
     const [posStart, posEnd] = scaleX.domain();
     let covLayerAddOffsetY = 0;
     let posGroupAddOffsetY = 0;
-    const posAxisHeight = 8;
-    if (!hidePositionAxis) {
-      covLayerAddOffsetY += posAxisHeight;
-      posGroupAddOffsetY += posAxisHeight;
-    }
+    const posAxisHeight = 25;
     const hasCoverages = !!coverages;
     if (hasCoverages) {
       posGroupAddOffsetY += coverages.height;
+    }
+    else if (!hidePositionAxis) {
+      posGroupAddOffsetY += posAxisHeight;
     }
     let minX = 0;
     let maxX = width;

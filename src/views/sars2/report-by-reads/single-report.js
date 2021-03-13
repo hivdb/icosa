@@ -135,7 +135,7 @@ export default class SingleSeqReadsReport extends React.Component {
 
   render() {
     const {
-      curSequenceReads,
+      inputSequenceReads,
       sequenceReadsResult,
       sequenceReadsResult: {allGeneSequenceReads},
       output,
@@ -143,7 +143,7 @@ export default class SingleSeqReadsReport extends React.Component {
       match, router,
       match: {location: {state: {disabledDrugs}}}
     } = this.props;
-    const coverages = getCoverages(curSequenceReads);
+    const coverages = getCoverages(inputSequenceReads);
     const {
       strain: {display: strain},
       drugResistance,

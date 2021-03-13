@@ -152,7 +152,7 @@ export default class PositionAxis extends React.Component {
     } = this.props;
     const tickOffset = tickFontSize * 1.5;
     const tickPositions = getTicks(scaleX, positionAxis);
-    return <svg y={offsetY}>
+    return <svg id="position-axis" y={offsetY}>
       <path
        d={this.axisPathData.join(' ')}
        fill="none"

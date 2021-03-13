@@ -46,31 +46,79 @@ function calcPath(coverages, scaleX, scaleY, posStart, posEnd) {
 }
 
 
+function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
+  const [covStart, covEnd] = scaleY.domain();
+  const yBottom = scaleY(covStart);
+  const yEnd = scaleY(covEnd);
+  const strokeWidth = 2;
+
+  const pathData = [
+    'm', x + tickWidth, yEnd + strokeWidth / 2,
+    'h', - tickWidth,
+    'v', yBottom - yEnd - strokeWidth,
+    'h', tickWidth
+  ];
+
+  return <g id="coverage-axis">
+    <path
+     strokeWidth={strokeWidth}
+     fill="none"
+     stroke="#000000"
+     d={pathData.join(' ')} />
+    <text
+     x={x - 5} y={yEnd - strokeWidth / 2 + tickFontSize / 2}
+     fontSize={tickFontSize}
+     fill="#000000"
+     textAnchor="end">
+      {covEnd.toLocaleString('en-US')}
+    </text>
+    <text
+     x={x - 5} y={yBottom}
+     fontSize={tickFontSize}
+     fill="#000000"
+     textAnchor="end">
+      {covStart.toLocaleString('en-US')}
+    </text>
+  </g>;
+}
+
+
 function CoverageLayer({
+  tickWidth,
+  tickFontSize,
   offsetY,
   height,
   scaleX,
   posStart,
   posEnd,
+  fill = '#c0c0c0',
   coverages
 }) {
   const maxCov = getMaxCov(coverages);
   const scaleY = scaleLinear()
     .domain([0, maxCov])
-    .range([height, 0]);
-  return <svg id="coverage-layer" y={offsetY}>
+    .range([height + tickFontSize, tickFontSize]);
+  return <svg id="coverage-layer" y={offsetY - tickFontSize}>
+    <CovAxis
+     tickWidth={tickWidth}
+     tickFontSize={tickFontSize}
+     x={scaleX(posStart) - tickWidth - 20}
+     scaleY={scaleY} />
     <path
-     fill="red"
+     fill={fill}
      d={calcPath(coverages, scaleX, scaleY, posStart, posEnd)} />
   </svg>;
 }
 
 CoverageLayer.propTypes = {
+  tickWidth: PropTypes.number.isRequired,
+  tickFontSize: PropTypes.number.isRequired,
   offsetY: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   scaleX: PropTypes.func.isRequired,
   posStart: PropTypes.number.isRequired,
   posEnd: PropTypes.number.isRequired,
+  fill: PropTypes.string,
   coverages: PropTypes.arrayOf(
     PropTypes.shape({
       position: PropTypes.number.isRequired,
@@ -81,7 +129,8 @@ CoverageLayer.propTypes = {
 
 
 CoverageLayer.defaultProps = {
-  labelFontSize: 16
+  tickWidth: 8,
+  tickFontSize: 12
 };
 
 export default CoverageLayer;

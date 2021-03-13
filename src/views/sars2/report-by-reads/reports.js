@@ -165,7 +165,6 @@ export default class SeqReadsReports extends React.Component {
         ({name}) => firstName === name
       );
     }
-    const curSequenceReads = allSequenceReads[currentSelected.index];
 
     return <>
       {output === 'printable' ?
@@ -180,7 +179,9 @@ export default class SeqReadsReports extends React.Component {
         {sequenceReadsAnalysis.map((seqReadsResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSeqReadsReport
-             curSequenceReads={curSequenceReads}
+             inputSequenceReads={allSequenceReads.find(
+               ({name}) => seqReadsResult.name === name
+             )}
              currentSelected={currentSelected}
              onSelect={onSelectSeqReads}
              sequenceReadsResult={seqReadsResult}
