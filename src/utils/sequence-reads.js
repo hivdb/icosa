@@ -25,14 +25,17 @@ export function buildGeneValidator(geneValidatorDefs) {
   for (const {
     regexp,
     gene,
-    posOffset = 0
+    posOffset = 0,
+    range
   } of geneValidatorDefs) {
-    patternPairs.push([new RegExp(regexp, 'i'), gene, posOffset]);
+    patternPairs.push([new RegExp(regexp, 'i'), gene, posOffset, range]);
   }
   return (gene, pos) => {
-    for (const [pattern, normGene, posOffset] of patternPairs) {
+    for (const [pattern, normGene, posOffset, range] of patternPairs) {
       if (pattern.test(gene)) {
-        return [normGene, pos + posOffset];
+        if (!range || (pos >= range[0] && pos <= range[1])) {
+          return [normGene, pos + posOffset];
+        }
       }
     }
     return [null, null];

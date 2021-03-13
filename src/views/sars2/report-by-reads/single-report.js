@@ -49,12 +49,19 @@ function scrollTo(top, callback, smoothMaxDelta = 0) {
 }
 
 
+function getCoverages({allReads}) {
+  return allReads.map(
+    ({gene, position, totalReads}) => ({gene, position, coverage: totalReads})
+  );
+}
+
+
 export default class SingleSeqReadsReport extends React.Component {
 
   static propTypes = {
     currentSelected: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
-    species: PropTypes.string.isRequired,
+    species: PropTypes.string,
     match: matchShape.isRequired,
     router: routerShape.isRequired,
     sequenceReadsResult: PropTypes.object.isRequired,
@@ -128,6 +135,7 @@ export default class SingleSeqReadsReport extends React.Component {
 
   render() {
     const {
+      curSequenceReads,
       sequenceReadsResult,
       sequenceReadsResult: {allGeneSequenceReads},
       output,
@@ -135,6 +143,7 @@ export default class SingleSeqReadsReport extends React.Component {
       match, router,
       match: {location: {state: {disabledDrugs}}}
     } = this.props;
+    const coverages = getCoverages(curSequenceReads);
     const {
       strain: {display: strain},
       drugResistance,
@@ -168,6 +177,7 @@ export default class SingleSeqReadsReport extends React.Component {
         <ReportSection title="Sequence quality assessment">
           <MutViewer {...{
             allGeneSeqs: allGeneSequenceReads,
+            coverages,
             output,
             strain
           }} />

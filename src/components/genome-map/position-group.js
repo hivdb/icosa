@@ -42,13 +42,13 @@ export default class PositionGroup extends React.Component {
     const [xStart] = scaleX.range();
 
     return <svg id={`position-group-${name}`} y={offsetY}>
-      <text x={xStart - 20} y={64} fill="#000000"
+      <text x={xStart - 20} y={44} fill="#000000"
        textAnchor="end" fontSize={21} fontWeight="bolder">
         {labelText}
       </text>
       {regions.map((region) => (
         <Region
-         offsetY={20}
+         offsetY={0}
          key={`region-${region.name}`}
          scaleX={scaleX}
          region={region} />
@@ -56,7 +56,7 @@ export default class PositionGroup extends React.Component {
       {positions.map(({pos, ...posData}) => (
         pos >= posStart && pos <= posEnd &&
         <Position
-         offsetY={20}
+         offsetY={0}
          key={`position-${pos}`}
          position={{pos, ...posData}} />
       ))}

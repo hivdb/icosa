@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 
 import GenomeMap from '../../genome-map';
 import GMRegion from '../../genome-map/region';
@@ -170,9 +171,35 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
 }
 
 
+function getCoverages(coverages, geneDefs) {
+  if (!coverages) {
+    return;
+  }
+  const posStart = Math.min(...geneDefs.map(({range}) => range[0]));
+  const posEnd = Math.max(...geneDefs.map(({range}) => range[1]));
+  geneDefs = geneDefs.reduce((acc, geneDef) => {
+    acc[geneDef.gene] = geneDef;
+    return acc;
+  }, {});
+  const results = [];
+  for (const {gene, position, coverage} of coverages) {
+    const {range, readingFrame} = geneDefs[gene];
+    const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
+    results.push({position: absNAPos, coverage});
+  }
+  return {
+    height: 50,
+    posStart,
+    posEnd,
+    coverages: results.sort((a, b) => a.position - b.position)
+  };
+}
+
+
 function MutationViewer({
   regionPresets,
-  allGeneSeqs
+  allGeneSeqs,
+  coverages
 }) {
   const {presets, genes} = regionPresets;
   const [preset, setPreset] = useState(presets[0]);
@@ -185,6 +212,8 @@ function MutationViewer({
     value: name, label
   }));
   const payload = {
+    name: curName,
+    label: '',
     ...otherPreset,
     regions: [
       ...regions,
@@ -195,7 +224,8 @@ function MutationViewer({
       name: 'NA',
       label: '',
       positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
-    }]
+    }],
+    coverages: getCoverages(coverages, genes)
   };
   return (
     <GenomeMap
@@ -215,6 +245,32 @@ function MutationViewer({
     setPreset(preset);
   }
 }
+
+
+MutationViewer.propTypes = {
+  allGeneSeqs: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.shape({
+        name: PropTypes.string.isRequired
+      }).isRequired,
+      unsequencedRegions: PropTypes.shape({
+        regions: PropTypes.arrayOf(
+          PropTypes.shape({
+            posStart: PropTypes.number.isRequired,
+            posEnd: PropTypes.number.isRequired
+          }).isRequired
+        ).isRequired
+      }).isRequired
+    }).isRequired,
+  ).isRequired,
+  coverages: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.string.isRequired,
+      position: PropTypes.number.isRequired,
+      coverage: PropTypes.number.isRequired
+    }).isRequired
+  )
+};
 
 
 export default function MutationViewerLoader(props) {

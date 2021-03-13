@@ -9,10 +9,12 @@ import {
   regionShape,
   positionGroupsShape,
   domainsShape,
-  positionAxisShape
+  positionAxisShape,
+  coveragesShape
 } from './prop-types';
 import PositionAxis from './position-axis';
 import PositionGroup from './position-group';
+import CoverageLayer from './coverage-layer';
 import {removeOverlaps} from './helpers';
 
 
@@ -106,6 +108,7 @@ export default class RegionGroup extends React.Component {
     regions: PropTypes.arrayOf(
       regionShape.isRequired
     ).isRequired,
+    coverages: coveragesShape,
     subregionGroup: PropTypes.shape({
       name: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
@@ -119,6 +122,7 @@ export default class RegionGroup extends React.Component {
   }
 
   static defaultProps = {
+    hidePositionAxis: false,
     positions: []
   }
 
@@ -157,11 +161,22 @@ export default class RegionGroup extends React.Component {
       paddingTop,
       positionGroups,
       width,
-      regions
+      regions,
+      coverages
       // subregionGroup
     } = this.props;
     const [posStart, posEnd] = scaleX.domain();
-    let addOffsetY = hidePositionAxis ? -30 : 0;
+    let covLayerAddOffsetY = 0;
+    let posGroupAddOffsetY = 0;
+    const posAxisHeight = 8;
+    if (!hidePositionAxis) {
+      covLayerAddOffsetY += posAxisHeight;
+      posGroupAddOffsetY += posAxisHeight;
+    }
+    const hasCoverages = !!coverages;
+    if (hasCoverages) {
+      posGroupAddOffsetY += coverages.height;
+    }
     let minX = 0;
     let maxX = width;
 
@@ -170,6 +185,12 @@ export default class RegionGroup extends React.Component {
        offsetY={paddingTop}
        scaleX={scaleX}
        positionAxis={positionAxis} />}
+      {hasCoverages ? (
+        <CoverageLayer
+         {...coverages}
+         scaleX={scaleX}
+         offsetY={paddingTop + covLayerAddOffsetY} />
+      ) : null}
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
         for (const {turns} of posGroup.positions) {
@@ -192,9 +213,9 @@ export default class RegionGroup extends React.Component {
            positionGroup={posGroup}
            regions={regions}
            scaleX={scaleX}
-           offsetY={paddingTop + addOffsetY + 30} />
+           offsetY={paddingTop + posGroupAddOffsetY} />
         </React.Fragment>;
-        addOffsetY += (
+        posGroupAddOffsetY += (
           posGroup.addOffsetY +
           longestPosLabelLen * 5 +
           105
@@ -219,12 +240,12 @@ export default class RegionGroup extends React.Component {
       )}
       */}
     </g>;
-    this.props.moveSVGBorder({
-      height: paddingTop + addOffsetY + 50,
+    setTimeout(() => this.props.moveSVGBorder({
+      height: paddingTop + posGroupAddOffsetY + 30,
       paddingLeft: -minX + 80,
       paddingRight: maxX - width + 80,
       width: maxX - minX + 160
-    });
+    }));
     return jsx;
   }
 }

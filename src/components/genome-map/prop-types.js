@@ -57,6 +57,18 @@ const positionGroupsShape = PropTypes.arrayOf(positionGroupShape.isRequired);
 
 const domainsShape = PropTypes.arrayOf(domainShape.isRequired);
 
+const coveragesShape = PropTypes.shape({
+  height: PropTypes.number.isRequired,
+  posStart: PropTypes.number.isRequired,
+  posEnd: PropTypes.number.isRequired,
+  coverages: PropTypes.arrayOf(
+    PropTypes.shape({
+      position: PropTypes.number.isRequired,
+      coverage: PropTypes.number.isRequired
+    }).isRequired
+  ).isRequired
+});
+
 const presetShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -71,7 +83,8 @@ const presetShape = PropTypes.shape({
   positionGroups: positionGroupsShape.isRequired,
   regions: PropTypes.arrayOf(
     regionShape.isRequired
-  ).isRequired
+  ).isRequired,
+  coverages: coveragesShape
 });
 
 export {
@@ -80,5 +93,5 @@ export {
   domainShape, domainsShape,
   positionAxisShape,
   positionGroupShape, positionGroupsShape,
-  presetShape
+  coveragesShape, presetShape
 };

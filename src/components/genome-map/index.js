@@ -46,6 +46,7 @@ export default class GenomeMap extends React.Component {
         positionAxis,
         positionGroups,
         regions,
+        coverages,
         subregionGroup,
         footnote
       }
@@ -80,6 +81,7 @@ export default class GenomeMap extends React.Component {
            positionAxis={positionAxis}
            positionGroups={positionGroups}
            regions={regions}
+           coverages={coverages}
            moveSVGBorder={this.moveSVGBorder}
            subregionGroup={subregionGroup} />
         </svg>

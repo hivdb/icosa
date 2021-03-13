@@ -18,7 +18,7 @@ export default class SeqReadsReports extends React.Component {
 
   static propTypes = {
     output: PropTypes.string.isRequired,
-    species: PropTypes.string.isRequired,
+    species: PropTypes.string,
     match: matchShape.isRequired,
     router: routerShape.isRequired,
     loaded: PropTypes.bool.isRequired,
@@ -165,6 +165,7 @@ export default class SeqReadsReports extends React.Component {
         ({name}) => firstName === name
       );
     }
+    const curSequenceReads = allSequenceReads[currentSelected.index];
 
     return <>
       {output === 'printable' ?
@@ -179,6 +180,7 @@ export default class SeqReadsReports extends React.Component {
         {sequenceReadsAnalysis.map((seqReadsResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSeqReadsReport
+             curSequenceReads={curSequenceReads}
              currentSelected={currentSelected}
              onSelect={onSelectSeqReads}
              sequenceReadsResult={seqReadsResult}

@@ -25,7 +25,7 @@ export default class PresetSelection extends React.Component {
   render() {
     const {value: current, options} = this.props;
     return <div className={style['preset-selection']}>
-      <label for="genome-map-preset">Genome View:</label>
+      <label htmlFor="genome-map-preset">Genome View:</label>
       <Dropdown
        value={current}
        placeholder="Choose a genome view..."
