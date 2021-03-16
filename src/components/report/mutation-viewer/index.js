@@ -3,48 +3,11 @@ import PropTypes from 'prop-types';
 
 import GenomeMap from '../../genome-map';
 import GMRegion from '../../genome-map/region';
-import {consecutiveGroupsBy} from '../../../utils/array-groups';
+import shortenMutationList from '../../../utils/shorten-mutation-list';
 import ConfigContext from '../config-context';
 import PresetSelection from './preset-selection';
 
 import style from './style.module.scss';
-
-
-function mergeDeletions(positions) {
-  const merged = [];
-  const groups = consecutiveGroupsBy(
-    positions,
-    (left, right) => (
-      left.AAs === right.AAs &&
-      left.AAs === '-' &&
-      left.gene === right.gene &&
-      left.aaPos === right.aaPos - 1
-    )
-  );
-  for (const group of groups) {
-    if (group.length === 1) {
-      const [{gene, name, pos, stroke, color}] = group;
-      merged.push({
-        name: `${gene}:${name.replace('Deletion', 'Δ')}`,
-        pos,
-        stroke,
-        color
-      });
-    }
-    else {
-      const leftest = group[0];
-      const rightest = group[group.length - 1];
-      const {gene, pos, stroke, color, aaPos: startPos} = leftest;
-      const {aaPos: endPos} = rightest;
-      const refAAs = group.map(({refAA}) => refAA).join('');
-      merged.push({
-        name: `${gene}:${refAAs}${startPos}-${endPos}Δ`,
-        pos, stroke, color
-      });
-    }
-  }
-  return merged;
-}
 
 
 function convertAAPosToAbsNAPos(aaPos, naPosStart, readingFrame) {
@@ -141,14 +104,13 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
       readingFrame
     } = geneDefs[geneName];
     const highlight = highlightGenes.includes(geneName);
+    const shortMutations = shortenMutationList(mutations);
 
     for (const {
       position,
-      reference: refAA,
-      AAs,
       text,
       isUnsequenced
-    } of mutations) {
+    } of shortMutations) {
       if (isUnsequenced) {
         continue;
       }
@@ -157,9 +119,6 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
         gene: displayGene,
         name: text,
         pos: absNAPos,
-        aaPos: position,
-        refAA,
-        AAs,
         ...(highlight ? null : {
           stroke: '#e0e0e0',
           color: '#a0a0a0'
@@ -167,7 +126,7 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
       });
     }
   }
-  return mergeDeletions(resultPositions);
+  return resultPositions;
 }
 
 

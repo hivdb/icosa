@@ -11,6 +11,8 @@ import {
   ReportSection
 } from '../../../components/report';
 
+import AntibodySuscSummary from '../../../components/ab-susc-summary';
+
 import style from '../style.module.scss';
 
 
@@ -136,7 +138,9 @@ export default class SingleSequenceReport extends React.Component {
   render() {
     const {
       sequenceResult,
-      sequenceResult: {alignedGeneSequences},
+      sequenceResult: {
+        alignedGeneSequences
+      },
       output,
       index,
       species,
@@ -174,6 +178,9 @@ export default class SingleSequenceReport extends React.Component {
             strain
           }} />
           <ValidationReport {...sequenceResult} {...{output, strain}} />
+        </ReportSection>
+        <ReportSection title="MAb susceptibility summary">
+          <AntibodySuscSummary {...sequenceResult} {...{output, strain}} />
         </ReportSection>
         {isCritical ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>

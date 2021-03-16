@@ -20,22 +20,65 @@ export default gql`
       level
       message
     }
-    suscResultsForAntibodies {
-      refName
-      refDOI
-      refURL
-      rxName
-      controlStrainName
-      strainName
-      mutations
-      section
-      ordinalNumber
-      foldCmp
-      fold
-      ineffective
-      resistanceLevel
-      cumulativeCount
-      antibodies
+    antibodySuscSummary {
+      mutations {
+        reference
+        position
+        AAs
+        text
+      }
+      hitMutations {
+        position
+      }
+      itemsByAntibody {
+        antibodies { name, abbrName }
+        items {
+          resistanceLevel
+          cumulativeCount
+          items {
+            reference {
+              refName
+              DOI
+              URL
+              firstAuthor
+              year
+            }
+            controlVirusStrain { name }
+            virusStrain { name }
+            section
+            foldCmp
+            fold
+            ineffective
+            cumulativeCount
+          }
+        }
+      }
+      itemsByAntibodyClass {
+        antibodyClass
+        items {
+          resistanceLevel
+          cumulativeCount
+          items {
+            reference {
+              refName
+              DOI
+              URL
+              firstAuthor
+              year
+            }
+            antibodies { name }
+            controlVirusStrain { name }
+            virusStrain { name }
+            section
+            foldCmp
+            fold
+            ineffective
+            cumulativeCount
+            numHitMutations
+            numMissMutations
+          }
+        }
+      }
     }
     alignedGeneSequences {
       firstAA
