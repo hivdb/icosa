@@ -1,5 +1,9 @@
+@import "../../styles/colors";
+@import "../../styles/functions";
 
 $max-bar-height: 3rem;
+$min-detail-box-height: 6rem;
+$button-group-sticky-start: 24rem;
 
 .ab-susc-summary-container {
   position: relative;
@@ -10,16 +14,16 @@ $max-bar-height: 3rem;
   }
 
   >ul:last-of-type {
-    margin-bottom: -24rem;
+    margin-bottom: -$button-group-sticky-start - $min-detail-box-height;
   }
   
   .button-group {
-    margin-top: 25rem;
-    margin-left: auto;
-    margin-right: auto;
+    margin: $button-group-sticky-start + 1rem auto -1rem;
+    padding-bottom: 1rem;
     text-align: right;
     position: sticky;
     bottom: 2rem;
+    padding-right: 1rem;
     button.show-more-results + button.collapse-results {
       margin-left: 1rem;
     }
@@ -36,13 +40,23 @@ ul.ab-susc-summary {
   margin-left: 0;
   padding-left: 0;
   li.mutations-group {
-    > .mutations {
+    position: relative;
+    &:not(:last-of-type) {
+      margin-bottom: 1rem;
+    }
+    &:last-of-type[data-detail-expanded] {
+      padding-bottom: 1rem + $min-detail-box-height;
+    }
+    .summary-box {
+      background-color: white;
+      border: 1px solid #7f7f7f;
+    }
+    .mutations {
       font-weight: 200;
       font-size: 1.2rem;
       padding-left: .5rem;
       padding-top: .5rem;
       padding-bottom: .25rem;
-      border-bottom: 1px solid #7f7f7f;
       > .miss-mutation {
         background-color: #e0e0e0;
         text-decoration: line-through;
@@ -62,33 +76,46 @@ ul.ab-susc-summary {
     margin-left: 0;
     padding-left: 0;
     > li.antibody-group {
-      cursor: pointer;
-      margin-top: 1rem;
-      margin-left: 1.5rem;
-      margin-bottom: 1rem;
-      padding-left: .5rem;
-      padding-right: .5rem;
-      display: flex;
-      flex-direction: column-reverse;
-      transition: background-color 100ms ease-in-out;
-      > .antibodies {
-        text-align: center;
-      }
-      &:hover {
-        background-color: #e7e7e7;
-        li.resistance-level::before {
-          content: attr(data-count);
-          position: absolute;
-          left: 0;
-          right: 0;
-          text-align: center;
-          bottom: calc(#{$max-bar-height} * var(--cumulative-count) / var(--max-cumulative-count) + 0.05rem);
-          font-size: .6rem;
-          line-height: 1.2em;
-          text-indent: 0;
+      > a.antibody-group-anchor {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        margin-left: 1.5rem;
+        margin-bottom: .25rem;
+        padding-left: .5rem;
+        padding-right: .5rem;
+        padding-bottom: .25rem;
+        display: flex;
+        flex-direction: column-reverse;
+        transition: background-color 100ms ease-in-out;
+
+        &:hover {
+          background-color: #e7e7e7;
+        }
+
+        &[data-current="true"] {
+          background-color: color(susc-summary-selected-bg);
+        }
+
+        &:hover, &[data-current="true"] {
+          li.resistance-level::before {
+            content: attr(data-count);
+            position: absolute;
+            left: 0;
+            right: 0;
+            text-align: center;
+            bottom: calc(#{$max-bar-height} * var(--cumulative-count) / var(--max-cumulative-count) + 0.05rem);
+            font-size: .6rem;
+            line-height: 1.2em;
+            text-indent: 0;
+          }
         }
       }
-      > ul.resistance-levels {
+
+      .antibodies {
+        text-align: center;
+      }
+      ul.resistance-levels {
         margin-bottom: .5rem;
         list-style-type: none;
         display: flex;
@@ -132,6 +159,73 @@ ul.ab-susc-summary {
             background-color: white;
           }
         }
+      }
+    }
+  }
+
+}
+
+.detail-box {
+  position: relative;
+  padding: 1.5rem 1rem;
+  line-height: 1.8em;
+  background-color: #f0f0f0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 0;
+  min-height: $min-detail-box-height;
+  opacity: 1;
+  transition: top 100ms ease-in-out, opacity 100ms ease-in-out 100ms, margin-bottom 100ms ease-in-out, padding 100ms ease-in-out;
+  top: 0;
+
+  &[data-display="false"] {
+    top: -$min-detail-box-height;
+    z-index: -1;
+    margin-bottom: -$min-detail-box-height;
+    padding: 0 1rem;
+    opacity: 0;
+  }
+
+  ul.rlevel-list {
+    padding-left: 1.5rem;
+    > li.rlevel-item {
+      >.rlevel {
+        border: 1px solid black;
+        padding: 0 .5rem;
+        &[data-level="resistant"] {
+          background-color: #146aa8;
+          color: white;
+
+        }
+        &[data-level="partial-resistance"] {
+          background-color: #7fcbee;
+          color: white;
+        }
+        &[data-level="susceptible"] {
+          background-color: white;
+        }
+      }
+    }
+  }
+
+  ul.ref-list {
+    padding-left: 1.5rem;
+  }
+
+  ul.susc-list {
+    display: inline-block;
+    list-style-type: none;
+    padding-left: 0;
+    &::before {
+      content: ': ';
+      padding-right: .25rem;
+    }
+    > li.susc-item {
+      display: inline-block;
+      &:not(:first-of-type)::before {
+        content: '·';
+        padding-left: .5rem;
+        padding-right: .5rem;
       }
     }
   }

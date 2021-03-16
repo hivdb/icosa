@@ -172,7 +172,6 @@ export default class SingleSeqReadsReport extends React.Component {
           <SeqSummary.PangolinLineage />
           <SeqSummary.MinPrevalence />
           <SeqSummary.MinCodonReads />
-          <SeqSummary.MinPositionReads />
         </SeqSummary>
         <ReportSection title="Sequence quality assessment">
           <MutViewer {...{

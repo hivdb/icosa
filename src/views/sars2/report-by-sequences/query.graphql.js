@@ -31,7 +31,7 @@ export default gql`
         position
       }
       itemsByAntibody {
-        antibodies { name, abbrName }
+        antibodies { name, abbrName, availability }
         items {
           resistanceLevel
           cumulativeCount
@@ -45,6 +45,7 @@ export default gql`
             }
             controlVirusStrain { name }
             virusStrain { name }
+            assay
             section
             foldCmp
             fold
