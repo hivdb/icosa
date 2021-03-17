@@ -1,16 +1,12 @@
 import React from 'react';
+import round from 'lodash/round';
 import orderBy from 'lodash/orderBy';
 
 import style from './style.module.scss';
 
 
 function formatPercent(percent) {
-  return percent.toPrecision(
-    Math.max(
-      Math.ceil(Math.log10(percent + .5)),
-      2
-    )
-  ) + '%';
+  return round(percent, percent >= 10 ? 0 : 1) + '%';
 }
 
 
