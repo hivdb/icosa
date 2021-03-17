@@ -133,6 +133,7 @@ ul.ab-susc-summary {
         text-align: center;
       }
       ul.resistance-levels {
+        box-sizing: content-box;
         margin-bottom: .5rem;
         list-style-type: none;
         display: flex;
@@ -144,6 +145,7 @@ ul.ab-susc-summary {
         align-items: flex-end;
         width: 3rem;
         > li.resistance-level {
+          box-sizing: content-box;
           height: $max-bar-height + .9rem;
           position: relative;
           &:not(:first-child) {
