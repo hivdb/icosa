@@ -9,6 +9,8 @@ import {
   ReportSection
 } from '../../../components/report';
 
+import AntibodySuscSummary from '../../../components/ab-susc-summary';
+
 import style from '../style.module.scss';
 
 
@@ -137,7 +139,10 @@ export default class SingleSeqReadsReport extends React.Component {
     const {
       inputSequenceReads,
       sequenceReadsResult,
-      sequenceReadsResult: {allGeneSequenceReads},
+      sequenceReadsResult: {
+        readDepthStats: {p95: coverageUpperLimit},
+        allGeneSequenceReads
+      },
       output,
       index,
       match, router,
@@ -175,11 +180,15 @@ export default class SingleSeqReadsReport extends React.Component {
         </SeqSummary>
         <ReportSection title="Sequence quality assessment">
           <MutViewer {...{
+            coverageUpperLimit: Math.floor(coverageUpperLimit),
             allGeneSeqs: allGeneSequenceReads,
             coverages,
             output,
             strain
           }} />
+        </ReportSection>
+        <ReportSection title="MAb susceptibility summary">
+          <AntibodySuscSummary {...sequenceReadsResult} {...{output, strain}} />
         </ReportSection>
         <MutationStats {...sequenceReadsResult} {...{match, router, output}} />
         {/* TODO: RangeError: Maximum call stack size exceeded

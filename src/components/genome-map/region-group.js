@@ -240,10 +240,10 @@ export default class RegionGroup extends React.Component {
       */}
     </g>;
     setTimeout(() => this.props.moveSVGBorder({
-      height: paddingTop + posGroupAddOffsetY + 30,
-      paddingLeft: -minX + 80,
-      paddingRight: maxX - width + 80,
-      width: maxX - minX + 160
+      height: paddingTop + posGroupAddOffsetY + 10,
+      paddingLeft: -minX + 120,
+      paddingRight: maxX - width + 120,
+      width: maxX - minX + 240
     }));
     return jsx;
   }

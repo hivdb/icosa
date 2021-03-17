@@ -197,17 +197,27 @@ function parseCodFreq(
     if (codonReads === 0) {
       continue;
     }
+    const delLen = (codon.match(/-/g) || []).length;
+    if (delLen < 3) {
+      codon = codon.replace(/-/g, '');
+    }
     if (codon.length < 3) {
       continue;
     }
-    const gpKey = `${gene}${aaPos}`;
-    if (!(gpKey in gpMap)) {
-      gpMap[gpKey] = {
-        gene, position: aaPos,
-        totalReads, allCodonReads: []
-      };
+    const aaDelLen = Math.floor(delLen / 3);
+    if (aaDelLen > 0) {
+      codon = '---';
     }
-    gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
+    for (let pos = aaPos - aaDelLen + (aaDelLen > 0); pos <= aaPos; pos ++) {
+      const gpKey = `${gene}${pos}`;
+      if (!(gpKey in gpMap)) {
+        gpMap[gpKey] = {
+          gene, position: pos,
+          totalReads, allCodonReads: []
+        };
+      }
+      gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
+    }
   }
   return {
     name,

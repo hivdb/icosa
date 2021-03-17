@@ -130,7 +130,7 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
 }
 
 
-function getCoverages(coverages, geneDefs) {
+function getCoverages(coverages, geneDefs, coverageUpperLimit) {
   if (!coverages) {
     return;
   }
@@ -150,6 +150,7 @@ function getCoverages(coverages, geneDefs) {
     height: 50,
     posStart,
     posEnd,
+    coverageUpperLimit,
     coverages: results.sort((a, b) => a.position - b.position)
   };
 }
@@ -158,7 +159,8 @@ function getCoverages(coverages, geneDefs) {
 function MutationViewer({
   regionPresets,
   allGeneSeqs,
-  coverages
+  coverages,
+  coverageUpperLimit
 }) {
   const {presets, genes} = regionPresets;
   const [preset, setPreset] = useState(presets[0]);
@@ -184,7 +186,7 @@ function MutationViewer({
       label: '',
       positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
     }],
-    coverages: getCoverages(coverages, genes)
+    coverages: getCoverages(coverages, genes, coverageUpperLimit)
   };
   return (
     <GenomeMap

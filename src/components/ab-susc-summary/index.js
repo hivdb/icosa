@@ -5,8 +5,33 @@ import Button from '../button';
 
 import style from './style.module.scss';
 
+function getQueryMutations(props) {
+  const{
+    alignedGeneSequences,
+    allGeneSequenceReads
+  } = props;
+  let geneSeq = {};
+  if (alignedGeneSequences) {
+    geneSeq = (
+      alignedGeneSequences
+        .find(({gene: {name}}) => name === 'S') || {}
+    );
+  }
+  else if (allGeneSequenceReads) {
+    geneSeq = (
+      allGeneSequenceReads
+        .find(({gene: {name}}) => name === 'S') || {}
+    );
+  }
+  const {mutations = []} = geneSeq;
+  return mutations;
+}
 
-function AntibodySuscSummary({antibodySuscSummary}) {
+
+function AntibodySuscSummary({
+  antibodySuscSummary,
+  ...props
+}) {
   antibodySuscSummary = antibodySuscSummary
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const maxCount = Math.max(
@@ -17,6 +42,7 @@ function AntibodySuscSummary({antibodySuscSummary}) {
     ))
   );
   const containerRef = React.useRef();
+  const queryMuts = getQueryMutations(props);
 
   const [showNumResults, setShowNumResults] = React.useState(3);
 
@@ -29,7 +55,7 @@ function AntibodySuscSummary({antibodySuscSummary}) {
        className={style['ab-susc-summary']}
        style={{"--max-cumulative-count": maxCount}}>
         {antibodySuscSummary.slice(0, showNumResults).map((item, idx) => (
-          <MutationsGroup key={idx} {...item} />
+          <MutationsGroup key={idx} {...item} queryMuts={queryMuts} />
         ))}
       </ul>
       <div className={style['button-group']}>

@@ -92,9 +92,13 @@ function CoverageLayer({
   posStart,
   posEnd,
   fill = '#c0c0c0',
+  coverageUpperLimit,
   coverages
 }) {
-  const maxCov = getMaxCov(coverages);
+  let maxCov = getMaxCov(coverages);
+  if (coverageUpperLimit) {
+    maxCov = Math.min(coverageUpperLimit, maxCov);
+  }
   const scaleY = scaleLinear()
     .domain([0, maxCov])
     .range([height + tickFontSize, tickFontSize]);
@@ -119,6 +123,7 @@ CoverageLayer.propTypes = {
   posStart: PropTypes.number.isRequired,
   posEnd: PropTypes.number.isRequired,
   fill: PropTypes.string,
+  coverageUpperLimit: PropTypes.number,
   coverages: PropTypes.arrayOf(
     PropTypes.shape({
       position: PropTypes.number.isRequired,

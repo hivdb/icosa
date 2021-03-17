@@ -22,17 +22,40 @@ function AntibodyGroupDetail({antibodies, items, display}) {
       {display && <>
         <div className={style['group-name']}>
           <strong>MAb name</strong>{': '}
-          {antibodies.map(({name, abbrName}, idx) => <React.Fragment key={idx}>
-            {idx > 0 ?
-              <span className={style['inline-divider']}>+</span> : null}
-            {name}
-            {abbrName ? ` (${abbrName})` : null}
-          </React.Fragment>)}
+          {antibodies.map(({name, abbrName, synonyms}, idx) => (
+            <React.Fragment key={idx}>
+              {idx > 0 ?
+                <span className={style['inline-divider']}>+</span> : null}
+              {name}
+              {abbrName || synonyms.length > 0 ? <> ({
+                uniq([abbrName, ...synonyms]).join(', ')
+              })</> : null}
+            </React.Fragment>
+          ))}
         </div>
         <div className={style['availability']}>
           <strong>Availability</strong>{': '}
           {uniq(antibodies.map(({availability}) => availability)).join('/')}
         </div>
+        {antibodies.some(({target}) => target) ?
+          <div className={style['target']}>
+            <strong>Target</strong>{': '}
+            {uniq(
+              antibodies
+                .map(({target}) => target)
+                .filter(target => target)
+            ).join('/')}
+          </div> : null}
+        {antibodies.some(({antibodyClass}) => antibodyClass) ?
+          <div className={style['antibody-class']}>
+            <strong>Class</strong>{': '}
+            {uniq(
+              antibodies
+                .map(({antibodyClass}) => antibodyClass)
+                .filter(cls => cls)
+            ).join('/')}
+          </div> : null}
+
         <div className={style['rlevel-detail']}>
           <strong>Resistance levels</strong>{': '}
           <ul className={style['rlevel-list']}>
@@ -87,8 +110,6 @@ function AntibodyGroupDetail({antibodies, items, display}) {
                           })()}
                           <ul className={style['susc-list']}>
                             {results.map(({
-                              controlVirusStrain: {name: controlName},
-                              virusStrain: {name: variantName},
                               assay,
                               section,
                               foldCmp,

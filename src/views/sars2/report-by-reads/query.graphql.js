@@ -32,10 +32,74 @@ export default gql`
     }
     readDepthStats {
       median: percentile(p: 50)
+      p95: percentile(p: 95)
     }
     validationResults {
       level
       message
+    }
+    antibodySuscSummary {
+      mutations {
+        gene { name }
+        reference
+        position
+        isUnsequenced
+        AAs
+        text
+      }
+      hitMutations {
+        position
+      }
+      hitPositions {
+        position
+      }
+      itemsByAntibody {
+        antibodies {
+          name
+          abbrName
+          synonyms
+          availability
+          target
+          antibodyClass
+        }
+        items {
+          resistanceLevel
+          cumulativeCount
+          items {
+            reference {
+              refName
+              DOI
+              URL
+            }
+            assay
+            section
+            foldCmp
+            fold
+            ineffective
+            cumulativeCount
+          }
+        }
+      }
+      itemsByAntibodyClass {
+        antibodyClass
+        items {
+          resistanceLevel
+          cumulativeCount
+          items {
+            reference {
+              refName
+              DOI
+              URL
+            }
+            antibodies { name }
+            section
+            foldCmp
+            fold
+            ineffective
+            cumulativeCount
+          }
+        }
+      }
     }
     availableGenes { name }
     minPrevalence
@@ -77,6 +141,7 @@ export default gql`
       # }
       mutations {
         text
+        AAs
         position
         primaryType
         isApobecMutation
@@ -85,6 +150,11 @@ export default gql`
         isUnusual
         isAmbiguous
         isDRM
+        allAAReads {
+          aminoAcid
+          numReads
+          percent
+        }
       }
     }
     drugResistance {

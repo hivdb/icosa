@@ -54,9 +54,17 @@ ul.ab-susc-summary {
     .mutations {
       font-weight: 200;
       font-size: 1.2rem;
-      padding-left: .5rem;
-      padding-top: .5rem;
+      padding-left: 2rem;
+      padding-top: 1rem;
       padding-bottom: .25rem;
+      > .diff-mutation {
+        background-color: #f0f0f0;
+        &::after {
+          content: '?';
+          vertical-align: super;
+          font-size: smaller;
+        }
+      }
       > .miss-mutation {
         background-color: #e0e0e0;
         text-decoration: line-through;

@@ -5,13 +5,22 @@ export default function shortenMutationList(mutations) {
   const merged = [];
   const groups = consecutiveGroupsBy(
     mutations,
-    (left, right) => (
-      !left.isUnsequenced &&
+    (left, right) => {
+      for (const field of ['AAs', 'position', 'isUnsequenced']) {
+        if (!(field in left) || !(field in right)) {
+          throw new Error(
+            `Unabled to determine if ${JSON.stringify(left)} and ` +
+            `${JSON.stringify(right)} should be merged, ` +
+            `field "${field}" is not provided`
+          );
+        }
+      }
+      return !left.isUnsequenced &&
       !right.isUnsequenced &&
       left.AAs === right.AAs &&
       left.AAs === '-' &&
-      left.position === right.position - 1
-    )
+      left.position === right.position - 1;
+    }
   );
   for (const group of groups) {
     if (group.length === 1) {
@@ -21,7 +30,7 @@ export default function shortenMutationList(mutations) {
         position,
         startPos: position,
         endPos: position,
-        text: text.replace('Deletion', 'Δ')
+        text: text.replace('Deletion', 'Δ').replace('-', 'Δ')
       });
     }
     else {

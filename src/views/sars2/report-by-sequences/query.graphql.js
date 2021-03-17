@@ -22,6 +22,8 @@ export default gql`
     }
     antibodySuscSummary {
       mutations {
+        gene { name }
+        isUnsequenced
         reference
         position
         AAs
@@ -30,8 +32,18 @@ export default gql`
       hitMutations {
         position
       }
+      hitPositions {
+        position
+      }
       itemsByAntibody {
-        antibodies { name, abbrName, availability }
+        antibodies {
+          name
+          abbrName
+          synonyms
+          availability
+          target
+          antibodyClass
+        }
         items {
           resistanceLevel
           cumulativeCount
@@ -40,11 +52,7 @@ export default gql`
               refName
               DOI
               URL
-              firstAuthor
-              year
             }
-            controlVirusStrain { name }
-            virusStrain { name }
             assay
             section
             foldCmp
@@ -64,19 +72,13 @@ export default gql`
               refName
               DOI
               URL
-              firstAuthor
-              year
             }
             antibodies { name }
-            controlVirusStrain { name }
-            virusStrain { name }
             section
             foldCmp
             fold
             ineffective
             cumulativeCount
-            numHitMutations
-            numMissMutations
           }
         }
       }

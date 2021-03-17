@@ -7,12 +7,31 @@ import AntibodyGroupDetail from './antibody-group-detail';
 
 
 function MutationsGroup({
-  mutations, hitMutations,
+  queryMuts,
+  mutations, hitMutations, hitPositions,
   itemsByAntibody, itemsByAntibodyClass
 }) {
   const shortMutations = shortenMutationList(mutations);
-  const shortMissMutations = shortMutations.filter(({startPos, endPos}) => (
-    !hitMutations.find(m => (
+  const diffPositions = shortMutations.filter(({startPos, endPos}) => (
+    hitPositions.some(m => (
+      m.position >= startPos &&
+      m.position <= endPos
+    )) &&
+    !hitMutations.some(m => (
+      m.position >= startPos &&
+      m.position <= endPos
+    ))
+  ));
+  const diffQueryMuts = shortenMutationList(
+    queryMuts.filter(({position}) => (
+      diffPositions.some(m => (
+        position >= m.startPos &&
+        position <= m.endPos
+      ))
+    ))
+  );
+  const missPositions = shortMutations.filter(({startPos, endPos}) => (
+    !hitPositions.some(m => (
       m.position >= startPos &&
       m.position <= endPos
     ))
@@ -29,24 +48,42 @@ function MutationsGroup({
             {idx > 0 ?
               <span className={style['inline-divider']}>+</span> : null}
             <span className={style[
-              hitMutations.find(m => (
+              hitMutations.some(m => (
                 m.position >= startPos &&
                 m.position <= endPos
-              )) ? 'hit-mutation' : 'miss-mutation'
+              )) ? 'hit-mutation' : (
+                hitPositions.some(m => (
+                  m.position >= startPos &&
+                  m.position <= endPos
+                )) ? 'diff-mutation' : 'miss-mutation'
+              )
             ]}>
               {text}
             </span>
           </React.Fragment>
         ))}
-        {shortMissMutations.length > 0 ? (
+        {diffQueryMuts.length + missPositions.length > 0 ? (
           <div className={style['miss-mutations']}>
-            {'Absent from the input sequence: '}
-            {shortMissMutations.map(({text}, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 ? '; ' : null}
-                {text}
-              </React.Fragment>
-            ))}
+            {diffQueryMuts.length > 0 ? <>
+              Different from input sequence:{' '}
+              {diffQueryMuts.map(({text}, idx) => (
+                <React.Fragment key={idx}>
+                  {idx > 0 ? '; ' : null}
+                  {text}
+                </React.Fragment>
+              ))}
+            </> : null}
+            {diffQueryMuts.length > 0 && missPositions.length > 0 ?
+              <br /> : null}
+            {missPositions.length > 0 ? <>
+              Absent from input sequence:{' '}
+              {missPositions.map(({text}, idx) => (
+                <React.Fragment key={idx}>
+                  {idx > 0 ? '; ' : null}
+                  {text}
+                </React.Fragment>
+              ))}
+            </> : null}
           </div>
         ) : null}
       </div>

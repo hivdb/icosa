@@ -62,6 +62,7 @@ const coveragesShape = PropTypes.shape({
   posStart: PropTypes.number.isRequired,
   posEnd: PropTypes.number.isRequired,
   fill: PropTypes.string,
+  coverageUpperLimit: PropTypes.number,
   coverages: PropTypes.arrayOf(
     PropTypes.shape({
       position: PropTypes.number.isRequired,

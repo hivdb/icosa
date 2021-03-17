@@ -29,7 +29,9 @@
   }
 
   .svg-container {
-    overflow-x: auto;
+    > svg {
+      width: 100%;
+    }
   }
 
 }
