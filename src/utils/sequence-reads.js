@@ -221,7 +221,7 @@ function parseCodFreq(
       continue;
     }
     if (dialect === 'general') {
-      const gpKey = `${gene}${aaPos}`;
+      const gpKey = `${gene}$$##$$${aaPos}`;
       if (!(gpKey in gpMap)) {
         gpMap[gpKey] = {
           gene, position: aaPos,
@@ -241,7 +241,7 @@ function parseCodFreq(
         codon = '---';
       }
       for (let pos = aaPos - aaDelLen + (aaDelLen > 0); pos <= aaPos; pos ++) {
-        const gpKey = `${gene}${pos}`;
+        const gpKey = `${gene}$$##$$${pos}`;
         if (!(gpKey in gpMap)) {
           gpMap[gpKey] = {
             gene, position: pos,
