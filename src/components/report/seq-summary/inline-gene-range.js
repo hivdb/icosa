@@ -14,10 +14,12 @@ export default function InlineGeneRange({geneSeqs}) {
           {geneSeqs.length > 1 ? 's' : null}:
         </dt>
         <dd>
-          {geneSeqs.map(({gene, unsequencedRegions: {size, regions}}, idx) => (
-            <React.Fragment key={idx}>
-              {idx > 0 ? ' · ' : null}
-              <span className={classNames(
+          <ul className={style['inline-gene-range-list']}>
+            {geneSeqs.map(({
+              gene,
+              unsequencedRegions: {size, regions}
+            }, idx) => (
+              <li key={idx} className={classNames(
                 style['inline-gene-range'],
                 highlightGenes.includes(gene.name) ?
                   style['hl'] : null
@@ -32,9 +34,9 @@ export default function InlineGeneRange({geneSeqs}) {
                       `${posStart}-${posEnd}` : posStart
                   ).join(', ')})
                 </> : null}
-              </span>
-            </React.Fragment>
-          ))}
+              </li>
+            ))}
+          </ul>
         </dd>
       </> : null}
       {geneSeqs.length < allGenes.length && <>
@@ -44,14 +46,13 @@ export default function InlineGeneRange({geneSeqs}) {
           missing:
         </dt>
         <dd className={style.warning}>
-          {allGenes
-            .filter(curGene => !geneSeqs.some(
-              ({gene}) => gene.name === curGene
-            ))
-            .map((geneName, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 ? ' · ' : null}
-                <span className={classNames(
+          <ul className={style['inline-gene-range-list']}>
+            {allGenes
+              .filter(curGene => !geneSeqs.some(
+                ({gene}) => gene.name === curGene
+              ))
+              .map((geneName, idx) => (
+                <li key={idx} className={classNames(
                   style['inline-gene-range'],
                   highlightGenes.includes(geneName) ?
                     style['hl'] : null
@@ -59,10 +60,10 @@ export default function InlineGeneRange({geneSeqs}) {
                   <span className={style['gene-name']}>
                     {geneDisplay[geneName] || geneName}
                   </span>
-                </span>
-              </React.Fragment>
-            ))
-          }
+                </li>
+              ))
+            }
+          </ul>
         </dd>
       </>}
     </>}

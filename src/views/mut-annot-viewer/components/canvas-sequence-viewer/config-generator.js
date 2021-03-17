@@ -172,25 +172,25 @@ export default class ConfigGenerator {
     );
     const underscoreAnnotOffsetYPixelPerRow = [];
     for (let r = 0; r < numRows; r ++) {
-      const startPos = r * numCols + absPosStart;
-      const endPos = (r + 1) * numCols + absPosStart - 1;
+      const posStart = r * numCols + absPosStart;
+      const posEnd = (r + 1) * numCols + absPosStart - 1;
       const annotHeightPerPos = new Array(numCols).fill(0);
-      for (let pos = startPos; pos <= endPos; pos ++) {
+      for (let pos = posStart; pos <= posEnd; pos ++) {
         const posLocs = usLocMatrix[pos - 1];
         if (posLocs && posLocs.length > 0) {
-          annotHeightPerPos[pos - startPos] += posLocs.length * usOuterSize;
+          annotHeightPerPos[pos - posStart] += posLocs.length * usOuterSize;
         }
       }
       for (const positions of aminoAcidsAnnotPositions) {
         for (const [pos,, aas] of Object.values(positions)) {
-          if (pos < startPos) {
+          if (pos < posStart) {
             continue;
           }
-          else if (pos > endPos) {
+          else if (pos > posEnd) {
             break;
           }
           if (aas && aas.length > 0) {
-            annotHeightPerPos[pos - startPos] += aas.length * aaOuterSize;
+            annotHeightPerPos[pos - posStart] += aas.length * aaOuterSize;
           }
         }
       }
@@ -294,7 +294,7 @@ export default class ConfigGenerator {
     });
   }
 
-  posRange2CoordPairs = (startPos, endPos, locIndex) => {
+  posRange2CoordPairs = (posStart, posEnd, locIndex) => {
     const {
       numCols,
       posItemSizePixel,
@@ -302,9 +302,9 @@ export default class ConfigGenerator {
       underscoreAnnotMarginPixel,
       seqFragment: [absPosStart, absPosEnd]
     } = this;
-    startPos = Math.max(absPosStart, startPos);
-    endPos = Math.min(absPosEnd, endPos);
-    if (endPos < startPos) {
+    posStart = Math.max(absPosStart, posStart);
+    posEnd = Math.min(absPosEnd, posEnd);
+    if (posEnd < posStart) {
       return [];
     }
     const coordPairs = [];
@@ -313,14 +313,14 @@ export default class ConfigGenerator {
       locIndex * (underscoreAnnotHeightPixel + underscoreAnnotMarginPixel)
     );
     const endOffsetY = offsetY + underscoreAnnotHeightPixel;
-    let startCoord = this.pos2Coord(startPos);
+    let startCoord = this.pos2Coord(posStart);
     let endCoord;
     for (
       let breakPos = (
-        Math.ceil((startPos - absPosStart + 1) / numCols) *
+        Math.ceil((posStart - absPosStart + 1) / numCols) *
         numCols + absPosStart - 1
       );
-      breakPos < endPos;
+      breakPos < posEnd;
       breakPos += numCols
     ) {
       endCoord = this.pos2Coord(breakPos);
@@ -330,7 +330,7 @@ export default class ConfigGenerator {
       coordPairs.push({startCoord, endCoord});
       startCoord = this.pos2Coord(breakPos + 1);
     }
-    endCoord = this.pos2Coord(endPos);
+    endCoord = this.pos2Coord(posEnd);
     endCoord.x += posItemSizePixel;
     startCoord.y += offsetY;
     endCoord.y += endOffsetY;

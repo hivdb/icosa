@@ -67,8 +67,6 @@ export default class GenomeMap extends React.Component {
       <div className={style['svg-container']}>
         <svg
          ref={this.svgRef}
-         width={`${width}px`}
-         height={`${height}px`}
          fontFamily='"Source Sans Pro", "Helvetica Neue", Helvetica'
          viewBox={`0 0 ${width} ${height}`}>
           <RegionGroup

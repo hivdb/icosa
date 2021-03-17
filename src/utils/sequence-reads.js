@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import {csvParse} from './csv';
 
 
@@ -160,11 +161,26 @@ function parseAAVF(
 }
 
 
+function detectCodFreqDialect(firstRow) {
+  if (isEqual(firstRow, [
+    'gene', 'pos', 'depth', 'codon',
+    'v_count', 'v_name', 'depth_F', 'v_fwd'
+  ])) {
+    return 'virolab';
+  }
+  else {
+    return 'general';
+  }
+}
+
+
 function parseCodFreq(
   name, rows, geneValidator
 ) {
   const gpMap = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
+  const [firstRow] = rows;
+  const dialect = detectCodFreqDialect(firstRow);
   for (let row of rows) {
     let gene, aaPos, totalReads, codon, codonReads;
     if (row.length >= 5) {
@@ -204,19 +220,36 @@ function parseCodFreq(
     if (codon.length < 3) {
       continue;
     }
-    const aaDelLen = Math.floor(delLen / 3);
-    if (aaDelLen > 0) {
-      codon = '---';
-    }
-    for (let pos = aaPos - aaDelLen + (aaDelLen > 0); pos <= aaPos; pos ++) {
-      const gpKey = `${gene}${pos}`;
+    if (dialect === 'general') {
+      const gpKey = `${gene}${aaPos}`;
       if (!(gpKey in gpMap)) {
         gpMap[gpKey] = {
-          gene, position: pos,
+          gene, position: aaPos,
           totalReads, allCodonReads: []
         };
       }
       gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
+    }
+    else if (dialect === 'virolab') {
+      const aaDelLen = Math.floor(delLen / 3);
+      if (aaDelLen > 0) {
+        if (codon.slice(-3) === '---') {
+          // if the gap is codon aligned, virolab dialect
+          // shift the deletion one codon prior
+          aaPos --;
+        }
+        codon = '---';
+      }
+      for (let pos = aaPos - aaDelLen + (aaDelLen > 0); pos <= aaPos; pos ++) {
+        const gpKey = `${gene}${pos}`;
+        if (!(gpKey in gpMap)) {
+          gpMap[gpKey] = {
+            gene, position: pos,
+            totalReads, allCodonReads: []
+          };
+        }
+        gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
+      }
     }
   }
   return {

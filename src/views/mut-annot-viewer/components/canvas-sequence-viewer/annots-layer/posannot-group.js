@@ -26,14 +26,14 @@ export default class PosAnnotGroup extends React.Component {
 
     return <Group>
       {annotLocs.map(({
-        startPos, endPos, locIndex,
+        posStart, posEnd, locIndex,
         annotName
       }, idx) => {
         let opacity = 1;
         if (hoverAnnotName && hoverAnnotName !== annotName) {
           opacity = .2;
         }
-        return posRange2CoordPairs(startPos, endPos, locIndex).map(
+        return posRange2CoordPairs(posStart, posEnd, locIndex).map(
           ({startCoord, endCoord}, jdx) => (
             <Rect
              key={`${idx}-${jdx}`}

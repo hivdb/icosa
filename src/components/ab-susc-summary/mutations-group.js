@@ -12,28 +12,28 @@ function MutationsGroup({
   itemsByAntibody, itemsByAntibodyClass
 }) {
   const shortMutations = shortenMutationList(mutations);
-  const diffPositions = shortMutations.filter(({startPos, endPos}) => (
+  const diffPositions = shortMutations.filter(({posStart, posEnd}) => (
     hitPositions.some(m => (
-      m.position >= startPos &&
-      m.position <= endPos
+      m.position >= posStart &&
+      m.position <= posEnd
     )) &&
     !hitMutations.some(m => (
-      m.position >= startPos &&
-      m.position <= endPos
+      m.position >= posStart &&
+      m.position <= posEnd
     ))
   ));
   const diffQueryMuts = shortenMutationList(
     queryMuts.filter(({position}) => (
       diffPositions.some(m => (
-        position >= m.startPos &&
-        position <= m.endPos
+        position >= m.posStart &&
+        position <= m.posEnd
       ))
     ))
   );
-  const missPositions = shortMutations.filter(({startPos, endPos}) => (
+  const missPositions = shortMutations.filter(({posStart, posEnd}) => (
     !hitPositions.some(m => (
-      m.position >= startPos &&
-      m.position <= endPos
+      m.position >= posStart &&
+      m.position <= posEnd
     ))
   ));
   const [curAbGroupIdx, setCurAbGroupIdx] = React.useState(null);
@@ -43,18 +43,18 @@ function MutationsGroup({
    data-detail-expanded={curAbGroupIdx !== null}>
     <div className={style['summary-box']}>
       <div className={style['mutations']}>
-        {shortMutations.map(({startPos, endPos, text}, idx) => (
+        {shortMutations.map(({posStart, posEnd, text}, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 ?
               <span className={style['inline-divider']}>+</span> : null}
             <span className={style[
               hitMutations.some(m => (
-                m.position >= startPos &&
-                m.position <= endPos
+                m.position >= posStart &&
+                m.position <= posEnd
               )) ? 'hit-mutation' : (
                 hitPositions.some(m => (
-                  m.position >= startPos &&
-                  m.position <= endPos
+                  m.position >= posStart &&
+                  m.position <= posEnd
                 )) ? 'diff-mutation' : 'miss-mutation'
               )
             ]}>

@@ -170,7 +170,7 @@ export default class SeqViewerStage extends React.Component {
     const {config: {
       seqFragment: [absPosStart, absPosEnd]
     }} = this.props;
-    let endPos = this.state.activePos;
+    let posEnd = this.state.activePos;
     const isBodyActive = document.activeElement.tagName === 'BODY';
     switch (key) {
       case 'ArrowUp':
@@ -180,12 +180,12 @@ export default class SeqViewerStage extends React.Component {
       case 'PageUp':
       case 'PageDown':
       case 'Home':
-        if (isBodyActive && endPos) {
+        if (isBodyActive && posEnd) {
           this.handleKeyDown(evt);
           return;
         }
         if (isBodyActive) {
-          endPos = endPos || absPosStart;
+          posEnd = posEnd || absPosStart;
           break;
         }
         else {
@@ -193,7 +193,7 @@ export default class SeqViewerStage extends React.Component {
         }
       case 'End':
         if (isBodyActive) {
-          endPos = absPosEnd;
+          posEnd = absPosEnd;
           break;
         }
         else {
@@ -205,10 +205,10 @@ export default class SeqViewerStage extends React.Component {
     evt.stopPropagation();
     evt.preventDefault();
     this.setState({
-      activePos: endPos,
-      anchorPos: endPos
+      activePos: posEnd,
+      anchorPos: posEnd
     });
-    this.setSelection([endPos]);
+    this.setSelection([posEnd]);
     this.containerRef.current.focus();
   }
 
@@ -243,36 +243,36 @@ export default class SeqViewerStage extends React.Component {
       numCols, numPosPerPage,
       seqFragment: [absPosStart, absPosEnd]
     } = this.props.config;
-    let endPos = this.state.activePos;
+    let posEnd = this.state.activePos;
     switch(key) {
       case 'ArrowLeft':
-        endPos --;
+        posEnd --;
         break;
       case 'ArrowRight':
-        endPos ++;
+        posEnd ++;
         break;
       case 'ArrowUp':
-        endPos -= numCols;
+        posEnd -= numCols;
         break;
       case 'ArrowDown':
-        endPos += numCols;
+        posEnd += numCols;
         break;
       case 'Home':
-        endPos = 1;
+        posEnd = 1;
         break;
       case 'End':
-        endPos = absPosEnd;
+        posEnd = absPosEnd;
         break;
       case 'PageUp':
-        endPos -= numPosPerPage;
-        if (endPos < absPosStart) {
-          endPos = absPosStart;
+        posEnd -= numPosPerPage;
+        if (posEnd < absPosStart) {
+          posEnd = absPosStart;
         }
         break;
       case 'PageDown':
-        endPos += numPosPerPage;
-        if (endPos > absPosEnd) {
-          endPos = absPosEnd;
+        posEnd += numPosPerPage;
+        if (posEnd > absPosEnd) {
+          posEnd = absPosEnd;
         }
         break;
       default:
@@ -280,24 +280,24 @@ export default class SeqViewerStage extends React.Component {
     }
     evt.preventDefault();
     evt.stopPropagation();
-    if (endPos < absPosStart || endPos > absPosEnd) {
+    if (posEnd < absPosStart || posEnd > absPosEnd) {
       return;
     }
     const nextState = {
-      activePos: endPos,
+      activePos: posEnd,
       anchorPos: this.state.anchorPos
     };
     if (!rangeSel) {
-      nextState.anchorPos = endPos;
+      nextState.anchorPos = posEnd;
     }
     this.setState(nextState);
     this.handleKeySelection(rangeSel, nextState);
   }
 
   handleKeySelection = debounce((rangeSel, nextState) => {
-    const {anchorPos, activePos: endPos} = nextState;
+    const {anchorPos, activePos: posEnd} = nextState;
     if (rangeSel) {
-      let selecteds = rangePos(anchorPos, endPos);
+      let selecteds = rangePos(anchorPos, posEnd);
       const {prevSelecteds} = this.state;
       this.setState({prevSelecteds: selecteds});
       selecteds = unionSelections(
@@ -306,7 +306,7 @@ export default class SeqViewerStage extends React.Component {
       this.setSelection(selecteds);
     }
     else {
-      const selecteds = [endPos];
+      const selecteds = [posEnd];
       this.setState({prevSelecteds: selecteds});
       this.setSelection(selecteds);
     }

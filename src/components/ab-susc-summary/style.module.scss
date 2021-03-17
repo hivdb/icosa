@@ -18,6 +18,9 @@ $button-group-sticky-start: 24rem;
   }
   
   .button-group {
+    &:empty {
+      margin: 0;
+    }
     margin: $button-group-sticky-start + 1rem auto -1rem;
     padding-bottom: 1rem;
     text-align: right;
@@ -36,6 +39,12 @@ $button-group-sticky-start: 24rem;
 }
 
 ul.ab-susc-summary {
+  &:empty {
+    margin-bottom: 0;
+    &::after {
+      content: 'No result.';
+    }
+  }
   list-style-type: none;
   margin-left: 0;
   padding-left: 0;

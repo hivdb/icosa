@@ -1,0 +1,105 @@
+ul.mutation-list {
+  padding-left: 1.5rem;
+  line-height: 1.8em;
+  column-gap: 3rem;
+  @media screen and (min-width: 1000px) {
+    column-count: 2;
+  }
+  > li.gene-item {
+    display: flex;
+    -webkit-column-break-inside: avoid; /* Chrome, Safari, Opera */
+    page-break-inside: avoid;           /* Firefox */
+    break-inside: avoid;                /* IE 10+ */
+    &:not(:first-of-type) {
+      margin-top: .5rem;
+    }
+    > .gene-name {
+      display: block;
+      font-weight: 600;
+      font-size: 1.1rem;
+      min-width: 4rem;
+      &::after {
+        content: ":";
+        padding-right: .2rem;
+        font-weight: normal;
+      }
+    }
+    > ul.gene-mutation-list {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 0;
+      list-style-type: none;
+      display: block;
+      > li.mutation-item {
+        position: relative;
+        display: inline-flex;
+        &:not(:first-of-type)::before {
+          content: '·';
+          font-weight: 800;
+          padding-left: .4rem;
+          padding-right: .4rem;
+        }
+        /*&:first-of-type[data-unsequenced="true"],
+        &[data-unsequenced="false"] +
+        li.mutation-item[data-unsequenced="true"] {
+          > .unseq::after {
+            content: 'unsequenced';
+            font-weight: 500;
+            position: absolute;
+            left: 0;
+            right: 0;
+            text-align: center;
+            bottom: -.6rem;
+            line-height: 1em;
+            font-size: .6rem;
+          }
+        }*/
+        > .unseq {
+          position: relative;
+          color: #b0b0b0;
+          text-decoration: line-through;
+          font-weight: 200;
+          padding-left: .2rem;
+          padding-right: .2rem;
+        }
+        > .annotations {
+          display: inline-flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding-left: .2rem;
+          margin-right: -.2rem;
+        }
+
+        ul.aa-percent-list {
+          margin-top: .4rem;
+          margin-bottom: 0;
+          list-style-type: none;
+          display: inline-block;
+          > li.aa-percent-item {
+            display: inline-block;
+            &:not(:first-of-type)::before {
+              content: ',';
+              padding-right: .15rem;
+            }
+          }
+          &[data-hide-aa="true"] .amino-acid {
+            display: none;
+          }
+        }
+
+        .total-reads {
+          margin-bottom: .2rem;
+        }
+
+        ul.aa-percent-list,
+        .total-reads {
+          color: #909090;
+          font-size: .6rem;
+          font-weight: 200;
+          line-height: 1em;
+          padding-left: 0;
+        }
+      }
+    }
+  }
+}

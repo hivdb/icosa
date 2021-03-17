@@ -6,13 +6,18 @@ export default function shortenMutationList(mutations) {
   const groups = consecutiveGroupsBy(
     mutations,
     (left, right) => {
-      for (const field of ['AAs', 'position', 'isUnsequenced']) {
-        if (!(field in left) || !(field in right)) {
-          throw new Error(
-            `Unabled to determine if ${JSON.stringify(left)} and ` +
-            `${JSON.stringify(right)} should be merged, ` +
-            `field "${field}" is not provided`
-          );
+      if (process.env.NODE_ENV !== 'production') {
+        for (const field of [
+          'AAs', 'reference',
+          'position', 'isUnsequenced'
+        ]) {
+          if (!(field in left) || !(field in right)) {
+            throw new Error(
+              `Unabled to determine if ${JSON.stringify(left)} and ` +
+              `${JSON.stringify(right)} should be merged, ` +
+              `field "${field}" is not provided`
+            );
+          }
         }
       }
       return !left.isUnsequenced &&
@@ -28,24 +33,24 @@ export default function shortenMutationList(mutations) {
       merged.push({
         ...mut,
         position,
-        startPos: position,
-        endPos: position,
+        posStart: position,
+        posEnd: position,
         text: text.replace('Deletion', 'Δ').replace('-', 'Δ')
       });
     }
     else {
       const leftest = group[0];
       const rightest = group[group.length - 1];
-      const {position: startPos, ...mut} = leftest;
-      const {position: endPos} = rightest;
+      const {position: posStart, ...mut} = leftest;
+      const {position: posEnd} = rightest;
       const reference = group.map(({reference}) => reference).join('');
       merged.push({
         ...mut,
-        text: `${reference}${startPos}-${endPos}Δ`,
+        text: `${reference}${posStart}-${posEnd}Δ`,
         reference,
-        position: startPos,
-        startPos,
-        endPos
+        position: posStart,
+        posStart,
+        posEnd
       });
     }
   }

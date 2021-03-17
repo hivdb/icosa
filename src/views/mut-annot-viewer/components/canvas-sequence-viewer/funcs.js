@@ -178,12 +178,12 @@ export function calcUnderscoreAnnotLocations(
   for (const {annot, positions} of posByAnnot) {
     const {name: annotName, level: annotLevel} = annot;
     if (annotLevel === 'position') {
-      for (const [startPos, endPos] of integersToRange(positions)) {
+      for (const [posStart, posEnd] of integersToRange(positions)) {
         const minAvailableLoc = matrixFindMinAvailableLoc(
-          startPos, endPos, annotName);
+          posStart, posEnd, annotName);
         locations.push({
-          startPos,
-          endPos,
+          posStart,
+          posEnd,
           locIndex: minAvailableLoc,
           annotName,
           annotLevel
@@ -194,8 +194,8 @@ export function calcUnderscoreAnnotLocations(
       for (const pos of positions) {
         const minAvailableLoc = matrixFindMinAvailableLoc(pos, pos, annotName);
         locations.push({
-          startPos: pos,
-          endPos: pos,
+          posStart: pos,
+          posEnd: pos,
           locIndex: minAvailableLoc,
           annotName,
           annotLevel
@@ -208,10 +208,10 @@ export function calcUnderscoreAnnotLocations(
     matrix
   };
 
-  function matrixFindMinAvailableLoc(startPos, endPos, annotName) {
+  function matrixFindMinAvailableLoc(posStart, posEnd, annotName) {
     const usedLocs = [];
     let maxAvailableLoc = 0;
-    for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
+    for (let pos0 = posStart - 1; pos0 < posEnd; pos0 ++) {
       matrix[pos0] = matrix[pos0] || [];
       for (const idx in matrix[pos0]) {
         if (matrix[pos0][idx]) {
@@ -226,7 +226,7 @@ export function calcUnderscoreAnnotLocations(
     if (minAvailableLoc < 0) {
       minAvailableLoc = maxAvailableLoc;
     }
-    for (let pos0 = startPos - 1; pos0 < endPos; pos0 ++) {
+    for (let pos0 = posStart - 1; pos0 < posEnd; pos0 ++) {
       matrix[pos0][minAvailableLoc] = annotName;
     }
     return minAvailableLoc;

@@ -11,11 +11,13 @@ import AlgComparison from './alg-comparison';
 import ValidationReport from './validation-report';
 import MutationViewer from './mutation-viewer';
 import ReportSection from './report-section';
+import MutationList from './mutation-list';
 
 export {
   DRInterpretation, DRMutationScores, SequenceSidebar,
   SeqReadsSidebar, SeqSummary,
   SeqMutationPrevalence, AlgComparison, ValidationReport,
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
-  MutationStats, MutationViewer, ReportSection
+  MutationStats, MutationViewer, ReportSection,
+  MutationList
 };

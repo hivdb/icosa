@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
 
 import {
-  DRInterpretation, DRMutationScores,
-  SeqSummary, MutationStats,
+  // DRInterpretation, DRMutationScores,
+  SeqSummary, // MutationStats,
   MutationViewer as MutViewer,
-  ReportSection
+  ReportSection,
+  MutationList as MutList
 } from '../../../components/report';
 
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
@@ -144,22 +145,13 @@ export default class SingleSeqReadsReport extends React.Component {
         allGeneSequenceReads
       },
       output,
-      index,
-      match, router,
-      match: {location: {state: {disabledDrugs}}}
+      index
     } = this.props;
     const coverages = getCoverages(inputSequenceReads);
     const {
       strain: {display: strain},
-      drugResistance,
-      name: seqName,
-      validationResults
+      name: seqName
     } = sequenceReadsResult;
-
-    const isCritical = validationResults.some(
-      ({level}) => level === 'CRITICAL');
-    const isSevere = validationResults.some(
-      ({level}) => level === 'SEVERE_WARNING');
 
     return (
       <article
@@ -187,28 +179,12 @@ export default class SingleSeqReadsReport extends React.Component {
             strain
           }} />
         </ReportSection>
+        <ReportSection title="Mutation list">
+          <MutList {...sequenceReadsResult} {...{output, strain}} />
+        </ReportSection>
         <ReportSection title="MAb susceptibility summary">
           <AntibodySuscSummary {...sequenceReadsResult} {...{output, strain}} />
         </ReportSection>
-        <MutationStats {...sequenceReadsResult} {...{match, router, output}} />
-        {/* TODO: RangeError: Maximum call stack size exceeded
-        <SeqReadsAnalysisQA {...sequenceReadsResult} output={output} /> */}
-        {/*<ValidationReport {...sequenceReadsResult} output={output} />*/}
-        {isCritical ?
-          <p>
-            The rest of the report is unavailable or suppressed
-            due to failed quality assessment (critical).
-          </p> :
-          drugResistance.map((geneDR, idx) => [
-            <DRInterpretation
-             key={`dri-${idx}`}
-             suppressDRI={isSevere}
-             {...{strain, geneDR, output, disabledDrugs}} />,
-            isSevere ? null :
-            <DRMutationScores
-             key={`ms-${idx}`}
-             {...{strain, geneDR, output, disabledDrugs}} />
-          ])}
       </article>
     );
   }

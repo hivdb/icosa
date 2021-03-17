@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import {matchShape} from 'found';
 
 import {
-  DRInterpretation,
-  DRMutationScores,
   ValidationReport,
   SeqSummary,
   MutationViewer as MutViewer,
-  ReportSection
+  ReportSection,
+  MutationList as MutList
 } from '../../../components/report';
 
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
@@ -142,19 +141,12 @@ export default class SingleSequenceReport extends React.Component {
         alignedGeneSequences
       },
       output,
-      index,
-      species,
-      match: {
-        location: {state: {disabledDrugs}}
-      }
+      index
     } = this.props;
     const {
       inputSequence: {header},
-      strain: {name: strain},
-      validationResults, drugResistance
+      strain: {name: strain}
     } = sequenceResult;
-    const isCritical = validationResults.some(
-      ({level}) => level === 'CRITICAL');
 
     return (
       <article
@@ -179,17 +171,12 @@ export default class SingleSequenceReport extends React.Component {
           }} />
           <ValidationReport {...sequenceResult} {...{output, strain}} />
         </ReportSection>
+        <ReportSection title="Mutation list">
+          <MutList {...sequenceResult} {...{output, strain}} />
+        </ReportSection>
         <ReportSection title="MAb susceptibility summary">
           <AntibodySuscSummary {...sequenceResult} {...{output, strain}} />
         </ReportSection>
-        {isCritical ? null :
-          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
-            <DRInterpretation
-             suppressLevels={species === 'SARS2'}
-             {...{geneDR, output, disabledDrugs, strain}} />
-            {species === 'SARS2' ? null : <DRMutationScores
-             {...{geneDR, output, disabledDrugs, strain}} />}
-          </React.Fragment>)}
       </article>
     );
   }

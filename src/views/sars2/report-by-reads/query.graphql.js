@@ -142,6 +142,7 @@ export default gql`
       mutations {
         text
         AAs
+        reference
         position
         primaryType
         isApobecMutation
@@ -150,6 +151,7 @@ export default gql`
         isUnusual
         isAmbiguous
         isDRM
+        totalReads
         allAAReads {
           aminoAcid
           numReads

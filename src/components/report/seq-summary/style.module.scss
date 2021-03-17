@@ -34,18 +34,33 @@
       color: color(validation-severe-warning-text);
     }
     .inline-divider {
-      padding-left: .5rem;
-      padding-right: .5rem;
+      font-weight: 800;
+      padding-left: .4rem;
+      padding-right: .4rem;
     }
-    .inline-gene-range {
-      white-space: nowrap;
-      &.hl { // highlighted
-        > .gene-name {
-          font-weight: 600;
+    ul.inline-gene-range-list {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 0;
+      list-style-type: none;
+      display: inline-block;
+      li.inline-gene-range {
+        display: inline-block;
+        white-space: nowrap;
+        &.hl { // highlighted
+          > .gene-name {
+            font-weight: 600;
+          }
         }
-      }
-      &:not(.hl) { // not highlighted
-        opacity: .6;
+        &:not(.hl) { // not highlighted
+          opacity: .6;
+        }
+        &:not(:first-of-type)::before {
+          content: '·';
+          font-weight: 800;
+          padding-left: .4rem;
+          padding-right: .4rem;
+        }
       }
     }
   }
