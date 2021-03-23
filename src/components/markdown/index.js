@@ -17,6 +17,7 @@ import ImageWrapper from './image-wrapper';
 import macroPlugin, {BadMacroNode} from './macro-plugin';
 import TableNodeWrapper from './macro-table';
 import GenomeMapNodeWrapper from './macro-genome-map';
+import TOCNodeWrapper from './macro-toc';
 import {presetShape as genomeMapPresetShape} from '../genome-map';
 
 
@@ -108,6 +109,7 @@ export default class Markdown extends React.Component {
       BadMacroNode,
       TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
       GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
+      TOCNode: TOCNodeWrapper({className: tocClassName}),
       // table: SimpleTableContainer,
       // parsedHtml,
       ...(inline ? {} : {root: RootWrapper}),

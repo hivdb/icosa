@@ -3,19 +3,20 @@ import React from 'react';
 import macroPlugin from './macro-plugin';
 import GenomeMap from '../genome-map';
 
-macroPlugin.addMacro('genomemap', (content) => {
+macroPlugin.addMacro('genomemap', (content, props) => {
   return {
     type: 'GenomeMapNode',
-    mapName: content.trim()
+    mapName: content.trim(),
+    props
   };
 });
 
 
 export default function GenomeMapNodeWrapper({genomeMaps}) {
-  return ({mapName}) => {
+  return ({mapName, props}) => {
     if (mapName in genomeMaps) {
       const preset = genomeMaps[mapName];
-      return <GenomeMap preset={preset} />;
+      return <GenomeMap {...props} preset={preset} />;
     }
     else {
       return <div>

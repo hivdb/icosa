@@ -1,3 +1,9 @@
+[toc]
+
+- [AAA](#AAA)
+
+[/toc]
+
 ## AAA
 
 ### Test1
@@ -16,6 +22,6 @@ sdhsdhsd[^test]
 
 ## GenomeMap
 
-[genomemap]
+[genomemap max-width="50vh"]
 test
 [/genomemap]
