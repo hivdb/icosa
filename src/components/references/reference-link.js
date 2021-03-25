@@ -4,6 +4,7 @@ import Popup from 'reactjs-popup';
 import Children from 'react-children-utilities';
 
 import ReferenceContext from './reference-context';
+import InlineRef from './inline-reference';
 import buildRef from './build-ref';
 import {focusElement} from './funcs';
 
@@ -61,6 +62,12 @@ export default class RefLink extends React.Component {
 
   render() {
     let {name, identifier, ...ref} = this.props;
+
+    if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
+      identifier = identifier.slice(0, identifier.length - 7);
+      return <InlineRef name={identifier} />;
+    }
+
     name = name || identifier;
     if (!name) {
       const {authors, year} = ref;
@@ -73,36 +80,44 @@ export default class RefLink extends React.Component {
     }
 
     return <ReferenceContext.Consumer>
-      {({setReference, getReference}) => {
-        const {number, itemId, linkId} = setReference(name, ref);
-        return (
-          <Popup
-           on="click"
-           position={[
-             'top center',
-             'bottom center'
-           ]}
-           className={style['ref-popup']}
-           closeOnDocumentClick
-           keepTooltipInside
-           repositionOnResize
-           trigger={
-             <sup><a className={style['ref-link']}
-              onClick={this.handleClick}
-              ref={this.linkRef}
-              id={linkId} href={`#ref__${itemId}`}>
-               [{number}]
-             </a></sup>
-           }>
-            {() => <>
+      {({setReference, getReference, ensureLoaded}) => {
+        const {number, itemId, linkId} = setReference(
+          name, ref, /* incr=*/ true
+        );
+
+        const trigger = (
+          <sup><a className={style['ref-link']}
+           onClick={this.handleClick}
+           ref={this.linkRef}
+           id={linkId} href={`#ref__${itemId}`}>
+            [{number}]
+          </a></sup>
+        );
+
+        return ensureLoaded(
+          () => (
+            <Popup
+             on="click"
+             position={[
+               'top center',
+               'right center',
+               'bottom center',
+               'left center'
+             ]}
+             className={style['ref-popup']}
+             closeOnDocumentClick
+             keepTooltipInside
+             repositionOnResize
+             trigger={trigger}>
               <a
                onClick={this.handleAnchorClick}
                href={`#ref__${itemId}`}>
                 {number}
               </a>.{' '}
               {buildRef(getReference(name))}
-            </>}
-          </Popup>
+            </Popup>
+          ),
+          trigger
         );
       }}
     </ReferenceContext.Consumer>;

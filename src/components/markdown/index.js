@@ -5,12 +5,15 @@ import OrigMarkdown from 'react-markdown/with-html';
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
 import {
-  ReferenceContext, ReferenceContextValue,
-  RefLink, RefDefinition
+  ReferenceContext,
+  ReferenceContextValue,
+  RefLink,
+  RefDefinition,
+  LoadExternalRefData
 } from '../references';
 
 import MarkdownLink from './link';
-import OptReferences from './references';
+import OptReferences, {StaticRefsNode} from './references';
 import MdHeadingTag from './heading-tags';
 import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
@@ -32,115 +35,126 @@ import {presetShape as genomeMapPresetShape} from '../genome-map';
 }*/
 
 
-export default class Markdown extends React.Component {
+function ExtendedMarkdown({
+  noHeadingStyle,
+  toc,
+  children,
+  referenceTitle,
+  inline,
+  tocClassName,
+  disableHeadingTagAnchor,
+  referenceHeadingTagLevel,
+  collapsableLevels,
+  imagePrefix,
+  cmsPrefix,
+  tables,
+  genomeMaps,
+  refDataLoader,
+  renderers: addRenderers,
+  ...props
+}) {
 
-  static propTypes = {
-    toc: PropTypes.bool.isRequired,
-    children: PropTypes.oneOfType([
-      PropTypes.string.isRequired,
-      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
-    ]).isRequired,
-    tocClassName: PropTypes.string,
-    inline: PropTypes.bool.isRequired,
-    renderers: PropTypes.object.isRequired,
-    collapsableLevels: PropTypes.array,
-    disableHeadingTagAnchor: PropTypes.bool.isRequired,
-    noHeadingStyle: PropTypes.bool.isRequired,
-    referenceTitle: PropTypes.string.isRequired,
-    referenceHeadingTagLevel: PropTypes.number.isRequired,
-    LoadReferences: PropTypes.func,
-    imagePrefix: PropTypes.string,
-    cmsPrefix: PropTypes.string,
-    genomeMaps: PropTypes.objectOf(genomeMapPresetShape.isRequired),
-    tables: PropTypes.objectOf(PropTypes.shape({
-      columnDefs: PropTypes.array.isRequired,
-      data: PropTypes.array.isRequired
-    }).isRequired)
+  if (children instanceof Array) {
+    children = children.join('');
   }
-
-  static defaultProps = {
-    toc: false,
-    inline: false,
-    renderers: {},
-    noHeadingStyle: false,
-    referenceTitle: 'References',
-    disableHeadingTagAnchor: false,
-    referenceHeadingTagLevel: 2,
-    imagePrefix: '/',
-    tables: {}
+  const mdProps = {
+    parserOptions: {footnotes: true},
+    transformLinkUri: false,
+    ...props
+  };
+  const generalRenderers = {
+    link: MarkdownLink,
+    image: ImageWrapper({imagePrefix}),
+    footnote: RefLink,
+    footnoteReference: RefLink,
+    footnoteDefinition: RefDefinition,
+    ...(noHeadingStyle ? null : {
+      heading: MdHeadingTag(disableHeadingTagAnchor)
+    }),
+    ...addRenderers
+  };
+  const renderers = {
+    ...generalRenderers,
+    BadMacroNode,
+    StaticRefsNode,
+    TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
+    GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
+    TOCNode: TOCNodeWrapper({className: tocClassName}),
+    // table: SimpleTableContainer,
+    // parsedHtml,
+    ...(inline ? {} : {root: RootWrapper}),
+    ...(inline ? {paragraph: ({children}) => <>{children}</>} : null),
+    ...addRenderers
+  };
+  mdProps.renderers = generalRenderers;
+  const context = new ReferenceContextValue(refDataLoader);
+  let jsx = (
+    <ReferenceContext.Provider value={context}>
+      <OrigMarkdown
+       {...mdProps}
+       key={children}
+       children={children}
+       renderers={renderers}
+       plugins={[macroPlugin.transformer]} />
+      <LoadExternalRefData />
+      <OptReferences
+       disableAnchor={disableHeadingTagAnchor}
+       level={referenceHeadingTagLevel}
+       {...{referenceTitle}} />
+    </ReferenceContext.Provider>
+  );
+  if (collapsableLevels && collapsableLevels.length > 0) {
+    jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
   }
-
-  render() {
-    let {
-      noHeadingStyle, toc,
-      children,
-      referenceTitle, inline, tocClassName,
-      disableHeadingTagAnchor,
-      referenceHeadingTagLevel,
-      collapsableLevels,
-      imagePrefix,
-      cmsPrefix,
-      tables,
-      genomeMaps,
-      LoadReferences,
-      renderers: addRenderers, ...props
-    } = this.props;
-    if (children instanceof Array) {
-      children = children.join('');
-    }
-    const mdProps = {
-      parserOptions: {footnotes: true},
-      transformLinkUri: false,
-      ...props
-    };
-    const generalRenderers = {
-      link: MarkdownLink,
-      image: ImageWrapper({imagePrefix}),
-      footnote: RefLink,
-      footnoteReference: RefLink,
-      footnoteDefinition: RefDefinition,
-      ...(noHeadingStyle ? null : {
-        heading: MdHeadingTag(disableHeadingTagAnchor)
-      }),
-      ...addRenderers
-    };
-    const renderers = {
-      ...generalRenderers,
-      BadMacroNode,
-      TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
-      GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
-      TOCNode: TOCNodeWrapper({className: tocClassName}),
-      // table: SimpleTableContainer,
-      // parsedHtml,
-      ...(inline ? {} : {root: RootWrapper}),
-      ...(inline ? {paragraph: ({children}) => <>{children}</>} : null),
-      ...addRenderers
-    };
-    mdProps.renderers = generalRenderers;
-    const context = new ReferenceContextValue(LoadReferences);
-    let jsx = (
-      <ReferenceContext.Provider value={context}>
-        <OrigMarkdown
-         {...mdProps}
-         key={children}
-         children={children}
-         renderers={renderers}
-         plugins={[macroPlugin.transformer]} />
-        <OptReferences
-         disableAnchor={disableHeadingTagAnchor}
-         level={referenceHeadingTagLevel}
-         {...{referenceTitle}} />
-      </ReferenceContext.Provider>
+  if (toc) {
+    return (
+      <AutoTOC
+       key={children}
+       className={tocClassName}>
+        {jsx}
+      </AutoTOC>
     );
-    if (collapsableLevels && collapsableLevels.length > 0) {
-      jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
-    }
-    if (toc) {
-      return <AutoTOC className={tocClassName}>{jsx}</AutoTOC>;
-    }
-    else {
-      return jsx;
-    }
   }
-
+  else {
+    return jsx;
+  }
 }
+
+
+ExtendedMarkdown.propTypes = {
+  toc: PropTypes.bool.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+  ]).isRequired,
+  tocClassName: PropTypes.string,
+  inline: PropTypes.bool.isRequired,
+  renderers: PropTypes.object.isRequired,
+  collapsableLevels: PropTypes.array,
+  disableHeadingTagAnchor: PropTypes.bool.isRequired,
+  noHeadingStyle: PropTypes.bool.isRequired,
+  referenceTitle: PropTypes.string.isRequired,
+  referenceHeadingTagLevel: PropTypes.number.isRequired,
+  refDataLoader: PropTypes.func,
+  imagePrefix: PropTypes.string,
+  cmsPrefix: PropTypes.string,
+  genomeMaps: PropTypes.objectOf(genomeMapPresetShape.isRequired),
+  tables: PropTypes.objectOf(PropTypes.shape({
+    columnDefs: PropTypes.array.isRequired,
+    data: PropTypes.array.isRequired
+  }).isRequired)
+};
+
+ExtendedMarkdown.defaultProps = {
+  toc: false,
+  inline: false,
+  renderers: {},
+  noHeadingStyle: false,
+  referenceTitle: 'References',
+  disableHeadingTagAnchor: false,
+  referenceHeadingTagLevel: 2,
+  imagePrefix: '/',
+  tables: {}
+};
+
+export default ExtendedMarkdown;

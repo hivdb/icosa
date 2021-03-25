@@ -1,5 +1,6 @@
 import React from 'react';
 import Markdown from '../../components/markdown';
+import genomeMaps from './genome-maps.json';
 
 const webpackMarkdownLoader = require.context(
   '!raw-loader!./',
@@ -13,17 +14,31 @@ const markdownFiles = webpackMarkdownLoader
 
 const testMd = markdownFiles[0].default;
 
-const genomeMaps = {
-  /* eslint-disable max-len */
-  test: {"name": "sars2-variant-clusters", "label": "SARS-CoV-2 Variant Clusters", "width": 1840, "height": 1580, "paddingLeft": 380, "paddingRight": 60, "paddingTop": 20, "positionGroups": [{"name": "B.1.1.7", "label": "B.1.1.7", "positions": [{"name": "PL:T183I", "pos": 3266, "stroke": "#e0e0e0", "color": "#a0a0a0"}, {"name": "PL:A890D", "pos": 5387, "stroke": "#e0e0e0", "color": "#a0a0a0"}]}], "presets": [{"name": "sars2-variant-clusters", "label": "SARS-CoV-2 Variant Clusters"}, {"name": "sars2-prolonged-infections", "label": "SARS-CoV-2 Prolonged Infections"}], "positionAxis": {"posOffset": 21562, "posStart": 21563, "posEnd": 25384, "convertToAA": true, "tickCount": 15, "roundToNearest": 5}, "domains": [{"posStart": 1, "posEnd": 21562, "scaleRatio": 0.15}, {"posStart": 21563, "posEnd": 23633, "scaleRatio": 0.5}, {"posStart": 23634, "posEnd": 25384, "scaleRatio": 0.2}, {"posStart": 25382, "posEnd": 29903, "scaleRatio": 0.15}], "regions": [{"name": "5-UTR", "label": "", "posStart": 1, "posEnd": 265, "shapeType": "line", "labelPostion": "above"}, {"name": "ORF1ab", "label": "ORF1ab", "posStart": 266, "posEnd": 21555, "shapeType": "rect", "fill": "#d8d8d8", "color": "#505050"}, {"name": "S", "label": "Spike", "posStart": 21563, "posEnd": 25384, "fill": "#b2df8a", "color": "#33a02c", "shapeType": "rect", "labelPosition": "above"}, {"name": "NTD", "label": "NTD", "posStart": 21600, "posEnd": 22478, "fill": "#a6cee3", "color": "#1f78b4", "offsetY": 12, "shapeType": "rect", "labelPosition": "over"}, {"name": "RBD", "label": "RBD", "posStart": 22479, "posEnd": 23165, "fill": "#fb9a99", "color": "#e31a1c", "offsetY": 12, "shapeType": "rect", "labelPosition": "over"}, {"name": "RBM", "label": "RBM", "posStart": 22872, "posEnd": 23087, "fill": "#cab2d6", "color": "#6a3d9a", "offsetY": 24, "shapeType": "rect", "labelPosition": "over"}, {"name": "SD1", "label": "SD1", "posStart": 23166, "posEnd": 23331, "offsetY": 12, "shapeType": "rect", "labelPosition": "over", "fill": "#d8d8d8", "color": "#505050"}, {"name": "SD2", "label": "SD2", "posStart": 23332, "posEnd": 23603, "offsetY": 12, "shapeType": "rect", "labelPosition": "over", "fill": "#d8d8d8", "color": "#505050"}, {"name": "S1-S2", "label": "S1/S2", "posStart": 23604, "posEnd": 23633, "fill": "#fdbf6f", "color": "#ff7f00", "offsetY": 12, "shapeType": "rect", "labelPosition": "above"}, {"name": "ORF3a", "label": "", "posStart": 25393, "posEnd": 26220, "shapeType": "rect", "labelPosition": "over", "fill": "#d8d8d8", "color": "#505050"}, {"name": "E", "label": "", "posStart": 26245, "posEnd": 26472, "shapeType": "rect", "labelPosition": "above", "fill": "#d8d8d8", "color": "#505050"}, {"name": "M", "label": "", "posStart": 26523, "posEnd": 27191, "shapeType": "rect", "labelPosition": "over", "fill": "#d8d8d8", "color": "#505050"}, {"name": "ORF6", "label": "", "posStart": 27202, "posEnd": 27387, "shapeType": "rect", "labelPosition": "above", "fill": "#d8d8d8", "color": "#505050"}, {"name": "ORF7a", "label": "", "posStart": 27394, "posEnd": 27759, "shapeType": "rect", "labelPosition": "below", "fill": "#d8d8d8", "color": "#505050"}, {"name": "ORF7b", "label": "", "posStart": 27756, "posEnd": 27887, "shapeType": "rect", "labelPosition": "above", "fill": "#d8d8d8", "color": "#505050"}, {"name": "ORF8", "label": "", "posStart": 27894, "posEnd": 28259, "shapeType": "rect", "labelPosition": "below", "fill": "#d8d8d8", "color": "#505050"}, {"name": "N", "label": "N", "posStart": 28274, "posEnd": 29533, "shapeType": "rect", "labelPosition": "over", "fill": "#d8d8d8", "color": "#505050"}, {"name": "ORF10", "label": "", "posStart": 29558, "posEnd": 29674, "shapeType": "rect", "labelPosition": "above", "fill": "#d8d8d8", "color": "#505050"}, {"name": "postORF10", "label": "", "posStart": 29675, "posEnd": 29903, "shapeType": "line", "labelPosition": "over"}], "lastModified": "2021-01-19T23:30:59Z"}
-};
+
+function RefDataLoader({onLoad, setReference, references}) {
+  setTimeout(() => {
+    for (const ref of references) {
+      setReference(
+        ref.name,
+        {...ref, children: ref.name + 'aaaa'},
+        /*incr=*/false
+      );
+    }
+    onLoad();
+  }, 8000);
+  return null;
+}
 
 
 export default class MarkdownDebugger extends React.Component {
 
   render() {
     return (
-      <Markdown collapsableLevels={['h3']} toc genomeMaps={genomeMaps}>
+      <Markdown
+       toc
+       refDataLoader={RefDataLoader}
+       collapsableLevels={['h3']}
+       genomeMaps={genomeMaps}>
         {testMd}
       </Markdown>
     );

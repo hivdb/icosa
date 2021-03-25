@@ -28,7 +28,7 @@ export default class RefDefinition extends React.Component {
 
     return <ReferenceContext.Consumer>
       {({setReference}) => {
-        setReference(name, ref, /* noIncr= */true);
+        setReference(name, ref, /* incr= */false);
         return null;
       }}
     </ReferenceContext.Consumer>;

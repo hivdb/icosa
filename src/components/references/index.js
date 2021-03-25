@@ -5,10 +5,20 @@ import RefLink from './reference-link';
 import RefDefinition from './reference-definition';
 import buildRef from './build-ref';
 import style from './style.module.scss';
-import DefaultLoadRefs from './load-references';
+import LoadExternalRefData from './load-references';
+import InlineRef from './inline-reference';
 import {focusElement} from './funcs';
 
-export {ReferenceContext, ReferenceContextValue, RefLink, RefDefinition};
+import InlineLoader from '../inline-loader';
+
+export {
+  ReferenceContext,
+  ReferenceContextValue,
+  InlineRef,
+  RefLink,
+  RefDefinition,
+  LoadExternalRefData
+};
 
 
 class RefItem extends React.Component {
@@ -68,27 +78,37 @@ class RefItem extends React.Component {
 }
 
 
-export default class References extends React.Component {
+function References({
+  onLoad,
+  placeholder
+}) {
 
-  static propTypes = {
-    onLoad: PropTypes.func
-  }
-
-  render() {
-    const {onLoad} = this.props;
-    return <ol className={style.references}>
-      <ReferenceContext.Consumer>
-        {({setReference, getReferences, LoadReferences}) => {
-          LoadReferences = LoadReferences ? LoadReferences : DefaultLoadRefs;
-          return <LoadReferences
-           onLoad={onLoad}
-           setReference={setReference}
-           references={getReferences()}>
-            {(refProps, idx) => <RefItem {...refProps} key={idx} />}
-          </LoadReferences>;
-        }}
-      </ReferenceContext.Consumer>
-    </ol>;
-  }
+  return <ol className={style.references}>
+    <ReferenceContext.Consumer>
+      {({ensureLoaded}) => (
+        ensureLoaded(
+          ({setReference, getLinkedReferences}) => (
+            getLinkedReferences().map(refProps => (
+              <RefItem {...refProps} key={refProps.itemId} />
+            ))
+          ),
+          placeholder
+        )
+      )}
+    </ReferenceContext.Consumer>
+  </ol>;
 
 }
+
+References.propTypes = {
+  onLoad: PropTypes.func,
+  placeholder: PropTypes.node.isRequired
+};
+
+
+References.defaultProps = {
+  placeholder: <InlineLoader />
+};
+
+
+export default References;

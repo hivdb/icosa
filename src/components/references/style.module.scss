@@ -60,10 +60,8 @@ ol.references {
   &:global(-content) {
     margin: auto;
     background: rgb(255, 255, 255);
-    width: 50%;
     padding: 1rem;
     border-radius: .4rem;
-    margin-left: 5rem;
     &[role="tooltip"] {
       min-width: min-content;
       max-width: max-content;
@@ -71,7 +69,6 @@ ol.references {
     }
   }
   &:global(-arrow) {
-    transform: translateX(5rem);
     stroke-width: 2px;
     stroke: gray;
     stroke-dasharray: 30px;
