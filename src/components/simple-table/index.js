@@ -64,6 +64,8 @@ export default class SimpleTable extends React.Component {
 
   static propTypes = {
     cacheKey: PropTypes.string,
+    compact: PropTypes.bool.isRequired,
+    lastCompact: PropTypes.bool.isRequired,
     sheetName: PropTypes.string.isRequired,
     columnDefs: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -81,6 +83,7 @@ export default class SimpleTable extends React.Component {
   }
 
   static defaultProps = {
+    compact: false,
     disableCopy: false,
     sheetName: 'Sheet1',
     tableScrollStyle: {},
@@ -305,7 +308,12 @@ export default class SimpleTable extends React.Component {
   }
 
   render() {
-    const {color, columnDefs, tableScrollStyle, tableStyle} = this.props;
+    const {
+      compact,
+      lastCompact,
+      color, columnDefs,
+      tableScrollStyle, tableStyle
+    } = this.props;
     const {
       sortedByColumn, sortedData,
       sortDirection, enableRowSpan,
@@ -324,6 +332,8 @@ export default class SimpleTable extends React.Component {
      ref={this.table}
      style={{"--mobile-label-width": mobileLabelWidth}}
      data-copying={copying}
+     data-compact={compact}
+     data-last-compact={lastCompact}
      className={style['simple-table-container']}>
       <div className={style['simple-table-scroll']} style={tableScrollStyle}>
         <table

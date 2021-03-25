@@ -9,8 +9,9 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import style from './style.module.scss';
 
-macroPlugin.addMacro('table', (content) => {
+macroPlugin.addMacro('table', (content, props) => {
   return {
+    ...props,
     type: 'TableNode',
     tableName: content.trim()
   };
@@ -190,6 +191,8 @@ export function Table({
   cacheKey,
   columnDefs,
   data,
+  compact,
+  lastCompact,
   references,
   mdProps: {renderers, ...mdProps},
   cmsPrefix,
@@ -205,6 +208,8 @@ export function Table({
 
   return <>
     <SimpleTable
+     compact={compact}
+     lastCompact={lastCompact}
      cacheKey={cacheKey}
      tableScrollStyle={tableScrollStyle}
      tableStyle={tableStyle}
@@ -218,11 +223,15 @@ export function Table({
 }
 
 
-export default function TableNode({tables, mdProps, cmsPrefix}) {
-  return ({tableName}) => {
+export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
+  return ({tableName, compact, lastCompact, ...props}) => {
+    compact = compact !== undefined;
+    lastCompact = lastCompact !== undefined;
     if (tableName in tables) {
       return (
         <Table
+         compact={compact}
+         lastCompact={lastCompact}
          cacheKey={tableName}
          mdProps={mdProps}
          cmsPrefix={cmsPrefix}

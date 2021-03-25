@@ -1,6 +1,7 @@
 import React from 'react';
 import Markdown from '../../components/markdown';
 import genomeMaps from './genome-maps.json';
+import tableData from './table-data.json';
 
 const webpackMarkdownLoader = require.context(
   '!raw-loader!./',
@@ -36,6 +37,8 @@ export default class MarkdownDebugger extends React.Component {
     return (
       <Markdown
        toc
+       escapeHtml={false}
+       tables={tableData}
        refDataLoader={RefDataLoader}
        collapsableLevels={['h3']}
        genomeMaps={genomeMaps}>

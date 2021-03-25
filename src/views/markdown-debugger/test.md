@@ -70,3 +70,19 @@ test5
 [genomemap max-width="50vh"]
 test
 [/genomemap]
+
+asdg
+sg
+sdhsdh
+sdg
+
+[table compact,lastCompact]
+testtable
+[/table]
+
+[table]
+testtable
+[/table]
+test
+test
+test

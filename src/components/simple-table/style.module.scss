@@ -12,14 +12,14 @@ $padding-h: .7rem;
 $padding-v: .7rem;
 
 .simple-table-scroll {
-  margin-top: 1rem;
+  --desktop-max-height: 80vh;
   border: 1px solid $border-color;
   background: #fff;
   box-shadow: none;
   border-radius: $border-radius;
   @media only screen and (min-width: 768px) {
     overflow: auto;
-    max-height: 80vh;
+    max-height: var(--desktop-max-height);
   }
 }
 
@@ -242,6 +242,8 @@ table.simple-table {
 
 .simple-table-container {
   position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   &::after {
     z-index: -1;
     content: "";
@@ -258,6 +260,28 @@ table.simple-table {
     z-index: 0;
     background-color: rgba(0, 0, 0, .2);
   }
+  &[data-compact="true"] {
+    width: auto;
+    float: left;
+    margin-top: 3rem;
+    margin-right: 4rem;
+    &[data-last-compact="true"] + * {
+      clear: left;
+    }
+    table.simple-table {
+      > thead > tr > th, > tbody > tr > td {
+        padding: .4rem;
+      }
+    }
+    .simple-table-scroll {
+      margin-top: 0;
+    }
+    @media only screen and (max-width: 767px) {
+      float: none;
+      margin-right: 0;
+    }
+  }
+
 }
 
 .download-options {
@@ -362,19 +386,19 @@ table.simple-table {
 }
 
 h2:global(.ui.dividing.header) + .simple-table-container {
-  .download-options {
+  &[data-compact="false"] .download-options {
     top: -3.5rem;
   }
 }
 
 h2[class*="heading-tag"] + .simple-table-container {
-  .download-options {
+  &[data-compact="false"] .download-options {
     top: -5rem;
   }
 }
 
 h3:global(.ui.header) + .simple-table-container {
-  .download-options {
+  &[data-compact="false"] .download-options {
     top: -3rem;
   }
 }
