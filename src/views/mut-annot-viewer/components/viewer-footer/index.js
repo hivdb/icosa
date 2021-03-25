@@ -11,7 +11,7 @@ import style from './style.module.scss';
 export default class ViewerFooter extends React.Component {
 
   static propTypes = {
-    LoadReferences: PropTypes.func,
+    refDataLoader: PropTypes.func,
     commentLookup: PropTypes.objectOf(PropTypes.shape({
       position: PropTypes.number.isRequired,
       comment: PropTypes.string.isRequired
@@ -74,7 +74,7 @@ export default class ViewerFooter extends React.Component {
     const {commentMdText, hasSelectedComments} = this;
     let {expanded} = this.state;
     expanded = hasSelectedComments ? expanded : false;
-    const {LoadReferences} = this.props;
+    const {refDataLoader} = this.props;
     return <div
      className={style['footer-container']}
      data-expanded={expanded}>
@@ -90,7 +90,7 @@ export default class ViewerFooter extends React.Component {
         <div className={style.scrollable} ref={this.scrollableRef}>
           <Markdown
            disableHeadingTagAnchor
-           {...{LoadReferences}}>
+           {...{refDataLoader}}>
             {commentMdText}
           </Markdown>
         </div>

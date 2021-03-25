@@ -40,7 +40,7 @@ class MutAnnotViewerInner extends React.Component {
     name: PropTypes.string.isRequired,
     display: PropTypes.node.isRequired,
     refSeq: PropTypes.string.isRequired,
-    LoadReferences: PropTypes.func,
+    refDataLoader: PropTypes.func,
     annotationData: PropTypes.object.isRequired
   }
 
@@ -151,7 +151,7 @@ class MutAnnotViewerInner extends React.Component {
   };
 
   render() {
-    const {refSeq, LoadReferences} = this.props;
+    const {refSeq, refDataLoader} = this.props;
     const {
       seqFragment,
       fragmentOptions,
@@ -219,7 +219,7 @@ class MutAnnotViewerInner extends React.Component {
       </section>
       <ViewerFooter
        {...{
-         LoadReferences,
+         refDataLoader,
          commentLookup,
          commentReferences,
          selectedPositions
@@ -237,7 +237,7 @@ export default class MutAnnotViewer extends React.Component {
       display: PropTypes.node.isRequired,
       annotationLoader: PropTypes.func.isRequired
     }).isRequired,
-    LoadReferences: PropTypes.func,
+    refDataLoader: PropTypes.func,
     match: matchShape.isRequired,
     router: routerShape.isRequired
   }
@@ -248,7 +248,7 @@ export default class MutAnnotViewer extends React.Component {
         name, display,
         annotationLoader
       },
-      LoadReferences,
+      refDataLoader,
       router,
       match: {location}
     } = props;
@@ -277,7 +277,7 @@ export default class MutAnnotViewer extends React.Component {
           name, display,
           refSeq: refSequence,
           annotationData,
-          LoadReferences,
+          refDataLoader,
           ...extraProps
         };
       })()
