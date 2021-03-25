@@ -76,13 +76,25 @@ sg
 sdhsdh
 sdg
 
-[table compact,lastCompact]
+[table compact]
 testtable
 [/table]
 
-[table]
-testtable
-[/table]
+**Footnote:**
+
 test
 test
 test
+test
+
+test
+test
+ets
+tet
+etse
+ytgesd
+gw
+hers
+dg
+wer
+weqrew
