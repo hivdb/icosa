@@ -7,6 +7,7 @@ import SARS2Routes from './views/sars2';
 import MutAnnotViewerRoutes from './views/mut-annot-viewer';
 import GenomeViewerRoutes from './views/genome-viewer';
 import MarkdownDebugger from './views/markdown-debugger';
+import MarkdownDebugger2 from './views/markdown-debugger2';
 import config from './config';
 
 const routes = (
@@ -14,6 +15,7 @@ const routes = (
     <Route Component={Layout}>
       <Route Component={Home} />
       <Route Component={MarkdownDebugger} path="markdown-debugger" />
+      <Route Component={MarkdownDebugger2} path="markdown-debugger2" />
       {SARS2Routes()}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}
       {GenomeViewerRoutes(config.genomeViewer)}

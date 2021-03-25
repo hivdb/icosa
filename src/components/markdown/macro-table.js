@@ -174,8 +174,8 @@ function expandMultiCells(data, columnDefs) {
   }
   const newRows = [];
   for (let i = 0; i < data.length; i ++) {
-    const row = data[i];
-    const subRows = row[expandTarget];
+    const {...row} = data[i];
+    const {...subRows} = row[expandTarget];
     delete row[expandTarget];
     for (const subRow of subRows) {
       const newRow = {...row, _spanIndex: i};

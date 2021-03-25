@@ -37,7 +37,7 @@ export default class MarkdownDebugger extends React.Component {
     return (
       <Markdown
        toc
-       key={1}
+       key={2}
        escapeHtml={false}
        tables={tableData}
        refDataLoader={RefDataLoader}

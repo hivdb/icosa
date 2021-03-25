@@ -47,9 +47,11 @@
 
 sdgsdh
 
+[go to 2](/markdown-debugger2/)
+
 #### test
 
-sdhsdhsd[^test]
+sdhsdhsd
 
 - [^test2#inline]
 

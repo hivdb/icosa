@@ -79,6 +79,10 @@ export default class RefLink extends React.Component {
       }
     }
 
+    if (typeof ref.children === 'undefined') {
+      delete ref.children;
+    }
+
     return <ReferenceContext.Consumer>
       {({setReference, getReference, ensureLoaded}) => {
         const {number, itemId, linkId} = setReference(
