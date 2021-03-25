@@ -11,28 +11,21 @@ import {focusElement} from './funcs';
 import style from './style.module.scss';
 
 
-export default class RefLink extends React.Component {
+function RefLinkInternal({
+  name,
+  refContext: {
+    setReference,
+    getReference,
+    ensureLoaded
+  },
+  ...ref
+}) {
 
-  static propTypes = {
-    name: PropTypes.string,
-    identifier: PropTypes.string,
-    authors: PropTypes.string,
-    year: PropTypes.string,
-    title: PropTypes.string,
-    journal: PropTypes.string,
-    medlineId: PropTypes.string,
-    url: PropTypes.string,
-    children: PropTypes.node
-  }
+  const linkRef = React.createRef();
 
-  constructor() {
-    super(...arguments);
-    this.linkRef = React.createRef();
-  }
-
-  componentDidMount() {
+  React.useEffect(() => {
     setTimeout(() => {
-      const elem = this.linkRef.current;
+      const elem = linkRef.current;
       if (!elem) {
         return;
       }
@@ -44,13 +37,52 @@ export default class RefLink extends React.Component {
         }
       }
     });
-  }
+  });
 
-  handleClick = (evt) => {
+  const {number, itemId, linkId} = setReference(
+    name, ref, /* incr=*/ true, true
+  );
+
+  const trigger = (
+    <sup><a className={style['ref-link']}
+     onClick={handleClick}
+     ref={linkRef}
+     id={linkId} href={`#ref__${itemId}`}>
+      [{number}]
+    </a></sup>
+  );
+
+  return ensureLoaded(
+    () => (
+      <Popup
+       on="click"
+       position={[
+         'top center',
+         'right center',
+         'bottom center',
+         'left center'
+       ]}
+       className={style['ref-popup']}
+       closeOnDocumentClick
+       keepTooltipInside
+       repositionOnResize
+       trigger={trigger}>
+        <a
+         onClick={handleAnchorClick}
+         href={`#ref__${itemId}`}>
+          {number}
+        </a>.{' '}
+        {buildRef(getReference(name))}
+      </Popup>
+    ),
+    trigger
+  );
+
+  function handleClick(evt) {
     evt && evt.preventDefault();
   }
 
-  handleAnchorClick = (evt) => {
+  function handleAnchorClick(evt) {
     const {href} = evt.currentTarget.attributes;
     const anchor = href.value.slice(1);
     setTimeout(() => {
@@ -60,71 +92,56 @@ export default class RefLink extends React.Component {
     });
   }
 
-  render() {
-    let {name, identifier, ...ref} = this.props;
+}
 
-    if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
-      identifier = identifier.slice(0, identifier.length - 7);
-      return <InlineRef name={identifier} />;
-    }
+RefLinkInternal.propTypes = {
+  name: PropTypes.string,
+  authors: PropTypes.string,
+  year: PropTypes.string,
+  title: PropTypes.string,
+  journal: PropTypes.string,
+  medlineId: PropTypes.string,
+  url: PropTypes.string,
+  children: PropTypes.node
+};
 
-    name = name || identifier;
-    if (!name) {
-      const {authors, year} = ref;
-      if (authors) {
-        name = `${authors.split(' ', 2)[0]}${year}`;
-      }
-      else {
-        name = Children.onlyText(ref.children);
-      }
-    }
 
-    if (typeof ref.children === 'undefined') {
-      delete ref.children;
-    }
+function RefLink({name, identifier, ...props}) {
+  const refContext = React.useContext(ReferenceContext);
 
-    return <ReferenceContext.Consumer>
-      {({setReference, getReference, ensureLoaded}) => {
-        const {number, itemId, linkId} = setReference(
-          name, ref, /* incr=*/ true
-        );
-
-        const trigger = (
-          <sup><a className={style['ref-link']}
-           onClick={this.handleClick}
-           ref={this.linkRef}
-           id={linkId} href={`#ref__${itemId}`}>
-            [{number}]
-          </a></sup>
-        );
-
-        return ensureLoaded(
-          () => (
-            <Popup
-             on="click"
-             position={[
-               'top center',
-               'right center',
-               'bottom center',
-               'left center'
-             ]}
-             className={style['ref-popup']}
-             closeOnDocumentClick
-             keepTooltipInside
-             repositionOnResize
-             trigger={trigger}>
-              <a
-               onClick={this.handleAnchorClick}
-               href={`#ref__${itemId}`}>
-                {number}
-              </a>.{' '}
-              {buildRef(getReference(name))}
-            </Popup>
-          ),
-          trigger
-        );
-      }}
-    </ReferenceContext.Consumer>;
+  if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
+    identifier = identifier.slice(0, identifier.length - 7);
+    return <InlineRef name={identifier} />;
   }
 
+  name = name || identifier;
+  if (!name) {
+    const {authors, year} = props;
+    if (authors) {
+      name = `${authors.split(' ', 2)[0]}${year}`;
+    }
+    else {
+      name = Children.onlyText(props.children);
+    }
+  }
+
+  for (const [key, val] of Object.entries(props)) {
+    if (val === undefined) {
+      delete props[key];
+    }
+  }
+
+  return (
+    <RefLinkInternal
+     {...props}
+     key={name}
+     name={name}
+     refContext={refContext} />
+  );
 }
+
+
+export default React.memo(
+  RefLink,
+  ({name: prev}, {name: next}) => prev === next
+);

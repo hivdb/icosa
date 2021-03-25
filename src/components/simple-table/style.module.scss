@@ -265,7 +265,7 @@ table.simple-table {
     float: left;
     margin-top: 3rem;
     margin-right: 4rem;
-    &[data-last-compact="true"] + * {
+    &[data-last-compact="true"] + .clearfix {
       clear: left;
     }
     table.simple-table {
@@ -277,7 +277,7 @@ table.simple-table {
       margin-top: 0;
     }
     @media only screen and (max-width: 1023px) {
-      & + * {
+      & + .clearfix {
         clear: left;
       }
     }

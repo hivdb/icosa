@@ -34,17 +34,17 @@ function RefDataLoader({onLoad, setReference, references}) {
 export default class MarkdownDebugger extends React.Component {
 
   render() {
-    return (
+    return <>
+      <a href="#wtf">wtf</a>
       <Markdown
        toc
        key={2}
        escapeHtml={false}
        tables={tableData}
        refDataLoader={RefDataLoader}
-       collapsableLevels={['h3']}
        genomeMaps={genomeMaps}>
         {testMd}
       </Markdown>
-    );
+    </>;
   }
 }

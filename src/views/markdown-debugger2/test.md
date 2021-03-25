@@ -1,5 +1,7 @@
 testtestestggvsgh [^aaa][^bbb]
 
+zzzz [^bbb]
+
 ## AAA
 
 ### Test1
@@ -10,7 +12,7 @@ sdgsdh
 
 #### test
 
-sdhsdhsd[^test]
+sdhsdhsd[^test] dshsdh[^test]
 
 - [^test2#inline]
 - [^test3#inline]
@@ -31,9 +33,9 @@ sg
 sdhsdh
 sdg
 
-[table compact]
+<!--[table compact]
 testtable
-[/table]
+[/table]-->
 
 **Footnote:**
 

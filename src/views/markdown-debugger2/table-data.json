@@ -52,11 +52,11 @@
     "data": [
       {
         "variant": "B.1.1.7",
-        "cas": "1<sub>9</sub>",
+        "cas": "1<sub>9</sub>[^testaa]",
         "ete": "1.5<sub>5</sub>",
         "tix": "1.6<sub>4</sub>",
         "bam": "1<sub>7</sub>",
-        "cil": "0.7<sub>4</sub>",
+        "cil": "0.7<sub>4</sub>[^testbb]",
         "imd": "0.7<sub>9</sub>",
         "sot": "2.8<sub>8</sub>*",
         "reg": "-",

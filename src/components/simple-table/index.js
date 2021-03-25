@@ -100,8 +100,7 @@ export default class SimpleTable extends React.Component {
       enableRowSpan: true,
       showOptMenu: false,
       defaultOpt: this.loadDefaultDownloadOption(),
-      copying: false,
-      mobileLabelWidth: 'auto'
+      copying: false
     };
     this.table = React.createRef();
   }
@@ -201,9 +200,12 @@ export default class SimpleTable extends React.Component {
     const hCells = Array.from(elem.querySelectorAll(
       ':scope > div > table > thead > tr > th[data-column]'
     ));
-    this.setState({mobileLabelWidth: `${
-      Math.max(...hCells.map(th => th.textContent.length)) * 0.55
-    }rem`});
+    elem.style.setProperty(
+      '--mobile-label-width',
+      `${
+        Math.max(...hCells.map(th => th.textContent.length)) * 0.55
+      }rem`
+    );
   }
 
   readTableData = () => {
@@ -318,7 +320,7 @@ export default class SimpleTable extends React.Component {
       sortedByColumn, sortedData,
       sortDirection, enableRowSpan,
       copying, showOptMenu,
-      defaultOpt, mobileLabelWidth
+      defaultOpt
     } = this.state;
     const context = columnDefs.reduce((acc, {name}) => {
       acc[name] = {};
@@ -327,135 +329,139 @@ export default class SimpleTable extends React.Component {
     const rowSpanMatrix = this.getRowSpanMatrix();
 
     const {disableCopy} = this.props;
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('render table');  // eslint-disable-line no-console
+    }
 
-    return <div
-     ref={this.table}
-     style={{"--mobile-label-width": mobileLabelWidth}}
-     data-copying={copying}
-     data-compact={compact}
-     data-last-compact={lastCompact}
-     className={style['simple-table-container']}>
-      <div className={style['simple-table-scroll']} style={tableScrollStyle}>
-        <table
-         style={tableStyle}
-         data-color={color}
-         className={style['simple-table']}>
-          <thead>
-            <tr>
-              {columnDefs.map(({
-                name, label, sort, sortable, headCellStyle
-              }, idx) => (
-                <th
-                 {...(sortable ? {
-                   'data-sorted': (
-                     sortedByColumn === name ? sortDirection : null
-                   ),
-                   onClick: this.handleSort(name, sort)
-                 } : {})}
-                 data-column
-                 data-sortable={sortable}
-                 style={headCellStyle}
-                 key={idx}>
-                  <div className={style['th-container']}>
-                    <div className={style['label']}>
-                      {label}
-                    </div>
-                    {sortable && <div className={style['sort-icon']}>
-                      {sortedByColumn === name && <>
-                        {sortDirection === 'ascending' && <FaSortUp />}
-                        {sortDirection === 'descending' && <FaSortDown />}
-                      </>}
-                      {(sortedByColumn !== name ||
-                        !sortDirection) && <FaSort />}
-                    </div>}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sortedData.map((row, idx) => (
-              <tr key={idx}>
-                {columnDefs.map(({
-                  name, render, renderConfig,
-                  textAlign, label, bodyCellStyle
-                }, jdx) => {
-                  const jsx = render(
-                    nestedGet(row, name),
-                    row,
-                    context[name],
-                    renderConfig
-                  );
-                  const isEmpty = typeof jsx === 'string' && jsx.length === 0;
-                  return <td
-                   key={jdx}
-                   className={classNames(
-                     enableRowSpan && rowSpanMatrix[idx][jdx] === 0 ?
-                       style.hide : null,
-                     style[textAlign]
-                   )}
-                   {...(isEmpty ? {'data-is-empty': ''} : null)}
-                   style={bodyCellStyle}
-                   rowSpan={
-                     enableRowSpan && rowSpanMatrix[idx][jdx] > 1 ?
-                       rowSpanMatrix[idx][jdx] : null
-                   }>
-                    <span
-                     className={style['cell-label']}>{label}</span>
-                    <span className={style['cell-value']}>{jsx}</span>
-                  </td>;
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {disableCopy ? null:
+    return <>
       <div
-       data-ignore-global-click
-       className={style['download-options']}>
-        <div className={style['download-button-group']}>
-          {defaultOpt === 'copy-tsv' ?
-            <button
-             onClick={this.handleCopy}>
-              Copy to clipboard
-            </button> : null}
-          {defaultOpt === 'download-csv' ?
-            <button
-             onClick={this.handleDownloadCSV}>
-              Download CSV
-            </button> : null}
-          {defaultOpt === 'download-excel' ?
-            <button
-             onClick={this.handleDownloadExcel}>
-              Download Excel
-            </button> : null}
-          <button
-           className={style['btn-more-option']}
-           onClick={this.toggleDownloadOptMenu}
-           aria-label="More options">
-            {showOptMenu ?
-              <FaCaretUp data-ignore-global-click /> :
-              <FaCaretDown data-ignore-global-click />}
-          </button>
+       ref={this.table}
+       data-copying={copying}
+       data-compact={compact}
+       data-last-compact={lastCompact}
+       className={style['simple-table-container']}>
+        <div className={style['simple-table-scroll']} style={tableScrollStyle}>
+          <table
+           style={tableStyle}
+           data-color={color}
+           className={style['simple-table']}>
+            <thead>
+              <tr>
+                {columnDefs.map(({
+                  name, label, sort, sortable, headCellStyle
+                }, idx) => (
+                  <th
+                   {...(sortable ? {
+                     'data-sorted': (
+                       sortedByColumn === name ? sortDirection : null
+                     ),
+                     onClick: this.handleSort(name, sort)
+                   } : {})}
+                   data-column
+                   data-sortable={sortable}
+                   style={headCellStyle}
+                   key={idx}>
+                    <div className={style['th-container']}>
+                      <div className={style['label']}>
+                        {label}
+                      </div>
+                      {sortable && <div className={style['sort-icon']}>
+                        {sortedByColumn === name && <>
+                          {sortDirection === 'ascending' && <FaSortUp />}
+                          {sortDirection === 'descending' && <FaSortDown />}
+                        </>}
+                        {(sortedByColumn !== name ||
+                          !sortDirection) && <FaSort />}
+                      </div>}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sortedData.map((row, idx) => (
+                <tr key={idx}>
+                  {columnDefs.map(({
+                    name, render, renderConfig,
+                    textAlign, label, bodyCellStyle
+                  }, jdx) => {
+                    const jsx = render(
+                      nestedGet(row, name),
+                      row,
+                      context[name],
+                      renderConfig
+                    );
+                    const isEmpty = typeof jsx === 'string' && jsx.length === 0;
+                    return <td
+                     key={jdx}
+                     className={classNames(
+                       enableRowSpan && rowSpanMatrix[idx][jdx] === 0 ?
+                         style.hide : null,
+                       style[textAlign]
+                     )}
+                     {...(isEmpty ? {'data-is-empty': ''} : null)}
+                     style={bodyCellStyle}
+                     rowSpan={
+                       enableRowSpan && rowSpanMatrix[idx][jdx] > 1 ?
+                         rowSpanMatrix[idx][jdx] : null
+                     }>
+                      <span
+                       className={style['cell-label']}>{label}</span>
+                      <span className={style['cell-value']}>{jsx}</span>
+                    </td>;
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        {showOptMenu &&
-          <div className={style['option-menu']}>
-            {defaultOpt !== 'copy-tsv' &&
-              <a onClick={this.handleCopy} href="#copy-tsv">
+        {disableCopy ? null:
+        <div
+         data-ignore-global-click
+         className={style['download-options']}>
+          <div className={style['download-button-group']}>
+            {defaultOpt === 'copy-tsv' ?
+              <button
+               onClick={this.handleCopy}>
                 Copy to clipboard
-              </a>}
-            {defaultOpt !== 'download-csv' &&
-              <a onClick={this.handleDownloadCSV} href="#download-csv">
+              </button> : null}
+            {defaultOpt === 'download-csv' ?
+              <button
+               onClick={this.handleDownloadCSV}>
                 Download CSV
-              </a>}
-            {defaultOpt !== 'download-excel' &&
-              <a onClick={this.handleDownloadExcel} href="#download-excel">
+              </button> : null}
+            {defaultOpt === 'download-excel' ?
+              <button
+               onClick={this.handleDownloadExcel}>
                 Download Excel
-              </a>}
-          </div>}
-      </div>}
-    </div>
-    ;
+              </button> : null}
+            <button
+             className={style['btn-more-option']}
+             onClick={this.toggleDownloadOptMenu}
+             aria-label="More options">
+              {showOptMenu ?
+                <FaCaretUp data-ignore-global-click /> :
+                <FaCaretDown data-ignore-global-click />}
+            </button>
+          </div>
+          {showOptMenu &&
+            <div className={style['option-menu']}>
+              {defaultOpt !== 'copy-tsv' &&
+                <a onClick={this.handleCopy} href="#copy-tsv">
+                  Copy to clipboard
+                </a>}
+              {defaultOpt !== 'download-csv' &&
+                <a onClick={this.handleDownloadCSV} href="#download-csv">
+                  Download CSV
+                </a>}
+              {defaultOpt !== 'download-excel' &&
+                <a onClick={this.handleDownloadExcel} href="#download-excel">
+                  Download Excel
+                </a>}
+            </div>}
+        </div>}
+      </div>
+      <div className={style.clearfix} />
+    </>;
   }
 }

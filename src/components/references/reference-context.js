@@ -42,20 +42,24 @@ export class ReferenceContextValue {
   )
 
   setReference = (name, reference, incr) => {
+    let isNew = true;
     let prevRefDef = {_count: 0};
     const nameKey = name.toLocaleLowerCase();
     if (nameKey in this.references) {
+      isNew = false;
       prevRefDef = this.references[nameKey];
     }
     else {
       // add new reference
       this.refNames.push(nameKey);
     }
-    this.references[nameKey] = {
-      ...prevRefDef,
-      ...reference,
-      name
-    };
+    if (isNew || Object.keys(reference).length > 0) {
+      this.references[nameKey] = {
+        ...prevRefDef,
+        ...reference,
+        name
+      };
+    }
     if (incr) {
       this.references[nameKey]._count ++;
     }

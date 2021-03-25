@@ -208,6 +208,7 @@ export function Table({
 
   return <>
     <SimpleTable
+     key={cacheKey}
      compact={compact}
      lastCompact={lastCompact}
      cacheKey={cacheKey}
@@ -230,6 +231,7 @@ export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
     if (tableName in tables) {
       return (
         <Table
+         key={tableName}
          compact={compact}
          lastCompact={lastCompact}
          cacheKey={tableName}

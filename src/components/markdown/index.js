@@ -157,4 +157,7 @@ ExtendedMarkdown.defaultProps = {
   tables: {}
 };
 
-export default ExtendedMarkdown;
+export default React.memo(
+  ExtendedMarkdown,
+  ({children: prev}, {children: next}) => prev === next
+);
