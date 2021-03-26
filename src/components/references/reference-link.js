@@ -40,7 +40,7 @@ function RefLinkInternal({
   });
 
   const {number, itemId, linkId} = setReference(
-    name, ref, /* incr=*/ true, true
+    name, ref, /* incr=*/ true
   );
 
   const trigger = (
@@ -105,8 +105,13 @@ RefLinkInternal.propTypes = {
   children: PropTypes.node
 };
 
+const MemoRefLinkInternal = React.memo(
+  RefLinkInternal,
+  ({name: prev}, {name: next}) => prev === next
+);
 
-function RefLink({name, identifier, ...props}) {
+
+export default function RefLink({name, identifier, ...props}) {
   const refContext = React.useContext(ReferenceContext);
 
   if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
@@ -132,16 +137,10 @@ function RefLink({name, identifier, ...props}) {
   }
 
   return (
-    <RefLinkInternal
+    <MemoRefLinkInternal
      {...props}
      key={name}
      name={name}
      refContext={refContext} />
   );
 }
-
-
-export default React.memo(
-  RefLink,
-  ({name: prev}, {name: next}) => prev === next
-);
