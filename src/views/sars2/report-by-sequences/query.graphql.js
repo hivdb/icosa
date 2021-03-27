@@ -20,7 +20,7 @@ export default gql`
       level
       message
     }
-    antibodySuscSummary {
+    antibodySuscSummary(drdbVersion: $drdbVersion) {
       mutations {
         gene { name }
         isUnsequenced

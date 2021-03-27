@@ -49,7 +49,8 @@ export default function ReportBySequencesContainer({
              currentSelected={currentSelected}
              renderPartialResults={output !== 'printable'}
              lazyLoad={lazyLoad}
-             onExtendVariables={handleExtendVariables}>
+             extraParams="$drdbVersion: String!"
+             onExtendVariables={handleExtendVariables(config)}>
               {props => (
                 <SeqReports
                  output={output}
@@ -64,9 +65,12 @@ export default function ReportBySequencesContainer({
     </ConfigContext.Consumer>
   );
 
-  function handleExtendVariables(vars) {
-    const {location: {state: {algorithm}}} = match;
-    vars.algorithm = algorithm;
-    return vars;
+  function handleExtendVariables({drdbVersion}) {
+    return vars => {
+      const {location: {state: {algorithm}}} = match;
+      vars.algorithm = algorithm;
+      vars.drdbVersion = drdbVersion;
+      return vars;
+    };
   }
 }
