@@ -17,11 +17,11 @@ html[data-no-smooth-scroll] {
   }
 }
 
-article.sequence-article, article.seqreads-article {
+article.sequence-article, article.seqreads-article, article.pattern-article {
   width: 100%;
   margin-bottom: 6rem;
   padding-top: 2rem;
-  header.sequence-header, header.seqreads-header {
+  header.sequence-header, header.seqreads-header, header.pattern-header {
     color: color(seq-title);
     padding: 1rem 0;
     position: relative;

@@ -21,4 +21,4 @@ export async function configWrapper(config) {
 }
 
 
-export default createAsyncContext();
+export default createAsyncContext({});

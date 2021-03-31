@@ -74,6 +74,7 @@ export default class SierraForms extends React.Component {
        basePath={basePath}
        match={match}
        router={router}
+       patternsTo={`${basePath}/by-patterns/report/`}
        sequencesTo={`${basePath}/by-sequences/report/`}
        enableReads readsTo={`${basePath}/by-reads/report/`}
        exampleFasta={exampleFasta} 

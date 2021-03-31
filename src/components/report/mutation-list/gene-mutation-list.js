@@ -11,7 +11,7 @@ function GeneMutationList({
   geneDisplay,
   gene: {name: geneName},
   mutations,
-  unsequencedRegions: {regions: unseqRegions}
+  unsequencedRegions: {regions: unseqRegions} = {regions: []}
 }) {
   const shortMutations = shortenMutationList(
     mutations.filter(({isUnsequenced}) => !isUnsequenced)

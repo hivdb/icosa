@@ -3,9 +3,9 @@ import Loader from 'react-loader';
 
 const EMPTY = {_emptyObject: 1};
 
-export default function AsyncContext() {
+export default function AsyncContext(defaultValue) {
 
-  const Context = React.createContext({});
+  const Context = React.createContext(defaultValue);
 
   function AsyncProvider({value, children}) {
     const [data, setData] = useState(EMPTY);

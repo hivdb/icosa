@@ -55,13 +55,14 @@
     "react-loader": "^2.4.7",
     "react-progressbar": "^15.4.1",
     "react-tabs": "^3.1.1",
+    "react-tagsinput": "^3.19.0",
     "reactjs-popup": "^2.0.4",
     "resolve-pathname": "^3.0.0",
     "rfdc": "^1.1.4",
     "sleep-promise": "^9.0.0",
     "typeface-source-sans-pro": "^1.1.5",
     "typescript": "^3.9.5",
-    "uuid": "^8.3.1"
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "@apollo/client": "^3.2.5",

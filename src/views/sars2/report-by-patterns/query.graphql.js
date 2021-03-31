@@ -1,33 +1,8 @@
 import gql from 'graphql-tag';
-import {
-  query as seqReadsSummaryFragment
-} from '../../../components/report/seqreads-summary';
-
-import {includeFragment} from '../../../utils/graphql-helper';
 
 export default gql`
-  fragment HIVDBReportBySequenceReadsRoot on Root {
-    ${includeFragment(seqReadsSummaryFragment, 'Root')}
-  }
-
-  fragment HIVDBReportBySequenceReads on SequenceReadsAnalysis {
+  fragment HIVDBReportByPattern on MutationsAnalysis {
     name
-    strain { display }
-    pangolin {
-      version
-      latestVersion
-      loaded
-      asyncResultsURI
-      taxon
-      lineage
-      probability
-      status
-      note
-    }
-    readDepthStats {
-      median: percentile(p: 50)
-      p95: percentile(p: 95)
-    }
     validationResults {
       level
       message
@@ -95,42 +70,8 @@ export default gql`
         }
       }
     }
-    availableGenes { name }
-    minPrevalence
-    minCodonReads
-    minPositionReads
-    ${includeFragment(seqReadsSummaryFragment, 'SequenceReadsAnalysis')}
-    allGeneSequenceReads {
-      firstAA
-      lastAA
+    allGeneMutations {
       gene { name length }
-      unsequencedRegions {
-        size
-        regions {
-          posStart posEnd
-        }
-      }
-      sdrms: mutations(filterOptions: [SDRM]) {
-        text
-      }
-      # allPositionCodonReads {
-      #   gene{
-      #     name
-      #   }
-      #   position
-      #   totalReads
-      #   codonReads {
-      #     codon
-      #     reads
-      #     aminoAcid
-      #     prevalence
-      #     isReference
-      #     isApobecMutation
-      #     isApobecDRM
-      #     isUnusual
-      #     isDRM
-      #   }
-      # }
       mutations {
         text
         AAs
@@ -144,11 +85,6 @@ export default gql`
         isAmbiguous
         isDRM
         totalReads
-        allAAReads {
-          aminoAcid
-          numReads
-          percent
-        }
       }
     }
     drugResistance {
@@ -190,5 +126,4 @@ export default gql`
       }
     }
   }
-  ${seqReadsSummaryFragment}
 `;

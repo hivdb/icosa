@@ -4,11 +4,13 @@ import {routerShape, matchShape, Link} from 'found';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 
 import FormsContainer from './container';
+import PatternsInputForm from './patterns-input-form';
 import SequenceInputForm from './sequence-input-form';
 import SequenceReadsInputForm from './sequence-reads-input-form';
 
 
 const tabNames = [
+  'by-patterns',
   'by-sequences',
   'by-reads'
 ];
@@ -40,6 +42,7 @@ export default class AnalyzeForms extends React.Component {
     onSubmit: PropTypes.func,
     //onTabSwitch: React.PropTypes.func,
     basePath: PropTypes.string.isRequired,
+    patternsTo: PropTypes.string.isRequired,
     sequencesTo: PropTypes.string.isRequired,
     readsTo: PropTypes.string,
     enableReads: PropTypes.bool.isRequired,
@@ -64,7 +67,7 @@ export default class AnalyzeForms extends React.Component {
       enableReads, hideReads, ...otherProps
     } = this.props;
     const commonProps = {...otherProps, onSubmit, children};
-    const isCurTabSeqReads = this.getTabIndex() === 1;
+    const isCurTabSeqReads = this.getTabIndex() === 2;
     const hideTabOthers = enableReads && hideReads && isCurTabSeqReads;
     const hideTabReads = !enableReads && !hideReads;
 
@@ -74,6 +77,11 @@ export default class AnalyzeForms extends React.Component {
          onSelect={() => null}
          selectedIndex={this.getTabIndex()}>
           <TabList>
+            <Tab style={hideTabOthers ? {display: 'none'} : null}>
+              <Link to={`${basePath}/by-patterns/`}>
+                Input mutations
+              </Link>
+            </Tab>
             <Tab style={hideTabOthers ? {display: 'none'} : null}>
               <Link to={`${basePath}/by-sequences/`}>
                 Input sequences
@@ -85,6 +93,11 @@ export default class AnalyzeForms extends React.Component {
               </Link>
             </Tab>
           </TabList>
+          <TabPanel>
+            <PatternsInputForm
+             to={this.props.patternsTo}
+             {...commonProps} />
+          </TabPanel>
           <TabPanel>
             <SequenceInputForm
              to={this.props.sequencesTo}

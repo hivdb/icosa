@@ -73,7 +73,7 @@ function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
       });
     }
     else {
-      const {unsequencedRegions} = geneSeq;
+      const {unsequencedRegions = {regions: []}} = geneSeq;
       for (let {posStart, posEnd} of unsequencedRegions.regions) {
         posStart = convertAAPosToAbsNAPos(posStart, range[0], readingFrame);
         posEnd = convertAAPosToAbsNAPos(posEnd, range[0], readingFrame);
@@ -157,6 +157,7 @@ function getCoverages(coverages, geneDefs, coverageUpperLimit) {
 
 
 function MutationViewer({
+  noUnseqRegions,
   regionPresets,
   allGeneSeqs,
   coverages,
@@ -178,7 +179,10 @@ function MutationViewer({
     ...otherPreset,
     regions: [
       ...regions,
-      ...getUnsequencedRegions(allGeneSeqs, genes, regions)
+      ...(
+        noUnseqRegions ? [] :
+          getUnsequencedRegions(allGeneSeqs, genes, regions)
+      )
     ],
     height: minHeight,
     positionGroups: [{
@@ -209,6 +213,7 @@ function MutationViewer({
 
 
 MutationViewer.propTypes = {
+  noUnseqRegions: PropTypes.bool.isRequired,
   allGeneSeqs: PropTypes.arrayOf(
     PropTypes.shape({
       gene: PropTypes.shape({
@@ -221,7 +226,7 @@ MutationViewer.propTypes = {
             posEnd: PropTypes.number.isRequired
           }).isRequired
         ).isRequired
-      }).isRequired
+      })
     }).isRequired,
   ).isRequired,
   coverages: PropTypes.arrayOf(
@@ -231,6 +236,11 @@ MutationViewer.propTypes = {
       coverage: PropTypes.number.isRequired
     }).isRequired
   )
+};
+
+
+MutationViewer.defaultProps = {
+  noUnseqRegions: false
 };
 
 

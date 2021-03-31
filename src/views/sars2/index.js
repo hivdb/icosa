@@ -12,6 +12,7 @@ import ConfigContext, {
 import CustomColors from '../../components/custom-colors';
 
 const SeqAnaForms = lazy(() => import('./forms'));
+const ReportByPatterns = lazy(() => import('./report-by-patterns'));
 const ReportBySequences = lazy(() => import('./report-by-sequences'));
 const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
@@ -28,6 +29,14 @@ export default function SARS2Routes({
   const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
   return <Route path={pathPrefix} Component={wrapper}>
+    <Route path="by-patterns/">
+      <Route render={({props}) => (
+        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+      )}/>
+      <Route path="report/" render={({props}) => (
+        <ReportByPatterns {...props} species={species} />
+      )}/>
+    </Route>
     <Route path="by-sequences/">
       <Route render={({props}) => (
         <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />

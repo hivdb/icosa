@@ -6,10 +6,15 @@ import style from './style.module.scss';
 
 
 function MutationList({
+  allGeneMutations,
   allGeneSequenceReads,
   alignedGeneSequences
 }) {
-  const geneSeqs = allGeneSequenceReads || alignedGeneSequences;
+  const geneSeqs = (
+    allGeneSequenceReads ||  // seqReads analysis
+    alignedGeneSequences ||  // sequence analysis
+    allGeneMutations         // pattern analysis
+  );
 
   return <ConfigContext.Consumer>
     {({geneDisplay}) => <ul className={style['mutation-list']}>
