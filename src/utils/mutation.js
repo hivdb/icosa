@@ -93,7 +93,11 @@ export function parseAndValidateMutation(mut, config) {
   const {geneSynonyms, geneReferences} = config;
   let [pos, aas,, gene] = parseMutation(mut);
   if (pos === null || aas === null || gene === null) {
-    errors.push("not a valid mutation");
+    errors.push(
+      "Not a valid mutation. A mutation must contain gene, " +
+      "position and at least one mutated amino acid. For examples, " +
+      "S:E484K (ref amino acid 'E' is optional), nsp6:S106del, nsp6:34ins."
+    );
     return {
       text: mut,
       errors
@@ -137,10 +141,6 @@ export function parseAndValidateMutation(mut, config) {
       errors
     };
   }
-  const ref = refSeq[pos - 1];
-  if (ref === aas) {
-    errors.push("the entered amino acid is identical to the reference");
-  }
   aas = aas
     .replace(/[iI]ns(e(r(t(i(o(n)?)?)?)?)?)?/g, '_')
     .replace(/[dD]el(e(t(i(o(n)?)?)?)?)?/g, '-')
@@ -152,6 +152,10 @@ export function parseAndValidateMutation(mut, config) {
       text: mut,
       errors
     };
+  }
+  const ref = refSeq[pos - 1];
+  if (ref === aas) {
+    errors.push("the entered amino acid is identical to the reference");
   }
   let indel = 'none';
   if (aas.includes('_')) {

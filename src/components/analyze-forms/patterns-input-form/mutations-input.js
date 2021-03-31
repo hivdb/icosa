@@ -15,8 +15,7 @@ import style from './style.module.scss';
 function MutationsInputInternal({
   config, uuid, name, mutations, onChange, isActive
 }) {
-
-  const [allErrors, setAllErrors] = React.useState([]);
+  const [,allErrors] = sanitizeMutations(mutations, config);
 
   return (
     <div key={uuid} className={style['mutation-suggest-input']}>
@@ -35,8 +34,7 @@ function MutationsInputInternal({
 
   function handleRemoveAllErrors(e) {
     e.preventDefault();
-    const [sanitized, allErrors] = sanitizeMutations(mutations, config, true);
-    setAllErrors(allErrors);
+    const [sanitized] = sanitizeMutations(mutations, config, true);
     onChange({
       uuid,
       name,
@@ -46,7 +44,6 @@ function MutationsInputInternal({
 
   function handleTagsChange(mutations) {
     const [sanitized, allErrors] = sanitizeMutations(mutations, config);
-    setAllErrors(allErrors);
     onChange({
       uuid,
       name,
@@ -70,7 +67,6 @@ function MutationsInputInternal({
     const [sanitized, allErrors] = sanitizeMutations(
       [...mutations, mut], config
     );
-    setAllErrors(allErrors);
     onChange({
       uuid,
       name,

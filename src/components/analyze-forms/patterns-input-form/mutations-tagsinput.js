@@ -14,7 +14,7 @@ function MutationsTagsInput({
 }) {
 
   const placeholder = (
-    'Enter/paste mutation(s); examples: S:E484K, nsp6:S106del, nsp6:34ins'
+    'Enter/paste mutation(s)'
   );
 
   return (
@@ -24,7 +24,7 @@ function MutationsTagsInput({
      addKeys={[13, 32, 187, 188, 190]}
      addOnBlur
      addOnPaste
-     pasteSplit={data => data.split(/[\s,;:+.]+/g)}
+     pasteSplit={data => data.split(/[\s,;+.]+/g)}
      value={mutations}
      renderTag={renderMutTag}
      inputProps={{
