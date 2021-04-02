@@ -59,6 +59,7 @@ export default class SingleSequenceReport extends React.Component {
     onSelect: PropTypes.func.isRequired,
     species: PropTypes.string.isRequired,
     match: matchShape.isRequired,
+    antibodies: PropTypes.array.isRequired,
     sequenceResult: PropTypes.object.isRequired,
     output: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
@@ -136,6 +137,7 @@ export default class SingleSequenceReport extends React.Component {
 
   render() {
     const {
+      antibodies,
       sequenceResult,
       sequenceResult: {
         alignedGeneSequences
@@ -175,7 +177,10 @@ export default class SingleSequenceReport extends React.Component {
           <MutList {...sequenceResult} {...{output, strain}} />
         </ReportSection>
         <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary {...sequenceResult} {...{output, strain}} />
+          <AntibodySuscSummary
+           antibodies={antibodies}
+           {...sequenceResult}
+           {...{output, strain}} />
         </ReportSection>
       </article>
     );

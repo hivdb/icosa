@@ -25,6 +25,7 @@ export default class SequenceReports extends React.Component {
     loaded: PropTypes.bool.isRequired,
     sequences: PropTypes.array.isRequired,
     currentSelected: PropTypes.object,
+    antibodies: PropTypes.array.isRequired,
     sequenceAnalysis: PropTypes.array.isRequired,
     onSelectSequence: PropTypes.func.isRequired
   }
@@ -155,6 +156,7 @@ export default class SequenceReports extends React.Component {
       output,
       species, match, loaded,
       sequences, currentSelected,
+      antibodies,
       sequenceAnalysis, onSelectSequence
     } = this.props;
     const pageTitle = this.getPageTitle(sequenceAnalysis, output);
@@ -180,6 +182,7 @@ export default class SequenceReports extends React.Component {
         {sequenceAnalysis.map((seqResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSequenceReport
+             antibodies={antibodies}
              currentSelected={currentSelected}
              onSelect={onSelectSequence}
              sequenceResult={seqResult}

@@ -8,7 +8,7 @@ import {
 
 import MutationsTagsInput from './mutations-tagsinput';
 import MutationsErrors from './mutations-errors';
-import MutationSuggestOptions from './mutation-suggest-options';
+// import MutationSuggestOptions from './mutation-suggest-options';
 import style from './style.module.scss';
 
 
@@ -26,9 +26,9 @@ function MutationsInputInternal({
       <MutationsErrors
        allErrors={allErrors}
        onAutoClean={handleRemoveAllErrors} />
-      <MutationSuggestOptions
+      {/*<MutationSuggestOptions
        config={config}
-       onChange={handleMutationSelect} />
+       onChange={handleMutationSelect} />*/}
     </div>
   );
 

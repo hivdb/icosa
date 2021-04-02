@@ -6,11 +6,16 @@ import {
 import {includeFragment} from '../../../utils/graphql-helper';
 
 export default gql`
-  fragment HIVDBReportBySequenceReadsRoot on Root {
+  fragment ReportBySequenceReadsRoot on Root {
     ${includeFragment(seqReadsSummaryFragment, 'Root')}
+    antibodies(drdbVersion: $drdbVersion) {
+      name
+      abbrName
+      priority
+    }
   }
 
-  fragment HIVDBReportBySequenceReads on SequenceReadsAnalysis {
+  fragment ReportBySequenceReads on SequenceReadsAnalysis {
     name
     strain { display }
     pangolin {
@@ -41,56 +46,21 @@ export default gql`
         AAs
         text
       }
-      hitMutations {
-        position
-      }
-      hitPositions {
-        position
-      }
       itemsByAntibody {
         antibodies {
           name
           abbrName
-          synonyms
-          availability
-          target
-          antibodyClass
+          priority
         }
+        cumulativeCount
+        cumulativeFold {
+          median: percentile(p: 50)
+        } 
         items {
-          resistanceLevel
-          cumulativeCount
-          items {
-            reference {
-              refName
-              DOI
-              URL
-            }
-            assay
-            section
-            foldCmp
-            fold
-            ineffective
-            cumulativeCount
-          }
-        }
-      }
-      itemsByAntibodyClass {
-        antibodyClass
-        items {
-          resistanceLevel
-          cumulativeCount
-          items {
-            reference {
-              refName
-              DOI
-              URL
-            }
-            antibodies { name }
-            section
-            foldCmp
-            fold
-            ineffective
-            cumulativeCount
+          reference {
+            refName
+            DOI
+            URL
           }
         }
       }

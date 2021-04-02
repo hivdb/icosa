@@ -62,6 +62,7 @@ function getCoverages({allReads}) {
 export default class SingleSeqReadsReport extends React.Component {
 
   static propTypes = {
+    antibodies: PropTypes.array.isRequired,
     currentSelected: PropTypes.object,
     onSelect: PropTypes.func.isRequired,
     species: PropTypes.string,
@@ -138,6 +139,7 @@ export default class SingleSeqReadsReport extends React.Component {
 
   render() {
     const {
+      antibodies,
       inputSequenceReads,
       sequenceReadsResult,
       sequenceReadsResult: {
@@ -183,7 +185,10 @@ export default class SingleSeqReadsReport extends React.Component {
           <MutList {...sequenceReadsResult} {...{output, strain}} />
         </ReportSection>
         <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary {...sequenceReadsResult} {...{output, strain}} />
+          <AntibodySuscSummary
+           antibodies={antibodies}
+           {...sequenceReadsResult}
+           {...{output, strain}} />
         </ReportSection>
       </article>
     );

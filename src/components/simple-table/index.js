@@ -74,6 +74,7 @@ export default class SimpleTable extends React.Component {
       sort: PropTypes.func.isRequired,
       sortable: PropTypes.bool.isRequired
     })),
+    getRowKey: PropTypes.func.isRequired,
     data: PropTypes.arrayOf(
       PropTypes.object.isRequired
     ).isRequired,
@@ -87,7 +88,8 @@ export default class SimpleTable extends React.Component {
     disableCopy: false,
     sheetName: 'Sheet1',
     tableScrollStyle: {},
-    tableStyle: {}
+    tableStyle: {},
+    getRowKey: () => null
   };
 
   constructor() {
@@ -159,8 +161,15 @@ export default class SimpleTable extends React.Component {
 
   handleSort(column, sortFunc) {
     if (sortFunc && typeof sortFunc !== 'function') {
-      const sortKeys = sortFunc.map(key => `${column}.${key}`);
-      sortFunc = value => sortBy(value, sortKeys);
+      const sortKeys = sortFunc.map(key => (
+        key instanceof Function ? key : `${column}.${key}`
+      ));
+      sortFunc = value => sortBy(value, item => sortKeys.map(
+        key => key instanceof Function ?
+          key(item) :
+          nestedGet(item, key) ||
+          ''
+      ));
     }
     return () => {
       let {sortedByColumn, sortDirection, sortedData} = this.state;
@@ -314,6 +323,7 @@ export default class SimpleTable extends React.Component {
       compact,
       lastCompact,
       color, columnDefs,
+      getRowKey,
       tableScrollStyle, tableStyle
     } = this.props;
     const {
@@ -380,7 +390,7 @@ export default class SimpleTable extends React.Component {
             </thead>
             <tbody>
               {sortedData.map((row, idx) => (
-                <tr key={idx}>
+                <tr key={getRowKey(row) || idx}>
                   {columnDefs.map(({
                     name, render, renderConfig,
                     textAlign, label, bodyCellStyle

@@ -22,6 +22,7 @@ export default class SeqReadsReports extends React.Component {
     match: matchShape.isRequired,
     router: routerShape.isRequired,
     loaded: PropTypes.bool.isRequired,
+    antibodies: PropTypes.array.isRequired,
     allSequenceReads: PropTypes.array.isRequired,
     currentSelected: PropTypes.object,
     sequenceReadsAnalysis: PropTypes.array.isRequired,
@@ -151,7 +152,7 @@ export default class SeqReadsReports extends React.Component {
 
   render() {
     const {
-      output, genes,
+      output, genes, antibodies,
       species, match, router, loaded,
       allSequenceReads, currentSelected,
       sequenceReadsAnalysis, onSelectSeqReads
@@ -184,6 +185,7 @@ export default class SeqReadsReports extends React.Component {
              )}
              currentSelected={currentSelected}
              onSelect={onSelectSeqReads}
+             antibodies={antibodies}
              sequenceReadsResult={seqReadsResult}
              onObserve={this.handleObserve}
              output={output}

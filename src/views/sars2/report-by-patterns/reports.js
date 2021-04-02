@@ -153,7 +153,7 @@ export default class PatternsReports extends React.Component {
     const {
       output, genes,
       species, match, router, loaded,
-      patterns, currentSelected,
+      patterns, currentSelected, antibodies,
       patternAnalysis, onSelectPattern
     } = this.props;
     const pageTitle = this.getPageTitle(patternAnalysis, output);
@@ -191,6 +191,7 @@ export default class PatternsReports extends React.Component {
              species={species}
              match={match}
              router={router}
+             antibodies={antibodies}
              genes={genes} />
             {idx + 1 < patternAnalysis.length ?
               <PageBreak /> : null}

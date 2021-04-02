@@ -29,13 +29,14 @@ export default function shortenMutationList(mutations) {
   );
   for (const group of groups) {
     if (group.length === 1) {
-      const [{text, position, ...mut}] = group;
+      const [{text, AAs, position, ...mut}] = group;
       merged.push({
         ...mut,
         position,
+        AAs,
         posStart: position,
         posEnd: position,
-        text: text.replace('Deletion', 'Δ').replace('-', 'Δ')
+        text: AAs === '-' ? `Δ${position}` : text.replace('-', 'Δ')
       });
     }
     else {
@@ -46,7 +47,7 @@ export default function shortenMutationList(mutations) {
       const reference = group.map(({reference}) => reference).join('');
       merged.push({
         ...mut,
-        text: `${reference}${posStart}-${posEnd}Δ`,
+        text: `Δ${posStart}-${posEnd}`,
         reference,
         position: posStart,
         posStart,

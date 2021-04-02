@@ -93,7 +93,13 @@ function PatternsInputForm({children, to, onSubmit}) {
   );
 
   async function handleSubmit(e) {
-    let payload = {patterns};
+    const payload = {
+      patterns: patterns.map(({mutations, ...pattern}) => ({
+        ...pattern,
+        name: mutations.join('+'),
+        mutations
+      }))
+    };
     let validated = true;
     let state = {};
     if (onSubmit) {

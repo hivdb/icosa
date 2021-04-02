@@ -1,7 +1,14 @@
 import gql from 'graphql-tag.macro';
 
 export default gql`
-  fragment SARS2ReportBySequences on SequenceAnalysis {
+  fragment ReportBySequencesRoot on Root {
+    antibodies(drdbVersion: $drdbVersion) {
+      name
+      abbrName
+      priority
+    }
+  }
+  fragment ReportBySequences on SequenceAnalysis {
     inputSequence { header }
     strain { name display }
     pangolin {
@@ -23,62 +30,27 @@ export default gql`
     antibodySuscSummary(drdbVersion: $drdbVersion) {
       mutations {
         gene { name }
-        isUnsequenced
         reference
         position
+        isUnsequenced
         AAs
         text
-      }
-      hitMutations {
-        position
-      }
-      hitPositions {
-        position
       }
       itemsByAntibody {
         antibodies {
           name
           abbrName
-          synonyms
-          availability
-          target
-          antibodyClass
+          priority
         }
+        cumulativeCount
+        cumulativeFold {
+          median: percentile(p: 50)
+        } 
         items {
-          resistanceLevel
-          cumulativeCount
-          items {
-            reference {
-              refName
-              DOI
-              URL
-            }
-            assay
-            section
-            foldCmp
-            fold
-            ineffective
-            cumulativeCount
-          }
-        }
-      }
-      itemsByAntibodyClass {
-        antibodyClass
-        items {
-          resistanceLevel
-          cumulativeCount
-          items {
-            reference {
-              refName
-              DOI
-              URL
-            }
-            antibodies { name }
-            section
-            foldCmp
-            fold
-            ineffective
-            cumulativeCount
+          reference {
+            refName
+            DOI
+            URL
           }
         }
       }

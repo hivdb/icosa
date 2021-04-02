@@ -61,6 +61,7 @@ export default class SinglePatternReport extends React.Component {
     patternResult: PropTypes.object.isRequired,
     output: PropTypes.string.isRequired,
     index: PropTypes.number.isRequired,
+    antibodies: PropTypes.array.isRequired,
     onObserve: PropTypes.func.isRequired
   }
 
@@ -130,6 +131,7 @@ export default class SinglePatternReport extends React.Component {
   render() {
     const {
       // inputPattern,
+      antibodies,
       patternResult,
       patternResult: {
         name: patName,
@@ -160,7 +162,9 @@ export default class SinglePatternReport extends React.Component {
           <MutList {...patternResult} {...{output}} />
         </ReportSection>
         <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary {...patternResult} {...{output}} />
+          <AntibodySuscSummary
+           antibodies={antibodies}
+           {...patternResult} {...{output}} />
         </ReportSection>
       </article>
     );
