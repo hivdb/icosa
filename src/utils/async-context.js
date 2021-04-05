@@ -34,8 +34,18 @@ export default function AsyncContext(defaultValue) {
     return children(value);
   }
 
+  function useContextWithLoadingStatus() {
+    const {loading, value} = useContext(Context);
+    if (loading && value === EMPTY) {
+      return [null, loading];
+    }
+
+    return [value, loading];
+  }
+
   return {
     Provider: AsyncProvider,
-    Consumer: AsyncConsumer
+    Consumer: AsyncConsumer,
+    use: useContextWithLoadingStatus
   };
 }

@@ -4,7 +4,9 @@ import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import uniqWith from 'lodash/uniqWith';
 
+import Markdown from '../markdown';
 import ExtLink from '../link/external';
+import {ConfigContext} from '../report';
 import SimpleTable, {ColumnDef} from '../simple-table';
 import shortenMutationList from '../../utils/shorten-mutation-list';
 
@@ -176,13 +178,19 @@ function AntibodySuscSummary({
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const payload = buildPayload(antibodySuscSummary);
 
-  return <>
-    <SimpleTable
-     compact lastCompact
-     getRowKey={getRowKey}
-     columnDefs={buildColumnDefs(antibodies, antibodySuscSummary)}
-     data={payload} />
-  </>;
+  return <ConfigContext.Consumer>
+    {({messages}) => (
+      payload.length > 0 ?
+        <SimpleTable
+         compact lastCompact
+         getRowKey={getRowKey}
+         columnDefs={buildColumnDefs(antibodies, antibodySuscSummary)}
+         data={payload} /> :
+        <Markdown escapeHtml={false}>
+          {messages['no-mab-susc-result']}
+        </Markdown>
+    )}
+  </ConfigContext.Consumer>;
 }
 
 

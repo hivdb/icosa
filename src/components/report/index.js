@@ -13,6 +13,7 @@ import ValidationReport from './validation-report';
 import MutationViewer from './mutation-viewer';
 import ReportSection from './report-section';
 import MutationList from './mutation-list';
+import ConfigContext from './config-context';
 
 export {
   DRInterpretation, DRMutationScores,
@@ -20,5 +21,5 @@ export {
   SeqMutationPrevalence, AlgComparison, ValidationReport,
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
   MutationStats, MutationViewer, ReportSection,
-  MutationList
+  MutationList, ConfigContext
 };

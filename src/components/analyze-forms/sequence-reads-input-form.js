@@ -19,7 +19,7 @@ import FileInput from '../file-input';
 import RadioInput from '../radio-input';
 import CheckboxInput from '../checkbox-input';
 import Link from '../link/basic';
-import ConfigContext from '../report/config-context';
+import {ConfigContext} from '../report';
 
 import style from './style.module.scss';
 
@@ -253,7 +253,7 @@ class SequenceReadsInputForm extends React.Component {
 
   render() {
     const {outputOptions} = this;
-    const {match, router, to, exampleCodonReads} = this.props;
+    const {config, match, router, to, exampleCodonReads} = this.props;
     const {
       allSequenceReads, allFastqFiles, outputOption,
       numProcessedSeqs, numAllSeqs, progressDesc,
@@ -295,7 +295,9 @@ class SequenceReadsInputForm extends React.Component {
             <input {...getInputProps()} />
             <ul
              data-drag-active={isDragActive}
-             data-placeholder={"Drag and drop FASTQ/CodFreq/AAVF files here"}
+             data-placeholder={
+               config.messages['seqreads-analysis-form-placeholder']
+             }
              {...getRootProps({className: style['sequence-reads-preview']})}>
               {allFastqFiles.map((f, idx) => (
                 <li key={`fastq-${idx}`}>

@@ -25,36 +25,38 @@ export default function SARS2Routes({
   className
 } = {}) {
   const configContext = configWrapper({...defaultConfig, ...config});
-  const species = configContext.species;
   const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
   return <Route path={pathPrefix} Component={wrapper}>
     <Route path="by-patterns/">
       <Route render={({props}) => (
-        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+        <SeqAnaForms
+         {...props} {...formProps}
+         pathPrefix={pathPrefix}
+         curAnalysis="pattern-analysis" />
       )}/>
-      <Route path="report/" render={({props}) => (
-        <ReportByPatterns {...props} species={species} />
-      )}/>
+      <Route path="report/" Component={ReportByPatterns} />
     </Route>
     <Route path="by-sequences/">
       <Route render={({props}) => (
-        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+        <SeqAnaForms
+         {...props} {...formProps}
+         pathPrefix={pathPrefix}
+         curAnalysis="sequence-analysis" />
       )}/>
-      <Route path="report/" render={({props}) => (
-        <ReportBySequences {...props} species={species} />
-      )}/>
+      <Route path="report/" Component={ReportBySequences} />
     </Route>
     <Route path="by-reads/">
       <Route render={({props}) => (
-        <SeqAnaForms {...props} {...formProps} {...{species, pathPrefix}} />
+        <SeqAnaForms
+         {...props} {...formProps}
+         pathPrefix={pathPrefix}
+         curAnalysis="seqreads-analysis" />
       )}/>
-      <Route path="report/" render={({props}) => (
-        <ReportBySeqReads {...props} species={species} />
-      )}/>
+      <Route path="report/" Component={ReportBySeqReads} />
     </Route>
     <Redirect to={({location: {pathname}}) => (
-      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-sequences/`
+      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-mutations/`
     )} />
   </Route>;
 

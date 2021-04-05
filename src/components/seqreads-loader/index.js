@@ -5,7 +5,7 @@ import {matchShape, withRouter} from 'found';
 import BigData from '../../utils/big-data';
 import PromiseComponent from '../../utils/promise-component';
 
-import ConfigContext from '../report/config-context';
+import {ConfigContext} from '../report';
 
 
 const SEQ_READS_CACHE = {};
