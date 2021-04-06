@@ -14,6 +14,7 @@ import MutationViewer from './mutation-viewer';
 import ReportSection from './report-section';
 import MutationList from './mutation-list';
 import ConfigContext from './config-context';
+import RefsSection, {RefContextWrapper} from './references';
 
 export {
   DRInterpretation, DRMutationScores,
@@ -21,5 +22,6 @@ export {
   SeqMutationPrevalence, AlgComparison, ValidationReport,
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
   MutationStats, MutationViewer, ReportSection,
-  MutationList, ConfigContext
+  MutationList, ConfigContext, RefsSection,
+  RefContextWrapper
 };

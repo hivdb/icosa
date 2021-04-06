@@ -182,6 +182,7 @@ export default class SequenceReports extends React.Component {
         {sequenceAnalysis.map((seqResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSequenceReport
+             key={indexOffset + idx}
              antibodies={antibodies}
              currentSelected={currentSelected}
              onSelect={onSelectSequence}

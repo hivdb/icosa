@@ -179,6 +179,7 @@ export default class PatternsReports extends React.Component {
         {patternAnalysis.map((patternResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SinglePatternReport
+             key={indexOffset + idx}
              inputPattern={patterns.find(
                ({name}) => patternResult.name === name
              )}

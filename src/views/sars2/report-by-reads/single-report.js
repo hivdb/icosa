@@ -7,9 +7,12 @@ import {
   SeqSummary, // MutationStats,
   MutationViewer as MutViewer,
   ReportSection,
-  MutationList as MutList
+  MutationList as MutList,
+  RefsSection,
+  RefContextWrapper
 } from '../../../components/report';
 
+import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
 
 import style from '../style.module.scss';
@@ -158,38 +161,44 @@ export default class SingleSeqReadsReport extends React.Component {
     return (
       <article
        className={style['seqreads-article']}>
-        <header
-         data-seqreads-name={seqName}
-         data-seqreads-index={index}
-         ref={this.headerRef}
-         className={style['seqreads-header']} id={seqName}>
-          <HLFirstWord index={index}>{seqName}</HLFirstWord>
-        </header>
-        <SeqSummary {...sequenceReadsResult} output={output}>
-          <SeqSummary.InlineGeneRange />
-          <SeqSummary.MedianReadDepth />
-          <SeqSummary.PangolinLineage />
-          <SeqSummary.MinPrevalence />
-          <SeqSummary.MinCodonReads />
-        </SeqSummary>
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer {...{
-            coverageUpperLimit: Math.floor(coverageUpperLimit),
-            allGeneSeqs: allGeneSequenceReads,
-            coverages,
-            output,
-            strain
-          }} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...sequenceReadsResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...sequenceReadsResult}
-           {...{output, strain}} />
-        </ReportSection>
+        <RefContextWrapper>
+          <header
+           data-seqreads-name={seqName}
+           data-seqreads-index={index}
+           ref={this.headerRef}
+           className={style['seqreads-header']} id={seqName}>
+            <HLFirstWord index={index}>{seqName}</HLFirstWord>
+          </header>
+          <SeqSummary {...sequenceReadsResult} output={output}>
+            <SeqSummary.InlineGeneRange />
+            <SeqSummary.MedianReadDepth />
+            <SeqSummary.PangolinLineage />
+            <SeqSummary.MinPrevalence />
+            <SeqSummary.MinCodonReads />
+          </SeqSummary>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer {...{
+              coverageUpperLimit: Math.floor(coverageUpperLimit),
+              allGeneSeqs: allGeneSequenceReads,
+              coverages,
+              output,
+              strain
+            }} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...sequenceReadsResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...sequenceReadsResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...sequenceReadsResult}
+             {...{output, strain}} />
+          </ReportSection>
+          <RefsSection />
+        </RefContextWrapper>
       </article>
     );
   }

@@ -50,6 +50,7 @@ function ExtendedMarkdown({
   tables,
   genomeMaps,
   refDataLoader,
+  displayReferences,
   renderers: addRenderers,
   ...props
 }) {
@@ -87,22 +88,27 @@ function ExtendedMarkdown({
     ...addRenderers
   };
   mdProps.renderers = generalRenderers;
-  const context = new ReferenceContextValue(refDataLoader);
   let jsx = (
-    <ReferenceContext.Provider value={context}>
-      <OrigMarkdown
-       {...mdProps}
-       key={children}
-       children={children}
-       renderers={renderers}
-       plugins={[macroPlugin.transformer]} />
-      <LoadExternalRefData />
-      <OptReferences
-       disableAnchor={disableHeadingTagAnchor}
-       level={referenceHeadingTagLevel}
-       {...{referenceTitle}} />
-    </ReferenceContext.Provider>
+    <OrigMarkdown
+     {...mdProps}
+     key={children}
+     children={children}
+     renderers={renderers}
+     plugins={[macroPlugin.transformer]} />
   );
+  if (displayReferences) {
+    const context = new ReferenceContextValue(refDataLoader);
+    jsx = (
+      <ReferenceContext.Provider value={context}>
+        {jsx}
+        <LoadExternalRefData />
+        <OptReferences
+         disableAnchor={disableHeadingTagAnchor}
+         level={referenceHeadingTagLevel}
+         {...{referenceTitle}} />
+      </ReferenceContext.Provider>
+    );
+  }
   if (collapsableLevels && collapsableLevels.length > 0) {
     jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
   }
@@ -138,6 +144,7 @@ ExtendedMarkdown.propTypes = {
   refDataLoader: PropTypes.func,
   imagePrefix: PropTypes.string,
   cmsPrefix: PropTypes.string,
+  displayReferences: PropTypes.bool.isRequired,
   genomeMaps: PropTypes.objectOf(genomeMapPresetShape.isRequired),
   tables: PropTypes.objectOf(PropTypes.shape({
     columnDefs: PropTypes.array.isRequired,
@@ -152,6 +159,7 @@ ExtendedMarkdown.defaultProps = {
   noHeadingStyle: false,
   referenceTitle: 'References',
   disableHeadingTagAnchor: false,
+  displayReferences: true,
   referenceHeadingTagLevel: 2,
   imagePrefix: '/',
   tables: {}

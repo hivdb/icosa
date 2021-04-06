@@ -5,9 +5,12 @@ import {matchShape, routerShape} from 'found';
 import {
   MutationViewer as MutViewer,
   ReportSection,
-  MutationList as MutList
+  MutationList as MutList,
+  RefsSection,
+  RefContextWrapper
 } from '../../../components/report';
 
+import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
 
 import style from '../style.module.scss';
@@ -145,30 +148,35 @@ export default class SinglePatternReport extends React.Component {
       <article
        key={patName}
        className={style['pattern-article']}>
-        <header
-         data-pattern-name={patName}
-         data-pattern-index={index}
-         ref={this.headerRef}
-         className={style['pattern-header']} id={patName}>
-          <HLFirstWord index={index}>{patName}</HLFirstWord>
-        </header>
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer noUnseqRegions {...{
-            allGeneSeqs: allGeneMutations,
-            output
-          }} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...patternResult} {...{output}} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...patternResult} {...{output}} />
-        </ReportSection>
+        <RefContextWrapper>
+          <header
+           data-pattern-name={patName}
+           data-pattern-index={index}
+           ref={this.headerRef}
+           className={style['pattern-header']} id={patName}>
+            <HLFirstWord index={index}>{patName}</HLFirstWord>
+          </header>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer noUnseqRegions {...{
+              allGeneSeqs: allGeneMutations,
+              output
+            }} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...patternResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <RefsSection />
+        </RefContextWrapper>
       </article>
     );
   }
-
 
 }

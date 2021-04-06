@@ -14,6 +14,18 @@ export default gql`
       level
       message
     }
+    mutationComments(cmtVersion: $cmtVersion) {
+      triggeredMutations {
+        gene { name }
+        reference
+        position
+        isUnsequenced
+        AAs
+        text
+      }
+      version
+      comment
+    }
     antibodySuscSummary(drdbVersion: $drdbVersion) {
       mutations {
         gene { name }

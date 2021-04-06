@@ -50,7 +50,7 @@ export default function ReportByReadsContainer({
              currentSelected={currentSelected}
              renderPartialResults={output !== 'printable'}
              lazyLoad={lazyLoad}
-             extraParams="$drdbVersion: String!"
+             extraParams="$drdbVersion: String!, $cmtVersion: String!"
              onExtendVariables={handleExtendVariables(config)}>
               {props => (
                 <SeqReadsReports
@@ -67,11 +67,12 @@ export default function ReportByReadsContainer({
     </ConfigContext.Consumer>
   );
 
-  function handleExtendVariables({drdbVersion}) {
+  function handleExtendVariables({drdbVersion, cmtVersion}) {
     return vars => {
       const {location: {state: {algorithm}}} = match;
       vars.algorithm = algorithm;
       vars.drdbVersion = drdbVersion;
+      vars.cmtVersion = cmtVersion;
       return vars;
     };
   }

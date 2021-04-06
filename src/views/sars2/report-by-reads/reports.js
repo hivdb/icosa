@@ -180,6 +180,7 @@ export default class SeqReadsReports extends React.Component {
         {sequenceReadsAnalysis.map((seqReadsResult, idx) => (
           <React.Fragment key={indexOffset + idx}>
             <SingleSeqReadsReport
+             key={indexOffset + idx}
              inputSequenceReads={allSequenceReads.find(
                ({name}) => seqReadsResult.name === name
              )}

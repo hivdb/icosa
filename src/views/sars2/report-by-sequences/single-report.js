@@ -7,9 +7,12 @@ import {
   SeqSummary,
   MutationViewer as MutViewer,
   ReportSection,
-  MutationList as MutList
+  MutationList as MutList,
+  RefsSection,
+  RefContextWrapper
 } from '../../../components/report';
 
+import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
 
 import style from '../style.module.scss';
@@ -153,35 +156,41 @@ export default class SingleSequenceReport extends React.Component {
     return (
       <article
        className={style['sequence-article']}>
-        <header
-         data-seq-header={header}
-         data-seq-index={index}
-         ref={this.headerRef}
-         className={style['sequence-header']} id={header}>
-          <HLFirstWord index={index}>{header}</HLFirstWord>
-        </header>
-        <SeqSummary {...sequenceResult} {...{output, strain}}>
-          <SeqSummary.InlineGeneRange />
-          <SeqSummary.PrettyPairwise />
-          <SeqSummary.PangolinLineage />
-        </SeqSummary>
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer {...{
-            allGeneSeqs: alignedGeneSequences,
-            output,
-            strain
-          }} />
-          <ValidationReport {...sequenceResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...sequenceResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...sequenceResult}
-           {...{output, strain}} />
-        </ReportSection>
+        <RefContextWrapper>
+          <header
+           data-seq-header={header}
+           data-seq-index={index}
+           ref={this.headerRef}
+           className={style['sequence-header']} id={header}>
+            <HLFirstWord index={index}>{header}</HLFirstWord>
+          </header>
+          <SeqSummary {...sequenceResult} {...{output, strain}}>
+            <SeqSummary.InlineGeneRange />
+            <SeqSummary.PrettyPairwise />
+            <SeqSummary.PangolinLineage />
+          </SeqSummary>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer {...{
+              allGeneSeqs: alignedGeneSequences,
+              output,
+              strain
+            }} />
+            <ValidationReport {...sequenceResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...sequenceResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...sequenceResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...sequenceResult}
+             {...{output, strain}} />
+          </ReportSection>
+          <RefsSection />
+        </RefContextWrapper>
       </article>
     );
   }
