@@ -1,0 +1,65 @@
+@import "../../styles/colors";
+@import "../../styles/functions";
+
+
+$cell-padding: .1rem;
+
+.cell-variants {
+  padding: $cell-padding 0;
+  .variants {
+    font-size: .8rem;
+    color: #808080;
+    &::before {
+      content: '(';
+    }
+    &::after {
+      content: ')';
+    }
+  }
+}
+
+.cell-fold {
+  padding: $cell-padding 0;
+  &[data-level="2"] {
+    background-color: #fff352;
+    .iqr, .range {
+      color: rgba(87, 87, 87, 0.8);
+    }
+  }
+  &[data-level="3"] {
+    background-color: color(name-cardinal);
+    color: white;
+    .iqr, .range {
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+  .iqr {
+    font-size: .8rem;
+    color: #808080;
+    &::before {
+      content: 'IQR: '
+    };
+  }
+  .range {
+    font-size: .8rem;
+    color: #808080;
+    &::before {
+      content: 'Range: '
+    };
+  }
+}
+
+ol.cell-references {
+  max-width: 20rem;
+  padding: $cell-padding 0;
+  margin: 0;
+  text-align: left;
+  list-style-type: none;
+  > li {
+    display: inline-block;
+    &:not(:last-of-type)::after {
+      content: ',';
+      padding-right: .2rem;
+    }
+  }
+}

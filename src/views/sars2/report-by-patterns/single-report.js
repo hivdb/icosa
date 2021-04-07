@@ -12,6 +12,8 @@ import {
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
+import CPSuscSummary from '../../../components/cp-susc-summary';
+import VPSuscSummary from '../../../components/vp-susc-summary';
 
 import style from '../style.module.scss';
 
@@ -171,6 +173,15 @@ export default class SinglePatternReport extends React.Component {
           <ReportSection title="MAb susceptibility summary">
             <AntibodySuscSummary
              antibodies={antibodies}
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
              {...patternResult} {...{output}} />
           </ReportSection>
           <RefsSection />

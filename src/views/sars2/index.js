@@ -56,7 +56,7 @@ export default function SARS2Routes({
       <Route path="report/" Component={ReportBySeqReads} />
     </Route>
     <Redirect to={({location: {pathname}}) => (
-      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-mutations/`
+      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-patterns/`
     )} />
   </Route>;
 

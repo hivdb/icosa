@@ -37,9 +37,8 @@ function renderMutations(mutations) {
 
 function buildPayload(antibodySuscSummary) {
   return antibodySuscSummary.map(
-    ({mutations, itemsByAntibody}) => {
-      const row = {mutations};
-      const refs = [];
+    ({mutations, references, itemsByAntibody}) => {
+      const row = {mutations, references};
       for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
         const abkey = (
           '__abfold__' +
@@ -47,14 +46,7 @@ function buildPayload(antibodySuscSummary) {
             .map(({name}) => name).join('+')
         );
         row[abkey] = cumdata;
-        for (let {reference: {refName, DOI, URL}} of items) {
-          if (DOI) {
-            URL = `https://doi.org/${DOI}`;
-          }
-          refs.push({refName, URL});
-        }
       }
-      row.references = uniqWith(refs, isEqual);
       return row;
     }
   );
@@ -93,8 +85,10 @@ function renderFold(resultItem) {
 
 function renderRefs(refs) {
   return <ol className={style['cell-references']}>
-    {refs.map(({refName, URL}) => <li name={refName}>
-      <ExtLink href={URL}>{refName}</ExtLink>
+    {refs.map(({refName, DOI, URL}) => <li name={refName}>
+      <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
+        {refName}
+      </ExtLink>
     </li>)}
   </ol>;
 }
@@ -171,12 +165,12 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
 
 function AntibodySuscSummary({
   antibodies,
-  antibodySuscSummary,
+  antibodySuscSummary: {itemsByKeyMutations},
   ...props
 }) {
-  antibodySuscSummary = antibodySuscSummary
+  itemsByKeyMutations = itemsByKeyMutations
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-  const payload = buildPayload(antibodySuscSummary);
+  const payload = buildPayload(itemsByKeyMutations);
 
   return <ConfigContext.Consumer>
     {({messages}) => (
@@ -184,7 +178,7 @@ function AntibodySuscSummary({
         <SimpleTable
          compact lastCompact
          getRowKey={getRowKey}
-         columnDefs={buildColumnDefs(antibodies, antibodySuscSummary)}
+         columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
          data={payload} /> :
         <Markdown escapeHtml={false}>
           {messages['no-mab-susc-result']}

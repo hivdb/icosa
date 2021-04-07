@@ -1,12 +1,9 @@
 import gql from 'graphql-tag';
+import {rootLevel, seqLevel, geneSeqLevel} from '../common-query.graphql';
 
 export default gql`
   fragment ReportByPatternRoot on Root {
-    antibodies(drdbVersion: $drdbVersion) {
-      name
-      abbrName
-      priority
-    }
+    ${rootLevel}
   }
   fragment ReportByPattern on MutationsAnalysis {
     name
@@ -14,100 +11,9 @@ export default gql`
       level
       message
     }
-    mutationComments(cmtVersion: $cmtVersion) {
-      triggeredMutations {
-        gene { name }
-        reference
-        position
-        isUnsequenced
-        AAs
-        text
-      }
-      version
-      comment
-    }
-    antibodySuscSummary(drdbVersion: $drdbVersion) {
-      mutations {
-        gene { name }
-        reference
-        position
-        isUnsequenced
-        AAs
-        text
-      }
-      itemsByAntibody {
-        antibodies {
-          name
-          abbrName
-          priority
-        }
-        cumulativeCount
-        cumulativeFold {
-          median: percentile(p: 50)
-        } 
-        items {
-          reference {
-            refName
-            DOI
-            URL
-          }
-        }
-      }
-    }
+    ${seqLevel}
     allGeneMutations {
-      gene { name length }
-      mutations {
-        text
-        AAs
-        reference
-        position
-        primaryType
-        isApobecMutation
-        hasStop
-        isUnsequenced
-        isUnusual
-        isAmbiguous
-        isDRM
-        totalReads
-      }
-    }
-    drugResistance {
-      algorithm {
-        text
-        family
-        version
-        publishDate
-      }
-      gene {
-         name,
-         drugClasses { name fullName }
-      }
-      levels: drugScores {
-        drugClass { name }
-        drug { name displayAbbr fullName }
-        text
-      }
-      mutationsByTypes {
-        mutationType
-        mutations { text isUnsequenced }
-      }
-      commentsByTypes {
-        commentType
-        comments {
-          name
-          text
-          highlightText
-        }
-      }
-      drugScores {
-        drugClass { name }
-        drug { name displayAbbr }
-        score
-        partialScores {
-          mutations { text }
-          score
-        }
-      }
+      ${geneSeqLevel}
     }
   }
 `;
