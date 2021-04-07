@@ -180,16 +180,16 @@ export default class RegionGroup extends React.Component {
     let maxX = width;
 
     const jsx = <g id={`region-group-${posStart}_${posEnd}`}>
-      {hidePositionAxis ? null : <PositionAxis
-       offsetY={paddingTop}
-       scaleX={scaleX}
-       positionAxis={positionAxis} />}
       {hasCoverages ? (
         <CoverageLayer
          {...coverages}
          scaleX={scaleX}
          offsetY={paddingTop + covLayerAddOffsetY} />
       ) : null}
+      {hidePositionAxis ? null : <PositionAxis
+       offsetY={paddingTop}
+       scaleX={scaleX}
+       positionAxis={positionAxis} />}
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
         for (const {turns} of posGroup.positions) {

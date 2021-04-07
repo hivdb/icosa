@@ -14,6 +14,8 @@ import {
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
+import CPSuscSummary from '../../../components/cp-susc-summary';
+import VPSuscSummary from '../../../components/vp-susc-summary';
 
 import style from '../style.module.scss';
 
@@ -178,7 +180,7 @@ export default class SingleSeqReadsReport extends React.Component {
           </SeqSummary>
           <ReportSection title="Sequence quality assessment">
             <MutViewer {...{
-              coverageUpperLimit: Math.floor(coverageUpperLimit),
+              coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
               allGeneSeqs: allGeneSequenceReads,
               coverages,
               output,
@@ -196,6 +198,15 @@ export default class SingleSeqReadsReport extends React.Component {
              antibodies={antibodies}
              {...sequenceReadsResult}
              {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...sequenceReadsResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
+             {...sequenceReadsResult} {...{output}} />
           </ReportSection>
           <RefsSection />
         </RefContextWrapper>

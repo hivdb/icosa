@@ -14,6 +14,8 @@ import {
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import AntibodySuscSummary from '../../../components/ab-susc-summary';
+import CPSuscSummary from '../../../components/cp-susc-summary';
+import VPSuscSummary from '../../../components/vp-susc-summary';
 
 import style from '../style.module.scss';
 
@@ -188,6 +190,15 @@ export default class SingleSequenceReport extends React.Component {
              antibodies={antibodies}
              {...sequenceResult}
              {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...sequenceResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
+             {...sequenceResult} {...{output}} />
           </ReportSection>
           <RefsSection />
         </RefContextWrapper>
