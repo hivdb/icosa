@@ -8,7 +8,8 @@ export default class ColumnDef {
     name, label, render, renderConfig = {}, sort,
     sortable = true, textAlign = 'center',
     none = '?', multiCells = false,
-    headCellStyle = {}, bodyCellStyle = {}
+    headCellStyle = {}, bodyCellStyle = {},
+    bodyCellColSpan = 1
   }) {
     this.name = name;
     this.label = label ? label : startCase(name);
@@ -24,6 +25,7 @@ export default class ColumnDef {
     this.multiCells = multiCells;
     this.headCellStyle = headCellStyle;
     this.bodyCellStyle = bodyCellStyle;
+    this.bodyCellColSpan = bodyCellColSpan;
   }
 
 }

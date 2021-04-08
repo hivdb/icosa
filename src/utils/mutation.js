@@ -5,11 +5,11 @@ const AMINO_ACIDS = 'ACDEFGHIKLMNPQRSTVWY';
 // const nonaaRegex = new RegExp(`[^${AMINO_ACIDS}_/*-]+`, 'g');
 const aaRegex = new RegExp(`[${AMINO_ACIDS}_*-]`, 'g');
 
-export function parseMutation(mut) {
+export function parseMutation(mut, defaultGene) {
   let pos = null;
   let aas = null;
   let ref = null;
-  let gene = null;
+  let gene = defaultGene;
   if (mut.includes(':')) {
     [gene] = mut.split(':', 1);
     mut = mut.slice(gene.length + 1);
@@ -90,8 +90,8 @@ export function sanitizeMutations(mutations, config, removeErrors = false) {
 
 export function parseAndValidateMutation(mut, config) {
   const errors = [];
-  const {geneSynonyms, geneReferences} = config;
-  let [pos, aas,, gene] = parseMutation(mut);
+  const {mutationDefaultGene, geneSynonyms, geneReferences} = config;
+  let [pos, aas,, gene] = parseMutation(mut, mutationDefaultGene);
   if (pos === null || aas === null || gene === null) {
     errors.push(
       "Not a valid mutation. A mutation must contain gene, " +

@@ -392,7 +392,7 @@ export default class SimpleTable extends React.Component {
               {sortedData.map((row, idx) => (
                 <tr key={getRowKey(row) || idx}>
                   {columnDefs.map(({
-                    name, render, renderConfig,
+                    name, render, renderConfig, bodyCellColSpan,
                     textAlign, label, bodyCellStyle
                   }, jdx) => {
                     const jsx = render(
@@ -411,6 +411,7 @@ export default class SimpleTable extends React.Component {
                      )}
                      {...(isEmpty ? {'data-is-empty': ''} : null)}
                      style={bodyCellStyle}
+                     colSpan={bodyCellColSpan > 1 ? bodyCellColSpan : null}
                      rowSpan={
                        enableRowSpan && rowSpanMatrix[idx][jdx] > 1 ?
                          rowSpanMatrix[idx][jdx] : null

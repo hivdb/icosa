@@ -52,6 +52,10 @@ function buildPayload(convPlasmaSuscSummary) {
         numSamples,
         references
       };
+      for (const level of SIRLevels) {
+        row[`__level__${level}`] = 0;
+      }
+      row[`__level__undetermined`] = 0;
       for (const {
         resistanceLevel,
         cumulativeCount
@@ -92,6 +96,47 @@ function renderPcnt(pcnt) {
   }
 }
 
+
+function PcntBarItem({level, pcnt}) {
+  const displayPcnt = pcnt >= 0.005 ? `${(pcnt * 100).toFixed(0)}%` : '0';
+  return (
+    <li
+     data-level={level}
+     data-pcnt={pcnt}
+     title={displayPcnt}
+     style={{'--level-pcnt': pcnt}}>
+      <span className={style.pcnt}>
+        {displayPcnt}
+      </span>
+    </li>
+  );
+}
+
+
+function PcntBar({levelPcnts}) {
+  return <ul className={style['pcnt-bar']}>
+    {levelPcnts.map(({level, pcnt}) => (
+      <PcntBarItem key={level} level={level} pcnt={pcnt} />
+    ))}
+  </ul>;
+}
+
+
+function renderPcntBar(_, row) {
+  const {
+    __level__susceptible: levelS = 0,
+    '__level__partial-resistance': levelI = 0,
+    __level__resistant: levelR = 0,
+    __level__undetermined: levelU = 0
+  } = row;
+  return <PcntBar levelPcnts={[
+    {level: '1', pcnt: levelS},
+    {level: '2', pcnt: levelI},
+    {level: '3', pcnt: levelR},
+    {level: 'U', pcnt: levelU}
+  ]} />;
+}
+
 function buildColumnDefs(itemsByKeyMutations) {
   const hasUndetermined = itemsByKeyMutations.some(
     ({itemsByResistLevel}) => itemsByResistLevel.some(
@@ -122,24 +167,42 @@ function buildColumnDefs(itemsByKeyMutations) {
     }),
     new ColumnDef({
       name: '__level__susceptible',
-      label: '<3-fold (S)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="1">
+        &lt;3-fold (S)
+      </span>,
+      render: renderPcntBar,
+      bodyCellColSpan: 3 + hasUndetermined
     }),
     new ColumnDef({
       name: '__level__partial-resistance',
-      label: '3-9-fold (I)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="2">
+        3-9-fold (I)
+      </span>,
+      render: renderPcnt,
+      bodyCellStyle: {
+        display: 'none'
+      }
     }),
     new ColumnDef({
       name: '__level__resistant',
-      label: '≥10-fold (R)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="3">
+        ≥10-fold (R)
+      </span>,
+      render: renderPcnt,
+      bodyCellStyle: {
+        display: 'none'
+      }
     }),
     ...(hasUndetermined ? [
       new ColumnDef({
         name: '__level__undetermined',
-        label: 'No individual fold',
-        render: renderPcnt
+        label: <span className={style['level-label']} data-level="U">
+          No individual fold
+        </span>,
+        render: renderPcnt,
+        bodyCellStyle: {
+          display: 'none'
+        }
       })
     ] : []),
     new ColumnDef({
