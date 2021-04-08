@@ -118,10 +118,10 @@ ul.pcnt-bar {
     width: calc(var(--level-pcnt) * var(--bar-width));
     overflow: hidden;
     > .pcnt {
-      width: "calc(
+      width: #{"calc(
         max(0, var(--level-pcnt) - var(--min-display-pcnt)) /
         (var(--level-pcnt) - var(--min-display-pcnt)) * var(--pcnt-width)
-      )";
+      )"};
       display: inline-block;
       overflow: hidden;
     }
