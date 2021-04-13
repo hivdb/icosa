@@ -44,28 +44,32 @@ function buildPayload(convPlasmaSuscSummary) {
       mutations,
       references,
       cumulativeCount: numSamples,
+      cumulativeFold: {median: medianFold},
       itemsByResistLevel
     }) => {
       const row = {
         mutations,
         numRefs: references.length,
         numSamples,
+        medianFold,
         references
       };
       for (const level of SIRLevels) {
         row[`__level__${level}`] = 0;
       }
-      row[`__level__undetermined`] = 0;
+      let total = 0;
       for (const {
         resistanceLevel,
         cumulativeCount
       } of itemsByResistLevel) {
         if (SIRLevels.includes(resistanceLevel)) {
-          row[`__level__${resistanceLevel}`] = cumulativeCount / numSamples;
+          total += cumulativeCount;
+          row[`__level__${resistanceLevel}`] = cumulativeCount;
         }
-        else {
-          row[`__level__undetermined`] = row[`__level__undetermined`] || 0;
-          row[`__level__undetermined`] += cumulativeCount / numSamples;
+      }
+      if (total > 0) {
+        for (const level of SIRLevels) {
+          row[`__level__${level}`] = row[`__level__${level}`] / total;
         }
       }
       return row;
@@ -114,10 +118,12 @@ function PcntBarItem({level, pcnt}) {
 
 
 function PcntBar({levelPcnts}) {
+  const isEmpty = levelPcnts.every(({pcnt}) => pcnt === 0);
   return <ul className={style['pcnt-bar']}>
     {levelPcnts.map(({level, pcnt}) => (
       <PcntBarItem key={level} level={level} pcnt={pcnt} />
     ))}
+    {isEmpty ? <li>N/A</li> : null}
   </ul>;
 }
 
@@ -138,15 +144,6 @@ function renderPcntBar(_, row) {
 }
 
 function buildColumnDefs(itemsByKeyMutations) {
-  const hasUndetermined = itemsByKeyMutations.some(
-    ({itemsByResistLevel}) => itemsByResistLevel.some(
-      ({resistanceLevel}) => !([
-        'susceptible',
-        'partial-resistance',
-        'resistant'
-      ].includes(resistanceLevel))
-    )
-  );
   const colDefs = [
     new ColumnDef({
       name: 'mutations',
@@ -171,7 +168,7 @@ function buildColumnDefs(itemsByKeyMutations) {
         &lt;3-fold (S)
       </span>,
       render: renderPcntBar,
-      bodyCellColSpan: 3 + hasUndetermined
+      bodyCellColSpan: 3
     }),
     new ColumnDef({
       name: '__level__partial-resistance',
@@ -193,18 +190,11 @@ function buildColumnDefs(itemsByKeyMutations) {
         display: 'none'
       }
     }),
-    ...(hasUndetermined ? [
-      new ColumnDef({
-        name: '__level__undetermined',
-        label: <span className={style['level-label']} data-level="U">
-          No individual fold
-        </span>,
-        render: renderPcnt,
-        bodyCellStyle: {
-          display: 'none'
-        }
-      })
-    ] : []),
+    new ColumnDef({
+      name: 'medianFold',
+      label: 'Median Fold',
+      render: n => n.toFixed(1)
+    }),
     new ColumnDef({
       name: 'references',
       label: 'References',

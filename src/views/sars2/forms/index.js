@@ -12,24 +12,16 @@ import Markdown from '../../../components/markdown';
 import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
 
 
-const exampleCodonReads = [
-  getFullLink('downloads/codfreq-examples/ERR4085387.S.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/ERR4181732.S.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/ERR4181742.S.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/ERR4181776.S.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/SRR11494719.RdRP.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/SRR11494735.RdRP.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/SRR11577999.RdRP.codfreq.txt'),
-  getFullLink('downloads/codfreq-examples/SRR11578120.RdRP.codfreq.txt'),
-];
+function loadExampleCodonReads(examples) {
+  return examples.map(getFullLink);
+}
 
-const exampleFasta = [
-  {
-    url: getFullLink('downloads/fasta-example.fas'),
-    title: 'FASTA example (N=2)'
-  }
-];
-
+function loadExampleFasta(examples) {
+  return examples.map(({url, title}) => ({
+    url: getFullLink(url),
+    title
+  }));
+}
 
 function SierraForms({
   config,
@@ -63,8 +55,8 @@ function SierraForms({
      patternsTo={`${basePath}/by-patterns/report/`}
      sequencesTo={`${basePath}/by-sequences/report/`}
      enableReads readsTo={`${basePath}/by-reads/report/`}
-     exampleFasta={exampleFasta} 
-     exampleCodonReads={exampleCodonReads}
+     exampleFasta={loadExampleFasta(config.sequenceExamples)} 
+     exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples)}
      sequencesOutputOptions={{
        __printable: {
          label: 'Printable HTML'

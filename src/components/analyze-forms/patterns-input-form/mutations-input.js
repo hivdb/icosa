@@ -17,6 +17,12 @@ function MutationsInputInternal({
 }) {
   const [,allErrors] = sanitizeMutations(mutations, config);
 
+  React.useEffect(() => {
+    if (allErrors.length > 0) {
+      onChange({}, true);
+    }
+  });
+
   return (
     <div key={uuid} className={style['mutation-suggest-input']}>
       <MutationsTagsInput
@@ -51,7 +57,7 @@ function MutationsInputInternal({
     }, allErrors.length > 0);
   }
 
-  function handleMutationSelect({value: mut, label}) {
+  /* function handleMutationSelect({value: mut, label}) {
     if (mut.length === 0) {
       return;
     }
@@ -72,7 +78,7 @@ function MutationsInputInternal({
       name,
       mutations: sanitized
     }, allErrors.length > 0);
-  }
+  } */
 
 }
   

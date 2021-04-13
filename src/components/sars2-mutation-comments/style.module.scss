@@ -1,24 +1,30 @@
 @import "../../styles/colors";
 
-ul.mutation-comments {
+.mutation-comments-container {
   border: 1px solid color(dividing-line);
   box-sizing: border-box;
   background-color: color(panel-bg);
   margin: 1.5rem -1rem 0;
-  padding: 1rem 1rem 1rem 3rem;
+  padding: 1rem;
   @media print {
     background-color: white;
   }
-
-  .triggered-mutations {
-    font-weight: 600;
-    .mut-sep {
-      &:first-of-type {
-        display: none;
-      }
-      padding: 0 .25rem;
-    }
+  
+  > .mutation-comments-options {
+    margin-top: 1.5rem;
   }
-  .mutation-comment {
+
+  > ul.mutation-comments {
+    margin: 0;
+    padding-left: 1.2rem;
+    .triggered-mutations {
+      font-weight: 600;
+      .mut-sep {
+        &:first-of-type {
+          display: none;
+        }
+        padding: 0 .25rem;
+      }
+    }
   }
 }

@@ -77,6 +77,9 @@ const seqLevel = `
         URL
       }
       cumulativeCount
+      cumulativeFold {
+        median: percentile(p: 50)
+      }
       itemsByResistLevel {
         resistanceLevel
         cumulativeCount

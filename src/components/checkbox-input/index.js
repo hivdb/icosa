@@ -24,59 +24,62 @@ const isClipPathPolygonSupported = (() => {
   return false;
 })();
 
-export default class CheckboxInput extends React.Component {
+function CheckboxInput({
+  id,
+  children,
+  className,
+  style: userStyle,
+  ...props
+}) {
 
-  static propTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    className: PropTypes.string,
-    value: PropTypes.any.isRequired,
-    children: PropTypes.node.isRequired,
-    onChange: PropTypes.func.isRequired,
-    checked: PropTypes.bool.isRequired,
-    disabled: PropTypes.bool.isRequired,
-    style: PropTypes.object.isRequired
-  }
+  const labelRef = createRef();
 
-  static defaultProps = {
-    checked: false,
-    disabled: false,
-    style: {}
-  }
+  return (
+    <span
+     key={id}
+     tabIndex={0}
+     onKeyDown={handleKeyDown}
+     className={classNames(
+       style['general-checkbox-input'], className,
+       isClipPathPolygonSupported ? style['use-polygon'] : null)
+     }>
+      <input
+       id={id} {...props}
+       type="checkbox" />
+      <label
+       ref={labelRef}
+       style={userStyle}
+       htmlFor={id}>
+        {children}
+      </label>
+    </span>
+  );
 
-  constructor() {
-    super(...arguments);
-    this.labelRef = createRef();
-  }
-
-  handleKeyDown = (evt) => {
+  function handleKeyDown(evt) {
     if (evt.key === ' ') {
       evt.preventDefault();
       evt.stopPropagation();
-      this.labelRef.current.click();
+      labelRef.current.click();
     }
   }
-
-  render() {
-    const {id, children, className, style: userStyle, ...props} = this.props;
-    return (
-      <span
-       tabIndex={0}
-       onKeyDown={this.handleKeyDown}
-       className={classNames(
-         style['general-checkbox-input'], className,
-         isClipPathPolygonSupported ? style['use-polygon'] : null)
-       }>
-        <input
-         id={id} {...props}
-         type="checkbox" />
-        <label
-         ref={this.labelRef}
-         style={userStyle}
-         htmlFor={id}>
-          {children}
-        </label>
-      </span>
-    );
-  }
 }
+
+CheckboxInput.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  value: PropTypes.any.isRequired,
+  children: PropTypes.node.isRequired,
+  onChange: PropTypes.func.isRequired,
+  checked: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  style: PropTypes.object.isRequired
+};
+
+CheckboxInput.defaultProps = {
+  checked: false,
+  disabled: false,
+  style: {}
+};
+
+export default CheckboxInput;

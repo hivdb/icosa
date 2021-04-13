@@ -56,6 +56,12 @@ ol.references {
   }
 }
 
+*[data-display-reflink="false"] {
+  .ref-link {
+    display: none;
+  }
+}
+
 .ref-popup {
   &:global(-content) {
     margin: auto;

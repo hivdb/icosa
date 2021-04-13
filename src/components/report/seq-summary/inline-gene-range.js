@@ -27,13 +27,13 @@ export default function InlineGeneRange({geneSeqs}) {
                 <span className={style['gene-name']}>
                   {geneDisplay[gene.name] || gene.name}
                 </span>
-                {size > 0 ? <>
+                {size > 0 ? <span className={style['unseq-region']}>
                   {' (missing: '}
                   {regions.map(
                     ({posStart, posEnd}) => posStart < posEnd ?
                       `${posStart}-${posEnd}` : posStart
                   ).join(', ')})
-                </> : null}
+                </span> : null}
               </li>
             ))}
           </ul>

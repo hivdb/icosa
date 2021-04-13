@@ -43,17 +43,21 @@
       margin-bottom: 0;
       padding-left: 0;
       list-style-type: none;
-      display: inline-block;
+      display: block;
       li.inline-gene-range {
         display: inline-block;
         white-space: nowrap;
-        &.hl { // highlighted
+        /* &.hl { // highlighted
           > .gene-name {
             font-weight: 600;
           }
         }
         &:not(.hl) { // not highlighted
           opacity: .6;
+        } */
+        > .unseq-region {
+          background-color: color(validation-severe-warning-bg);
+          color: color(validation-severe-warning-text);
         }
         &:not(:first-of-type)::before {
           content: '·';

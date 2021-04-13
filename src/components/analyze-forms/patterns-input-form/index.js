@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import {v4 as uuidv4} from 'uuid';
 
 import CheckboxInput from '../../checkbox-input';
-import useLocationState from '../../../utils/use-location-state';
+import createLocationState from '../../../utils/use-location-state';
+import createPersistedReducer from '../../../utils/use-persisted-reducer';
 
 import BaseForm from '../base';
 import parentStyle from '../style.module.scss';
@@ -25,18 +26,8 @@ function newPatternObj() {
 }
 
 
-function useRetainInputOpt() {
-  const [opt, setOpt] = React.useState(
-    window.localStorage.getItem(KEY_RETAIN_INPUT_OPT) === 'true'
-  );
-  const toggleOptWithLocalStorage = () => {
-    const newOpt = !opt;
-    window.localStorage.setItem(KEY_RETAIN_INPUT_OPT, newOpt.toString());
-    setOpt(newOpt);
-  };
-
-  return [opt, toggleOptWithLocalStorage];
-}
+const useRetainInputOpt = createPersistedReducer(KEY_RETAIN_INPUT_OPT);
+const usePatterns = createLocationState('patterns');
 
 
 function PatternsInputForm({children, to, onSubmit}) {
@@ -44,12 +35,12 @@ function PatternsInputForm({children, to, onSubmit}) {
   const [
     retainInputOpt,
     toggleRetainInputOpt
-  ] = useRetainInputOpt();
+  ] = useRetainInputOpt(flag => !flag, true);
 
   const [
     patterns,
     setPatterns
-  ] = useLocationState('patterns', [newPatternObj()], () => retainInputOpt);
+  ] = usePatterns([newPatternObj()], () => retainInputOpt);
 
   const disabled = patterns.every(pat => pat.length === 0);
   const [
@@ -112,15 +103,17 @@ function PatternsInputForm({children, to, onSubmit}) {
   }
 
   function handleChange({uuid, name, mutations}, preventSubmit) {
-    const patternObj = patterns.find(({uuid: myUUID}) => myUUID === uuid);
-    patternObj.name = name;
-    patternObj.mutations = mutations;
-    setPatterns([...patterns]);
+    if (uuid) {
+      const patternObj = patterns.find(({uuid: myUUID}) => myUUID === uuid);
+      patternObj.name = name;
+      patternObj.mutations = mutations;
+      setPatterns([...patterns]);
+    }
     if (preventSubmit) {
-      setSubmitDisabled(true);
+      submitDisabled || setSubmitDisabled(true);
     }
     else if (submitDisabled && !disabled) {
-      setSubmitDisabled(false);
+      submitDisabled && setSubmitDisabled(false);
     }
   }
 

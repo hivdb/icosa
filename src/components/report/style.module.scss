@@ -17,11 +17,33 @@
 
 .report-section {
   @extend %report-section;
+
+  > h2 {
+    button.toggle-display {
+      display: inline-block;
+      border: none;
+      background-color: transparent;
+      padding: 0;
+      height: 1em;
+      line-height: 1em;
+      cursor: pointer;
+      margin-right: .5ex;
+      &:focus {
+        outline: none;
+        > svg {
+          outline-offset: 1px;
+          outline: 1px auto -webkit-focus-ring-color;
+        }
+      }
+      > svg {
+        margin-top: -.5ex;
+      }
+    }
+  }
 }
 
 .dr-mutation-scores {
   @extend %report-section;
-  position: relative;
 }
 
 ul.subtype-details {
@@ -52,7 +74,6 @@ ul.subtype-details {
 
 .dr-interpretation {
   @extend %report-section;
-  position: relative;
 }
 
 .gene-mutation-prevalence {
@@ -564,6 +585,29 @@ section.alg-comparison {
   margin-top: -40px;
   @media print {
     margin-top: -26px;
+  }
+}
+
+.collapsable-container {
+  overflow: hidden;
+  position: relative;
+  .collapsable-content {
+    position: relative;
+    transition: opacity 500ms ease-in-out;
+  }
+  &[data-display="true"] {
+    transition: max-height 0s linear;
+    max-height: 1%;
+    .collapsable-content {
+      opacity: 1;
+    }
+  }
+  &[data-display="false"] {
+    transition: max-height 0s linear 700ms;
+    max-height: 0;
+    .collapsable-content {
+      opacity: 0;
+    }
   }
 }
 

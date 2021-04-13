@@ -117,7 +117,7 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
       const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
       resultPositions.push({
         gene: displayGene,
-        name: text,
+        name: highlight ? text : `${displayGene}:${text}`,
         pos: absNAPos,
         ...(highlight ? null : {
           stroke: '#e0e0e0',

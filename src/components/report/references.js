@@ -1,5 +1,7 @@
 import React from 'react';
 
+import createPersistedReducer from '../../utils/use-persisted-reducer';
+
 import ConfigContext from './config-context';
 import ReportSection from './report-section';
 
@@ -8,6 +10,10 @@ import References, {
   ReferenceContextValue,
   LoadExternalRefData
 } from '../references';
+
+const useDisplayRefSection = createPersistedReducer(
+  '--sierra-report-display-ref-section-opt'
+);
 
 export function RefContextWrapper({children}) {
   return <ConfigContext.Consumer>
@@ -21,10 +27,18 @@ export function RefContextWrapper({children}) {
 }
 
 export default function ReferencesSection() {
+  const [display, toggleDisplay] = useDisplayRefSection(
+    display => !display, false
+  );
+
   return (
     <ReferenceContext.Consumer>
       {({hasAnyReference}) => hasAnyReference() ?
-        <ReportSection title="References">
+        <ReportSection
+         title="References"
+         display={display}
+         toggleDisplay={toggleDisplay}
+         collapsable>
           <LoadExternalRefData />
           <References />
         </ReportSection> : null}

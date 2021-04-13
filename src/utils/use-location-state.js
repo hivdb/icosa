@@ -2,7 +2,7 @@ import React from 'react';
 import {useRouter} from 'found';
 
 
-export default function useLocationState(
+export function useLocationState(
   name,
   defaultValue,
   saveCondition = () => true
@@ -22,16 +22,28 @@ export default function useLocationState(
   }
   const [value, setValue] = React.useState(initValue);
   
-  const setValueWithLocation = newValue => {
-    if (newValue instanceof Function) {
-      newValue = newValue(value);
-    }
-    setValue(newValue);
-    if (saveCondition()) {
-      state[name] = newValue;
-      router.replace({...locRemains, state});
-    }
-  };
+  const setValueWithLocation = React.useCallback(
+    newValue => {
+      if (newValue instanceof Function) {
+        newValue = newValue(value);
+      }
+      setValue(newValue);
+      if (saveCondition()) {
+        state[name] = newValue;
+        router.replace({...locRemains, state});
+      }
+    },
+    [value, name, saveCondition, router, state, locRemains]
+  );
 
   return [value, setValueWithLocation];
+}
+
+
+export default function createLocationState(name) {
+
+  return (defaultValue, saveCondition) => useLocationState(
+    name, defaultValue, saveCondition
+  );
+
 }
