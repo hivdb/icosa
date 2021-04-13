@@ -87,8 +87,10 @@ function RefLinkInternal({
     const anchor = href.value.slice(1);
     setTimeout(() => {
       const elem = document.getElementById(anchor);
-      const parentLi = elem.closest('li');
-      focusElement(parentLi);
+      if (elem) {
+        const parentLi = elem.closest('li');
+        focusElement(parentLi);
+      }
     });
   }
 

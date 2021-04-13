@@ -162,3 +162,19 @@
   color: color(form-title-bar-alter);
   font-weight: 500;
 }
+
+%levels-style {
+  display: inline-block;
+  vertical-align: middle;
+  box-sizing: border-box;
+  &[data-level="1"] {
+    background-color: white;
+  }
+  &[data-level="2"] {
+    background-color: #fff352;
+  }
+  &[data-level="3"] {
+    color: white;
+    background-color: color(name-cardinal);
+  }
+}

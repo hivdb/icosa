@@ -52,7 +52,8 @@ ReportSection.propTypes = {
 
 ReportSection.defaultProps = {
   collapsable: false,
-  defaultDisplay: true
+  display: true,
+  toggleDisplay: () => null
 };
 
 export default ReportSection;

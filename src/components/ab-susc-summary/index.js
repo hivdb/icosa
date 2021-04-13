@@ -85,7 +85,7 @@ function renderFold(resultItem) {
 
 function renderRefs(refs) {
   return <ol className={style['cell-references']}>
-    {refs.map(({refName, DOI, URL}) => <li name={refName}>
+    {refs.map(({refName, DOI, URL}) => <li key={refName}>
       <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
         {refName}
       </ExtLink>

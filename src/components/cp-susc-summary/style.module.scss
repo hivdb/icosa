@@ -1,5 +1,6 @@
 @import "../../styles/colors";
 @import "../../styles/functions";
+@import "../../styles/extension";
 
 
 $cell-padding: .1rem;
@@ -64,26 +65,6 @@ ol.cell-references {
   }
 }
 
-%levels-style {
-  display: inline-block;
-  vertical-align: middle;
-  box-sizing: border-box;
-  &[data-level="1"] {
-    background-color: white;
-  }
-  &[data-level="2"] {
-    background-color: #fff352;
-  }
-  &[data-level="3"] {
-    color: white;
-    background-color: color(name-cardinal);
-  }
-  &[data-level="U"] {
-    color: white;
-    background-color: #555;
-  }
-}
-
 .level-label {
   white-space: nowrap;
   border: 1px solid black;
@@ -91,46 +72,3 @@ ol.cell-references {
   @extend %levels-style;
 }
 
-ul.pcnt-bar {
-  --bar-width: 30rem;
-  //--small-window-bar-width: 15rem;
-  //--small-widnow-min-display-pcnt: 0.12;
-  --min-display-pcnt: 0.05;
-  /*@media (max-width: 1024px) {
-    --bar-width: var(--small-window-bar-width);
-    --min-display-pcnt: var(--small-window-min-display-pcnt);
-  }*/
-  --bar-height: 1.5rem;
-  --pcnt-width: 2.1rem;
-  padding: 0;
-  margin: 0;
-  height: var(--bar-height);
-  width: var(--bar-width);
-  list-style-type: none;
-  box-sizing: content-box;
-  white-space: nowrap;
-  border: 1px solid black;
-  > li {
-    @extend %levels-style;
-    height: var(--bar-height);
-    line-height: var(--bar-height);
-    position: relative;
-    width: calc(var(--level-pcnt) * var(--bar-width));
-    overflow: hidden;
-    > .pcnt {
-      --available-pcnt: (var(--level-pcnt) - var(--min-display-pcnt));
-      width: calc(#{"max"}(0, var(--available-pcnt)) / var(--available-pcnt) * var(--pcnt-width));
-      display: inline-block;
-      overflow: hidden;
-    }
-    &:not([data-pcnt="0"]) + li::before {
-      content: "";
-      display: block;
-      position: absolute;
-      height: var(--bar-height);
-      right: left;
-      top: 0;
-      border-left: 1px solid black;
-    }
-  }
-}

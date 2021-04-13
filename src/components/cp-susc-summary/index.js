@@ -3,6 +3,7 @@ import React from 'react';
 import Markdown from '../markdown';
 import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
+import SIRPcntBar from '../sir-pcnt-bar';
 import SimpleTable, {ColumnDef} from '../simple-table';
 import shortenMutationList from '../../utils/shorten-mutation-list';
 
@@ -79,7 +80,7 @@ function buildPayload(convPlasmaSuscSummary) {
 
 function renderRefs(refs) {
   return <ol className={style['cell-references']}>
-    {refs.map(({refName, DOI, URL}) => <li name={refName}>
+    {refs.map(({refName, DOI, URL}) => <li key={refName}>
       <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
         {refName}
       </ExtLink>
@@ -100,46 +101,16 @@ function renderPcnt(pcnt) {
   }
 }
 
-
-function PcntBarItem({level, pcnt}) {
-  const displayPcnt = pcnt >= 0.005 ? `${(pcnt * 100).toFixed(0)}%` : '0';
-  return (
-    <li
-     data-level={level}
-     data-pcnt={pcnt}
-     title={displayPcnt}
-     style={{'--level-pcnt': pcnt}}>
-      <span className={style.pcnt}>
-        {displayPcnt}
-      </span>
-    </li>
-  );
-}
-
-
-function PcntBar({levelPcnts}) {
-  const isEmpty = levelPcnts.every(({pcnt}) => pcnt === 0);
-  return <ul className={style['pcnt-bar']}>
-    {levelPcnts.map(({level, pcnt}) => (
-      <PcntBarItem key={level} level={level} pcnt={pcnt} />
-    ))}
-    {isEmpty ? <li>N/A</li> : null}
-  </ul>;
-}
-
-
 function renderPcntBar(_, row) {
   const {
     __level__susceptible: levelS = 0,
     '__level__partial-resistance': levelI = 0,
-    __level__resistant: levelR = 0,
-    __level__undetermined: levelU = 0
+    __level__resistant: levelR = 0
   } = row;
-  return <PcntBar levelPcnts={[
+  return <SIRPcntBar levelPcnts={[
     {level: '1', pcnt: levelS},
     {level: '2', pcnt: levelI},
-    {level: '3', pcnt: levelR},
-    {level: 'U', pcnt: levelU}
+    {level: '3', pcnt: levelR}
   ]} />;
 }
 

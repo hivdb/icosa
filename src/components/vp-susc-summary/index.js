@@ -3,6 +3,7 @@ import React from 'react';
 import Markdown from '../markdown';
 import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
+import SIRPcntBar from '../sir-pcnt-bar';
 import SimpleTable, {ColumnDef} from '../simple-table';
 import shortenMutationList from '../../utils/shorten-mutation-list';
 
@@ -44,24 +45,32 @@ function buildPayload(vaccPlasmaSuscSummary) {
       mutations,
       references,
       cumulativeCount: numSamples,
+      cumulativeFold: {median: medianFold},
       itemsByResistLevel
     }) => {
       const row = {
         mutations,
         numRefs: references.length,
         numSamples,
+        medianFold,
         references
       };
+      for (const level of SIRLevels) {
+        row[`__level__${level}`] = 0;
+      }
+      let total = 0;
       for (const {
         resistanceLevel,
         cumulativeCount
       } of itemsByResistLevel) {
         if (SIRLevels.includes(resistanceLevel)) {
-          row[`__level__${resistanceLevel}`] = cumulativeCount / numSamples;
+          total += cumulativeCount;
+          row[`__level__${resistanceLevel}`] = cumulativeCount;
         }
-        else {
-          row[`__level__undetermined`] = row[`__level__undetermined`] || 0;
-          row[`__level__undetermined`] += cumulativeCount / numSamples;
+      }
+      if (total > 0) {
+        for (const level of SIRLevels) {
+          row[`__level__${level}`] = row[`__level__${level}`] / total;
         }
       }
       return row;
@@ -71,7 +80,7 @@ function buildPayload(vaccPlasmaSuscSummary) {
 
 function renderRefs(refs) {
   return <ol className={style['cell-references']}>
-    {refs.map(({refName, DOI, URL}) => <li name={refName}>
+    {refs.map(({refName, DOI, URL}) => <li key={refName}>
       <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
         {refName}
       </ExtLink>
@@ -92,16 +101,20 @@ function renderPcnt(pcnt) {
   }
 }
 
+function renderPcntBar(_, row) {
+  const {
+    __level__susceptible: levelS = 0,
+    '__level__partial-resistance': levelI = 0,
+    __level__resistant: levelR = 0
+  } = row;
+  return <SIRPcntBar levelPcnts={[
+    {level: '1', pcnt: levelS},
+    {level: '2', pcnt: levelI},
+    {level: '3', pcnt: levelR}
+  ]} />;
+}
+
 function buildColumnDefs(itemsByKeyMutations) {
-  const hasUndetermined = itemsByKeyMutations.some(
-    ({itemsByResistLevel}) => itemsByResistLevel.some(
-      ({resistanceLevel}) => !([
-        'susceptible',
-        'partial-resistance',
-        'resistant'
-      ].includes(resistanceLevel))
-    )
-  );
   const colDefs = [
     new ColumnDef({
       name: 'mutations',
@@ -122,26 +135,37 @@ function buildColumnDefs(itemsByKeyMutations) {
     }),
     new ColumnDef({
       name: '__level__susceptible',
-      label: '<3-fold (S)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="1">
+        &lt;3-fold (S)
+      </span>,
+      render: renderPcntBar,
+      bodyCellColSpan: 3
     }),
     new ColumnDef({
       name: '__level__partial-resistance',
-      label: '3-9-fold (I)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="2">
+        3-9-fold (I)
+      </span>,
+      render: renderPcnt,
+      bodyCellStyle: {
+        display: 'none'
+      }
     }),
     new ColumnDef({
       name: '__level__resistant',
-      label: '≥10-fold (R)',
-      render: renderPcnt
+      label: <span className={style['level-label']} data-level="3">
+        ≥10-fold (R)
+      </span>,
+      render: renderPcnt,
+      bodyCellStyle: {
+        display: 'none'
+      }
     }),
-    ...(hasUndetermined ? [
-      new ColumnDef({
-        name: '__level__undetermined',
-        label: 'No individual fold',
-        render: renderPcnt
-      })
-    ] : []),
+    new ColumnDef({
+      name: 'medianFold',
+      label: 'Median Fold',
+      render: n => n.toFixed(1)
+    }),
     new ColumnDef({
       name: 'references',
       label: 'References',
