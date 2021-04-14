@@ -166,6 +166,7 @@ export default class SeqReadsReports extends React.Component {
         ({name}) => firstName === name
       );
     }
+    console.log('re-render reports');
 
     return <>
       {output === 'printable' ?

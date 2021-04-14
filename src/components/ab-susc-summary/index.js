@@ -172,20 +172,25 @@ function AntibodySuscSummary({
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const payload = buildPayload(itemsByKeyMutations);
 
-  return <ConfigContext.Consumer>
-    {({messages}) => (
-      payload.length > 0 ?
-        <SimpleTable
-         compact lastCompact
-         getRowKey={getRowKey}
-         columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
-         data={payload} /> :
+  if (payload.length > 0) {
+    return (
+      <SimpleTable
+       compact lastCompact
+       getRowKey={getRowKey}
+       columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
+       data={payload} />
+    );
+  }
+  else {
+    return <ConfigContext.Consumer>
+      {({messages}) => (
         <Markdown escapeHtml={false}>
           {messages['no-mab-susc-result']}
         </Markdown>
-    )}
-  </ConfigContext.Consumer>;
+      )}
+    </ConfigContext.Consumer>;
+  }
 }
 
 
-export default AntibodySuscSummary;
+export default React.memo(AntibodySuscSummary);

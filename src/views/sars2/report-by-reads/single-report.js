@@ -159,6 +159,7 @@ export default class SingleSeqReadsReport extends React.Component {
       strain: {display: strain},
       name: seqName
     } = sequenceReadsResult;
+    console.log('re-render single-report', index, inputSequenceReads.name);
 
     return (
       <article

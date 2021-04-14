@@ -185,20 +185,25 @@ function ConvPlasmaSuscSummary({
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
   const payload = buildPayload(itemsByKeyMutations);
 
-  return <ConfigContext.Consumer>
-    {({messages}) => (
-      payload.length > 0 ?
-        <SimpleTable
-         compact lastCompact
-         getRowKey={getRowKey}
-         columnDefs={buildColumnDefs(itemsByKeyMutations)}
-         data={payload} /> :
+  if (payload.length > 0) {
+    return (
+      <SimpleTable
+       compact lastCompact
+       getRowKey={getRowKey}
+       columnDefs={buildColumnDefs(itemsByKeyMutations)}
+       data={payload} />
+    );
+  }
+  else {
+    return <ConfigContext.Consumer>
+      {({messages}) => (
         <Markdown escapeHtml={false}>
           {messages['no-cp-susc-result']}
         </Markdown>
-    )}
-  </ConfigContext.Consumer>;
+      )}
+    </ConfigContext.Consumer>;
+  }
 }
 
 
-export default ConvPlasmaSuscSummary;
+export default React.memo(ConvPlasmaSuscSummary);

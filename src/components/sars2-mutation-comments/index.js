@@ -75,4 +75,4 @@ SARS2MutationComments.propTypes = {
   ).isRequired
 };
 
-export default SARS2MutationComments;
+export default React.memo(SARS2MutationComments);

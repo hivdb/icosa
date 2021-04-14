@@ -62,6 +62,7 @@
     "sleep-promise": "^9.0.0",
     "typeface-source-sans-pro": "^1.1.5",
     "typescript": "^3.9.5",
+    "use-persisted-state": "hivdb/use-persisted-state#61bfffd",
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
@@ -79,7 +80,6 @@
     "react-markdown": "^4.3.1",
     "react-scripts": "3.4.1",
     "remark-macro": "^1.0.7",
-    "use-persisted-state": "^0.3.3",
     "xlsx": "^0.16.9",
     "youtube-url": "^0.5.0"
   },

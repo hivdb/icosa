@@ -1,31 +1,28 @@
 import React from 'react';
-import {useRouter} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
-import ConfigContext from '../config-context';
 
 
-export default function MinPositionReads({
+function MinPositionReads({
+  match, router,
+  config: {seqReadsMinPositionReadsOptions: options},
   minPositionReads: curValue
 }) {
-  const {match, router} = useRouter();
 
-  return <ConfigContext.Consumer>
-    {({seqReadsMinPositionReadsOptions: options}) => <>
-      <dt className={style['has-dropdown']}>
-        Read depth threshold by position:
-      </dt>
-      <dd className={style['has-dropdown']}>
-        <Dropdown
-         value={options.find(({value}) => value === curValue)}
-         placeholder="..."
-         options={options}
-         name="cutoff"
-         onChange={handleChange} />
-      </dd>
-    </>}
-  </ConfigContext.Consumer>;
+  return <>
+    <dt className={style['has-dropdown']}>
+      Read depth threshold by position:
+    </dt>
+    <dd className={style['has-dropdown']}>
+      <Dropdown
+       value={options.find(({value}) => value === curValue)}
+       placeholder="..."
+       options={options}
+       name="cutoff"
+       onChange={handleChange} />
+    </dd>
+  </>;
 
   function handleChange({value: cdreads}) {
     const newLoc = {...match.location};
@@ -35,3 +32,5 @@ export default function MinPositionReads({
   }
 
 }
+
+export default React.memo(MinPositionReads);

@@ -13,7 +13,9 @@ export class ReferenceContextValue {
     );
     [this.refNames, this._pushRefName] = React.useReducer(
       (refNames, refName) => {
-        refNames.push(refName);
+        if (!refNames.includes(refName)) {
+          refNames.push(refName);
+        }
         return refNames;
       },
       []

@@ -244,11 +244,14 @@ MutationViewer.defaultProps = {
 };
 
 
+const MemoMutationViewer = React.memo(MutationViewer);
+
+
 export default function MutationViewerLoader(props) {
 
   return <ConfigContext.Consumer>
     {({regionPresets}) => (
-      <MutationViewer {...props} regionPresets={regionPresets} />
+      <MemoMutationViewer {...props} regionPresets={regionPresets} />
     )}
   </ConfigContext.Consumer>;
 }

@@ -37,4 +37,4 @@ function GeneMutationList({
 }
 
 
-export default GeneMutationList;
+export default React.memo(GeneMutationList);

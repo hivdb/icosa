@@ -185,20 +185,25 @@ function VaccPlasmaSuscSummary({
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
   const payload = buildPayload(itemsByKeyMutations);
 
-  return <ConfigContext.Consumer>
-    {({messages}) => (
-      payload.length > 0 ?
-        <SimpleTable
-         compact lastCompact
-         getRowKey={getRowKey}
-         columnDefs={buildColumnDefs(itemsByKeyMutations)}
-         data={payload} /> :
+  if (payload.length > 0) {
+    return (
+      <SimpleTable
+       compact lastCompact
+       getRowKey={getRowKey}
+       columnDefs={buildColumnDefs(itemsByKeyMutations)}
+       data={payload} />
+    );
+  }
+  else {
+    return <ConfigContext.Consumer>
+      {({messages}) => (
         <Markdown escapeHtml={false}>
           {messages['no-vp-susc-result']}
         </Markdown>
-    )}
-  </ConfigContext.Consumer>;
+      )}
+    </ConfigContext.Consumer>;
+  }
 }
 
 
-export default VaccPlasmaSuscSummary;
+export default React.memo(VaccPlasmaSuscSummary);

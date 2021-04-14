@@ -14,7 +14,6 @@ function Mutation({text, isUnsequenced, totalReads, allAAReads}) {
   const hasTotalReads = totalReads && totalReads > 0;
   const hasAAReads = allAAReads && allAAReads.length > 0;
 
-
   return (
     <li
      className={style['mutation-item']}

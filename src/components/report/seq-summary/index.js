@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
+import {useRouter} from 'found';
 
 import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
@@ -15,6 +16,7 @@ import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
 import MedianReadDepthReal from './median-read-depth';
+import ConfigContext from '../config-context';
 
 
 const SDRMs = () => null;
@@ -32,6 +34,9 @@ const MedianReadDepth = () => null;
 
 function SeqSummary(props) {
   const {
+    config,
+    match,
+    router,
     output,
     bestMatchingSubtype,
     subtypes,
@@ -72,15 +77,15 @@ function SeqSummary(props) {
       <div className={style['desc-list']}>
         <dl>
           {children.some(child => child.type === InlineGeneRange) && (
-            <InlineGeneRangeReal {...{geneSeqs}} />
+            <InlineGeneRangeReal config={config} {...{geneSeqs}} />
           )}
           {geneSeqs.map((geneSeq, idx) => {
             return <React.Fragment key={idx}>
               {children.some(child => child.type === MultilineGeneRange) && (
-                <MultilineGeneRangeReal {...{geneSeq}} />
+                <MultilineGeneRangeReal config={config} {...{geneSeq}} />
               )}
               {children.some(child => child.type === GeneMutations) && (
-                <GeneMutationsReal {...{geneSeq}} />
+                <GeneMutationsReal config={config} {...{geneSeq}} />
               )}
             </React.Fragment>;
           })}
@@ -94,13 +99,25 @@ function SeqSummary(props) {
             <PangolinLineageReal {...pangolin} />
           )}
           {children.some(child => child.type === MinPrevalence) && (
-            <MinPrevalenceReal {...{minPrevalence}} />
+            <MinPrevalenceReal
+             match={match}
+             router={router}
+             config={config}
+             {...{minPrevalence}} />
           )}
           {children.some(child => child.type === MinCodonReads) && (
-            <MinCodonReadsReal {...{minCodonReads}} />
+            <MinCodonReadsReal
+             match={match}
+             router={router}
+             config={config}
+             {...{minCodonReads}} />
           )}
           {children.some(child => child.type === MinPositionReads) && (
-            <MinPositionReadsReal {...{minPositionReads}} />
+            <MinPositionReadsReal
+             match={match}
+             router={router}
+             config={config}
+             {...{minPositionReads}} />
           )}
           {showSDRMs && children.some(child => child.type === SDRMs) && (
             <SDRMList {...{geneSeqs}} />
@@ -125,6 +142,7 @@ function SeqSummary(props) {
 }
 
 SeqSummary.propTypes = {
+  config: PropTypes.object.isRequired,
   children: PropTypes.arrayOf(
     PropTypes.node.isRequired
   ).isRequired,
@@ -141,16 +159,34 @@ SeqSummary.defaultProps = {
   ]
 };
 
-SeqSummary.SDRMs = SDRMs;
-SeqSummary.PrettyPairwise = PrettyPairwise;
-SeqSummary.MultilineGeneRange = MultilineGeneRange;
-SeqSummary.InlineGeneRange = InlineGeneRange;
-SeqSummary.GeneMutations = GeneMutations;
-SeqSummary.Subtype = Subtype;
-SeqSummary.PangolinLineage = PangolinLineage;
-SeqSummary.MedianReadDepth = MedianReadDepth;
-SeqSummary.MinPrevalence = MinPrevalence;
-SeqSummary.MinCodonReads = MinCodonReads;
-SeqSummary.MinPositionReads = MinPositionReads;
+const MemoSeqSummary = React.memo(
+  SeqSummary,
+  ({name: prevName}, {name: nextName}) => prevName === nextName
+);
 
-export default SeqSummary;
+function SeqSummaryWrapper(props) {
+  const {match, router} = useRouter();
+  return <ConfigContext.Consumer>
+    {config => (
+      <MemoSeqSummary
+       {...props}
+       config={config}
+       match={match}
+       router={router} />
+    )}
+  </ConfigContext.Consumer>;
+}
+
+SeqSummaryWrapper.SDRMs = SDRMs;
+SeqSummaryWrapper.PrettyPairwise = PrettyPairwise;
+SeqSummaryWrapper.MultilineGeneRange = MultilineGeneRange;
+SeqSummaryWrapper.InlineGeneRange = InlineGeneRange;
+SeqSummaryWrapper.GeneMutations = GeneMutations;
+SeqSummaryWrapper.Subtype = Subtype;
+SeqSummaryWrapper.PangolinLineage = PangolinLineage;
+SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
+SeqSummaryWrapper.MinPrevalence = MinPrevalence;
+SeqSummaryWrapper.MinCodonReads = MinCodonReads;
+SeqSummaryWrapper.MinPositionReads = MinPositionReads;
+
+export default SeqSummaryWrapper;

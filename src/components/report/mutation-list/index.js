@@ -20,7 +20,8 @@ function MutationList({
     {({geneDisplay}) => <ul className={style['mutation-list']}>
       {geneSeqs.map((geneSeq, idx) => (
         <GeneMutationList
-         key={idx} {...geneSeq}
+         key={geneSeq.gene.name}
+         {...geneSeq}
          geneDisplay={geneDisplay} />
       ))}
     </ul>}

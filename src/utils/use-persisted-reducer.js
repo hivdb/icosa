@@ -1,4 +1,4 @@
-import createPersistedState from 'use-persisted-state';
+import createPersistedState from 'use-persisted-state/src';
 
 
 export default function createPersistedReducer(key, provider) {
