@@ -1,11 +1,16 @@
-const QUICKLOAD_LIMIT = 10;
+const QUICKLOAD_LIMIT = 5;
 
 
-export function calcOffsetLimit({allSequenceReads, offset, lazyLoad}) {
-  let limit;
+export function calcOffsetLimit({
+  allSequenceReads,
+  offset,
+  lazyLoad,
+  quickLoadLimit = QUICKLOAD_LIMIT
+}) {
+  // quickLoadLimit must not be less than 3
+  let limit = Math.max(3, quickLoadLimit);
   if (lazyLoad) {
-    offset = Math.max(0, offset - Math.floor(QUICKLOAD_LIMIT / 2));
-    limit = QUICKLOAD_LIMIT;
+    offset = Math.max(0, offset - Math.floor((limit - 1) / 2));
   }
   else {
     offset = 0;

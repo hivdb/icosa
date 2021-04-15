@@ -6,73 +6,70 @@ import Paginator from '../paginator';
 import style from './style.module.scss';
 
 
-export default class SeqReadsSidebar extends React.Component {
+function SeqReadsSidebar({
+  allSequenceReads,
+  currentSelected,
+  onSelect
+}) {
+  const containerRef = React.useRef();
+  const [fixed, handleWindowScroll] = React.useReducer(
+    () => {
+      const {top} = containerRef.current.getBoundingClientRect();
+      const newFixed = top === 0;
+      return newFixed;
+    },
+    false
+  );
 
-  static propTypes = {
-    allSequenceReads: PropTypes.array.isRequired,
-    currentSelected: PropTypes.shape({
-      index: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired
-    }),
-    onSelect: PropTypes.func
-  }
-
-  constructor() {
-    super(...arguments);
-    this.containerRef = React.createRef();
-    this.state = {fixed: false};
-  }
-
-  componentDidMount() {
-    window.addEventListener('scroll', this.handleWindowScroll, false);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleWindowScroll, false);
-  }
-
-  handleWindowScroll = evt => {
-    const {prevFixed} = this.state;
-    const {top} = this.containerRef.current.getBoundingClientRect();
-    const fixed = top === 0;
-    if (fixed !== prevFixed) {
-      this.setState({fixed});
-    }
-  }
-
-  handleClick(e, seqReads) {
-    e && e.preventDefault();
-    const {onSelect} = this.props;
-    onSelect && onSelect(seqReads);
-  }
-
-  render() {
-    const {fixed} = this.state;
-    const {allSequenceReads, currentSelected} = this.props;
-
-    return (
-      <div
-       ref={this.containerRef}
-       data-fixed={fixed}
-       className={style['sequence-paginator-container']}>
-        <Paginator
-         footnote={<>
-           This submission contains {allSequenceReads.length} sequences.
-         </>}
-         currentSelected={currentSelected.name}>
-          {allSequenceReads
-            .map((seqReads, idx) => (
-              <Paginator.Item
-               key={idx}
-               name={seqReads.name}
-               href={`#${seqReads.name}`}
-               onClick={(e) => this.handleClick(e, seqReads)}>
-                {seqReads.name}
-              </Paginator.Item>
-          ))}
-        </Paginator>
-      </div>
+  React.useEffect(() => {
+    window.addEventListener('scroll', handleWindowScroll, false);
+    return () => (
+      window.removeEventListener('scroll', handleWindowScroll, false)
     );
-  }
+  }, [handleWindowScroll]);
+
+  const children = React.useMemo(() => {
+    return allSequenceReads
+      .map((seqReads, idx) => (
+        <Paginator.Item
+         key={idx}
+         name={seqReads.name}
+         href={`?name=${seqReads.name}`}
+         onClick={(e) => handleClick(e, seqReads)}>
+          {seqReads.name}
+        </Paginator.Item>
+      ));
+
+    function handleClick(e, seqReads) {
+      e && e.preventDefault();
+      onSelect && onSelect(seqReads);
+    }
+  }, [onSelect, allSequenceReads]);
+
+  return (
+    <div
+     ref={containerRef}
+     data-fixed={fixed}
+     className={style['sequence-paginator-container']}>
+      <Paginator
+       footnote={<>
+         This submission contains {allSequenceReads.length} sequences.
+       </>}
+       currentSelected={currentSelected.name}>
+        {children}
+      </Paginator>
+    </div>
+  );
 
 }
+
+SeqReadsSidebar.propTypes = {
+  allSequenceReads: PropTypes.array.isRequired,
+  currentSelected: PropTypes.shape({
+    index: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired
+  }),
+  onSelect: PropTypes.func
+};
+
+export default SeqReadsSidebar;

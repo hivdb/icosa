@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
-import Loader from 'react-loader';
+import nestGet from 'lodash/get';
 import {useQuery} from '@apollo/client';
 
+import FixedLoader from '../fixed-loader';
 import SmoothProgressBar from '../smooth-progress-bar';
 import {
   includeFragment, includeFragmentIfExist
 } from '../../utils/graphql-helper';
 
-import {SequenceReadsPropType} from './prop-types';
 
-const MAX_PER_REQUEST = 10;
+const MAX_PER_REQUEST = 1;
 
 function getQuery(fragment, extraParams) {
   return gql`
@@ -32,22 +32,24 @@ function getQuery(fragment, extraParams) {
   `;
 }
 
-function buildResultLookup(data) {
-  const lookup = {};
-  let {sequenceReadsAnalysis} = data;
-  for (const seqReadsResult of sequenceReadsAnalysis) {
-    const {name} = seqReadsResult;
-    lookup[name] = seqReadsResult;
+function cacheData(cache, data, mainArrayName, uniqKeyName) {
+  cache.lookup = cache.lookup || {};
+  const mainArray = data[mainArrayName];
+  for (const mainObj of mainArray) {
+    const uniqKeyVal = nestGet(mainObj, uniqKeyName);
+    cache.lookup[uniqKeyVal] = mainObj;
   }
-  return lookup;
+  const misc = {...data};
+  delete misc[mainArrayName];
+  cache.misc = {...cache.misc, ...misc};
+  return cache;
 }
-
 
 function getVariables({
   allSequenceReads,
   offset,
   limit,
-  lookup,
+  cache,
   onExtendVariables,
   data = {},
   maxPerRequest = MAX_PER_REQUEST
@@ -61,7 +63,7 @@ function getVariables({
     if (!inputSeqReads) {
       break;
     }
-    if (inputSeqReads.name in lookup) {
+    if (inputSeqReads.name in cache.lookup) {
       fetchedCount ++;
     }
     else if (querySeqReads.length < maxPerRequest) {
@@ -86,20 +88,19 @@ function prepareChildProps({
   allSequenceReads,
   offset,
   limit,
-  lookup,
+  cache,
   data = {},
   loaded,
   ...props
 }) {
   let {
-    sequenceReadsAnalysis = [],
-    ...misc
+    sequenceReadsAnalysis = []
   } = data;
   const querySeqReads = allSequenceReads.slice(offset, offset + limit);
   sequenceReadsAnalysis = [];
   for (const {name} of querySeqReads) {
-    if (name in lookup) {
-      sequenceReadsAnalysis.push(lookup[name]);
+    if (name in cache.lookup) {
+      sequenceReadsAnalysis.push(cache.lookup[name]);
     }
   }
   if (loaded && querySeqReads.length > sequenceReadsAnalysis.length) {
@@ -113,7 +114,7 @@ function prepareChildProps({
       sequenceReadsAnalysis,
       currentVersion: {},
       currentProgramVersion: {},
-      ...misc
+      ...cache.misc
     },
     loaded,
     ...props
@@ -122,6 +123,13 @@ function prepareChildProps({
 
 
 function SeqReadsAnalysisQuery(props) {
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(
+      'Render SeqReadsAnalysisQuery',
+      (new Date()).getTime()
+    );
+  }
   const {
     query: queryFragment,
     extraParams,
@@ -134,11 +142,13 @@ function SeqReadsAnalysisQuery(props) {
     showProgressBar,
     onExtendVariables
   } = props;
+
   const [cursor, setCursor] = React.useState({
     offset: initOffset,
     limit: initLimit
   });
-  let lookup = {};
+  const {current: cache} = React.useRef({lookup: {}, misc: {}});
+
   let progressObj = {
     progress: 0,
     nextProgress: 0,
@@ -147,9 +157,9 @@ function SeqReadsAnalysisQuery(props) {
 
   const query = getQuery(queryFragment, extraParams);
   const {variables, needFetchMore} = getVariables({
-    allSequenceReads,
     ...cursor,
-    lookup,
+    allSequenceReads,
+    cache,
     onExtendVariables
   });
 
@@ -176,8 +186,9 @@ function SeqReadsAnalysisQuery(props) {
   let loaded = !loading;
 
   if (data) {
-    lookup = buildResultLookup(data);
+    cacheData(cache, data, 'sequenceReadsAnalysis', 'name');
   }
+
   if (!loading && needFetchMore) {
     // the MAX_PER_REQUEST is exceeded;
     // try fetch more
@@ -201,7 +212,7 @@ function SeqReadsAnalysisQuery(props) {
   const childProps = prepareChildProps({
     allSequenceReads,
     ...cursor,
-    lookup,
+    cache,
     data,
     loaded,
     onFetchMore: tryFetchMore
@@ -217,7 +228,7 @@ function SeqReadsAnalysisQuery(props) {
   }
 
   return <>
-    <Loader loaded={loaded} />
+    {loaded ? null : <FixedLoader />}
     {progressbar}
     {children(childProps)}
   </>;
@@ -232,7 +243,7 @@ function SeqReadsAnalysisQuery(props) {
       allSequenceReads,
       offset,
       limit,
-      lookup,
+      cache,
       data,
       onExtendVariables
     });
@@ -256,7 +267,7 @@ function SeqReadsAnalysisQuery(props) {
     else {
       /**
        * A known expected behavior although it is weird:
-       * Under development mode, fetchMore will be executed twice with the
+       * Under development mode, fetchMore will be fired twice with the
        * same variables. Don't try to fix it because it is expected. See
        * https://bit.ly/36k3CFg and https://bit.ly/35g6Fip for explanation.
        *
@@ -278,9 +289,7 @@ function SeqReadsAnalysisQuery(props) {
 SeqReadsAnalysisQuery.propTypes = {
   query: PropTypes.object.isRequired,
   extraParams: PropTypes.string,
-  allSequenceReads: PropTypes.arrayOf(
-    SequenceReadsPropType.isRequired
-  ).isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
   initOffset: PropTypes.number.isRequired,
   initLimit: PropTypes.number.isRequired,
   children: PropTypes.func.isRequired,

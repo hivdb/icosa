@@ -5,13 +5,18 @@ import SeqReadsAnalysisQuery from './query';
 import SeqReadsAnalysisLayout from './layout';
 
 import {calcInitOffsetLimit} from './funcs';
-import {SequenceReadsPropType} from './prop-types';
-
 
 const SeqReadsContext = React.createContext({});
 
 
 function SeqReadsAnalysisContainer(props) {
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(
+      'render SeqReadsAnalysisContainer',
+      (new Date()).getTime()
+    );
+  }
 
   const {
     query,
@@ -59,9 +64,7 @@ function SeqReadsAnalysisContainer(props) {
 SeqReadsAnalysisContainer.propTypes = {
   query: PropTypes.object.isRequired,
   extraParams: PropTypes.string,
-  allSequenceReads: PropTypes.arrayOf(
-    SequenceReadsPropType.isRequired
-  ).isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.shape({
     index: PropTypes.number,
     name: PropTypes.string

@@ -10,6 +10,9 @@ function randomKey() {
 }
 
 async function load(key) {
+  if ('key' in key) {
+    key = key.key;
+  }
   if (!isBigData(key)) {
     return key;
   }

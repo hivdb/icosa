@@ -1,5 +1,5 @@
 import React from 'react';
-import createHash from 'create-hash';
+import isEqual from 'lodash/isEqual';
 import buildApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../components/report/config-context';
@@ -11,19 +11,8 @@ import query from './query.graphql';
 import SeqReadsReports from './reports';
 
 
-function hashSeqReadsSet(allSeqReads) {
-  const payload = JSON.stringify(allSeqReads);
-  const sha256 = createHash('sha256');
-  sha256.write(payload);
-  sha256.end();
-  return sha256.read().toString('hex');
-}
-
-let clientHash = null;
-let client = null;
-
-
-export default function ReportByReadsContainer({
+function ReportByReadsContainer({
+  config,
   species,
   router,
   match
@@ -32,39 +21,54 @@ export default function ReportByReadsContainer({
     query: {output = 'default'} = {}
   } = {}} = match;
   const lazyLoad = output !== 'printable';
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(
+      'Begin rendering ReportByReadsContainer',
+      (new Date()).getTime()
+    );
+  }
+  const {current} = React.useRef({});
 
   return (
-    <ConfigContext.Consumer>
-      {config => (
-        <SeqReadsLoader lazyLoad={lazyLoad}>
-          {({allSequenceReads, currentSelected}) => {
-            const seqReadsHash = hashSeqReadsSet(allSequenceReads);
-            if (!client || clientHash !== seqReadsHash) {
-              client = buildApolloClient(config);
-              clientHash = seqReadsHash;
+    <SeqReadsLoader lazyLoad={lazyLoad}>
+      {({allSequenceReads, currentSelected}) => {
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.log('SeqReads loaded', (new Date()).getTime());
+        }
+        if (!current.client || !isEqual(current.payload, allSequenceReads)) {
+          current.client = buildApolloClient(config);
+          current.payload = allSequenceReads;
+        }
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.log('SeqReads compared', (new Date()).getTime());
+        }
+        return <SeqReadsAnalysisLayout
+         query={query}
+         client={current.client}
+         allSequenceReads={current.payload}
+         currentSelected={currentSelected}
+         renderPartialResults={output !== 'printable'}
+         lazyLoad={lazyLoad}
+         extraParams="$drdbVersion: String!, $cmtVersion: String!"
+         onExtendVariables={handleExtendVariables(config)}>
+          {props => {
+            if (process.env.NODE_ENV !== 'production') {
+              // eslint-disable-next-line no-console
+              console.log('Analysis loaded', (new Date()).getTime());
             }
-            return <SeqReadsAnalysisLayout
-             query={query}
-             client={client}
-             allSequenceReads={allSequenceReads}
-             currentSelected={currentSelected}
-             renderPartialResults={output !== 'printable'}
-             lazyLoad={lazyLoad}
-             extraParams="$drdbVersion: String!, $cmtVersion: String!"
-             onExtendVariables={handleExtendVariables(config)}>
-              {props => (
-                <SeqReadsReports
-                 output={output}
-                 species={species}
-                 match={match}
-                 router={router}
-                 {...props} />
-              )}
-            </SeqReadsAnalysisLayout>;
+            return <SeqReadsReports
+             output={output}
+             species={species}
+             match={match}
+             router={router}
+             {...props} />;
           }}
-        </SeqReadsLoader>
-      )}
-    </ConfigContext.Consumer>
+        </SeqReadsAnalysisLayout>;
+      }}
+    </SeqReadsLoader>
   );
 
   function handleExtendVariables({drdbVersion, cmtVersion}) {
@@ -76,4 +80,17 @@ export default function ReportByReadsContainer({
       return vars;
     };
   }
+}
+
+
+export default function ReportByReadsContainerWrapper(props) {
+  return (
+    <ConfigContext.Consumer>
+      {config => (
+        <ReportByReadsContainer
+         {...props}
+         config={config} />
+      )}
+    </ConfigContext.Consumer>
+  );
 }

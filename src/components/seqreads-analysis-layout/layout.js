@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {matchShape, routerShape, withRouter} from 'found';
 
 import {calcOffsetLimit} from './funcs';
-import {SequenceReadsPropType} from './prop-types';
 
 
 class SeqReadsAnalysisLayout extends React.Component {
@@ -15,9 +14,7 @@ class SeqReadsAnalysisLayout extends React.Component {
       index: PropTypes.number,
       name: PropTypes.string
     }),
-    allSequenceReads: PropTypes.arrayOf(
-      SequenceReadsPropType.isRequired
-    ),
+    allSequenceReads: PropTypes.array,
     data: PropTypes.shape({
       currentVersion: PropTypes.object.isRequired,
       currentProgramVersion: PropTypes.object.isRequired,

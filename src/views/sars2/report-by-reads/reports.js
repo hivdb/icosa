@@ -44,11 +44,6 @@ export default class SeqReadsReports extends React.Component {
     return pageTitle;
   }
 
-  constructor() {
-    super(...arguments);
-    this.paginatorRef = React.createRef();
-  }
-
   resetPaginatorScrollOffset = () => {
     const event = new Event('--sierra-paginator-reset-scroll');
     window.dispatchEvent(event);
@@ -74,7 +69,7 @@ export default class SeqReadsReports extends React.Component {
     this.candidateMap = {};
   }
 
-  observerCallback = (entries) => {
+  observerCallback = async (entries) => {
     if (this.preventObserver) {
       return;
     }
@@ -115,7 +110,8 @@ export default class SeqReadsReports extends React.Component {
       candidates.sort(([a], [b]) => a - b);
       const [[,newName]] = candidates;
       if (newName !== curName) {
-        onSelectSeqReads({name: candidates[0][1]});
+        // await this.handlePaginatorSelectSeqReads({name: candidates[0][1]});
+        await onSelectSeqReads({name: candidates[0][1]});
         this.resetPaginatorScrollOffset();
         curName = newName;
       }
@@ -147,7 +143,7 @@ export default class SeqReadsReports extends React.Component {
     );
     window.dispatchEvent(event);
     // fallback if the event is not catched
-    setTimeout(this.resetObserver, 5000);
+    // setTimeout(this.resetObserver, 5000);
   }
 
   render() {
@@ -166,13 +162,15 @@ export default class SeqReadsReports extends React.Component {
         ({name}) => firstName === name
       );
     }
-    console.log('re-render reports');
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('render SeqReadsReports', (new Date()).getTime());
+    }
 
     return <>
       {output === 'printable' ?
         <PrintHeader species={species} /> :
         <SeqReadsSidebar
-         ref={this.paginatorRef}
          currentSelected={currentSelected}
          onSelect={this.handlePaginatorSelectSeqReads}
          allSequenceReads={allSequenceReads} />

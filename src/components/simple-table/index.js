@@ -340,7 +340,8 @@ export default class SimpleTable extends React.Component {
 
     const {disableCopy} = this.props;
     if (process.env.NODE_ENV !== 'production') {
-      console.log('render table');  // eslint-disable-line no-console
+      // eslint-disable-next-line no-console
+      console.log('render table', (new Date()).getTime());
     }
 
     return <>

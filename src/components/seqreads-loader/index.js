@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, withRouter} from 'found';
+import {useRouter} from 'found';
 
+import FixedLoader from '../fixed-loader';
 import BigData from '../../utils/big-data';
-import PromiseComponent from '../../utils/promise-component';
+import useSmartAsync from '../../utils/use-smart-async';
 
 import {ConfigContext} from '../report';
-
-
-const SEQ_READS_CACHE = {};
 
 
 function getCurrentSelected({
@@ -16,7 +14,9 @@ function getCurrentSelected({
   lazyLoad,
   allSequenceReads
 }) {
-  if (!lazyLoad) { return undefined; }
+  if (!lazyLoad) { return {}; }
+  if (allSequenceReads.length === 0) { return {}; }
+
   const {query: {name}} = location;
   if (!name) {
     return {index: 0, name: allSequenceReads[0].name};
@@ -28,42 +28,53 @@ function getCurrentSelected({
 }
 
 
-async function prepareChildProps(props) {
-  let {
-    match, lazyLoad,
-    match: {location: loc},
-    childProps = {},
-    defaultParams
-  } = props;
-  /* if (onLoadCache && loc.query && 'load' in loc.query) {
-    const cachedData = await onLoadCache(loc.query.load);
-    allSequenceReads = cachedData.allSequenceReads;
-    cachedProps = cachedData.props;
-  } */
-
-  const key = loc.state.allSequenceReads;
+function useAllOrigSeqReads(match) {
+  const {
+    location: {
+      state: {
+        allSequenceReads: key
+      } = {}
+    } = {}
+  } = match;
   if (!key) {
-    console.error(
+    throw new Error(
       "There's not location.state.allSequenceReads for current view."
     );
   }
-  let allSequenceReads;
-  if (key in SEQ_READS_CACHE) {
-    allSequenceReads = SEQ_READS_CACHE[key];
+  const {data, error, isPending} = useSmartAsync({
+    promiseFn: BigData.load,
+    key
+  });
+  if (error) {
+    throw new Error(error.message);
   }
-  else {
-    allSequenceReads = await BigData.load(key);
-    SEQ_READS_CACHE[key] = allSequenceReads;
+  else if (!isPending && !(data instanceof Array)) {
+    throw new Error(
+      `The stored allSequenceReads is not an array: ${JSON.stringify(data)}`
+    );
   }
-  
-  // attach query parameters
+  return [data, isPending];
+}
+
+function useAllSeqReads({
+  match,
+  defaultParams
+}) {
   let {
     strain,
     minPrevalence,
     minCodonReads,
     minPositionReads
   } = defaultParams;
-  let {query: {cutoff, cdreads, posreads} = {}} = loc;
+  let {
+    location: {
+      query: {
+        cutoff,
+        cdreads,
+        posreads
+      } = {}
+    } = {}
+  } = match;
   cutoff = parseFloat(cutoff);
   if (!isNaN(cutoff)) {
     minPrevalence = cutoff;
@@ -76,52 +87,86 @@ async function prepareChildProps(props) {
   if (!isNaN(posreads)) {
     minPositionReads = posreads;
   }
-  allSequenceReads = allSequenceReads.map(sr => {
-    sr = {
-      ...sr,  // deep-copy to avoid cache
+  const [allOrigSeqReads, isPending] = useAllOrigSeqReads(match);
+  // useMemo to ensure the returning array uses the same ref
+  return React.useMemo(
+    () => {
+      if (isPending) {
+        return [undefined, true];
+      }
+      else {
+        return [
+          allOrigSeqReads.map(sr => ({
+            ...sr,  // deep-copy to avoid cache
+            strain,
+            minPrevalence,
+            minCodonReads,
+            minPositionReads
+          })),
+          false
+        ];
+      }
+    },
+    [
       strain,
       minPrevalence,
       minCodonReads,
-      minPositionReads
-    };
-    return sr;
+      minPositionReads,
+      allOrigSeqReads,
+      isPending
+    ]
+  );
+}
+
+
+function SeqReadsLoader(props) {
+  const {
+    match,
+    lazyLoad,
+    defaultParams,
+    childProps = {},
+    children
+  } = props;
+  const [allSequenceReads, isPending] = useAllSeqReads({
+    match,
+    defaultParams
   });
-
-  childProps = {
-    ...childProps,
-    allSequenceReads,
-    currentSelected: getCurrentSelected({
-      match, lazyLoad, allSequenceReads
-    })
-  };
-  
-  return childProps;
+  if (isPending) {
+    return <FixedLoader />;
+  }
+  else {
+    return children({
+      ...childProps,
+      allSequenceReads,
+      currentSelected: getCurrentSelected({
+        match, lazyLoad, allSequenceReads
+      })
+    });
+  }
 }
 
 
-function BaseSeqReadsLoader(props) {
+function SeqReadsLoaderWrapper(props) {
 
-  const {children} = props;
+  const {match} = useRouter();
+  const [config, isPending] = ConfigContext.use();
 
-  return <ConfigContext.Consumer>
-    {({seqReadsDefaultParams}) => {
-      const promise = prepareChildProps({
-        ...props,
-        defaultParams: seqReadsDefaultParams
-      });
-      return (
-        <PromiseComponent
-         promise={promise}
-         then={children} />
-      );
-    }}
-  </ConfigContext.Consumer>;
+  if (isPending) {
+    return <FixedLoader />;
+  }
+
+  const {seqReadsDefaultParams: defaultParams} = config;
+
+  return (
+    <SeqReadsLoader
+     {...props}
+     {...{match, defaultParams}} />
+  );
 }
 
-BaseSeqReadsLoader.propTypes = {
-  match: matchShape.isRequired,
+SeqReadsLoaderWrapper.propTypes = {
   children: PropTypes.func.isRequired,
   lazyLoad: PropTypes.bool.isRequired
 };
 
-export default withRouter(BaseSeqReadsLoader);
+export default SeqReadsLoaderWrapper;
