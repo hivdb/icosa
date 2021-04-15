@@ -3,133 +3,51 @@ import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import FixedLoader from '../fixed-loader';
-import BigData from '../../utils/big-data';
-import useSmartAsync from '../../utils/use-smart-async';
 
 import {ConfigContext} from '../report';
 
+import useAllSeqReads from './use-all-seq-reads';
 
-function getCurrentSelected({
-  match: {location = {query: {}}},
+
+function useCurrentSelected({
   lazyLoad,
   allSequenceReads
 }) {
-  if (!lazyLoad) { return {}; }
-  if (allSequenceReads.length === 0) { return {}; }
-
-  const {query: {name}} = location;
-  if (!name) {
-    return {index: 0, name: allSequenceReads[0].name};
-  }
-  const index = Math.max(
-    0, allSequenceReads.findIndex(({name: seqH}) => seqH === name)
-  );
-  return {index, name: allSequenceReads[index].name};
-}
-
-
-function useAllOrigSeqReads(match) {
   const {
-    location: {
-      state: {
-        allSequenceReads: key
-      } = {}
-    } = {}
-  } = match;
-  if (!key) {
-    throw new Error(
-      "There's not location.state.allSequenceReads for current view."
-    );
-  }
-  const {data, error, isPending} = useSmartAsync({
-    promiseFn: BigData.load,
-    key
-  });
-  if (error) {
-    throw new Error(error.message);
-  }
-  else if (!isPending && !(data instanceof Array)) {
-    throw new Error(
-      `The stored allSequenceReads is not an array: ${JSON.stringify(data)}`
-    );
-  }
-  return [data, isPending];
-}
+    match: {location = {query: {}}}
+  } = useRouter();
 
-function useAllSeqReads({
-  match,
-  defaultParams
-}) {
-  let {
-    strain,
-    minPrevalence,
-    minCodonReads,
-    minPositionReads
-  } = defaultParams;
-  let {
-    location: {
-      query: {
-        cutoff,
-        cdreads,
-        posreads
-      } = {}
-    } = {}
-  } = match;
-  cutoff = parseFloat(cutoff);
-  if (!isNaN(cutoff)) {
-    minPrevalence = cutoff;
-  }
-  cdreads = parseInt(cdreads, 10);
-  if (!isNaN(cdreads)) {
-    minCodonReads = cdreads;
-  }
-  posreads = parseInt(posreads, 10);
-  if (!isNaN(posreads)) {
-    minPositionReads = posreads;
-  }
-  const [allOrigSeqReads, isPending] = useAllOrigSeqReads(match);
-  // useMemo to ensure the returning array uses the same ref
   return React.useMemo(
     () => {
-      if (isPending) {
-        return [undefined, true];
+      if (!lazyLoad) { return {}; }
+      if (!allSequenceReads || allSequenceReads.length === 0) { return {}; }
+
+      const name = location.query.name;
+      if (!name) {
+        return {index: 0, name: allSequenceReads[0].name};
       }
-      else {
-        return [
-          allOrigSeqReads.map(sr => ({
-            ...sr,  // deep-copy to avoid cache
-            strain,
-            minPrevalence,
-            minCodonReads,
-            minPositionReads
-          })),
-          false
-        ];
-      }
+      const index = Math.max(
+        0, allSequenceReads.findIndex(({name: seqH}) => seqH === name)
+      );
+      return {index, name: allSequenceReads[index].name};
     },
-    [
-      strain,
-      minPrevalence,
-      minCodonReads,
-      minPositionReads,
-      allOrigSeqReads,
-      isPending
-    ]
+    [lazyLoad, allSequenceReads, location.query.name]
   );
 }
 
 
 function SeqReadsLoader(props) {
   const {
-    match,
     lazyLoad,
     defaultParams,
     childProps = {},
     children
   } = props;
   const [allSequenceReads, isPending] = useAllSeqReads({
-    match,
     defaultParams
+  });
+  const currentSelected = useCurrentSelected({
+    lazyLoad, allSequenceReads
   });
   if (isPending) {
     return <FixedLoader />;
@@ -138,9 +56,7 @@ function SeqReadsLoader(props) {
     return children({
       ...childProps,
       allSequenceReads,
-      currentSelected: getCurrentSelected({
-        match, lazyLoad, allSequenceReads
-      })
+      currentSelected
     });
   }
 }
@@ -148,7 +64,6 @@ function SeqReadsLoader(props) {
 
 function SeqReadsLoaderWrapper(props) {
 
-  const {match} = useRouter();
   const [config, isPending] = ConfigContext.use();
 
   if (isPending) {
@@ -160,7 +75,7 @@ function SeqReadsLoaderWrapper(props) {
   return (
     <SeqReadsLoader
      {...props}
-     {...{match, defaultParams}} />
+     {...{defaultParams}} />
   );
 }
 

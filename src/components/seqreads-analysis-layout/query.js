@@ -147,7 +147,14 @@ function SeqReadsAnalysisQuery(props) {
     offset: initOffset,
     limit: initLimit
   });
-  const {current: cache} = React.useRef({lookup: {}, misc: {}});
+  const cache = React.useMemo(
+    () => ({
+      allSequenceReads,
+      lookup: {},
+      misc: {}
+    }),
+    [allSequenceReads]
+  );
 
   let progressObj = {
     progress: 0,

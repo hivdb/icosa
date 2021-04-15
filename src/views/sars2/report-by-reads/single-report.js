@@ -135,18 +135,21 @@ export default React.memo(
       index: prevIndex,
       output: prevOutput,
       onObserve: prevOnObserve,
+      inputSequenceReads: prevInputSeq,
       sequenceReadsResult: {name: prevName}
     },
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
+      inputSequenceReads: nextInputSeq,
       sequenceReadsResult: {name: nextName}
     }
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
     prevOnObserve === nextOnObserve &&
+    prevInputSeq === nextInputSeq &&
     prevName === nextName
   )
 );
