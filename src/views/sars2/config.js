@@ -43,10 +43,9 @@ export default {
       '' : 'http://localhost:8113'
   ),
   cmsStages: {
-    'hivdb.stanford.edu': 'cms.hivdb.org/prod',
-    'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
-    'staging2.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging2',
-    '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2'
+    'covdb.stanford.edu': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-prod',
+    'localhost:3009': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2',
+    '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev'
   },
   mutationGenePattern: /^(RDRP|S)/i,
   seqReadsDefaultCutoff: 0.2,  // 20%
