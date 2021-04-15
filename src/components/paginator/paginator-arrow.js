@@ -1,46 +1,88 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {getIndex} from './funcs';
 import style from './style.module.scss';
 
 
-export default class PaginatorArrow extends React.Component {
-
-  static propTypes = {
-    direction: PropTypes.number.isRequired,
-    onClick: PropTypes.func.isRequired
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const {props} = this;
-    return !(
-      nextProps.direction === props.direction &&
-      nextProps.onClick === props.onClick
+function PaginatorArrow({
+  direction,
+  onClick
+}) {
+  if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.log(
+      `render PaginatorArrow ${direction}`,
+      (new Date()).getTime()
     );
   }
 
-  handleClick = evt => {
-    evt.preventDefault();
-    const {direction, onClick} = this.props;
-    onClick(direction);
-  }
+  const handleClick = React.useCallback(
+    evt => {
+      evt.preventDefault();
+      onClick(direction);
+    },
+    [direction, onClick]
+  );
 
-  render() {
-    let {
-      direction
-    } = this.props;
+  return (
+    <a
+     href={`#paginator-${direction > 0 ? 'next' : 'prev'}`}
+     onClick={handleClick}
+     className={style['paginator-arrow']}
+     data-direction={direction}>
+      <span className={style['paginator-arrow_desc']}>
+        {direction > 0 ? 'Next' : 'Prev'}
+      </span>
+    </a>
+  );
 
+}
+
+
+PaginatorArrow.propTypes = {
+  direction: PropTypes.number.isRequired,
+  onClick: PropTypes.func.isRequired
+};
+
+const MemoPaginatorArrow = React.memo(
+  PaginatorArrow,
+  (prev, next) => {
     return (
-      <a
-       href={`#paginator-${direction > 0 ? 'next' : 'prev'}`}
-       onClick={this.handleClick}
-       className={style['paginator-arrow']}
-       data-direction={direction}>
-        <span className={style['paginator-arrow_desc']}>
-          {direction > 0 ? 'Next' : 'Prev'}
-        </span>
-      </a>
+      next.direction === prev.direction &&
+      next.onClick === prev.onClick
     );
   }
+);
 
+
+export default function usePaginatorArrow({
+  currentSelected,
+  childItems,
+  onScroll
+}) {
+  const handleArrowClick = React.useCallback(
+    direction => {
+      let index = getIndex(currentSelected, childItems);
+      const childProps = childItems[index + direction];
+      if (childProps) {
+        childProps.onClick();
+      }
+      onScroll(direction);
+    },
+    [childItems, currentSelected, onScroll]
+  );
+
+  return {
+    backwardArrow: (
+      <MemoPaginatorArrow
+       direction={-1}
+       onClick={handleArrowClick} />
+    ),
+    forwardArrow: (
+      <MemoPaginatorArrow
+       direction={1}
+       onClick={handleArrowClick} />
+    )
+  };
 }

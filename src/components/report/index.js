@@ -11,6 +11,7 @@ import SeqMutationPrevalence from './seq-mutation-prevalence';
 import AlgComparison from './alg-comparison';
 import ValidationReport from './validation-report';
 import MutationViewer from './mutation-viewer';
+import ReportHeader from './report-header';
 import ReportSection from './report-section';
 import MutationList from './mutation-list';
 import ConfigContext from './config-context';
@@ -23,5 +24,5 @@ export {
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
   MutationStats, MutationViewer, ReportSection,
   MutationList, ConfigContext, RefsSection,
-  RefContextWrapper
+  RefContextWrapper, ReportHeader
 };

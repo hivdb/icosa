@@ -1,0 +1,37 @@
+@import '../../../styles/colors';
+
+header.report-header {
+  color: color(seq-title);
+  padding: 1rem 0;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  > h1 {
+    white-space: nowrap;
+    font-size: 2rem;
+    padding-right: 1rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  > p.desc {
+    margin: 0;
+    line-height: 2rem;
+    font-size: 1.1rem;
+    font-weight: 300;
+    display: inline;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  &::before {
+    position: absolute;
+    content: "";
+    display: block;
+    left: calc(50% - 50vw);
+    right: calc(50% - 50vw);
+    top: 0;
+    bottom: 0;
+    background-color: color(seq-title-bg);
+    z-index: -1;
+  }
+}
