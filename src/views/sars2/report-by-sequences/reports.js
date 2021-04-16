@@ -63,6 +63,7 @@ function SequenceReports({
 
   const {
     onObserve,
+    onDisconnect,
     paginator
   } = useReportPaginator({
     inputObjs: sequences,
@@ -94,6 +95,7 @@ function SequenceReports({
            currentSelected={currentSelected}
            sequenceResult={seqResult}
            onObserve={onObserve}
+           onDisconnect={onDisconnect}
            output={output}
            index={indexOffset + idx}
            species={species}

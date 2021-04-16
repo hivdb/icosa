@@ -3,7 +3,7 @@
 .report-paginator-container {
   position: sticky !important;
   top: 0px;
-  padding: 1rem 0;
+  padding: 1em 0;
   z-index: 1000;
   &::before {
     content: '';
@@ -16,7 +16,12 @@
     transition: background-color 200ms ease-in-out;
     z-index: -2;
   }
-  &[data-fixed="true"]::before {
-    background-color: color(paginator-opt-bg);
+  font-size: .85rem;
+  &[data-fixed="true"] {
+    font-size: .7rem;
+    &::before {
+      background-color: color(paginator-opt-bg);
+      border-bottom: 1px solid color(paginator-opt-border);
+    }
   }
 }

@@ -29,7 +29,8 @@ function SingleSequenceReport({
   sequenceResult,
   output,
   index,
-  onObserve
+  onObserve,
+  onDisconnect
 }) {
 
   const {
@@ -46,7 +47,8 @@ function SingleSequenceReport({
          output={output}
          name={header}
          index={index}
-         onObserve={onObserve} />
+         onObserve={onObserve}
+         onDisconnect={onDisconnect} />
         <SeqSummary {...sequenceResult} {...{output, strain}}>
           <SeqSummary.InlineGeneRange />
           <SeqSummary.PrettyPairwise />

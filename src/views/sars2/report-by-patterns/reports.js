@@ -61,6 +61,7 @@ function PatternReports({
 
   const {
     onObserve,
+    onDisconnect,
     paginator
   } = useReportPaginator({
     inputObjs: patterns,
@@ -94,6 +95,7 @@ function PatternReports({
            currentSelected={currentSelected}
            patternResult={patternResult}
            onObserve={onObserve}
+           onDisconnect={onDisconnect}
            output={output}
            index={indexOffset + idx}
            species={species}

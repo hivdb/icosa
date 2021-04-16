@@ -26,10 +26,19 @@ export default class GenomeMap extends React.Component {
     this.svgRef = React.createRef();
     const {preset: {height, width, paddingLeft, paddingRight}} = this.props;
     this.state = {height, width, paddingLeft, paddingRight};
+    this._mounted = false;
+  }
+
+  componentDidMount() {
+    this._mounted = true;
+  }
+
+  componentWillUnmount() {
+    this._mounted = false;
   }
 
   moveSVGBorder = ({height, width, paddingLeft, paddingRight}) => {
-    if (height > this.state.height) {
+    if (this._mounted && height > this.state.height) {
       this.setState({height, width, paddingLeft, paddingRight});
     }
   }

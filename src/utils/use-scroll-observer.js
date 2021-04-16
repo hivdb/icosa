@@ -34,7 +34,9 @@ export default function useScrollObserver({
   onSelectItem
 }) {
 
-  const {current} = React.useRef({});
+  const {current} = React.useRef({
+    observingNodes: {}
+  });
   current.loaded = loaded;
   current.name = currentSelected.name;
   current.output = output;
@@ -42,7 +44,6 @@ export default function useScrollObserver({
   const resetScrollObserver = React.useCallback(
     () => {
       current.preventObserver = false;
-      current.observingNodes = {};
       current.prevRatioMap = {};
       current.candidateMap = {};
     },
@@ -141,6 +142,15 @@ export default function useScrollObserver({
     [current]
   );
 
+  const onDisconnect = React.useCallback(
+    ({node}) => {
+      const name = node.dataset.scrollObserveName;
+      delete current.observingNodes[name];
+      current.observer.disconnect(node);
+    },
+    [current]
+  );
+
   const preventScrollObserver = React.useCallback(
     () => {
       current.preventObserver = true;
@@ -181,6 +191,7 @@ export default function useScrollObserver({
 
   return {
     onObserve,
+    onDisconnect,
     preventScrollObserver,
     resetScrollObserver,
     scrollTo

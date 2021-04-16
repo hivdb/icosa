@@ -27,7 +27,8 @@ function SinglePatternReport({
   patternResult,
   output,
   index,
-  onObserve
+  onObserve,
+  onDisconnect
 }) {
   const {
     name,
@@ -43,7 +44,8 @@ function SinglePatternReport({
          output={output}
          name={name}
          index={index}
-         onObserve={onObserve} />
+         onObserve={onObserve}
+         onDisconnect={onDisconnect} />
         <ReportSection title="Sequence quality assessment">
           <MutViewer noUnseqRegions {...{
             allGeneSeqs: allGeneMutations,

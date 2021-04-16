@@ -108,6 +108,7 @@ export default function useReportPaginator({
 
   const {
     onObserve,
+    onDisconnect,
     preventScrollObserver,
     resetScrollObserver,
     scrollTo
@@ -134,6 +135,7 @@ export default function useReportPaginator({
 
   return {
     onObserve,
+    onDisconnect,
     paginator: (
       <ReportPaginator
        currentSelected={currentSelected}

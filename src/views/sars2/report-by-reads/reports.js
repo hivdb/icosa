@@ -61,6 +61,7 @@ function SeqReadsReports({
 
   const {
     onObserve,
+    onDisconnect,
     paginator
   } = useReportPaginator({
     inputObjs: allSequenceReads,
@@ -99,6 +100,7 @@ function SeqReadsReports({
            antibodies={antibodies}
            sequenceReadsResult={seqReadsResult}
            onObserve={onObserve}
+           onDisconnect={onDisconnect}
            output={output}
            index={indexOffset + idx}
            species={species}

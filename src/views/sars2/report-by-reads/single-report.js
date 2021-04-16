@@ -42,7 +42,8 @@ function SingleSeqReadsReport({
   sequenceReadsResult,
   output,
   index,
-  onObserve
+  onObserve,
+  onDisconnect
 }) {
 
   const {
@@ -70,7 +71,8 @@ function SingleSeqReadsReport({
          output={output}
          name={name}
          index={index}
-         onObserve={onObserve} />
+         onObserve={onObserve}
+         onDisconnect={onDisconnect} />
         <SeqSummary {...sequenceReadsResult} output={output}>
           <SeqSummary.InlineGeneRange />
           <SeqSummary.MedianReadDepth />

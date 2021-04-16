@@ -121,16 +121,6 @@ export default function useFetchMore({
     ]
   );
 
-  React.useEffect(
-    () => {
-      if (loaded && pendingResolve.current) {
-        pendingResolve.current();
-        pendingResolve.current = null;
-      }
-    },
-    [loaded, pendingResolve]
-  );
-
   const onSelect = React.useCallback(
     ({name}) => {
       const loc = {
@@ -162,6 +152,18 @@ export default function useFetchMore({
       pendingResolve,
       inputUniqKeyName
     ]
+  );
+
+  const {current: resolve} = pendingResolve;
+
+  React.useEffect(
+    () => {
+      if (loaded && resolve) {
+        resolve();
+        pendingResolve.current = null;
+      }
+    },
+    [loaded, resolve]
   );
 
   return {

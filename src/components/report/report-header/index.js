@@ -18,7 +18,8 @@ function ReportHeader({
   output,
   name,
   index,
-  onObserve
+  onObserve,
+  onDisconnect
 }) {
   const headerRef = React.useRef();
 
@@ -28,13 +29,15 @@ function ReportHeader({
         return;
       }
       const headerNode = headerRef.current;
-      onObserve({
+      const payload = {
         name,
         index,
         node: headerNode
-      });
+      };
+      onObserve(payload);
+      return () => onDisconnect(payload);
     },
-    [output, headerRef, name, index, onObserve]
+    [output, headerRef, name, index, onObserve, onDisconnect]
   );
 
   return <header

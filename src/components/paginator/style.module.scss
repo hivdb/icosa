@@ -1,24 +1,31 @@
 @import "../../styles";
 
-$item-size: 2.5rem;
-$item-outer-size: $item-size * 2;
+$item-size: 2.5em;
+$display-nums: var(--display-nums);
+$offset: var(--offset);
+$total: var(--total);
+$scroll-offset: var(--scroll-offset);
+$hover-offset: var(--hover-offset);
+$margin-left-main: var(--margin-left-main);
+
+$item-outer-size: #{$item-size} * 2;
 $hover-opacity: .9;
 $client-width: var(--display-nums) * #{$item-outer-size};
-$scrollbar-step-width: #{$client-width} / var(--total);
-$scrollbar-offset: #{$scrollbar-step-width} * var(--scroll-offset);
+$scrollbar-step-width: #{$client-width} / #{$total};
+$scrollbar-offset: #{$scrollbar-step-width} * #{$scroll-offset};
 $scrollbar-width: css-max(
-  calc(1rem + 2rem),
+  3em,
   calc(
     #{$scrollbar-step-width} *
-    var(--display-nums)
+    #{$display-nums}
   )
 );
-$desc-width: $item-size * 9;
+$desc-width: #{$item-size} * 9;
 $desc-margin-left-main: css-min(
   css-calc(
-    #{$item-size - $desc-width / 2} #{"+"}
+    #{$item-size} - #{$desc-width} / 2 +
     #{$item-outer-size} *
-    var(--offset)
+    #{$offset}
   ),
   css-calc(
     100% -
@@ -27,17 +34,17 @@ $desc-margin-left-main: css-min(
 );
 $desc-margin-left: css-calc(
   #{$item-size} *
-  var(--hover-offset) #{"+"}
+  #{$hover-offset} #{"+"}
   css-max(
-    0px, var(--margin-left-main)
+    0px, #{$desc-margin-left-main}
   )
 );
 
 .paginator-container {
   position: relative;
-  width: calc(#{$item-outer-size * 2} + #{$client-width});
-  padding-left: $item-outer-size;
-  padding-right: $item-outer-size;
+  width: calc(#{$item-outer-size} * 2 + #{$client-width});
+  padding-left: calc(#{$item-outer-size});
+  padding-right: calc(#{$item-outer-size});
   box-sizing: border-box;
   margin-left: auto;
   margin-right: 0;
@@ -45,20 +52,20 @@ $desc-margin-left: css-calc(
 
 @mixin paginator-item {
   display: block;
-  width: $item-size;
-  height: $item-size;
+  width: calc(#{$item-size});
+  height: calc(#{$item-size});
   box-sizing: border-box;
   text-align: center;
-  line-height: $item-size;
+  line-height: calc(#{$item-size});
   vertical-align: middle;
-  transition: all 200ms ease-in-out;
+  transition: width 200ms ease-in-out, height 200ms ease-in-out, line-height 200ms ease-in-out;
 }
 
 .paginator-container > .paginator-arrow {
   position: absolute;
-  top: $item-size - .3rem;
-  padding-left: $item-size / 2;
-  padding-right: $item-size / 2;
+  top: calc(#{$item-size} - .3em);
+  padding-left: calc(#{$item-size} / 2);
+  padding-right: calc(#{$item-size} / 2);
   padding-bottom: 0;
   > .paginator-arrow_desc, &::after {
     @include paginator-item;
@@ -68,7 +75,7 @@ $desc-margin-left: css-calc(
     position: absolute;
     top: 0;
     color: color(paginator-text);
-    left: $item-size / 2;
+    left: calc(#{$item-size} / 2);
   }
   
   > .paginator-arrow_desc {
@@ -107,7 +114,7 @@ $desc-margin-left: css-calc(
     margin-top: 0;
     margin-bottom: 0;
     padding: 0;
-    transform: translateX(calc(var(--scroll-offset) * #{-$item-outer-size}));
+    transform: translateX(calc(#{$scroll-offset} * -#{$item-outer-size}));
     transition: transform 200ms ease-in-out;
   }
 }
@@ -121,8 +128,8 @@ $desc-margin-left: css-calc(
     display: block;
     position: relative;
     text-decoration: none;
-    padding-left: $item-size / 2;
-    padding-right: $item-size / 2;
+    padding-left: calc(#{$item-size} / 2);
+    padding-right: calc(#{$item-size} / 2);
     padding-bottom: 0;
   
     > .paginator-item_desc, &::after {
@@ -133,7 +140,7 @@ $desc-margin-left: css-calc(
       color: color(paginator-text);
       position: absolute;
       top: 0;
-      left: $item-size / 2;
+      left: calc(#{$item-size} / 2);
       counter-increment: paginator;
       content: counter(paginator)"\a0";
     }
@@ -178,19 +185,16 @@ $desc-margin-left: css-calc(
 }
 
 .paginator-container > .paginator-desc {
-  // cssnano bug: https://github.com/vercel/next.js/issues/17066#issuecomment-691825013
-  --margin-left-main: #{$desc-margin-left-main};
-  --margin-left: #{$desc-margin-left};
   position: relative;
-  margin-left: var(--margin-left);
-  margin-bottom: -.5rem;
+  margin-left: $desc-margin-left;
+  margin-bottom: -.5em;
   display: inline-block;
   box-sizing: border-box;
   line-height: $item-size;
   height: $item-size;
-  max-width: $desc-width;
-  padding-left: $item-size / 3;
-  padding-right: $item-size / 3;
+  max-width: calc(#{$desc-width});
+  padding-left: calc(#{$item-size} / 3);
+  padding-right: calc(#{$item-size} / 3);
   color: color(paginator-text-current);
   transition: all 200ms ease-in-out;
   overflow: hidden;
@@ -226,20 +230,20 @@ $desc-margin-left: css-calc(
 }
 
 .paginator-container > .scrollbar-container {
-  margin-top: - $item-size / 3;
+  margin-top: calc(- #{$item-size} / 3);
   position: relative;
   z-index: 1;
   cursor: pointer;
-  height: 1.25rem;
+  height: 1.25em;
   overflow: hidden;
   &::before {
     position: absolute;
     content: '';
     display: block;
-    top: .5rem;
+    top: .5em;
     left: 0;
     right: 0;
-    bottom: .5rem;
+    bottom: .5em;
     background-color: color(paginator-scrollbar);
     opacity: 0;
     transition: opacity 200ms ease-in-out;
@@ -254,10 +258,10 @@ $desc-margin-left: css-calc(
     &::before {
       display: block;
       content: '';
-      margin-top: .5rem;
-      margin-bottom: 1rem;
+      margin-top: .5em;
+      margin-bottom: 1em;
       width: $scrollbar-width;
-      height: .25rem;
+      height: .25em;
       opacity: .4;
       background-color: color(paginator-scrollbar);
       transition: opacity 200ms ease-in-out;
@@ -268,8 +272,8 @@ $desc-margin-left: css-calc(
   }
   > .scrollbar-drag-shadow {
     opacity: 0;
-    width: 1rem;
-    height: 1rem;
+    width: 1em;
+    height: 1em;
     position: absolute;
     top: 0;
     left: 0;
@@ -287,5 +291,5 @@ $desc-margin-left: css-calc(
 .paginator-container > .paginator-footnote {
   color: color(paginator-footnote-text);
   opacity: .7;
-  font-size: .85rem;
+  font-size: .85em;
 }
