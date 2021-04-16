@@ -98,7 +98,7 @@ function SeqReadsAnalysisQuery({
       loaded,
       allSequenceReads,
       currentSelected,
-      onSelectSeqReads: onSelect,
+      onSelect,
 
       currentVersion,
       currentProgramVersion,

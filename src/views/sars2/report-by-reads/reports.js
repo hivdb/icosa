@@ -56,7 +56,7 @@ function SeqReadsReports({
   allSequenceReads,
   currentSelected,
   sequenceReadsAnalysis,
-  onSelectSeqReads
+  onSelect
 }) {
 
   const {
@@ -67,7 +67,7 @@ function SeqReadsReports({
     loaded,
     output,
     currentSelected,
-    onSelect: onSelectSeqReads
+    onSelect
   });
 
   const pageTitle = getPageTitle(sequenceReadsAnalysis, output);
@@ -125,7 +125,7 @@ SeqReadsReports.propTypes = {
   allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceReadsAnalysis: PropTypes.array.isRequired,
-  onSelectSeqReads: PropTypes.func.isRequired
+  onSelect: PropTypes.func.isRequired
 };
 
 SeqReadsReports.defaultProps = {

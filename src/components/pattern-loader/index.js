@@ -1,62 +1,66 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, withRouter} from 'found';
-
-import PromiseComponent from '../../utils/promise-component';
+import {useRouter} from 'found';
 
 
-function getCurrentSelected({
-  match: {location = {query: {}}},
+function useCurrentSelected({
   lazyLoad,
   patterns
 }) {
-  if (!lazyLoad) { return undefined; }
-  const {query: {name}} = location;
-  if (!name) {
-    return {index: 0, name: patterns[0].name};
-  }
-  const index = Math.max(
-    0, patterns.findIndex(({name: patN}) => patN === name)
+  const {
+    match: {location = {query: {}}}
+  } = useRouter();
+
+  return React.useMemo(
+    () => {
+      if (!patterns || patterns.length === 0) { return {}; }
+      if (!lazyLoad) { return patterns[0]; }
+
+      const name = location.query.name;
+      if (!name) {
+        return {index: 0, name: patterns[0].name};
+      }
+      const index = Math.max(
+        0, patterns.findIndex(({name: patN}) => patN === name)
+      );
+      return {index, name: patterns[index].name};
+    },
+    [lazyLoad, patterns, location.query.name]
   );
-  return {index, name: patterns[index].name};
 }
 
 
-async function prepareChildProps(props) {
-  let {
-    match, lazyLoad,
-    match: {location: loc},
-    childProps = {}
-  } = props;
+function usePatterns() {
+  const {
+    match: {location: loc}
+  } = useRouter();
 
   const {patterns} = loc.state;
-  
-  childProps = {
+  return patterns;
+}
+
+
+function PatternLoader({
+  children,
+  childProps = {},
+  lazyLoad
+}) {
+  const patterns = usePatterns();
+  const currentSelected = useCurrentSelected({
+    lazyLoad, patterns
+  });
+
+  return children({
     ...childProps,
     patterns,
-    currentSelected: getCurrentSelected({
-      match, lazyLoad, patterns
-    })
-  };
-  
-  return childProps;
+    currentSelected
+  });
 }
 
-
-function BasePatternLoader(props) {
-  const {children} = props;
-  const promise = prepareChildProps(props);
-  return (
-    <PromiseComponent
-     promise={promise}
-     then={children} />
-  );
-}
-
-BasePatternLoader.propTypes = {
-  match: matchShape.isRequired,
+PatternLoader.propTypes = {
   children: PropTypes.func.isRequired,
+  childProps: PropTypes.object,
   lazyLoad: PropTypes.bool.isRequired
 };
 
-export default withRouter(BasePatternLoader);
+export default PatternLoader;

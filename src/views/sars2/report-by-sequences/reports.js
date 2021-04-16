@@ -116,7 +116,7 @@ SequenceReports.propTypes = {
   currentSelected: PropTypes.object,
   antibodies: PropTypes.array.isRequired,
   sequenceAnalysis: PropTypes.array.isRequired,
-  onSelectSequence: PropTypes.func.isRequired
+  onSelect: PropTypes.func.isRequired
 };
 
 SequenceReports.defaultProps = {

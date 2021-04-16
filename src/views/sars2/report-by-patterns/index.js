@@ -1,6 +1,6 @@
 import React from 'react';
-import createHash from 'create-hash';
-import buildApolloClient from '../apollo-client';
+import useExtendVariables from '../use-extend-variables';
+import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../components/report/config-context';
 import PatternLoader from '../../../components/pattern-loader';
@@ -11,69 +11,66 @@ import query from './query.graphql';
 import PatternReports from './reports';
 
 
-function hashPatterns(patterns) {
-  const payload = JSON.stringify(patterns);
-  const sha256 = createHash('sha256');
-  sha256.write(payload);
-  sha256.end();
-  return sha256.read().toString('hex');
-}
-
-let clientHash = null;
-let client = null;
-
-
-export default function ReportByPatternsContainer({
+function ReportByPatternsContainer({
+  config,
   species,
   router,
-  match
+  match,
+  lazyLoad,
+  output,
+  patterns,
+  currentSelected
 }) {
+
+  const client = useApolloClient({
+    payload: patterns,
+    config
+  });
+  const onExtendVariables = useExtendVariables({
+    config,
+    match
+  });
+  return <PatternAnalysisLayout
+   query={query}
+   client={client}
+   patterns={patterns}
+   currentSelected={currentSelected}
+   renderPartialResults={output !== 'printable'}
+   lazyLoad={lazyLoad}
+   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   onExtendVariables={onExtendVariables}>
+    {props => (
+      <PatternReports
+       output={output}
+       species={species}
+       match={match}
+       router={router}
+       {...props} />
+    )}
+  </PatternAnalysisLayout>;
+  
+}
+
+export default function ReportByPatternsContainerWrapper(props) {
   const {location: {
     query: {output = 'default'} = {}
-  } = {}} = match;
+  } = {}} = props.match;
   const lazyLoad = output !== 'printable';
-
   return (
     <ConfigContext.Consumer>
       {config => (
         <PatternLoader lazyLoad={lazyLoad}>
-          {({patterns, currentSelected}) => {
-            const patternsHash = hashPatterns(patterns);
-            if (!client || clientHash !== patternsHash) {
-              client = buildApolloClient(config);
-              clientHash = patternsHash;
-            }
-            return <PatternAnalysisLayout
-             query={query}
-             client={client}
+          {({patterns, currentSelected}) => (
+            <ReportByPatternsContainer
+             {...props}
+             output={output}
+             lazyLoad={lazyLoad}
              patterns={patterns}
              currentSelected={currentSelected}
-             renderPartialResults={output !== 'printable'}
-             lazyLoad={lazyLoad}
-             extraParams="$drdbVersion: String!, $cmtVersion: String!"
-             onExtendVariables={handleExtendVariables(config)}>
-              {props => (
-                <PatternReports
-                 output={output}
-                 species={species}
-                 match={match}
-                 router={router}
-                 {...props} />
-              )}
-            </PatternAnalysisLayout>;
-          }}
+             config={config} />
+          )}
         </PatternLoader>
       )}
     </ConfigContext.Consumer>
   );
-
-  function handleExtendVariables({drdbVersion, cmtVersion}) {
-    return vars => {
-      const {location: {state: {algorithm}}} = match;
-      vars.algorithm = algorithm;
-      vars.drdbVersion = drdbVersion;
-      vars.cmtVersion = cmtVersion;
-      return vars;
-    };
-  }
 }
