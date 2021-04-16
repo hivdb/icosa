@@ -175,7 +175,7 @@ function AntibodySuscSummary({
   if (payload.length > 0) {
     return (
       <SimpleTable
-       compact lastCompact
+       compact lastCompact disableCopy
        getRowKey={getRowKey}
        columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
        data={payload} />

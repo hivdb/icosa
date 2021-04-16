@@ -188,7 +188,7 @@ function ConvPlasmaSuscSummary({
   if (payload.length > 0) {
     return (
       <SimpleTable
-       compact lastCompact
+       compact lastCompact disableCopy
        getRowKey={getRowKey}
        columnDefs={buildColumnDefs(itemsByKeyMutations)}
        data={payload} />

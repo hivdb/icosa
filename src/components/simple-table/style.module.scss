@@ -263,7 +263,12 @@ table.simple-table {
   &[data-compact="true"] {
     width: auto;
     float: left;
-    margin-top: 3rem;
+    &[data-nocopy="true"] {
+      margin-top: 1rem;
+    }
+    &[data-nocopy="false"] {
+      margin-top: 3rem;
+    }
     margin-right: 4rem;
     &[data-last-compact="true"] + .clearfix {
       clear: left;

@@ -347,6 +347,7 @@ export default class SimpleTable extends React.Component {
     return <>
       <div
        ref={this.table}
+       data-nocopy={disableCopy}
        data-copying={copying}
        data-compact={compact}
        data-last-compact={lastCompact}
