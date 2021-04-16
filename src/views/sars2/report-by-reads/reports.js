@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
 
-import {SeqReadsSidebar} from '../../../components/report';
+import {useReportPaginator} from '../../../components/report';
 import PageBreak from '../../../components/page-break';
 
 import setTitle from '../../../utils/set-title';
-import useScrollObserver from '../../../utils/use-scroll-observer';
 
 import style from '../style.module.scss';
 import PrintHeader from '../print-header';
@@ -60,47 +59,16 @@ function SeqReadsReports({
   onSelectSeqReads
 }) {
 
-  const resetPaginatorScrollOffset = React.useCallback(
-    () => {
-      const event = new Event('--sierra-paginator-reset-scroll');
-      window.dispatchEvent(event);
-    },
-    []
-  );
-
-  const onSelectItem = React.useCallback(
-    name => {
-      onSelectSeqReads({name});
-      resetPaginatorScrollOffset();
-    },
-    [onSelectSeqReads, resetPaginatorScrollOffset]
-  );
-
   const {
     onObserve,
-    preventScrollObserver,
-    resetScrollObserver,
-    scrollTo
-  } = useScrollObserver({
+    paginator
+  } = useReportPaginator({
+    inputObjs: allSequenceReads,
     loaded,
     output,
     currentSelected,
-    onSelectItem
+    onSelect: onSelectSeqReads
   });
-
-  const handlePaginatorSelectSeqReads = React.useCallback(
-    async ({name}) => {
-      preventScrollObserver();
-      await onSelectSeqReads({name});
-      scrollTo(name, resetScrollObserver);
-    },
-    [
-      preventScrollObserver,
-      onSelectSeqReads,
-      scrollTo,
-      resetScrollObserver
-    ]
-  );
 
   const pageTitle = getPageTitle(sequenceReadsAnalysis, output);
   setTitle(pageTitle);
@@ -118,10 +86,7 @@ function SeqReadsReports({
   return <>
     {output === 'printable' ?
       <PrintHeader species={species} /> :
-      <SeqReadsSidebar
-       currentSelected={currentSelected}
-       onSelect={handlePaginatorSelectSeqReads}
-       allSequenceReads={allSequenceReads} />
+      paginator
     }
     <main className={style.main} data-loaded={loaded}>
       {sequenceReadsAnalysis.map((seqReadsResult, idx) => (

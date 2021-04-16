@@ -2,7 +2,6 @@ import React from 'react';
 import {useRouter} from 'found';
 
 import BigData from '../../utils/big-data';
-import useSmartAsync from '../../utils/use-smart-async';
 
 
 function useAllOrigSeqReads(match) {
@@ -13,24 +12,7 @@ function useAllOrigSeqReads(match) {
       } = {}
     } = {}
   } = match;
-  if (!key) {
-    throw new Error(
-      "There's not location.state.allSequenceReads for current view."
-    );
-  }
-  const {data, error, isPending} = useSmartAsync({
-    promiseFn: BigData.load,
-    key
-  });
-  if (error) {
-    throw new Error(error.message);
-  }
-  else if (!isPending && !(data instanceof Array)) {
-    throw new Error(
-      `The stored allSequenceReads is not an array: ${JSON.stringify(data)}`
-    );
-  }
-  return [data, isPending];
+  return BigData.use(key);
 }
 
 export default function useAllSeqReads({

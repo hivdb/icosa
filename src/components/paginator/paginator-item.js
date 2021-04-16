@@ -71,7 +71,6 @@ export default React.memo(
   PaginatorItem,
   (prev, next) => (
     prev.name === next.name &&
-    prev.onClick === next.onClick &&
     prev.href === next.href &&
     prev.children === next.children &&
     prev.isSelected === next.isSelected &&

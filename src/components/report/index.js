@@ -1,8 +1,7 @@
 import DRInterpretation from './dr-interpretation';
 import DRMutationScores from './dr-mutation-scores';
 import PatternSidebar from './pattern-sidebar';
-import SequenceSidebar from './sequence-sidebar';
-import SeqReadsSidebar from './seqreads-sidebar';
+import useReportPaginator from './report-paginator';
 import {SequenceAnalysisQAChart} from './sequence-qa';
 import SeqReadsAnalysisQA from './seqreads-qa';
 import MutationStats from './mutation-stats';
@@ -19,7 +18,7 @@ import RefsSection, {RefContextWrapper} from './references';
 
 export {
   DRInterpretation, DRMutationScores,
-  PatternSidebar, SequenceSidebar, SeqReadsSidebar, SeqSummary,
+  PatternSidebar, useReportPaginator, SeqSummary,
   SeqMutationPrevalence, AlgComparison, ValidationReport,
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
   MutationStats, MutationViewer, ReportSection,

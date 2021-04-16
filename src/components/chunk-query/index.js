@@ -1,79 +1,117 @@
-import React from 'react';
 import {useQuery} from '@apollo/client';
 
-import ChunkQueryInner from './inner';
+import useFetchMore from './use-fetch-more';
+import useResultCache from './use-result-cache';
+import useCursorAndVariables from './use-cursor-and-variables';
+import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
 
-export default function ChunkQuery(props) {
+
+export {calcOffsetLimit, calcInitOffsetLimit};
+
+export default function useChunkQuery({
+  query,
+  lazyLoad,
+  inputObjs,
+  initOffset,
+  initLimit,
+  client,
+  currentSelected,
+  onExtendVariables,
+  maxPerRequest,
+  mainInputName,
+  inputUniqKeyName,
+  mainOutputName,
+  outputUniqKeyName
+}) {
+  const commonProps = {
+    lazyLoad,
+    inputObjs,
+    maxPerRequest,
+    mainInputName,
+    inputUniqKeyName,
+    mainOutputName,
+    outputUniqKeyName
+  };
   const {
-    query,
-    render,
-    client,
-    onRequireVariables,
-    onMergeData,
-    onLoadCache = variables => ({
-      variables,
-      cachedData: null,
-      fullyCached: false
-    }),
-    onSaveCache = () => null,
-    renderPartialResults,
-    noVariablesMessage = <div>No input data supplied.</div>,
-    progressText = () => null,
-    noCache = false
-  } = props;
-  let {variables, done} = onRequireVariables();
-  const cache = onLoadCache(variables);
-  const {cachedData, fullyCached} = cache;
-  variables = cache.variables;
-  
-  const fetchPolicy = noCache ? 'no-cache' : 'cache-first';
-  let {loading, error, data, fetchMore} = useQuery(
+    cacheResults,
+    restoreResults,
+    isCached
+  } = useResultCache({
+    ...commonProps
+  });
+
+  const {
+    cursor,
+    setCursor,
+    variables,
+    isCursorFulfilled,
+    getVariables
+  } = useCursorAndVariables({
+    initOffset,
+    initLimit,
+    isCached,
+    onExtendVariables,
+    ...commonProps
+  });
+
+  let {
+    loading,
+    error,
+    data,
+    fetchMore
+  } = useQuery(
     query,
     {
       variables,
-      fetchPolicy,
+      fetchPolicy: 'cache-first',
       client,
-      returnPartialData: true,
-      skip: done || fullyCached
+      returnPartialData: false
     }
   );
-  if (done) { return noVariablesMessage; }
-  if (!loading && !error && !fullyCached) {
-    onSaveCache(data);
-  }
-  if (fullyCached) {
-    data = cachedData;
-  }
-  else if (cachedData && data) {
-    data = onMergeData(cachedData, data);
-  }
-  
-  return (
-    <ChunkQueryInner
-     key="chunk-query-inner"
-     {...{
-       data, render, renderPartialResults,
-       progressText, loading, error
-     }}
-     onLoadMore={handleLoadMore} />
-  );
 
-  function handleLoadMore() {
-    const {onMergeData, onRequireVariables} = props;
-    const {
-      variables, progress, nextProgress, total, done
-    } = onRequireVariables(data);
-    if (done) { return [true, progress, nextProgress, total]; }
-    fetchMore({
-      variables,
-      updateQuery: (prev, {fetchMoreResult}) => {
-        if (!fetchMoreResult) {
-          return prev;
-        }
-        return onMergeData(prev, fetchMoreResult);
-      }
+  if (data && !error) {
+    cacheResults(data);
+  }
+
+  const {
+    loaded,
+    progressObj,
+    onSelect
+  } = useFetchMore({
+    fetchMore,
+    loading,
+    getVariables,
+    cursor,
+    setCursor,
+    currentSelected,
+    isCursorFulfilled,
+    ...commonProps
+  });
+
+  if (error) {
+    return {
+      loaded: false,
+      error,
+      data,
+      progressObj,
+      onSelect
+    };
+  }
+
+  else {
+    const mergedData = restoreResults({
+      ...cursor,
+      loaded
     });
-    return [false, progress, nextProgress, total];
+
+    return {
+      loaded,
+      error: null,
+      data: mergedData,
+      cursor,
+      progressObj,
+      onSelect
+    };
   }
 
 }

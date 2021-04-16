@@ -1,6 +1,6 @@
 import React from 'react';
-import createHash from 'create-hash';
-import buildApolloClient from '../apollo-client';
+import useApolloClient from '../apollo-client';
+import useExtendVariables from '../use-extend-variables';
 
 import ConfigContext from '../../../components/report/config-context';
 import SeqLoader from '../../../components/sequence-loader';
@@ -11,67 +11,74 @@ import query from './query.graphql';
 import SeqReports from './reports';
 
 
-function hashSeqSet(sequences) {
-  const payload = JSON.stringify(sequences);
-  const sha256 = createHash('sha256');
-  sha256.write(payload);
-  sha256.end();
-  return sha256.read().toString('hex');
+function ReportBySequencesContainer({
+  config,
+  species,
+  lazyLoad,
+  output,
+  match,
+  sequences,
+  currentSelected
+}) {
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(
+      'Begin rendering ReportBySequenceContainer',
+      (new Date()).getTime()
+    );
+  }
+
+  const client = useApolloClient({
+    payload: sequences,
+    config
+  });
+  const onExtendVariables = useExtendVariables({
+    config,
+    match
+  });
+
+  return <SeqAnalysisLayout
+   query={query}
+   client={client}
+   sequences={sequences}
+   currentSelected={currentSelected}
+   renderPartialResults={output !== 'printable'}
+   lazyLoad={lazyLoad}
+   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   onExtendVariables={onExtendVariables}>
+    {props => (
+      <SeqReports
+       output={output}
+       species={species}
+       match={match}
+       {...props} />
+    )}
+  </SeqAnalysisLayout>;
+
 }
 
-let clientHash = null;
-let client = null;
 
-
-export default function ReportBySequencesContainer({
-  species,
-  match
-}) {
+export default function ReportBySequencesContainerWrapper(props) {
   const {location: {
     query: {output = 'default'} = {}
-  } = {}} = match;
+  } = {}} = props.match;
   const lazyLoad = output !== 'printable';
 
   return (
     <ConfigContext.Consumer>
       {config => (
         <SeqLoader lazyLoad={lazyLoad}>
-          {({sequences, currentSelected}) => {
-            const seqHash = hashSeqSet(sequences);
-            if (!client || clientHash !== seqHash) {
-              client = buildApolloClient(config);
-              clientHash = seqHash;
-            }
-            return <SeqAnalysisLayout
-             query={query}
-             client={client}
+          {({sequences, currentSelected}) => (
+            <ReportBySequencesContainer
+             {...props}
+             output={output}
+             lazyLoad={lazyLoad}
              sequences={sequences}
              currentSelected={currentSelected}
-             renderPartialResults={output !== 'printable'}
-             lazyLoad={lazyLoad}
-             extraParams="$drdbVersion: String!, $cmtVersion: String!"
-             onExtendVariables={handleExtendVariables(config)}>
-              {props => (
-                <SeqReports
-                 output={output}
-                 species={species}
-                 match={match}
-                 {...props} />
-              )}
-            </SeqAnalysisLayout>;
-          }}
+             config={config} />
+          )}
         </SeqLoader>
       )}
     </ConfigContext.Consumer>
   );
-
-  function handleExtendVariables({drdbVersion, cmtVersion}) {
-    return vars => {
-      const {location: {state: {algorithm}}} = match;
-      vars.algorithm = algorithm;
-      vars.drdbVersion = drdbVersion;
-      vars.cmtVersion = cmtVersion;
-      return vars;
-    };
-  }
 }

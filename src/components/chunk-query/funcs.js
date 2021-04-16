@@ -2,7 +2,7 @@ const QUICKLOAD_LIMIT = 5;
 
 
 export function calcOffsetLimit({
-  allSequenceReads,
+  size,
   offset,
   lazyLoad,
   quickLoadLimit = QUICKLOAD_LIMIT
@@ -14,16 +14,16 @@ export function calcOffsetLimit({
   }
   else {
     offset = 0;
-    limit = allSequenceReads.length;
+    limit = size;
   }
   return {offset, limit};
 }
 
 
-export function calcInitOffsetLimit({allSequenceReads, lazyLoad}) {
+export function calcInitOffsetLimit({size, lazyLoad}) {
   let initOffset = 0, initLimit = 0;
   if (!lazyLoad) {
-    initLimit = allSequenceReads.length;
+    initLimit = size;
   }
   return {initOffset, initLimit};
 }

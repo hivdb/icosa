@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import useSmartAsync from './use-smart-async';
 
 function isBigData(key) {
   return typeof key === 'string' && key.startsWith('@@bigData/');
@@ -48,4 +49,18 @@ async function clear(timeout = 3600000) {
   }
 }
 
-export default {isBigData, load, save, remove, clear};
+function useBigData(key) {
+  if (!key) {
+    throw new Error("key is empty");
+  }
+  const {data, error, isPending} = useSmartAsync({
+    promiseFn: load,
+    key
+  });
+  if (error) {
+    throw new Error(error.message);
+  }
+  return [data, isPending];
+}
+
+export default {isBigData, load, save, remove, clear, use: useBigData};

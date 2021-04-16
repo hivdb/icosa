@@ -1,82 +1,92 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, withRouter} from 'found';
+import {useRouter} from 'found';
 
+import FixedLoader from '../fixed-loader';
 import BigData from '../../utils/big-data';
-import PromiseComponent from '../../utils/promise-component';
 
 
-function getCurrentSelected({
-  match: {location = {query: {}}},
+function useCurrentSelected({
   lazyLoad,
   sequences
 }) {
-  if (!lazyLoad) { return sequences[0]; }
-  const {query: {header}} = location;
-  if (!header) {
-    return {index: 0, header: sequences[0].header};
-  }
-  const index = Math.max(
-    0, sequences.findIndex(({header: seqH}) => seqH === header)
+  const {
+    match: {location = {query: {}}}
+  } = useRouter();
+
+  return React.useMemo(
+    () => {
+      if (!sequences || sequences.length === 0) { return {}; }
+      if (!lazyLoad) { return sequences[0]; }
+
+      const name = location.query.name;
+      if (!name) {
+        return {index: 0, name: sequences[0].header};
+      }
+      const index = Math.max(
+        0, sequences.findIndex(({header: seqH}) => seqH === name)
+      );
+      return {index, name: sequences[index].header};
+    },
+    [lazyLoad, sequences, location.query.name]
   );
-  return {index, header: sequences[index].header};
 }
 
 
-async function prepareChildProps(props) {
-  let {
-    match, lazyLoad,
-    match: {location: loc},
-    childProps = {}
-  } = props;
+function useSequences() {
+  const {
+    match: {
+      location: {
+        state: {
+          sequences: key
+        } = {}
+      } = {}
+    }
+  } = useRouter();
+  let [sequences, isPending] = BigData.use(key);
+  return React.useMemo(
+    () => {
+      if (isPending) {
+        return [undefined, true];
+      }
+      else {
+        return [
+          sequences.map(({size, ...seq}) => seq),
+          false
+        ];
+      }
+    },
+    [sequences, isPending]
+  );
+}
 
-  /* if (onLoadCache && loc.query && 'load' in loc.query) {
-    const {sequences, props: cachedProps} = await onLoadCache(loc.query.load);
-    childProps = {...otherProps, sequences, cachedProps};
-  } */
 
-  const key = loc.state.sequences;
-  if (!key) {
-    console.error("There's not location.state.sequences for current view.");
-  }
-  let sequences;
-  sequences = await BigData.load(key);
-  sequences.map(seq => {
-    delete seq.size;
-    return seq;
+function SequenceLoader({
+  children,
+  childProps = {},
+  lazyLoad
+}) {
+  const [sequences, isPending] = useSequences();
+  const currentSelected = useCurrentSelected({
+    lazyLoad, sequences
   });
-  
-  childProps = {
+
+  if (isPending) {
+    return <FixedLoader />;
+  }
+
+  return children({
     ...childProps,
     sequences,
-    currentSelected: getCurrentSelected({
-      match, lazyLoad, sequences
-    })
-  };
-  
-  return childProps;
-}
-
-
-function BaseSequenceLoader(props) {
-
-  const {children} = props;
-
-  const promise = prepareChildProps(props);
-  return (
-    <PromiseComponent
-     promise={promise}
-     then={children} />
-  );
-
-
+    currentSelected
+  });
 
 }
 
-BaseSequenceLoader.propTypes = {
-  match: matchShape.isRequired,
+SequenceLoader.propTypes = {
   children: PropTypes.func.isRequired,
+  childProps: PropTypes.object,
   lazyLoad: PropTypes.bool.isRequired
 };
 
-export default withRouter(BaseSequenceLoader);
+export default SequenceLoader;

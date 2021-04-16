@@ -19,8 +19,8 @@ function useCurrentSelected({
 
   return React.useMemo(
     () => {
-      if (!lazyLoad) { return {}; }
       if (!allSequenceReads || allSequenceReads.length === 0) { return {}; }
+      if (!lazyLoad) { return allSequenceReads[0]; }
 
       const name = location.query.name;
       if (!name) {
@@ -81,7 +81,8 @@ function SeqReadsLoaderWrapper(props) {
 
 SeqReadsLoaderWrapper.propTypes = {
   children: PropTypes.func.isRequired,
-  lazyLoad: PropTypes.bool.isRequired
+  lazyLoad: PropTypes.bool.isRequired,
+  childProps: PropTypes.object
 };
 
 export default SeqReadsLoaderWrapper;
