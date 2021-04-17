@@ -9,7 +9,7 @@ import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
 
-import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
+// import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
 
 
 function loadExampleCodonReads(examples) {
@@ -60,7 +60,7 @@ function SierraForms({
      sequencesOutputOptions={{
        __printable: {
          label: 'Printable HTML'
-       },
+       }/*,
        tsv: {
          label: "Spreadsheets (TSV)",
          subOptions,
@@ -68,7 +68,7 @@ function SierraForms({
          renderer: props => (
            <SeqTabularReports {...props} />
          )
-       }
+       }*/
      }}
      seqReadsOutputOptions={{
        __printable: {
