@@ -15,6 +15,7 @@ $color: #a0a0a0;
   background-color: white;
   padding: $size / 3 $size;
   border-radius: $size / 3;
+  box-sizing: content-box;
   box-shadow: 1px 1px 4px #999;
 }
 .lds-ring_fixed div {
