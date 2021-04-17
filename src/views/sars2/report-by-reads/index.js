@@ -20,13 +20,6 @@ function ReportByReadsContainer({
   allSequenceReads,
   currentSelected
 }) {
-  if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
-    console.log(
-      'Render ReportByReadsContainer',
-      (new Date()).getTime()
-    );
-  }
   const client = useApolloClient({
     payload: allSequenceReads,
     config

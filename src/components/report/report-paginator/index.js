@@ -89,7 +89,7 @@ export default function useReportPaginator({
   loaded,
   output,
   currentSelected,
-  onSelect
+  fetchAnother
 }) {
   const resetPaginatorScrollOffset = React.useCallback(
     () => {
@@ -99,38 +99,23 @@ export default function useReportPaginator({
     []
   );
 
-  const onSelectItem = React.useCallback(
-    name => {
-      onSelect({name});
-      resetPaginatorScrollOffset();
-    },
-    [onSelect, resetPaginatorScrollOffset]
-  );
-
   const {
     onObserve,
     onDisconnect,
-    preventScrollObserver,
-    resetScrollObserver,
     scrollTo
   } = useScrollObserver({
     loaded,
-    output,
+    disabled: output === 'printable',
     currentSelected,
-    onSelectItem
+    asyncLoadNewItem: fetchAnother,
+    afterLoadNewItem: resetPaginatorScrollOffset
   });
 
   const onPaginatorSelect = React.useCallback(
-    async name => {
-      preventScrollObserver();
-      await onSelect({name});
-      scrollTo(name, resetScrollObserver);
-    },
+    name => scrollTo(name, resetPaginatorScrollOffset),
     [
-      preventScrollObserver,
-      onSelect,
       scrollTo,
-      resetScrollObserver
+      resetPaginatorScrollOffset
     ]
   );
 

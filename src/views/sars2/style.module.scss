@@ -29,6 +29,9 @@ article.sequence-article, article.seqreads-article, article.pattern-article {
   &[data-loaded="false"] {
     @extend %placeholder;
     min-height: 40vh;
+    &:last-of-type {
+      min-height: 100vh;
+    }
   }
   margin-bottom: 6rem;
   padding-top: $article-padding-top;

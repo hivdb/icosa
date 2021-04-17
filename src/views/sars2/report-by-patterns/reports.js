@@ -41,7 +41,7 @@ function PatternReports({
   patterns,
   currentSelected,
   patternAnalysis,
-  onSelect
+  fetchAnother
 }) {
 
   const {
@@ -53,7 +53,7 @@ function PatternReports({
     loaded,
     output,
     currentSelected,
-    onSelect
+    fetchAnother
   });
 
   const pageTitle = getPageTitle(patternAnalysis, output);
@@ -107,7 +107,7 @@ PatternReports.propTypes = {
   patterns: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   patternAnalysis: PropTypes.array.isRequired,
-  onSelect: PropTypes.func.isRequired
+  fetchAnother: PropTypes.func.isRequired
 };
 
 export default PatternReports;

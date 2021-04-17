@@ -7,19 +7,7 @@ function inView(node) {
 }
 
 
-function ensureScrollTo(top, callback) {
-  const checkScroll = () => {
-    if (Math.abs(window.pageYOffset - top) < 15) {
-      window.removeEventListener('scroll', checkScroll, false);
-      document.documentElement.dataset.noSmoothScroll = '';
-      setTimeout(() => {
-        window.scrollTo({top, behavior: 'auto'});
-        callback && setTimeout(callback, 500);
-      }, 50);
-      delete document.documentElement.dataset.noSmoothScroll;
-    }
-  };
-  window.addEventListener('scroll', checkScroll, false);
+function noSmoothScrollTo(top) {
   let behavior = 'auto';
   // disable global smooth scroll
   document.documentElement.dataset.noSmoothScroll = '';
@@ -29,18 +17,24 @@ function ensureScrollTo(top, callback) {
 
 export default function useScrollObserver({
   loaded,
-  output,
+  disabled,
   currentSelected,
-  onSelectItem
+  asyncLoadNewItem,
+  afterLoadNewItem
 }) {
 
   const {current} = React.useRef({
     observingNodes: {}
   });
-  current.loaded = loaded;
   current.name = currentSelected.name;
-  current.output = output;
-  current.onSelectItem = onSelectItem;
+  current.loaded = loaded;
+
+  const preventScrollObserver = React.useCallback(
+    () => {
+      current.preventObserver = true;
+    },
+    [current]
+  );
 
   const resetScrollObserver = React.useCallback(
     () => {
@@ -53,10 +47,10 @@ export default function useScrollObserver({
 
   const observerCallback = React.useCallback(
     async (entries) => {
-      if (!current.loaded || current.preventObserver) {
+      if (!current.loaded || disabled || current.preventObserver) {
         return;
       }
-      for (const entry of entries) {
+      /*for (const entry of entries) {
         const name = entry.target.dataset.scrollObserveName;
         const index = parseInt(entry.target.dataset.scrollObserveIndex);
         const viewportHeight = window.innerHeight;
@@ -73,7 +67,7 @@ export default function useScrollObserver({
           curRatio > 0.5
         ) {
           // enter
-          current.candidateMap[index] = name;
+          current.candidateMap[index] = [name, entry.target];
         }
         else if (
           curRatio < prevRatio &&
@@ -87,16 +81,41 @@ export default function useScrollObserver({
       const candidates = Object.entries(current.candidateMap);
       if (candidates.length > 0) {
         candidates.sort(([a], [b]) => a - b);
-        const [[,newName]] = candidates;
-        if (newName !== current.name) {
-          await current.onSelectItem(candidates[0][1]);
-          current.name = newName;
+        const [[, [targetName, target]]] = candidates;
+        if (targetName !== current.name) {
+          await asyncLoadNewItem(
+            targetName, /* updateCurrentSelected = / true
+          );
+          target.dataset.scrollObserveLoaded = "yes";
+          anyLoaded = true;
+        }
+      }*/
+
+      let anyLoaded = false;
+      let firstFlag = true;
+      const observingNodes = Object.entries(current.observingNodes);
+      /* observingNodes.sort(([,a], [,b]) => (
+        parseInt(a.dataset.scrollObserveIndex) -
+        parseInt(b.dataset.scrollObserveIndex)
+      )); */
+      for (const [name, node] of observingNodes) {
+        if (inView(node)) {
+          if (firstFlag && name !== current.name) {
+            await asyncLoadNewItem(name, /* updateCurrentSelected = */ true);
+            node.dataset.scrollObserveLoaded = "yes";
+            firstFlag = false;
+            anyLoaded = true;
+          }
+          else if (node.dataset.scrollObserveLoaded !== "yes") {
+            await asyncLoadNewItem(name, /* updateCurrentSelected = */ false);
+            node.dataset.scrollObserveLoaded = "yes";
+            anyLoaded = true;
+          }
         }
       }
+      anyLoaded && afterLoadNewItem();
     },
-    [
-      current
-    ]
+    [asyncLoadNewItem, afterLoadNewItem, current, disabled]
   );
 
   const registerScrollObserver = React.useCallback(
@@ -111,6 +130,7 @@ export default function useScrollObserver({
       }
       current.observer = new IntersectionObserver(observerCallback, options);
       for (const node of Object.values(current.observingNodes)) {
+        // re-register all known nodes
         current.observer.observe(node);
       }
       resetScrollObserver();
@@ -120,32 +140,44 @@ export default function useScrollObserver({
 
   React.useEffect(
     () => {
-      if (output === 'printable') {
+      if (disabled) {
         return;
       }
       registerScrollObserver();
     },
     [
-      output, current,
+      disabled,
       registerScrollObserver
     ]
   );
 
   const scrollTo = React.useCallback(
-    (name, callback = () => null) => {
+    async (name, callback = () => null, avoidLoading = false) => {
       const node = current.observingNodes[name];
       if (node) {
         if (inView(node)) {
           callback();
           return;
         }
-        let {top} = node.getBoundingClientRect();
 
+        preventScrollObserver();
+        if (!avoidLoading) {
+          await asyncLoadNewItem(name, /* updateCurrentSelected = */ true);
+          node.dataset.scrollObserveLoaded = "yes";
+          afterLoadNewItem();
+        }
+
+        let {top} = node.getBoundingClientRect();
         top += window.pageYOffset - 150;
-        ensureScrollTo(top, callback);
+
+        noSmoothScrollTo(top);
+        resetScrollObserver();
       }
     },
-    [current]
+    [
+      current, preventScrollObserver, resetScrollObserver,
+      asyncLoadNewItem, afterLoadNewItem
+    ]
   );
 
   const onObserve = React.useCallback(
@@ -168,30 +200,25 @@ export default function useScrollObserver({
     [current]
   );
 
-  const preventScrollObserver = React.useCallback(
-    () => {
-      current.preventObserver = true;
-    },
-    [current]
-  );
-
+  // only run once on componentDidMount
   React.useEffect(
     () => {
-      if (output === 'printable') {
-        return;
-      }
-      if (loaded) {
-        scrollTo(current.name);
+      if (!disabled) {
+        scrollTo(
+          current.name,
+          () => null,
+          /* avoidLoading = */ true
+        );
       }
     },
-    [loaded, output, current, scrollTo]
+    [/* eslint-disable-line react-hooks/exhaustive-deps */]
   );
 
   return {
     onObserve,
     onDisconnect,
-    preventScrollObserver,
-    resetScrollObserver,
+    // preventScrollObserver,
+    // resetScrollObserver,
     scrollTo
   };
 }

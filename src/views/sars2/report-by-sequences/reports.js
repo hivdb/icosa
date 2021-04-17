@@ -43,7 +43,7 @@ function SequenceReports({
   sequences,
   currentSelected,
   sequenceAnalysis,
-  onSelect
+  fetchAnother
 }) {
 
   const {
@@ -55,7 +55,7 @@ function SequenceReports({
     loaded,
     output,
     currentSelected,
-    onSelect
+    fetchAnother
   });
 
   const pageTitle = getPageTitle(sequenceAnalysis, output);
@@ -107,7 +107,7 @@ SequenceReports.propTypes = {
   currentSelected: PropTypes.object,
   antibodies: PropTypes.array.isRequired,
   sequenceAnalysis: PropTypes.array.isRequired,
-  onSelect: PropTypes.func.isRequired
+  fetchAnother: PropTypes.func.isRequired
 };
 
 SequenceReports.defaultProps = {

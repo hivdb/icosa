@@ -66,7 +66,7 @@ function PatternAnalysisQuery({
     error,
     data,
     progressObj,
-    onSelect
+    fetchAnother
   } = useCumuQuery({
     query: getQuery(queryFragment, extraParams),
     lazyLoad,
@@ -103,7 +103,7 @@ function PatternAnalysisQuery({
       loaded,
       patterns,
       currentSelected,
-      onSelect,
+      fetchAnother,
 
       currentVersion,
       currentProgramVersion,

@@ -12,7 +12,7 @@ export function calcOffsetLimit({
 
   if (lazyLoad) {
     limit = quickLoadLimit;
-    if (limit > 3) {
+    if (limit >= 3) {
       offset = Math.max(0, offset - Math.floor((limit - 1) / 2));
     }
   }

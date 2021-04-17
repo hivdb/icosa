@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 
-import useOnSelect from './use-on-select';
+import useFetchAnother from './use-fetch-another';
 import useResultCache from './use-result-cache';
 import useCursorAndVariables from './use-cursor-and-variables';
 import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
@@ -8,37 +8,17 @@ import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
 
 export {calcOffsetLimit, calcInitOffsetLimit};
 
-export default function useCumuQuery({
-  query,
-  lazyLoad,
-  inputObjs,
-  initOffset,
-  initLimit,
-  client,
-  currentSelected,
-  onExtendVariables,
-  maxPerRequest,
-  mainInputName,
-  inputUniqKeyName,
-  mainOutputName,
-  outputUniqKeyName
-}) {
-  const commonProps = {
-    lazyLoad,
-    inputObjs,
-    maxPerRequest,
-    mainInputName,
-    inputUniqKeyName,
-    mainOutputName,
-    outputUniqKeyName
-  };
+export default function useCumuQuery(props) {
+  const {
+    query,
+    client,
+  } = props;
+
   const {
     cacheResults,
     restoreResults,
     isCached
-  } = useResultCache({
-    ...commonProps
-  });
+  } = useResultCache(props);
 
   const {
     cursor,
@@ -49,12 +29,8 @@ export default function useCumuQuery({
     isEmptyQuery,
     isCursorFulfilled
   } = useCursorAndVariables({
-    initOffset,
-    initLimit,
-    currentSelected,
     isCached,
-    onExtendVariables,
-    ...commonProps
+    ...props
   });
 
   let {
@@ -90,10 +66,11 @@ export default function useCumuQuery({
     total: cursor.limit
   };
 
-  const onSelect = useOnSelect({
+  const fetchAnother = useFetchAnother({
     loaded,
     setCursor,
-    ...commonProps
+    isCached,
+    ...props
   });
 
   if (error) {
@@ -102,7 +79,7 @@ export default function useCumuQuery({
       error,
       data,
       progressObj,
-      onSelect
+      fetchAnother
     };
   }
 
@@ -118,7 +95,7 @@ export default function useCumuQuery({
       data: mergedData,
       cursor,
       progressObj,
-      onSelect
+      fetchAnother
     };
   }
 

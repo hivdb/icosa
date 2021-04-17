@@ -61,7 +61,7 @@ function SeqReadsAnalysisQuery({
     error,
     data,
     progressObj,
-    onSelect
+    fetchAnother
   } = useCumuQuery({
     query: getQuery(queryFragment, extraParams),
     lazyLoad,
@@ -98,7 +98,7 @@ function SeqReadsAnalysisQuery({
       loaded,
       allSequenceReads,
       currentSelected,
-      onSelect,
+      fetchAnother,
 
       currentVersion,
       currentProgramVersion,
