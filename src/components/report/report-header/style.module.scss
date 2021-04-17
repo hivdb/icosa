@@ -34,4 +34,14 @@ header.report-header {
     background-color: color(seq-title-bg);
     z-index: -1;
   }
+
+  @media print {
+    -webkit-print-color-adjust: exact;
+    color: color(seq-title-bg);
+    &::before {
+      left: -50%;
+      right: -50%;
+      background-color: rgba(222, 222, 222, .6);
+    }
+  }
 }

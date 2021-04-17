@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
@@ -7,6 +8,7 @@ import style from './style.module.scss';
 
 
 function ReportSection({
+  className,
   collapsable,
   display,
   toggleDisplay,
@@ -15,7 +17,10 @@ function ReportSection({
   children
 }) {
   return (
-    <section className={style['report-section']} data-display={display}>
+    <section className={classNames(
+      style['report-section'],
+      className
+    )} data-display={display}>
       <h2>
         {collapsable ? (
           <button

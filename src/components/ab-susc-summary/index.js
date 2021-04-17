@@ -177,6 +177,7 @@ function AntibodySuscSummary({
       <SimpleTable
        compact lastCompact disableCopy
        getRowKey={getRowKey}
+       className={style['ab-susc-summary']}
        columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
        data={payload} />
     );

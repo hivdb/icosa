@@ -5,6 +5,12 @@
 
 $cell-padding: .1rem;
 
+.cp-susc-summary {
+  @media print {
+    page-break-inside: avoid;
+  }
+}
+
 .cell-variants {
   padding: $cell-padding 0;
   .variants {

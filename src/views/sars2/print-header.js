@@ -15,6 +15,9 @@ import style from './style.module.scss';
 export default function PrintHeader({curAnalysis}) {
 
   let title = 'Sierra Analysis Report';
+
+  const now = React.useMemo(() => new Date(), []);
+
   const [config, isPending] = ConfigContext.use();
 
   if (!isPending) {
@@ -32,6 +35,7 @@ export default function PrintHeader({curAnalysis}) {
           <FaPrint /> Print
         </Button>
       </IntroHeaderSupplement>
+      <p>Generated at {now.toLocaleString()}</p>
     </IntroHeader>
   </Intro>;
   

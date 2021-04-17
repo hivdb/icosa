@@ -6,9 +6,6 @@
   background-color: color(panel-bg);
   margin: 1.5rem -1rem 0;
   padding: 1rem;
-  @media print {
-    background-color: white;
-  }
   
   > .mutation-comments-options {
     margin-top: 1.5rem;
@@ -24,6 +21,28 @@
           display: none;
         }
         padding: 0 .25rem;
+      }
+    }
+  }
+
+  @media print {
+    border-color: transparent;
+    background-color: transparent;
+    margin: .5rem -1rem 0;
+    padding: 0 1rem;
+
+    > .mutation-comments-options {
+      display: none;
+    }
+
+    a[class*="ref-link"] {
+      display: none;
+    }
+
+    > ul.mutation-comments > li {
+      page-break-inside: avoid;
+      p {
+        margin: 0.3rem 0 1rem;
       }
     }
   }

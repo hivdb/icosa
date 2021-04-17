@@ -189,6 +189,7 @@ function VaccPlasmaSuscSummary({
     return (
       <SimpleTable
        compact lastCompact disableCopy
+       className={style['vp-susc-summary']}
        getRowKey={getRowKey}
        columnDefs={buildColumnDefs(itemsByKeyMutations)}
        data={payload} />

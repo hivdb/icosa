@@ -11,6 +11,8 @@ import References, {
   LoadExternalRefData
 } from '../references';
 
+import style from './style.module.scss';
+
 const useDisplayRefSection = createPersistedReducer(
   '--sierra-report-display-ref-section-opt'
 );
@@ -37,6 +39,7 @@ export default function ReferencesSection() {
         <ReportSection
          title="References"
          display={display}
+         className={style['reference-section']}
          toggleDisplay={toggleDisplay}
          collapsable>
           <LoadExternalRefData />

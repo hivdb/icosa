@@ -63,6 +63,7 @@ function groupBySpanIndex(rows) {
 export default class SimpleTable extends React.Component {
 
   static propTypes = {
+    className: PropTypes.string,
     cacheKey: PropTypes.string,
     compact: PropTypes.bool.isRequired,
     lastCompact: PropTypes.bool.isRequired,
@@ -323,7 +324,7 @@ export default class SimpleTable extends React.Component {
       compact,
       lastCompact,
       color, columnDefs,
-      getRowKey,
+      getRowKey, className,
       tableScrollStyle, tableStyle
     } = this.props;
     const {
@@ -351,12 +352,23 @@ export default class SimpleTable extends React.Component {
        data-copying={copying}
        data-compact={compact}
        data-last-compact={lastCompact}
-       className={style['simple-table-container']}>
-        <div className={style['simple-table-scroll']} style={tableScrollStyle}>
+       className={classNames(
+         style['simple-table-container'],
+         className ? `${className}__container` : null
+       )}>
+        <div
+         className={classNames(
+           style['simple-table-scroll'],
+           className ? `${className}__scroll` : null
+         )}
+         style={tableScrollStyle}>
           <table
            style={tableStyle}
            data-color={color}
-           className={style['simple-table']}>
+           className={classNames(
+             style['simple-table'],
+             className
+           )}>
             <thead>
               <tr>
                 {columnDefs.map(({

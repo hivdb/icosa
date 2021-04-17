@@ -54,22 +54,29 @@ function SinglePatternReport({
               output
             }} />
           </ReportSection>
-          <ReportSection title="Mutation list">
+          <ReportSection
+           className={style['no-page-break']}
+           title="Mutation list">
             <MutList {...patternResult} {...{output}} />
           </ReportSection>
           <ReportSection title="Mutation comments">
             <SARS2MutComments {...patternResult} />
           </ReportSection>
-          <ReportSection title="MAb susceptibility summary">
+          <ReportSection
+           className={style['no-page-break']}
+           title="MAb susceptibility summary">
             <AntibodySuscSummary
              antibodies={antibodies}
              {...patternResult} {...{output}} />
           </ReportSection>
-          <ReportSection title="Convalescent plasma susceptibility summary">
+          <ReportSection
+           className={style['no-page-break']}
+           title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
              {...patternResult} {...{output}} />
           </ReportSection>
           <ReportSection
+           className={style['no-page-break']}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
              {...patternResult} {...{output}} />

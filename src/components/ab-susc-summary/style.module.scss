@@ -4,6 +4,12 @@
 
 $cell-padding: .1rem;
 
+.ab-susc-summary {
+  @media print {
+    page-break-inside: avoid;
+  }
+}
+
 .cell-variants {
   padding: $cell-padding 0;
   .variants {
@@ -20,6 +26,7 @@ $cell-padding: .1rem;
 
 .cell-fold {
   padding: $cell-padding 0;
+  -webkit-print-color-adjust: exact;
   &[data-level="2"] {
     background-color: #fff352;
     .iqr, .range {

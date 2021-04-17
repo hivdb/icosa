@@ -21,6 +21,11 @@ $padding-v: .7rem;
     overflow: auto;
     max-height: var(--desktop-max-height);
   }
+
+  @media print {
+    overflow: visible;
+    max-height: none;
+  }
 }
 
 table.simple-table {
@@ -74,6 +79,9 @@ table.simple-table {
     > tr {
       > th {
         position: sticky;
+        @media print {
+          position: static;
+        }
         padding: $padding-v $padding-h;
         text-align: center;
         background-color: $header-bgcolor;
@@ -98,6 +106,9 @@ table.simple-table {
             margin-left: .1rem;
             > svg {
               vertical-align: top;
+            }
+            @media print {
+              display: none;
             }
           }
         }

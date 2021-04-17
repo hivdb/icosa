@@ -150,7 +150,13 @@
   background-color: color(form-title-bar-bg);
   color: color(form-title-bar);
   font-weight: 500;
-  -webkit-print-color-adjust: exact;
+  @media print {
+    -webkit-print-color-adjust: exact;
+    border-color: #c2c2c2;
+    background-color: #eeeeee;
+    color: black;
+  }
+
 }
 
 %title-bar-alter {
@@ -164,6 +170,7 @@
 }
 
 %levels-style {
+  -webkit-print-color-adjust: exact;
   display: inline-block;
   vertical-align: middle;
   box-sizing: border-box;

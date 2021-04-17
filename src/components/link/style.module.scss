@@ -11,4 +11,8 @@ a.link {
     text-decoration-style: dotted;
     cursor: help;
   }
+  @media print {
+    color: black;
+    text-decoration: underline;
+  }
 }

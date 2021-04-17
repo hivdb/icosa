@@ -13,6 +13,7 @@ ul.sir-pcnt-bar {
   }*/
   --bar-height: 1.5rem;
   --pcnt-width: 2.1rem;
+  -webkit-print-color-adjust: exact;
   padding: 0;
   margin: 0;
   height: var(--bar-height);

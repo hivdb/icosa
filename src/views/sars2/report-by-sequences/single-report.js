@@ -64,23 +64,30 @@ function SingleSequenceReport({
             }} />
             <ValidationReport {...sequenceResult} {...{output, strain}} />
           </ReportSection>
-          <ReportSection title="Mutation list">
+          <ReportSection
+           className={style['no-page-break']}
+           title="Mutation list">
             <MutList {...sequenceResult} {...{output, strain}} />
           </ReportSection>
           <ReportSection title="Mutation comments">
             <SARS2MutComments {...sequenceResult} />
           </ReportSection>
-          <ReportSection title="MAb susceptibility summary">
+          <ReportSection
+           className={style['no-page-break']}
+           title="MAb susceptibility summary">
             <AntibodySuscSummary
              antibodies={antibodies}
              {...sequenceResult}
              {...{output, strain}} />
           </ReportSection>
-          <ReportSection title="Convalescent plasma susceptibility summary">
+          <ReportSection
+           className={style['no-page-break']}
+           title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
              {...sequenceResult} {...{output}} />
           </ReportSection>
           <ReportSection
+           className={style['no-page-break']}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
              {...sequenceResult} {...{output}} />

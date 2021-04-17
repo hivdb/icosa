@@ -8,6 +8,11 @@
       border-radius: 0;
       border-color: color(dropdown-border);
       overflow: visible;
+      @media print {
+        color: black;
+        background-color: transparent;
+        border: none;
+      }
     }
     .Dropdown-menu {
       text-align: left;
@@ -36,6 +41,9 @@
       right: -1px;
       bottom: -1px;
       border: none;
+      @media print {
+        display: none;
+      }
     }
     .is-open .Dropdown-arrow {
       background-color: color(dropdown-arrow-active-bg);
@@ -64,6 +72,9 @@
   @extend %base-dropdown;
   :global .Dropdown-control {
     padding: 4px 32px 4px 12px;
+    @media print {
+      padding: 0;
+    }
   }
 }
 
@@ -71,9 +82,15 @@
   @extend %base-dropdown;
   :global .Dropdown-control {
     padding: 0 32px 0 12px;
+    @media print {
+      padding: 0;
+    }
   }
   :global .Dropdown-option {
     padding: 2px 10px;
+    @media print {
+      padding: 0;
+    }
   }
 }
 
@@ -82,10 +99,16 @@
   :global .Dropdown-control {
     padding: 8px 64px 8px 24px;
     font-size: 1.5rem;
+    @media print {
+      padding: 0;
+    }
   }
   :global .Dropdown-option {
     padding: 16px 20px;
     font-size: 1.5rem;
+    @media print {
+      padding: 0;
+    }
   }
   :global .Dropdown-arrow {
     width: 42px;

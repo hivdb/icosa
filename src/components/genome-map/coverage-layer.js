@@ -91,7 +91,7 @@ function CoverageLayer({
   scaleX,
   posStart,
   posEnd,
-  fill = '#c0c0c0',
+  fill = '#dadada',
   coverageUpperLimit,
   coverages
 }) {

@@ -81,6 +81,10 @@ article.sequence-article, article.seqreads-article, article.pattern-article {
   margin-left: .8rem;
   margin-right: .8rem;
   @media print {
-    display: none;
+    display: none !important;
   }
+}
+
+.no-page-break {
+  page-break-inside: avoid;
 }

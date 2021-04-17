@@ -98,7 +98,19 @@ ul.mutation-list {
           font-weight: 200;
           line-height: 1em;
           padding-left: 0;
+          @media print {
+            color: black;
+          }
         }
+      }
+    }
+  }
+  @media print {
+    column-count: 2;
+    > li.gene-item {
+      page-break-inside: avoid;
+      &:not(:first-of-type) {
+        margin-top: .1rem;
       }
     }
   }

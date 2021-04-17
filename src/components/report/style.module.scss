@@ -631,3 +631,9 @@ section.alg-comparison {
     background-color: color(paginator-opt-bg);
   }
 }
+
+.reference-section {
+  @media print {
+    display: none;
+  }
+}

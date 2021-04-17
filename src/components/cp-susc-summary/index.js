@@ -189,6 +189,7 @@ function ConvPlasmaSuscSummary({
     return (
       <SimpleTable
        compact lastCompact disableCopy
+       className={style['cp-susc-summary']}
        getRowKey={getRowKey}
        columnDefs={buildColumnDefs(itemsByKeyMutations)}
        data={payload} />
