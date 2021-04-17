@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SeqAnalysisQuery from './query';
 
-import {calcInitOffsetLimit} from '../chunk-query';
+import {calcInitOffsetLimit} from '../cumu-query';
 
 
 function SequenceAnalysisContainer(props) {
@@ -42,6 +42,7 @@ function SequenceAnalysisContainer(props) {
      sequences={sequences}
      {...calcInitOffsetLimit({
        size: sequences,
+       curIndex: currentSelected.index,
        lazyLoad
      })}>
       {children}

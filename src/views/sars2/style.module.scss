@@ -1,8 +1,11 @@
 @import '../../styles/colors';
+@import '../../styles/placeholder';
 
 html[data-no-smooth-scroll] {
   scroll-behavior: initial !important;
 }
+
+$article-padding-top: 2rem;
 
 .sierra-webui {
   svg {
@@ -17,10 +20,18 @@ html[data-no-smooth-scroll] {
   }
 }
 
+main.main {
+  margin-top: - $article-padding-top;
+}
+
 article.sequence-article, article.seqreads-article, article.pattern-article {
   width: 100%;
+  &[data-loaded="false"] {
+    @extend %placeholder;
+    min-height: 40vh;
+  }
   margin-bottom: 6rem;
-  padding-top: 2rem;
+  padding-top: $article-padding-top;
   header.sequence-header, header.seqreads-header, header.pattern-header {
     color: color(seq-title);
     padding: 1rem 0;

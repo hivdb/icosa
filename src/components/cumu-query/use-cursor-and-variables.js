@@ -6,17 +6,22 @@ export default function useCursorAndVariables({
   initLimit,
   isCached,
   inputObjs,
+  currentSelected: {
+    index: loadFirstIndex
+  },
   inputUniqKeyName,
   mainInputName,
   maxPerRequest,
   onExtendVariables
 }) {
   const [cursor, setCursor] = React.useState({
+    loadFirstIndex,
     offset: initOffset,
     limit: initLimit
   });
   const getVariables = React.useCallback(
     ({
+      loadFirstIndex,
       offset,
       limit
     }) => {
@@ -24,7 +29,21 @@ export default function useCursorAndVariables({
       const queryObjs = [];
       let fetchedCount = 0;
       let isCursorFulfilled = true;
-      for (let idx = offset; idx < end; idx ++) {
+
+      let idxStart = offset;
+      const loadFirstObj = inputObjs[loadFirstIndex];
+      if (!loadFirstObj) {
+        throw new Error(
+          `InputObjs index out of bound: loadFirstObj=${loadFirstObj}`
+        );
+      }
+      if (!isCached(loadFirstObj[inputUniqKeyName])) {
+        // the loadFirstObj is not cached, load it first
+        isCursorFulfilled = false;
+        idxStart = loadFirstIndex;
+      }
+
+      for (let idx = idxStart; idx < end; idx ++) {
         const inputObj = inputObjs[idx];
         if (!inputObj) {
           break;

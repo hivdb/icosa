@@ -30,21 +30,6 @@ function getPageTitle(patternAnalysis, output) {
 }
 
 
-function calcIndexOffset({
-  patternAnalysis,
-  patterns
-}) {
-  let indexOffset = 0;
-  if (patternAnalysis.length > 0) {
-    const [{name: firstName}] = patternAnalysis;
-    indexOffset = patterns.findIndex(
-      ({name}) => firstName === name
-    );
-  }
-  return indexOffset;
-}
-
-
 function PatternReports({
   output,
   genes,
@@ -74,10 +59,13 @@ function PatternReports({
   const pageTitle = getPageTitle(patternAnalysis, output);
   setTitle(pageTitle);
 
-  const indexOffset = calcIndexOffset({
-    patternAnalysis,
-    patterns
-  });
+  const patResultLookup = patternAnalysis.reduce(
+    (acc, pr) => {
+      acc[pr.name] = pr;
+      return acc;
+    },
+    {}
+  );
 
   return <>
     {output === 'printable' ?
@@ -85,19 +73,18 @@ function PatternReports({
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
-      {patternAnalysis.map((patternResult, idx) => (
-        <React.Fragment key={indexOffset + idx}>
+      {patterns.map((pat, idx) => (
+        <React.Fragment key={idx}>
           <SinglePatternReport
-           key={indexOffset + idx}
-           inputPattern={patterns.find(
-             ({name}) => patternResult.name === name
-           )}
+           key={idx}
+           inputPattern={pat}
            currentSelected={currentSelected}
-           patternResult={patternResult}
+           patternResult={patResultLookup[pat.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}
-           index={indexOffset + idx}
+           name={pat.name}
+           index={idx}
            species={species}
            match={match}
            router={router}

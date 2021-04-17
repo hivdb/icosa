@@ -26,54 +26,57 @@ function SinglePatternReport({
   router,
   patternResult,
   output,
+  name,
   index,
   onObserve,
   onDisconnect
 }) {
   const {
-    name,
     allGeneMutations
-  } = patternResult;
+  } = patternResult || {};
 
   return (
     <article
      key={name}
+     data-loaded={!!patternResult}
      className={style['pattern-article']}>
-      <RefContextWrapper>
-        <ReportHeader
-         output={output}
-         name={name}
-         index={index}
-         onObserve={onObserve}
-         onDisconnect={onDisconnect} />
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer noUnseqRegions {...{
-            allGeneSeqs: allGeneMutations,
-            output
-          }} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...patternResult} {...{output}} />
-        </ReportSection>
-        <ReportSection title="Mutation comments">
-          <SARS2MutComments {...patternResult} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...patternResult} {...{output}} />
-        </ReportSection>
-        <ReportSection title="Convalescent plasma susceptibility summary">
-          <CPSuscSummary
-           {...patternResult} {...{output}} />
-        </ReportSection>
-        <ReportSection
-         title="Plasma from vaccinated persons susceptibility summary">
-          <VPSuscSummary
-           {...patternResult} {...{output}} />
-        </ReportSection>
-        <RefsSection />
-      </RefContextWrapper>
+      <ReportHeader
+       output={output}
+       name={name}
+       index={index}
+       onObserve={onObserve}
+       onDisconnect={onDisconnect} />
+      {patternResult ? <>
+        <RefContextWrapper>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer noUnseqRegions {...{
+              allGeneSeqs: allGeneMutations,
+              output
+            }} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...patternResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
+             {...patternResult} {...{output}} />
+          </ReportSection>
+          <RefsSection />
+        </RefContextWrapper>
+      </> : null}
     </article>
   );
 }
@@ -84,7 +87,7 @@ SinglePatternReport.propTypes = {
   species: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
-  patternResult: PropTypes.object.isRequired,
+  patternResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   antibodies: PropTypes.array.isRequired,

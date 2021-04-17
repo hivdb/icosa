@@ -28,6 +28,7 @@ function SingleSequenceReport({
   router,
   sequenceResult,
   output,
+  header,
   index,
   onObserve,
   onDisconnect
@@ -35,12 +36,12 @@ function SingleSequenceReport({
 
   const {
     alignedGeneSequences,
-    inputSequence: {header},
-    strain: {name: strain}
-  } = sequenceResult;
+    strain: {name: strain} = {}
+  } = sequenceResult || {};
 
   return (
     <article
+     data-loaded={!!sequenceResult}
      className={style['sequence-article']}>
       <RefContextWrapper>
         <ReportHeader
@@ -49,41 +50,43 @@ function SingleSequenceReport({
          index={index}
          onObserve={onObserve}
          onDisconnect={onDisconnect} />
-        <SeqSummary {...sequenceResult} {...{output, strain}}>
-          <SeqSummary.InlineGeneRange />
-          <SeqSummary.PrettyPairwise />
-          <SeqSummary.PangolinLineage />
-        </SeqSummary>
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer {...{
-            allGeneSeqs: alignedGeneSequences,
-            output,
-            strain
-          }} />
-          <ValidationReport {...sequenceResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...sequenceResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Mutation comments">
-          <SARS2MutComments {...sequenceResult} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...sequenceResult}
-           {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Convalescent plasma susceptibility summary">
-          <CPSuscSummary
-           {...sequenceResult} {...{output}} />
-        </ReportSection>
-        <ReportSection
-         title="Plasma from vaccinated persons susceptibility summary">
-          <VPSuscSummary
-           {...sequenceResult} {...{output}} />
-        </ReportSection>
-        <RefsSection />
+        {sequenceResult ? <>
+          <SeqSummary {...sequenceResult} {...{output, strain}}>
+            <SeqSummary.InlineGeneRange />
+            <SeqSummary.PrettyPairwise />
+            <SeqSummary.PangolinLineage />
+          </SeqSummary>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer {...{
+              allGeneSeqs: alignedGeneSequences,
+              output,
+              strain
+            }} />
+            <ValidationReport {...sequenceResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...sequenceResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...sequenceResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...sequenceResult}
+             {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...sequenceResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
+             {...sequenceResult} {...{output}} />
+          </ReportSection>
+          <RefsSection />
+        </> : null}
       </RefContextWrapper>
     </article>
   );
@@ -95,7 +98,7 @@ SingleSequenceReport.propTypes = {
   species: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   antibodies: PropTypes.array.isRequired,
-  sequenceResult: PropTypes.object.isRequired,
+  sequenceResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onObserve: PropTypes.func.isRequired
@@ -108,18 +111,21 @@ export default React.memo(
       index: prevIndex,
       output: prevOutput,
       onObserve: prevOnObserve,
-      sequenceResult: {inputSequence: {header: prevHeader}}
+      header: prevHeader,
+      sequenceResult: prevResult
     },
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
-      sequenceResult: {inputSequence: {header: nextHeader}}
+      header: nextHeader,
+      sequenceResult: nextResult
     }
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
     prevOnObserve === nextOnObserve &&
-    prevHeader === nextHeader
+    prevHeader === nextHeader &&
+    prevResult === nextResult
   )
 );

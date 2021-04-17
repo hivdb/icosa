@@ -51,7 +51,7 @@ function ReportHeader({
 ReportHeader.propTypes = {
   output: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  index: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
   onObserve: PropTypes.func.isRequired
 };
 

@@ -41,77 +41,72 @@ function SingleSeqReadsReport({
   inputSequenceReads,
   sequenceReadsResult,
   output,
+  name,
   index,
   onObserve,
   onDisconnect
 }) {
 
   const {
-    name,
-    strain: {display: strain},
-    readDepthStats: {p95: coverageUpperLimit},
+    strain: {display: strain} = {},
+    readDepthStats: {p95: coverageUpperLimit} = {},
     allGeneSequenceReads
-  } = sequenceReadsResult;
+  } = sequenceReadsResult || {};
 
   const coverages = useCoverages(inputSequenceReads);
 
-  if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
-    console.log(
-      `render SingleSeqReadsReport ${index} ${name}`,
-      (new Date()).getTime()
-    );
-  }
-
   return (
     <article
+     data-loaded={!!sequenceReadsResult}
      className={style['seqreads-article']}>
-      <RefContextWrapper>
-        <ReportHeader
-         output={output}
-         name={name}
-         index={index}
-         onObserve={onObserve}
-         onDisconnect={onDisconnect} />
-        <SeqSummary {...sequenceReadsResult} output={output}>
-          <SeqSummary.InlineGeneRange />
-          <SeqSummary.MedianReadDepth />
-          <SeqSummary.PangolinLineage />
-          <SeqSummary.MinPrevalence />
-          <SeqSummary.MinCodonReads />
-        </SeqSummary>
-        <ReportSection title="Sequence quality assessment">
-          <MutViewer {...{
-            coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
-            allGeneSeqs: allGeneSequenceReads,
-            coverages,
-            output,
-            strain
-          }} />
-        </ReportSection>
-        <ReportSection title="Mutation list">
-          <MutList {...sequenceReadsResult} {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Mutation comments">
-          <SARS2MutComments {...sequenceReadsResult} />
-        </ReportSection>
-        <ReportSection title="MAb susceptibility summary">
-          <AntibodySuscSummary
-           antibodies={antibodies}
-           {...sequenceReadsResult}
-           {...{output, strain}} />
-        </ReportSection>
-        <ReportSection title="Convalescent plasma susceptibility summary">
-          <CPSuscSummary
-           {...sequenceReadsResult} {...{output}} />
-        </ReportSection>
-        <ReportSection
-         title="Plasma from vaccinated persons susceptibility summary">
-          <VPSuscSummary
-           {...sequenceReadsResult} {...{output}} />
-        </ReportSection>
-        <RefsSection />
-      </RefContextWrapper>
+      <ReportHeader
+       output={output}
+       name={name}
+       index={index}
+       onObserve={onObserve}
+       onDisconnect={onDisconnect} />
+      {sequenceReadsResult ? <>
+        <RefContextWrapper>
+          <SeqSummary {...sequenceReadsResult} output={output}>
+            <SeqSummary.InlineGeneRange />
+            <SeqSummary.MedianReadDepth />
+            <SeqSummary.PangolinLineage />
+            <SeqSummary.MinPrevalence />
+            <SeqSummary.MinCodonReads />
+          </SeqSummary>
+          <ReportSection title="Sequence quality assessment">
+            <MutViewer {...{
+              coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
+              allGeneSeqs: allGeneSequenceReads,
+              coverages,
+              output,
+              strain
+            }} />
+          </ReportSection>
+          <ReportSection title="Mutation list">
+            <MutList {...sequenceReadsResult} {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Mutation comments">
+            <SARS2MutComments {...sequenceReadsResult} />
+          </ReportSection>
+          <ReportSection title="MAb susceptibility summary">
+            <AntibodySuscSummary
+             antibodies={antibodies}
+             {...sequenceReadsResult}
+             {...{output, strain}} />
+          </ReportSection>
+          <ReportSection title="Convalescent plasma susceptibility summary">
+            <CPSuscSummary
+             {...sequenceReadsResult} {...{output}} />
+          </ReportSection>
+          <ReportSection
+           title="Plasma from vaccinated persons susceptibility summary">
+            <VPSuscSummary
+             {...sequenceReadsResult} {...{output}} />
+          </ReportSection>
+          <RefsSection />
+        </RefContextWrapper>
+      </> : null}
     </article>
   );
 
@@ -123,7 +118,7 @@ SingleSeqReadsReport.propTypes = {
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   inputSequenceReads: PropTypes.array.isRequired,
-  sequenceReadsResult: PropTypes.object.isRequired,
+  sequenceReadsResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onObserve: PropTypes.func.isRequired
@@ -138,20 +133,20 @@ export default React.memo(
       output: prevOutput,
       onObserve: prevOnObserve,
       inputSequenceReads: prevInputSeq,
-      sequenceReadsResult: {name: prevName}
+      sequenceReadsResult: prevResult
     },
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
       inputSequenceReads: nextInputSeq,
-      sequenceReadsResult: {name: nextName}
+      sequenceReadsResult: nextResult
     }
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
     prevOnObserve === nextOnObserve &&
     prevInputSeq === nextInputSeq &&
-    prevName === nextName
+    prevResult === nextResult
   )
 );

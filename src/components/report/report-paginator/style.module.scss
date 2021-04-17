@@ -16,12 +16,18 @@
     transition: background-color 200ms ease-in-out;
     z-index: -2;
   }
-  font-size: .85rem;
+  font-size: .8rem;
+  &::before {
+    background-color: white;
+  }
+  transition: opacity 150ms ease-in-out;
   &[data-fixed="true"] {
-    font-size: .7rem;
+    opacity: 1;
     &::before {
       background-color: color(paginator-opt-bg);
-      border-bottom: 1px solid color(paginator-opt-border);
+    }
+    &:hover {
+      opacity: .95;
     }
   }
 }

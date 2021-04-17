@@ -63,6 +63,7 @@ function ReportPaginator({
      data-fixed={fixed}
      className={style['report-paginator-container']}>
       <Paginator
+       inverseColor={fixed}
        footnote={<>
          This submission contains {inputObjs.length} sequences.
        </>}

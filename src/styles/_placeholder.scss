@@ -1,0 +1,29 @@
+%placeholder {
+
+  position: relative;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 50%;
+    z-index: 100;
+    width: 500%;
+    margin-left: -250%;
+    background: linear-gradient(to right, rgba(#fff, 0) 46%, rgba(#fff, 0.35) 50%, rgba(#fff, 0) 54%) 50% 50%;
+    animation: phAnimation 0.8s linear infinite;
+    content: " ";
+    pointer-events: none;
+  }
+
+}
+
+@keyframes phAnimation {
+  0% {
+    transform: translate3d(-30%, 0, 0);
+  }
+  100% {
+    transform: translate3d(30%, 0, 0);
+  }
+}

@@ -54,6 +54,7 @@ function calcDisplayOffsets({
 
 
 function Paginator({
+  inverseColor,
   footnote,
   currentSelected,
   className,
@@ -125,7 +126,11 @@ function Paginator({
        '--total': childItems.length,
        '--display-nums': displayNums
      }}
-     className={classNames(className, style['paginator-container'])}>
+     className={classNames(
+       className,
+       style['paginator-container'],
+       inverseColor ? style['inverse-color'] : null
+     )}>
       <div
        className={style['paginator-desc']}
        data-is-hovering={!!currentHovering}
@@ -150,6 +155,7 @@ function Paginator({
 
 
 Paginator.propTypes = {
+  inverseColor: PropTypes.bool,
   footnote: PropTypes.node,
   currentSelected: PropTypes.string,
   className: PropTypes.string,

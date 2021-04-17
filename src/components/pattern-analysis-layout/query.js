@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 
 import FixedLoader from '../fixed-loader';
-import useChunkQuery from '../chunk-query';
+import useCumuQuery from '../cumu-query';
 import SmoothProgressBar from '../smooth-progress-bar';
 import {
   includeFragment, includeFragmentIfExist
@@ -67,7 +67,7 @@ function PatternAnalysisQuery({
     data,
     progressObj,
     onSelect
-  } = useChunkQuery({
+  } = useCumuQuery({
     query: getQuery(queryFragment, extraParams),
     lazyLoad,
     inputObjs: patterns,

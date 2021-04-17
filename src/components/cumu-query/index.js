@@ -49,6 +49,7 @@ export default function useChunkQuery({
   } = useCursorAndVariables({
     initOffset,
     initLimit,
+    currentSelected,
     isCached,
     onExtendVariables,
     ...commonProps

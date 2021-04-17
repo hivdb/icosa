@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import SeqReadsAnalysisQuery from './query';
 
-import {calcInitOffsetLimit} from '../chunk-query';
+import {calcInitOffsetLimit} from '../cumu-query';
 
 const SeqReadsContext = React.createContext({});
 
@@ -45,6 +45,7 @@ function SeqReadsAnalysisContainer(props) {
        allSequenceReads={allSequenceReads}
        {...calcInitOffsetLimit({
          size: allSequenceReads.length,
+         curIndex: currentSelected.index,
          lazyLoad
        })}>
         {children}

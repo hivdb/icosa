@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 
 import PatAnalysisQuery from './query';
 
-import {calcInitOffsetLimit} from '../chunk-query';
+import {calcInitOffsetLimit} from '../cumu-query';
 
 
 function PatternAnalysisContainer(props) {
   const {
+    currentSelected,
     patterns,
     lazyLoad
   } = props;
@@ -17,6 +18,7 @@ function PatternAnalysisContainer(props) {
      {...props}
      {...calcInitOffsetLimit({
        size: patterns.length,
+       curIndex: currentSelected.index,
        lazyLoad
      })} />
   );

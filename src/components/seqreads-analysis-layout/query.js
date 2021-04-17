@@ -8,7 +8,7 @@ import {
   includeFragment, includeFragmentIfExist
 } from '../../utils/graphql-helper';
 
-import useChunkQuery from '../chunk-query';
+import useCumuQuery from '../cumu-query';
 
 
 const MAX_PER_REQUEST = 1;
@@ -62,7 +62,7 @@ function SeqReadsAnalysisQuery({
     data,
     progressObj,
     onSelect
-  } = useChunkQuery({
+  } = useCumuQuery({
     query: getQuery(queryFragment, extraParams),
     lazyLoad,
     inputObjs: allSequenceReads,

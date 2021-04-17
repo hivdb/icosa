@@ -32,21 +32,6 @@ function getPageTitle(sequenceAnalysis, output) {
 }
 
 
-function calcIndexOffset({
-  sequenceAnalysis,
-  sequences
-}) {
-  let indexOffset = 0;
-  if (sequenceAnalysis.length > 0) {
-    const firstHeader = sequenceAnalysis[0].inputSequence.header;
-    indexOffset = sequences.findIndex(
-      ({header}) => firstHeader === header
-    );
-  }
-  return indexOffset;
-}
-
-
 function SequenceReports({
   output,
   genes,
@@ -76,10 +61,13 @@ function SequenceReports({
   const pageTitle = getPageTitle(sequenceAnalysis, output);
   setTitle(pageTitle);
 
-  const indexOffset = calcIndexOffset({
-    sequenceAnalysis,
-    sequences
-  });
+  const seqResultLookup = sequenceAnalysis.reduce(
+    (acc, sr) => {
+      acc[sr.inputSequence.header] = sr;
+      return acc;
+    },
+    {}
+  );
 
   return <>
     {output === 'printable' ?
@@ -87,17 +75,18 @@ function SequenceReports({
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
-      {sequenceAnalysis.map((seqResult, idx) => (
-        <React.Fragment key={indexOffset + idx}>
+      {sequences.map(({header}, idx) => (
+        <React.Fragment key={idx}>
           <SingleSequenceReport
-           key={indexOffset + idx}
+           key={idx}
            antibodies={antibodies}
            currentSelected={currentSelected}
-           sequenceResult={seqResult}
+           sequenceResult={seqResultLookup[header]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}
-           index={indexOffset + idx}
+           header={header}
+           index={idx}
            species={species}
            match={match} />
           {idx + 1 < sequenceAnalysis.length ?

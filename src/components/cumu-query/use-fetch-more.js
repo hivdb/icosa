@@ -2,7 +2,7 @@ import React from 'react';
 import nestGet from 'lodash/get';
 import {useRouter} from 'found';
 
-import {calcOffsetLimit} from '../chunk-query';
+import {calcOffsetLimit} from './funcs';
 
 
 export default function useFetchMore({
@@ -19,12 +19,13 @@ export default function useFetchMore({
   isCursorFulfilled
 }) {
   const onFetchMore = React.useCallback(
-    ({offset, limit, isCursorFulfilled = true}) => {
+    ({loadFirstIndex, offset, limit, isCursorFulfilled = true}) => {
       const {
         variables,
         fetchedCount,
         fetchingCount
       } = getVariables({
+        loadFirstIndex,
         offset,
         limit
       });
@@ -34,12 +35,13 @@ export default function useFetchMore({
       // but not changing the cursor.
       if (
         isCursorFulfilled && (
+          loadFirstIndex !== cursor.loadFirstIndex ||
           offset !== cursor.offset ||
           limit !== cursor.limit
         )
       ) {
         // cursor fulfilled, change it to next
-        setCursor({offset, limit});
+        setCursor({loadFirstIndex, offset, limit});
       }
 
       const numNextSeqReads = variables[mainInputName].length;
@@ -169,7 +171,6 @@ export default function useFetchMore({
   return {
     loaded,
     progressObj,
-    onFetchMore,
     onSelect
   };
 }

@@ -1,8 +1,13 @@
 import React from 'react';
 
 
-function ensureScrollTo(top, callback, smoothMaxDelta = 0) {
-  const enableSmooth = Math.abs(top - window.pageYOffset) < smoothMaxDelta;
+function inView(node) {
+  let {top, bottom} = node.getBoundingClientRect();
+  return top >= 0 && bottom <= window.innerHeight;
+}
+
+
+function ensureScrollTo(top, callback) {
   const checkScroll = () => {
     if (Math.abs(window.pageYOffset - top) < 15) {
       window.removeEventListener('scroll', checkScroll, false);
@@ -16,13 +21,8 @@ function ensureScrollTo(top, callback, smoothMaxDelta = 0) {
   };
   window.addEventListener('scroll', checkScroll, false);
   let behavior = 'auto';
-  if (enableSmooth) {
-    behavior = 'smooth';
-  }
-  else {
-    // disable global smooth scroll
-    document.documentElement.dataset.noSmoothScroll = '';
-  }
+  // disable global smooth scroll
+  document.documentElement.dataset.noSmoothScroll = '';
   window.scrollTo({top, behavior});
 }
 
@@ -40,6 +40,7 @@ export default function useScrollObserver({
   current.loaded = loaded;
   current.name = currentSelected.name;
   current.output = output;
+  current.onSelectItem = onSelectItem;
 
   const resetScrollObserver = React.useCallback(
     () => {
@@ -69,7 +70,7 @@ export default function useScrollObserver({
         if (
           isIntersecting &&
           curRatio > prevRatio &&
-          curRatio > 0.9
+          curRatio > 0.5
         ) {
           // enter
           current.candidateMap[index] = name;
@@ -88,14 +89,13 @@ export default function useScrollObserver({
         candidates.sort(([a], [b]) => a - b);
         const [[,newName]] = candidates;
         if (newName !== current.name) {
-          await onSelectItem(candidates[0][1]);
+          await current.onSelectItem(candidates[0][1]);
           current.name = newName;
         }
       }
     },
     [
-      current,
-      onSelectItem
+      current
     ]
   );
 
@@ -106,15 +106,16 @@ export default function useScrollObserver({
         rootMargin: '-50px 0px -30% 0px',
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
       };
+      if (current.observer) {
+        current.observer.disconnect();
+      }
       current.observer = new IntersectionObserver(observerCallback, options);
+      for (const node of Object.values(current.observingNodes)) {
+        current.observer.observe(node);
+      }
       resetScrollObserver();
     },
     [current, observerCallback, resetScrollObserver]
-  );
-
-  const unregisterScrollObserver = React.useCallback(
-    () => current.observer.disconnect(),
-    [current]
   );
 
   React.useEffect(
@@ -123,21 +124,38 @@ export default function useScrollObserver({
         return;
       }
       registerScrollObserver();
-      return unregisterScrollObserver();
     },
     [
       output, current,
-      registerScrollObserver,
-      unregisterScrollObserver
+      registerScrollObserver
     ]
+  );
+
+  const scrollTo = React.useCallback(
+    (name, callback = () => null) => {
+      const node = current.observingNodes[name];
+      if (node) {
+        if (inView(node)) {
+          callback();
+          return;
+        }
+        let {top} = node.getBoundingClientRect();
+
+        top += window.pageYOffset - 150;
+        ensureScrollTo(top, callback);
+      }
+    },
+    [current]
   );
 
   const onObserve = React.useCallback(
     ({name, index, node}) => {
       node.dataset.scrollObserveName = name;
       node.dataset.scrollObserveIndex = index;
-      current.observer.observe(node);
       current.observingNodes[name] = node;
+      if (current.observer) {
+        current.observer.observe(node);
+      }
     },
     [current]
   );
@@ -146,7 +164,6 @@ export default function useScrollObserver({
     ({node}) => {
       const name = node.dataset.scrollObserveName;
       delete current.observingNodes[name];
-      current.observer.disconnect(node);
     },
     [current]
   );
@@ -154,25 +171,6 @@ export default function useScrollObserver({
   const preventScrollObserver = React.useCallback(
     () => {
       current.preventObserver = true;
-    },
-    [current]
-  );
-
-  const scrollTo = React.useCallback(
-    (name, callback = () => null) => {
-      const node = current.observingNodes[name];
-      if (node) {
-        let {top, bottom} = node.getBoundingClientRect();
-
-        if (top >= 0 && bottom - (bottom - top) * .9 <= window.innerHeight) {
-          // in viewport
-          callback();
-          return;
-        }
-
-        top += window.pageYOffset - 150;
-        ensureScrollTo(top, callback);
-      }
     },
     [current]
   );

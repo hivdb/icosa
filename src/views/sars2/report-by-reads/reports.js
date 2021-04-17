@@ -30,21 +30,6 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 }
 
 
-function calcIndexOffset({
-  sequenceReadsAnalysis,
-  allSequenceReads
-}) {
-  let indexOffset = 0;
-  if (sequenceReadsAnalysis.length > 0) {
-    const [{name: firstName}] = sequenceReadsAnalysis;
-    indexOffset = allSequenceReads.findIndex(
-      ({name}) => firstName === name
-    );
-  }
-  return indexOffset;
-}
-
-
 function SeqReadsReports({
   output,
   genes,
@@ -74,10 +59,13 @@ function SeqReadsReports({
   const pageTitle = getPageTitle(sequenceReadsAnalysis, output);
   setTitle(pageTitle);
 
-  const indexOffset = calcIndexOffset({
-    sequenceReadsAnalysis,
-    allSequenceReads
-  });
+  const seqReadsResultLookup = sequenceReadsAnalysis.reduce(
+    (acc, srr) => {
+      acc[srr.name] = srr;
+      return acc;
+    },
+    {}
+  );
 
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
@@ -90,19 +78,18 @@ function SeqReadsReports({
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
-      {sequenceReadsAnalysis.map((seqReadsResult, idx) => (
-        <React.Fragment key={indexOffset + idx}>
+      {allSequenceReads.map((inputSeqReads, idx) => (
+        <React.Fragment key={idx}>
           <SingleSeqReadsReport
-           key={indexOffset + idx}
-           inputSequenceReads={allSequenceReads.find(
-             ({name}) => seqReadsResult.name === name
-           )}
+           key={idx}
+           inputSequenceReads={inputSeqReads}
            antibodies={antibodies}
-           sequenceReadsResult={seqReadsResult}
+           sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}
-           index={indexOffset + idx}
+           name={inputSeqReads.name}
+           index={idx}
            species={species}
            match={match}
            router={router}

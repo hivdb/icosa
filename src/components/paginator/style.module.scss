@@ -41,6 +41,19 @@ $desc-margin-left: css-calc(
 );
 
 .paginator-container {
+  --color-dark: var(--sierra-color-paginator-dark);
+  --color-dark-hover: var(--sierra-color-paginator-dark-hover);
+  --color-light: var(--sierra-color-paginator-light);
+  --color-light-hover: var(--sierra-color-paginator-light-hover);
+  --color-text: var(--sierra-color-paginator-text);
+
+  &.inverse-color {
+    --color-dark: var(--sierra-color-paginator-light);
+    --color-dark-hover: var(--sierra-color-paginator-light-hover);
+    --color-light: var(--sierra-color-paginator-dark);
+    --color-light-hover: var(--sierra-color-paginator-dark-hover);
+    --color-text: var(--sierra-color-paginator-text-inverse);
+  }
   position: relative;
   width: calc(#{$item-outer-size} * 2 + #{$client-width});
   padding-left: calc(#{$item-outer-size});
@@ -74,7 +87,7 @@ $desc-margin-left: css-calc(
   &::after {
     position: absolute;
     top: 0;
-    color: color(paginator-text);
+    color: var(--color-dark);
     left: calc(#{$item-size} / 2);
   }
   
@@ -86,7 +99,7 @@ $desc-margin-left: css-calc(
 
   &:hover > .paginator-arrow_desc {
     opacity: $hover-opacity;
-    background-color: color(paginator-text-hover-bg);
+    background-color: var(--color-light-hover);
   }
 
   &[data-direction="-1"] {
@@ -137,7 +150,7 @@ $desc-margin-left: css-calc(
     }
 
     &::after {
-      color: color(paginator-text);
+      color: var(--color-dark);
       position: absolute;
       top: 0;
       left: calc(#{$item-size} / 2);
@@ -156,29 +169,29 @@ $desc-margin-left: css-calc(
   &[data-is-hovering="true"] > .paginator-item_link {
     > .paginator-item_desc {
       opacity: $hover-opacity;
-      background-color: color(paginator-text-hover-bg);
+      background-color: var(--color-light-hover);
     }
     &::after {
-      color: color(paginator-text-hover);
+      color: var(--color-text);
     }
   }
 
   &[data-is-selected="true"] > .paginator-item_link {
     > .paginator-item_desc {
-      background-color: color(paginator-text-current-bg);
+      background-color: var(--color-dark);
     }
     &::after {
-      color: color(paginator-text-current);
+      color: var(--color-light);
     }
   }
 
   &[data-is-hovering="true"][data-is-selected="true"] > .paginator-item_link {
     > .paginator-item_desc {
       opacity: 1;
-      background-color: color(paginator-text-current-hover-bg);
+      background-color: var(--color-dark-hover);
     }
     ::after {
-      color: color(paginator-text-current);
+      color: var(--color-light);
     }
   }
   
@@ -195,7 +208,7 @@ $desc-margin-left: css-calc(
   max-width: calc(#{$desc-width});
   padding-left: calc(#{$item-size} / 3);
   padding-right: calc(#{$item-size} / 3);
-  color: color(paginator-text-current);
+  color: var(--color-light);
   transition: all 200ms ease-in-out;
   overflow: hidden;
   white-space: nowrap;
@@ -209,22 +222,22 @@ $desc-margin-left: css-calc(
     bottom: 0;
     content: "";
     transition: background-color 200ms ease-in-out;
-    background-color: color(paginator-text-current-bg);
+    background-color: var(--color-dark);
     z-index: -1;
   }
 
   &[data-is-hovering="true"] {
     &::before {
       opacity: $hover-opacity;
-      background-color: color(paginator-text-hover-bg);
+      background-color: var(--color-light-hover);
     }
-    color: color(paginator-text-hover);
+    color: var(--color-text);
     &[data-is-hovering-selected="true"] {
       &::before {
         opacity: 1;
-        background-color: color(paginator-text-current-hover-bg);
+        background-color: var(--color-dark-hover);
       }
-      color: color(paginator-text-current);
+      color: var(--color-light);
     }
   }
 }
@@ -244,7 +257,7 @@ $desc-margin-left: css-calc(
     left: 0;
     right: 0;
     bottom: .5em;
-    background-color: color(paginator-scrollbar);
+    background-color: var(--color-text);
     opacity: 0;
     transition: opacity 200ms ease-in-out;
   }
@@ -263,7 +276,7 @@ $desc-margin-left: css-calc(
       width: $scrollbar-width;
       height: .25em;
       opacity: .4;
-      background-color: color(paginator-scrollbar);
+      background-color: var(--color-text);
       transition: opacity 200ms ease-in-out;
     }
     &:hover::before {
@@ -289,7 +302,7 @@ $desc-margin-left: css-calc(
 }
 
 .paginator-container > .paginator-footnote {
-  color: color(paginator-footnote-text);
+  color: var(--color-text);
   opacity: .7;
   font-size: .85em;
 }
