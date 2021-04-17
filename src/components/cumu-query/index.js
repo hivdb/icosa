@@ -8,7 +8,7 @@ import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
 
 export {calcOffsetLimit, calcInitOffsetLimit};
 
-export default function useChunkQuery({
+export default function useCumuQuery({
   query,
   lazyLoad,
   inputObjs,

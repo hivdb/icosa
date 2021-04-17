@@ -41,7 +41,7 @@ function SequenceAnalysisContainer(props) {
      onExtendVariables={onExtendVariables}
      sequences={sequences}
      {...calcInitOffsetLimit({
-       size: sequences,
+       size: sequences.length,
        curIndex: currentSelected.index,
        lazyLoad
      })}>

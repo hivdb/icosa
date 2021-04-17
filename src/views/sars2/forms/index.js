@@ -70,6 +70,11 @@ function SierraForms({
          )
        }
      }}
+     seqReadsOutputOptions={{
+       __printable: {
+         label: 'Printable HTML'
+       }
+     }}
     />
   </>;
 }

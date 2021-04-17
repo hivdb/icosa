@@ -78,8 +78,8 @@ function ReportPaginator({
 ReportPaginator.propTypes = {
   inputObjs: PropTypes.array,
   currentSelected: PropTypes.shape({
-    index: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired
+    index: PropTypes.number,
+    name: PropTypes.string
   }),
   onSelect: PropTypes.func
 };

@@ -74,7 +74,7 @@ function SeqReadsReports({
 
   return <>
     {output === 'printable' ?
-      <PrintHeader species={species} /> :
+      <PrintHeader curAnalysis="seqreads-analysis" /> :
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
@@ -82,6 +82,7 @@ function SeqReadsReports({
         <React.Fragment key={idx}>
           <SingleSeqReadsReport
            key={idx}
+           species={species}
            inputSequenceReads={inputSeqReads}
            antibodies={antibodies}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
@@ -90,7 +91,6 @@ function SeqReadsReports({
            output={output}
            name={inputSeqReads.name}
            index={idx}
-           species={species}
            match={match}
            router={router}
            genes={genes} />

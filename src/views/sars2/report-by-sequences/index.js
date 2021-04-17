@@ -38,6 +38,7 @@ function ReportBySequencesContainer({
   });
 
   return <SeqAnalysisLayout
+   species={config.species}
    query={query}
    client={client}
    sequences={sequences}

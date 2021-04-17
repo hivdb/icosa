@@ -71,7 +71,7 @@ function SequenceReports({
 
   return <>
     {output === 'printable' ?
-      <PrintHeader species={species} /> :
+      <PrintHeader curAnalysis="sequence-analysis" /> :
       paginator
     }
     <main className={style.main} data-loaded={loaded}>

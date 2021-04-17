@@ -48,6 +48,7 @@ export default class AnalyzeForms extends React.Component {
     enableReads: PropTypes.bool.isRequired,
     hideReads: PropTypes.bool.isRequired,
     sequencesOutputOptions: PropTypes.object,
+    seqReadsOutputOptions: PropTypes.object,
     children: PropTypes.node
   }
 
@@ -107,6 +108,7 @@ export default class AnalyzeForms extends React.Component {
           <TabPanel>
             <SequenceReadsInputForm
              to={this.props.readsTo}
+             outputOptions={this.props.seqReadsOutputOptions}
              {...commonProps} />
           </TabPanel>
         </Tabs>

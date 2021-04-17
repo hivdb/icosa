@@ -75,11 +75,11 @@ export default function useFetchMore({
   );
 
   let loaded = !loading;
-  let progressObj = {
+  const {current: progressObj} = React.useRef({
     progress: 0,
     nextProgress: 0,
     total: inputObjs.length
-  };
+  });
 
   if (loaded && !isCursorFulfilled) {
     // the max_per_request is exceeded;
@@ -94,11 +94,9 @@ export default function useFetchMore({
       isCursorFulfilled: false
     });
     loaded = done;
-    progressObj = {
-      progress,
-      nextProgress,
-      total
-    };
+    progressObj.progress = progress;
+    progressObj.nextProgress = nextProgress;
+    progressObj.total = total;
   }
 
   const {match, router} = useRouter();

@@ -31,16 +31,18 @@ export default function useCursorAndVariables({
       let isCursorFulfilled = true;
 
       let idxStart = offset;
-      const loadFirstObj = inputObjs[loadFirstIndex];
-      if (!loadFirstObj) {
-        throw new Error(
-          `InputObjs index out of bound: loadFirstObj=${loadFirstObj}`
-        );
-      }
-      if (!isCached(loadFirstObj[inputUniqKeyName])) {
-        // the loadFirstObj is not cached, load it first
-        isCursorFulfilled = false;
-        idxStart = loadFirstIndex;
+      if (loadFirstIndex !== undefined) {
+        const loadFirstObj = inputObjs[loadFirstIndex];
+        if (!loadFirstObj) {
+          throw new Error(
+            `InputObjs index out of bound: loadFirstObj=${loadFirstObj}`
+          );
+        }
+        if (!isCached(loadFirstObj[inputUniqKeyName])) {
+          // the loadFirstObj is not cached, load it first
+          isCursorFulfilled = false;
+          idxStart = loadFirstIndex;
+        }
       }
 
       for (let idx = idxStart; idx < end; idx ++) {
