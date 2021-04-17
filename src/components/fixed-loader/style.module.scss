@@ -5,13 +5,17 @@ $color: #a0a0a0;
 
 .lds-ring_fixed {
   font-size: 2.5rem;
-  position: absolute;
+  position: fixed;
   z-index: 5000;
   bottom: calc(50vh - #{$size / 8 * 5});
   left: calc(50vw - #{$size / 8 * 5});
   display: inline-block;
   width: $size / 8 * 10;
   height: $size / 8 * 10;
+  background-color: white;
+  padding: $size / 3 $size;
+  border-radius: $size / 3;
+  box-shadow: 1px 1px 4px #999;
 }
 .lds-ring_fixed div {
   box-sizing: border-box;

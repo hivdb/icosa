@@ -124,7 +124,7 @@ SingleSeqReadsReport.propTypes = {
   species: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
-  inputSequenceReads: PropTypes.array.isRequired,
+  inputSequenceReads: PropTypes.object.isRequired,
   sequenceReadsResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,

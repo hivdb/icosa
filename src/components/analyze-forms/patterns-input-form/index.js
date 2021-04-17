@@ -125,13 +125,6 @@ function PatternsInputForm({children, to, onSubmit}) {
 
 
 PatternsInputForm.propTypes = {
-  defaultPatterns: PropTypes.arrayOf(
-    PropTypes.shape({
-      uuid: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      mutations: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
-    }).isRequired
-  ).isRequired,
   children: PropTypes.node,
   to: PropTypes.string,
   onSubmit: PropTypes.func

@@ -1,5 +1,4 @@
 import React from 'react';
-import {useRouter} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';

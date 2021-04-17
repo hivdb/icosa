@@ -168,6 +168,7 @@ class SectionInner extends React.Component {
       level, match, router,
       registerCollapsableAnchor,  // unused
       getClosestCollapsableAnchor,  // unused
+      alwaysCollapsable,  // unused
       ...props
     } = this.props;
     const {

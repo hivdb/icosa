@@ -41,33 +41,6 @@ export default function useResultCache({
       loaded
     }) => {
       const mainOutputs = Object.values(cache.lookup);
-      /* let queryObjs = inputObjs.slice(offset, offset + limit);
-      for (const queryObj of queryObjs) {
-        const uniqKeyVal = nestGet(queryObj, inputUniqKeyName);
-    
-        if (uniqKeyVal in cache.lookup) {
-          mainOutputs.push(cache.lookup[uniqKeyVal]);
-        }
-      }
-    
-      if (loaded && queryObjs.length > mainOutputs.length) {
-        loaded = false;
-      }
-
-      if (!loaded) {
-        queryObjs = queryObjs.slice(
-          loadFirstIndex - offset,
-          loadFirstIndex - offset + 1
-        );
-        mainOutputs = mainOutputs.filter(
-          outputObj => queryObjs.some(
-            queryObj => (
-              nestGet(queryObj, inputUniqKeyName) ===
-              nestGet(outputObj, outputUniqKeyName)
-            )
-          )
-        );
-      }*/
     
       const mergedData = {
         currentVersion: {},

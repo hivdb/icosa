@@ -13,7 +13,6 @@ import SeqReadsReports from './reports';
 
 function ReportByReadsContainer({
   config,
-  species,
   router,
   match,
   lazyLoad,
@@ -50,7 +49,6 @@ function ReportByReadsContainer({
       <SeqReadsReports
        species={config.species}
        output={output}
-       species={species}
        match={match}
        router={router}
        {...props} />

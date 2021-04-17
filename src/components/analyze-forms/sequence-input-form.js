@@ -34,7 +34,7 @@ export default class SequenceInputForm extends React.Component {
       label: PropTypes.node.isRequired,
       subOptions: PropTypes.arrayOf(PropTypes.node.isRequired),
       defaultSubOptions: PropTypes.arrayOf(PropTypes.number.isRequired),
-      renderer: PropTypes.func.isRequired
+      renderer: PropTypes.func
     }).isRequired).isRequired,
     onSubmit: PropTypes.func
   }

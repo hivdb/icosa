@@ -69,7 +69,7 @@ function SARS2MutationComments({mutationComments}) {
 SARS2MutationComments.propTypes = {
   mutationComments: PropTypes.arrayOf(
     PropTypes.shape({
-      triggeredMutations: PropTypes.object.isRequired,
+      triggeredMutations: PropTypes.array.isRequired,
       comment: PropTypes.string.isRequired
     }).isRequired
   ).isRequired

@@ -82,9 +82,8 @@ function SierraForms({
 SierraForms.propTypes = {
   match: matchShape.isRequired,
   router: routerShape.isRequired,
-  species: PropTypes.string.isRequired,
+  curAnalysis: PropTypes.string.isRequired,
   pathPrefix: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired
 };
 
 export default function SierraFormsWithConfig(props) {

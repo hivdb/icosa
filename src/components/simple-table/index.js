@@ -72,7 +72,15 @@ export default class SimpleTable extends React.Component {
       name: PropTypes.string.isRequired,
       label: PropTypes.node.isRequired,
       render: PropTypes.func.isRequired,
-      sort: PropTypes.func.isRequired,
+      sort: PropTypes.oneOfType([
+        PropTypes.func.isRequired,
+        PropTypes.arrayOf(
+          PropTypes.oneOfType([
+            PropTypes.func.isRequired,
+            PropTypes.string.isRequired
+          ]).isRequired
+        ).isRequired
+      ]).isRequired,
       sortable: PropTypes.bool.isRequired
     })),
     getRowKey: PropTypes.func.isRequired,

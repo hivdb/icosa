@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 
-import useFetchMore from './use-fetch-more';
+import useOnSelect from './use-on-select';
 import useResultCache from './use-result-cache';
 import useCursorAndVariables from './use-cursor-and-variables';
 import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
@@ -43,9 +43,11 @@ export default function useCumuQuery({
   const {
     cursor,
     setCursor,
+    fetchedCount,
+    fetchingCount,
     variables,
-    isCursorFulfilled,
-    getVariables
+    isEmptyQuery,
+    isCursorFulfilled
   } = useCursorAndVariables({
     initOffset,
     initLimit,
@@ -58,13 +60,13 @@ export default function useCumuQuery({
   let {
     loading,
     error,
-    data,
-    fetchMore
+    data
   } = useQuery(
     query,
     {
       variables,
-      fetchPolicy: 'cache-first',
+      skip: isEmptyQuery,
+      fetchPolicy: 'no-cache',
       client,
       returnPartialData: false
     }
@@ -74,18 +76,23 @@ export default function useCumuQuery({
     cacheResults(data);
   }
 
-  const {
+  const fulfilled = isCursorFulfilled();
+  const loaded = !loading && fulfilled;
+
+  if (!loading && !fulfilled) {
+    // not loading and cursor not fulfilled, trigger reload
+    setCursor({...cursor});
+  }
+
+  const progressObj = {
+    progress: fetchedCount,
+    nextProgress: fetchedCount + fetchingCount,
+    total: cursor.limit
+  };
+
+  const onSelect = useOnSelect({
     loaded,
-    progressObj,
-    onSelect
-  } = useFetchMore({
-    fetchMore,
-    loading,
-    getVariables,
-    cursor,
     setCursor,
-    currentSelected,
-    isCursorFulfilled,
     ...commonProps
   });
 

@@ -30,4 +30,7 @@
       opacity: .95;
     }
   }
+  @media print {
+    display: none;
+  }
 }

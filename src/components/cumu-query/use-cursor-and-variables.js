@@ -1,4 +1,5 @@
 import React from 'react';
+import nestGet from 'lodash/get';
 
 
 export default function useCursorAndVariables({
@@ -19,6 +20,7 @@ export default function useCursorAndVariables({
     offset: initOffset,
     limit: initLimit
   });
+
   const getVariables = React.useCallback(
     ({
       loadFirstIndex,
@@ -28,7 +30,7 @@ export default function useCursorAndVariables({
       const end = offset + limit;
       const queryObjs = [];
       let fetchedCount = 0;
-      let isCursorFulfilled = true;
+      let fetchingCount = 0;
 
       let idxStart = offset;
       if (loadFirstIndex !== undefined) {
@@ -38,9 +40,8 @@ export default function useCursorAndVariables({
             `InputObjs index out of bound: loadFirstObj=${loadFirstObj}`
           );
         }
-        if (!isCached(loadFirstObj[inputUniqKeyName])) {
+        if (!isCached(nestGet(loadFirstObj, inputUniqKeyName))) {
           // the loadFirstObj is not cached, load it first
-          isCursorFulfilled = false;
           idxStart = loadFirstIndex;
         }
       }
@@ -50,14 +51,12 @@ export default function useCursorAndVariables({
         if (!inputObj) {
           break;
         }
-        if (isCached(inputObj[inputUniqKeyName])) {
+        if (isCached(nestGet(inputObj, inputUniqKeyName))) {
           fetchedCount ++;
         }
-        else if (queryObjs.length < maxPerRequest) {
+        else if (fetchingCount < maxPerRequest) {
+          fetchingCount ++;
           queryObjs.push(inputObj);
-        }
-        else {
-          isCursorFulfilled = false;
         }
       }
       const variables = {};
@@ -65,9 +64,9 @@ export default function useCursorAndVariables({
     
       return {
         variables: onExtendVariables(variables),
-        isCursorFulfilled,
+        isEmptyQuery: queryObjs.length === 0,
         fetchedCount,
-        fetchingCount: queryObjs.length
+        fetchingCount
       };
     },
     [
@@ -75,10 +74,34 @@ export default function useCursorAndVariables({
       mainInputName, maxPerRequest, onExtendVariables
     ]
   );
-  const {variables, isCursorFulfilled} = getVariables(cursor);
+
+  const isCursorFulfilled = React.useCallback(
+    () => {
+      const offset = cursor.offset;
+      const limit = cursor.limit;
+      const end = offset + limit;
+      return inputObjs.slice(offset, end).every(
+        inputObj => isCached(nestGet(inputObj, inputUniqKeyName))
+      );
+    },
+    [
+      cursor.offset, cursor.limit,
+      inputObjs, isCached, inputUniqKeyName
+    ]
+  );
+
+  const {
+    variables,
+    isEmptyQuery,
+    fetchedCount,
+    fetchingCount
+  } = getVariables(cursor);
 
   return {
     variables,
+    isEmptyQuery,
+    fetchedCount,
+    fetchingCount,
     isCursorFulfilled,
     getVariables,
     cursor,
