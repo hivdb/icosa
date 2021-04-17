@@ -6,7 +6,6 @@ $offset: var(--offset);
 $total: var(--total);
 $scroll-offset: var(--scroll-offset);
 $hover-offset: var(--hover-offset);
-$margin-left-main: var(--margin-left-main);
 
 $item-outer-size: #{$item-size} * 2;
 $hover-opacity: .9;
@@ -36,7 +35,7 @@ $desc-margin-left: css-calc(
   #{$item-size} *
   #{$hover-offset} #{"+"}
   css-max(
-    0px, #{$desc-margin-left-main}
+    0px, var(--margin-left-main)
   )
 );
 
@@ -198,8 +197,12 @@ $desc-margin-left: css-calc(
 }
 
 .paginator-container > .paginator-desc {
+  // cssnano bug: https://github.com/vercel/next.js/issues/17066#issuecomment-691825013
+  // TL;DR: it passed `yarn start` but crashed `yarn build`.
+  --margin-left-main: #{$desc-margin-left-main};
+  --margin-left: #{$desc-margin-left};
   position: relative;
-  margin-left: $desc-margin-left;
+  margin-left: var(--margin-left);
   margin-bottom: -.5em;
   display: inline-block;
   box-sizing: border-box;
