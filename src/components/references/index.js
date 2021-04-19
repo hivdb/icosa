@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReferenceContext, {ReferenceContextValue} from './reference-context';
+import ReferenceContext, {useReference} from './reference-context';
 import RefLink from './reference-link';
 import RefDefinition from './reference-definition';
 import buildRef from './build-ref';
@@ -13,7 +13,7 @@ import InlineLoader from '../inline-loader';
 
 export {
   ReferenceContext,
-  ReferenceContextValue,
+  useReference,
   InlineRef,
   RefLink,
   RefDefinition,

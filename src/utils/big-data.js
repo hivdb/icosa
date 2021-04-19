@@ -63,4 +63,5 @@ function useBigData(key) {
   return [data, isPending];
 }
 
-export default {isBigData, load, save, remove, clear, use: useBigData};
+const BigData = {isBigData, load, save, remove, clear, use: useBigData};
+export default BigData;

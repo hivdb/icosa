@@ -75,7 +75,7 @@ const genomeViewerConfig = {
 };
 
 
-export default {
+const config = {
   graphql_url: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
@@ -241,3 +241,5 @@ export default {
   mutAnnotViewer: mutAnnotViewerConfig,
   genomeViewer: genomeViewerConfig
 };
+
+export default config;

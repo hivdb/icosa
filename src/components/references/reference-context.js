@@ -1,25 +1,19 @@
 import React from 'react';
 import PromiseComponent from '../../utils/promise-component';
 
-export class ReferenceContextValue {
+class ReferenceObject {
 
-  constructor(refDataLoader) {
-    [this.references, this._setRef] = React.useReducer(
-      (refs, {refName, ref}) => {
-        refs[refName] = ref;
-        return refs;
-      },
-      {}
-    );
-    [this.refNames, this._pushRefName] = React.useReducer(
-      (refNames, refName) => {
-        if (!refNames.includes(refName)) {
-          refNames.push(refName);
-        }
-        return refNames;
-      },
-      []
-    );
+  constructor({
+    references,
+    setRef,
+    refNames,
+    pushRefName,
+    refDataLoader
+  }) {
+    this.references = references;
+    this._setRef = setRef;
+    this.refNames = refNames;
+    this._pushRefName = pushRefName;
     this.refDataLoader = refDataLoader;
 
     // default to loaded if refDataLoader is not provided
@@ -115,6 +109,31 @@ export class ReferenceContextValue {
     return this.getAllReferences()
       .filter(({linkIds}) => linkIds.length > 0);
   }
+}
+
+
+export function useReference(refDataLoader) {
+  const [references, setRef] = React.useReducer(
+    (refs, {refName, ref}) => {
+      refs[refName] = ref;
+      return refs;
+    },
+    {}
+  );
+  const [refNames, pushRefName] = React.useReducer(
+    (refNames, refName) => {
+      if (!refNames.includes(refName)) {
+        refNames.push(refName);
+      }
+      return refNames;
+    },
+    []
+  );
+  return new ReferenceObject({
+    references, setRef,
+    refNames, pushRefName,
+    refDataLoader
+  });
 }
 
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import InlineLoader from '../inline-loader';
 
 import createPersistedReducer from '../../utils/use-persisted-reducer';
 
@@ -7,7 +8,7 @@ import ReportSection from './report-section';
 
 import References, {
   ReferenceContext,
-  ReferenceContextValue,
+  useReference,
   LoadExternalRefData
 } from '../references';
 
@@ -18,14 +19,15 @@ const useDisplayRefSection = createPersistedReducer(
 );
 
 export function RefContextWrapper({children}) {
-  return <ConfigContext.Consumer>
-    {({refDataLoader}) => {
-      const refContext = new ReferenceContextValue(refDataLoader);
-      return <ReferenceContext.Provider value={refContext}>
-        {children}
-      </ReferenceContext.Provider>;
-    }}
-  </ConfigContext.Consumer>;
+  const [config, loading] = ConfigContext.use();
+  const {refDataLoader} = config || {};
+  const refContext = useReference(refDataLoader);
+  if (loading) {
+    return <InlineLoader />;
+  }
+  return <ReferenceContext.Provider value={refContext}>
+    {children}
+  </ReferenceContext.Provider>;
 }
 
 export default function ReferencesSection() {

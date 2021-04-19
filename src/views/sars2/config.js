@@ -29,7 +29,7 @@ async function popRefAminoAcid(dataURI) {
 }
 
 
-export default {
+const config = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/' +
     'pages/sierra-sars2.json'
@@ -196,3 +196,5 @@ export default {
     }
   ]
 };
+
+export default config;

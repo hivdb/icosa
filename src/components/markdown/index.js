@@ -6,7 +6,7 @@ import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
 import {
   ReferenceContext,
-  ReferenceContextValue,
+  useReference,
   RefLink,
   RefDefinition,
   LoadExternalRefData
@@ -96,10 +96,10 @@ function ExtendedMarkdown({
      renderers={renderers}
      plugins={[macroPlugin.transformer]} />
   );
+  const refContext = useReference(refDataLoader);
   if (displayReferences) {
-    const context = new ReferenceContextValue(refDataLoader);
     jsx = (
-      <ReferenceContext.Provider value={context}>
+      <ReferenceContext.Provider value={refContext}>
         {jsx}
         <LoadExternalRefData />
         <OptReferences
