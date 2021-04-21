@@ -1,4 +1,5 @@
 @import "../../styles/colors";
+@import "../../styles/constants";
 @import "../../styles/functions";
 @import "../../styles/extension";
 
@@ -81,6 +82,7 @@ ol.cell-references {
 
 button.toggle-display {
   width: 100%;
+  font-family: "Arial Narrow", $base-font-family;
   border-top: 1px solid rgba(34, 36, 38, 0.15);
   border-right: none;
   border-bottom: none;

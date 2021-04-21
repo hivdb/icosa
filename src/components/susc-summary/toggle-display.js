@@ -15,7 +15,8 @@ function ToggleDisplayButton({
      onClick={onToggle}
      className={style['toggle-display']}
      data-expanded={expanded}>
-      Show {num} {expanded ? 'less' : 'more'}
+      Show {num > 1 ? num : 'one'}{' '}
+      {expanded ? 'less' : 'more'} result{num > 1 ? 's' : ''}
     </button>
   );
 }
