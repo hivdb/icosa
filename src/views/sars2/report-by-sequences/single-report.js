@@ -14,9 +14,11 @@ import {
 } from '../../../components/report';
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
-import AntibodySuscSummary from '../../../components/ab-susc-summary';
-import CPSuscSummary from '../../../components/cp-susc-summary';
-import VPSuscSummary from '../../../components/vp-susc-summary';
+import {
+  AbSuscSummary,
+  CPSuscSummary,
+  VPSuscSummary
+} from '../../../components/susc-summary';
 
 import style from '../style.module.scss';
 
@@ -75,7 +77,7 @@ function SingleSequenceReport({
           <ReportSection
            className={style['no-page-break']}
            title="MAb susceptibility summary">
-            <AntibodySuscSummary
+            <AbSuscSummary
              antibodies={antibodies}
              {...sequenceResult}
              {...{output, strain}} />

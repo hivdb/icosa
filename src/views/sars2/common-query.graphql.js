@@ -34,7 +34,7 @@ const seqLevel = `
     comment
   }
   antibodySuscSummary(drdbVersion: $drdbVersion) {
-    itemsByKeyMutations {
+    itemsByMutations {
       mutations {
         gene { name }
         reference
@@ -43,6 +43,12 @@ const seqLevel = `
         AAs
         text
       }
+      hitVariants {
+        displayName
+      }
+      variantMatchType
+      numVariantOnlyMutations
+      numQueryOnlyMutations
       references {
         refName
         DOI
@@ -62,7 +68,7 @@ const seqLevel = `
     }
   }
   convPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByKeyMutations {
+    itemsByMutations {
       mutations {
         gene { name }
         reference
@@ -71,6 +77,12 @@ const seqLevel = `
         AAs
         text
       }
+      hitVariants {
+        displayName
+      }
+      variantMatchType
+      numVariantOnlyMutations
+      numQueryOnlyMutations
       references {
         refName
         DOI
@@ -87,7 +99,7 @@ const seqLevel = `
     }
   }
   vaccPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByKeyMutations {
+    itemsByMutations {
       mutations {
         gene { name }
         reference
@@ -96,6 +108,12 @@ const seqLevel = `
         AAs
         text
       }
+      hitVariants {
+        displayName
+      }
+      variantMatchType
+      numVariantOnlyMutations
+      numQueryOnlyMutations
       references {
         refName
         DOI

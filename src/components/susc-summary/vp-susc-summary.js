@@ -5,31 +5,11 @@ import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
 import SIRPcntBar from '../sir-pcnt-bar';
 import SimpleTable, {ColumnDef} from '../simple-table';
-import shortenMutationList from '../../utils/shorten-mutation-list';
 
+import {getRowKey, getUniqVariants, decideDisplayPriority} from './funcs';
+import CellMutations from './cell-mutations';
+import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
-
-
-function renderMutations(mutations) {
-  const shortMutations = shortenMutationList(mutations);
-  return (
-    <div
-     key={getRowKey({mutations})}
-     className={style['cell-variants']}>
-      <div className={style['mutations']}>
-        {shortMutations.map(({text}, idx) => (
-          <React.Fragment key={idx}>
-            {idx > 0 ?
-              <span className={style['inline-divider']}>+</span> : null}
-            <span className={style['mutation']}>
-              {text}
-            </span>
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 
 const SIRLevels = [
@@ -40,42 +20,48 @@ const SIRLevels = [
 
 
 function buildPayload(vaccPlasmaSuscSummary) {
-  return vaccPlasmaSuscSummary.map(
-    ({
-      mutations,
-      references,
-      cumulativeCount: numSamples,
-      cumulativeFold: {median: medianFold},
-      itemsByResistLevel
-    }) => {
-      const row = {
+  return decideDisplayPriority(vaccPlasmaSuscSummary)
+    .map(
+      ([{
         mutations,
-        numRefs: references.length,
-        numSamples,
-        medianFold,
-        references
-      };
-      for (const level of SIRLevels) {
-        row[`__level__${level}`] = 0;
-      }
-      let total = 0;
-      for (const {
-        resistanceLevel,
-        cumulativeCount
-      } of itemsByResistLevel) {
-        if (SIRLevels.includes(resistanceLevel)) {
-          total += cumulativeCount;
-          row[`__level__${resistanceLevel}`] = cumulativeCount;
-        }
-      }
-      if (total > 0) {
+        hitVariants,
+        references,
+        cumulativeCount: numSamples,
+        cumulativeFold: {median: medianFold},
+        itemsByResistLevel
+      }, displayOrder]) => {
+        const variants = getUniqVariants(hitVariants);
+        const row = {
+          mutations,
+          variants,
+          numRefs: references.length,
+          numSamples,
+          medianFold,
+          references,
+          displayOrder
+        };
         for (const level of SIRLevels) {
-          row[`__level__${level}`] = row[`__level__${level}`] / total;
+          row[`__level__${level}`] = 0;
         }
+        let total = 0;
+        for (const {
+          resistanceLevel,
+          cumulativeCount
+        } of itemsByResistLevel) {
+          if (SIRLevels.includes(resistanceLevel)) {
+            total += cumulativeCount;
+            row[`__level__${resistanceLevel}`] = cumulativeCount;
+          }
+        }
+        if (total > 0) {
+          for (const level of SIRLevels) {
+            row[`__level__${level}`] = row[`__level__${level}`] / total;
+          }
+        }
+        return row;
       }
-      return row;
-    }
-  );
+    )
+    .filter(({displayOrder}) => displayOrder !== null);
 }
 
 function renderRefs(refs) {
@@ -86,10 +72,6 @@ function renderRefs(refs) {
       </ExtLink>
     </li>)}
   </ol>;
-}
-
-function getRowKey({mutations}) {
-  return mutations.map(({text}) => text).join('+');
 }
 
 function renderPcnt(pcnt) {
@@ -114,12 +96,14 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function buildColumnDefs(itemsByKeyMutations) {
+function buildColumnDefs(itemsByMutations) {
   const colDefs = [
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: renderMutations,
+      render: (mutations, {variants}) => (
+        <CellMutations {...{mutations, variants}} />
+      ),
       sort: [({mutations}) => [
         mutations.length,
         ...mutations.map(({position, AAs}) => [position, AAs])
@@ -178,21 +162,24 @@ function buildColumnDefs(itemsByKeyMutations) {
 
 
 function VaccPlasmaSuscSummary({
-  vaccPlasmaSuscSummary: {itemsByKeyMutations},
+  vaccPlasmaSuscSummary: {itemsByMutations},
   ...props
 }) {
-  itemsByKeyMutations = itemsByKeyMutations
+  itemsByMutations = itemsByMutations
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
-  const payload = buildPayload(itemsByKeyMutations);
+  const payload = buildPayload(itemsByMutations);
+  const {rows, button, expanded} = useToggleDisplay(payload);
 
   if (payload.length > 0) {
     return (
       <SimpleTable
+       cacheKey={expanded}
        compact lastCompact disableCopy
-       className={style['vp-susc-summary']}
+       className={style['susc-summary']}
        getRowKey={getRowKey}
-       columnDefs={buildColumnDefs(itemsByKeyMutations)}
-       data={payload} />
+       columnDefs={buildColumnDefs(itemsByMutations)}
+       data={rows}
+       afterTable={button} />
     );
   }
   else {

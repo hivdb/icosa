@@ -8,48 +8,36 @@ import Markdown from '../markdown';
 import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
 import SimpleTable, {ColumnDef} from '../simple-table';
-import shortenMutationList from '../../utils/shorten-mutation-list';
 
+import {getUniqVariants, getRowKey, decideDisplayPriority} from './funcs';
+import CellMutations from './cell-mutations';
+import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
 
 
-function renderMutations(mutations) {
-  const shortMutations = shortenMutationList(mutations);
-  return (
-    <div
-     key={getRowKey({mutations})}
-     className={style['cell-variants']}>
-      <div className={style['mutations']}>
-        {shortMutations.map(({text}, idx) => (
-          <React.Fragment key={idx}>
-            {idx > 0 ?
-              <span className={style['inline-divider']}>+</span> : null}
-            <span className={style['mutation']}>
-              {text}
-            </span>
-          </React.Fragment>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-
 function buildPayload(antibodySuscSummary) {
-  return antibodySuscSummary.map(
-    ({mutations, references, itemsByAntibody}) => {
-      const row = {mutations, references};
-      for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
-        const abkey = (
-          '__abfold__' +
-          sortBy(antibodies, ['priority'])
-            .map(({name}) => name).join('+')
-        );
-        row[abkey] = cumdata;
+  return decideDisplayPriority(antibodySuscSummary)
+    .map(
+      ([{
+        mutations,
+        hitVariants,
+        references,
+        itemsByAntibody
+      }, displayOrder]) => {
+        const variants = getUniqVariants(hitVariants);
+        const row = {mutations, references, variants, displayOrder};
+        for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
+          const abkey = (
+            '__abfold__' +
+            sortBy(antibodies, ['priority'])
+              .map(({name}) => name).join('+')
+          );
+          row[abkey] = cumdata;
+        }
+        return row;
       }
-      return row;
-    }
-  );
+    )
+    .filter(({displayOrder}) => displayOrder !== null);
 }
 
 
@@ -94,11 +82,6 @@ function renderRefs(refs) {
 }
 
 
-function getRowKey({mutations}) {
-  return mutations.map(({text}) => text).join('+');
-}
-
-
 function findComboAntibodies(antibodySuscSummary) {
   const combos = [];
   for (const {itemsByAntibody} of antibodySuscSummary) {
@@ -140,7 +123,9 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: renderMutations,
+      render: (mutations, {variants}) => (
+        <CellMutations {...{mutations, variants}} />
+      ),
       sort: [({mutations}) => [
         mutations.length,
         ...mutations.map(({position, AAs}) => [position, AAs])
@@ -165,21 +150,24 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
 
 function AntibodySuscSummary({
   antibodies,
-  antibodySuscSummary: {itemsByKeyMutations},
+  antibodySuscSummary: {itemsByMutations},
   ...props
 }) {
-  itemsByKeyMutations = itemsByKeyMutations
+  itemsByMutations = itemsByMutations
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-  const payload = buildPayload(itemsByKeyMutations);
+  const payload = buildPayload(itemsByMutations);
+  const {rows, button, expanded} = useToggleDisplay(payload);
 
   if (payload.length > 0) {
     return (
       <SimpleTable
+       cacheKey={expanded}
        compact lastCompact disableCopy
        getRowKey={getRowKey}
-       className={style['ab-susc-summary']}
-       columnDefs={buildColumnDefs(antibodies, itemsByKeyMutations)}
-       data={payload} />
+       className={style['susc-summary']}
+       columnDefs={buildColumnDefs(antibodies, itemsByMutations)}
+       data={rows}
+       afterTable={button} />
     );
   }
   else {

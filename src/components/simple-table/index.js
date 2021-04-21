@@ -90,6 +90,7 @@ export default class SimpleTable extends React.Component {
     tableScrollStyle: PropTypes.object.isRequired,
     tableStyle: PropTypes.object.isRequired,
     disableCopy: PropTypes.bool.isRequired,
+    afterTable: PropTypes.node
   }
 
   static defaultProps = {
@@ -333,7 +334,8 @@ export default class SimpleTable extends React.Component {
       lastCompact,
       color, columnDefs,
       getRowKey, className,
-      tableScrollStyle, tableStyle
+      tableScrollStyle, tableStyle,
+      afterTable
     } = this.props;
     const {
       sortedByColumn, sortedData,
@@ -447,6 +449,7 @@ export default class SimpleTable extends React.Component {
               ))}
             </tbody>
           </table>
+          {afterTable}
         </div>
         {disableCopy ? null:
         <div
