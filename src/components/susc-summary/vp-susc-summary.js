@@ -64,15 +64,6 @@ function buildPayload(vaccPlasmaSuscSummary) {
     .filter(({displayOrder}) => displayOrder !== null);
 }
 
-function renderPcnt(pcnt) {
-  if (pcnt >= 0.005) {
-    return `${(pcnt * 100).toFixed(0)}%`;
-  }
-  else {
-    return '0';
-  }
-}
-
 function renderPcntBar(_, row) {
   const {
     __level__susceptible: levelS = 0,
@@ -109,31 +100,9 @@ function buildColumnDefs(itemsByMutations) {
     }),
     new ColumnDef({
       name: '__level__susceptible',
-      label: <span className={style['level-label']} data-level="1">
-        &lt;3-fold (S)
-      </span>,
+      label: 'Susceptibility distribution',
       render: renderPcntBar,
-      bodyCellColSpan: 3
-    }),
-    new ColumnDef({
-      name: '__level__partial-resistance',
-      label: <span className={style['level-label']} data-level="2">
-        3-9-fold (I)
-      </span>,
-      render: renderPcnt,
-      bodyCellStyle: {
-        display: 'none'
-      }
-    }),
-    new ColumnDef({
-      name: '__level__resistant',
-      label: <span className={style['level-label']} data-level="3">
-        ≥10-fold (R)
-      </span>,
-      render: renderPcnt,
-      bodyCellStyle: {
-        display: 'none'
-      }
+      sortable: false
     }),
     new ColumnDef({
       name: 'medianFold',
@@ -161,7 +130,7 @@ function VaccPlasmaSuscSummary({
   const {rows, button, expanded} = useToggleDisplay(payload);
 
   if (payload.length > 0) {
-    return (
+    return <>
       <SimpleTable
        cacheKey={expanded}
        compact lastCompact disableCopy
@@ -170,7 +139,19 @@ function VaccPlasmaSuscSummary({
        columnDefs={buildColumnDefs(itemsByMutations)}
        data={rows}
        afterTable={button} />
-    );
+      <p>
+        Susceptibility levels:{' '}
+        <span className={style['level-label']} data-level="1">
+          &lt;3-fold
+        </span>{' '}
+        <span className={style['level-label']} data-level="2">
+          3-9-fold
+        </span>{' '}
+        <span className={style['level-label']} data-level="3">
+          ≥10-fold
+        </span>
+      </p>
+    </>;
   }
   else {
     return <ConfigContext.Consumer>
