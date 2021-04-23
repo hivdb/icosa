@@ -5,12 +5,12 @@ import isEqual from 'lodash/isEqual';
 import uniqWith from 'lodash/uniqWith';
 
 import Markdown from '../markdown';
-import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
 import SimpleTable, {ColumnDef} from '../simple-table';
 
 import {getUniqVariants, getRowKey, decideDisplayPriority} from './funcs';
 import CellMutations from './cell-mutations';
+import CellReferences from './cell-references';
 import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
 
@@ -68,17 +68,6 @@ function renderFold(resultItem) {
       {min.toFixed(1)}-{max.toFixed(1)}
     </div>*/}
   </div>;
-}
-
-
-function renderRefs(refs) {
-  return <ol className={style['cell-references']}>
-    {refs.map(({refName, DOI, URL}) => <li key={refName}>
-      <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
-        {refName}
-      </ExtLink>
-    </li>)}
-  </ol>;
 }
 
 
@@ -140,7 +129,7 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
     new ColumnDef({
       name: 'references',
       label: 'References',
-      render: renderRefs,
+      render: refs => <CellReferences refs={refs} />,
       sortable: false
     })
   ];

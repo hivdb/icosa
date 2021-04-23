@@ -1,13 +1,13 @@
 import React from 'react';
 
 import Markdown from '../markdown';
-import ExtLink from '../link/external';
 import {ConfigContext} from '../report';
 import SIRPcntBar from '../sir-pcnt-bar';
 import SimpleTable, {ColumnDef} from '../simple-table';
 
 import {getRowKey, getUniqVariants, decideDisplayPriority} from './funcs';
 import CellMutations from './cell-mutations';
+import CellReferences from './cell-references';
 import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
 
@@ -62,16 +62,6 @@ function buildPayload(vaccPlasmaSuscSummary) {
       }
     )
     .filter(({displayOrder}) => displayOrder !== null);
-}
-
-function renderRefs(refs) {
-  return <ol className={style['cell-references']}>
-    {refs.map(({refName, DOI, URL}) => <li key={refName}>
-      <ExtLink href={URL ? URL : `https://doi.org/${DOI}`}>
-        {refName}
-      </ExtLink>
-    </li>)}
-  </ol>;
 }
 
 function renderPcnt(pcnt) {
@@ -153,7 +143,7 @@ function buildColumnDefs(itemsByMutations) {
     new ColumnDef({
       name: 'references',
       label: 'References',
-      render: renderRefs,
+      render: refs => <CellReferences refs={refs} />,
       sortable: false
     })
   ];
