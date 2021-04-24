@@ -150,7 +150,7 @@ function AntibodySuscSummary({
   if (payload.length > 0) {
     return (
       <SimpleTable
-       cacheKey={expanded}
+       cacheKey={`${expanded}`}
        compact lastCompact disableCopy
        getRowKey={getRowKey}
        className={style['susc-summary']}

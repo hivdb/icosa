@@ -1,4 +1,5 @@
 import React from 'react';
+import isEqual from 'lodash/isEqual';
 import PromiseComponent from '../../utils/promise-component';
 
 class ReferenceObject {
@@ -31,16 +32,6 @@ class ReferenceObject {
     );
   }
 
-  #setRef = ({refName, ref}) => {
-    this.#references[refName] = ref;
-    if (!this.#refNames.includes(refName)) {
-      this.#refNames.push(refName);
-    }
-    for (const cb of this.#onUpdates) {
-      cb();
-    }
-  }
-
   listenOnUpdate = cb => {
     if (!this.#onUpdates.includes(cb)) {
       this.#onUpdates.push(cb);
@@ -48,14 +39,6 @@ class ReferenceObject {
   }
 
   setLoaded = () => {
-    if (process.env.NODE_ENV !== 'production') {
-      if (this.loaded) {
-        console.error(
-          'Warning: refDataLoader should be only called once ' +
-          'but is called multiple times.'
-        );
-      }
-    }
     this.loaded = true;
     this._resolveLoadingPromise();
   }
@@ -70,21 +53,24 @@ class ReferenceObject {
 
   setReference = (name, reference, incr) => {
     let isNew = true;
-    let payload = {name, _count: 0};
+    let prevPayload, payload = {name, _count: 0};
     const nameKey = name.toLocaleLowerCase();
     if (nameKey in this.#references) {
       isNew = false;
-      payload = this.#references[nameKey];
+      prevPayload = payload = this.#references[nameKey];
+    }
+    else {
+      this.#refNames.push(nameKey);
     }
     payload = {...payload, ...reference};
     if (incr) {
       payload._count ++;
     }
-    if (isNew || Object.keys(reference).length > 0 || incr) {
-      this.#setRef({
-        refName: nameKey,
-        ref: payload
-      });
+    if (isNew || incr || !isEqual(prevPayload, payload)) {
+      this.#references[nameKey] = payload;
+      for (const cb of this.#onUpdates) {
+        cb();
+      }
     }
     const refNumber = this.#refNames.indexOf(nameKey) + 1;
     const refLinkNumber = payload._count;

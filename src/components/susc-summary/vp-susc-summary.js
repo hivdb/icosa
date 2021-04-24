@@ -132,7 +132,7 @@ function VaccPlasmaSuscSummary({
   if (payload.length > 0) {
     return <>
       <SimpleTable
-       cacheKey={expanded}
+       cacheKey={`${expanded}`}
        compact lastCompact disableCopy
        className={style['susc-summary']}
        getRowKey={getRowKey}

@@ -35,7 +35,9 @@ const Router = createFarceRouter({
  *
  */
 ReactDOM.render(
-    <Router resolver={resolver} />,
+  <React.StrictMode>
+    <Router resolver={resolver} />
+  </React.StrictMode>,
   document.getElementById('root')
 );
 
