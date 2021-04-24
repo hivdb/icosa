@@ -215,23 +215,21 @@ class SectionInner extends React.Component {
 }
 
 
-class Section extends React.Component {
+function Section(props) {
 
-  render() {
-    return <Context.Consumer>
-      {({
-        registerCollapsableAnchor,
-        getClosestCollapsableAnchor
-      }) => (
-        <SectionInner
-         {...this.props}
-         {...{
-           registerCollapsableAnchor,
-           getClosestCollapsableAnchor
-         }} />
-      )}
-    </Context.Consumer>;
-  }
+  return <Context.Consumer>
+    {({
+      registerCollapsableAnchor,
+      getClosestCollapsableAnchor
+    }) => (
+      <SectionInner
+       {...props}
+       {...{
+         registerCollapsableAnchor,
+         getClosestCollapsableAnchor
+       }} />
+    )}
+  </Context.Consumer>;
 
 }
 

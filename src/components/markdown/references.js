@@ -2,7 +2,12 @@ import React from 'react';
 
 import Collapsable from '../collapsable';
 import {HeadingTag} from '../heading-tags';
-import References, {InlineRef, ReferenceContext} from '../references';
+import References, {
+  InlineRef,
+  useAutoUpdate,
+  ReferenceContext,
+  LoadExternalRefData
+} from '../references';
 
 import macroPlugin from './macro-plugin';
 
@@ -40,17 +45,22 @@ export function StaticRefsNode({names, as = 'ul', className, style}) {
 export default function OptReferences({
   level, disableAnchor, referenceTitle
 }) {
-  return <ReferenceContext.Consumer>
-    {({hasAnyReference}) => hasAnyReference() ? (
+  const {hasAnyReference} = React.useContext(ReferenceContext);
+  useAutoUpdate();
+
+  if (hasAnyReference()) {
+    return (
       <Collapsable.Section
        level={level}
        alwaysCollapsable
        data-section-reference="">
         {({onLoad}) => <>
           <HeadingTag {...{disableAnchor, level}}>{referenceTitle}</HeadingTag>
+          <LoadExternalRefData />
           <References onLoad={onLoad} />
         </>}
       </Collapsable.Section>
-    ) : null}
-  </ReferenceContext.Consumer>;
+    );
+  }
+  return null;
 }

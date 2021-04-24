@@ -3,17 +3,20 @@ import PromiseComponent from '../../utils/promise-component';
 
 class ReferenceObject {
 
+  // private fields
+  #references;
+  #refNames;
+  #onUpdates;
+
+  // public fields
+  refDataLoader;
+
   constructor({
-    references,
-    setRef,
-    refNames,
-    pushRefName,
     refDataLoader
   }) {
-    this.references = references;
-    this._setRef = setRef;
-    this.refNames = refNames;
-    this._pushRefName = pushRefName;
+    this.#references = {};
+    this.#refNames = [];
+    this.#onUpdates = [];
     this.refDataLoader = refDataLoader;
 
     // default to loaded if refDataLoader is not provided
@@ -26,6 +29,22 @@ class ReferenceObject {
         }
       }
     );
+  }
+
+  #setRef = ({refName, ref}) => {
+    this.#references[refName] = ref;
+    if (!this.#refNames.includes(refName)) {
+      this.#refNames.push(refName);
+    }
+    for (const cb of this.#onUpdates) {
+      cb();
+    }
+  }
+
+  listenOnUpdate = cb => {
+    if (!this.#onUpdates.includes(cb)) {
+      this.#onUpdates.push(cb);
+    }
   }
 
   setLoaded = () => {
@@ -53,25 +72,21 @@ class ReferenceObject {
     let isNew = true;
     let payload = {name, _count: 0};
     const nameKey = name.toLocaleLowerCase();
-    if (nameKey in this.references) {
+    if (nameKey in this.#references) {
       isNew = false;
-      payload = this.references[nameKey];
-    }
-    else {
-      // add new reference
-      this._pushRefName(nameKey);
+      payload = this.#references[nameKey];
     }
     payload = {...payload, ...reference};
     if (incr) {
       payload._count ++;
     }
     if (isNew || Object.keys(reference).length > 0 || incr) {
-      this._setRef({
+      this.#setRef({
         refName: nameKey,
         ref: payload
       });
     }
-    const refNumber = this.refNames.indexOf(nameKey) + 1;
+    const refNumber = this.#refNames.indexOf(nameKey) + 1;
     const refLinkNumber = payload._count;
     return {
       number: refNumber,
@@ -85,12 +100,12 @@ class ReferenceObject {
   }
 
   getReference = (name) => {
-    return this.references[name.toLocaleLowerCase()];
+    return this.#references[name.toLocaleLowerCase()];
   }
 
   getAllReferences = () => {
-    return this.refNames.map((nameKey, rn0) => {
-      const {_count, ...ref} = this.references[nameKey];
+    return this.#refNames.map((nameKey, rn0) => {
+      const {_count, ...ref} = this.#references[nameKey];
       const refNumber = rn0 + 1;
       const linkIds = [];
       for (let rln = 1; rln <= _count; rln ++) {
@@ -113,7 +128,7 @@ class ReferenceObject {
 
 
 export function useReference(refDataLoader) {
-  const [references, setRef] = React.useReducer(
+  /*const [references, setRef] = React.useReducer(
     (refs, {refName, ref}) => {
       refs[refName] = ref;
       return refs;
@@ -128,12 +143,22 @@ export function useReference(refDataLoader) {
       return refNames;
     },
     []
+  );*/
+  return React.useMemo(
+    () => {
+
+      /*const pushRefName = refName => {
+        if (!refNames.includes(refName)) {
+          refNames.push(refName);
+        }
+      };*/
+
+      return new ReferenceObject({
+        refDataLoader
+      });
+    },
+    [refDataLoader]
   );
-  return new ReferenceObject({
-    references, setRef,
-    refNames, pushRefName,
-    refDataLoader
-  });
 }
 
 

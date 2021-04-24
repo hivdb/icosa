@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {useRouter} from 'found';
 import Popup from 'reactjs-popup';
 import Children from 'react-children-utilities';
 
@@ -10,8 +11,8 @@ import {focusElement} from './funcs';
 
 import style from './style.module.scss';
 
-
 function RefLinkInternal({
+  group,
   name,
   refContext: {
     setReference,
@@ -21,33 +22,87 @@ function RefLinkInternal({
   ...ref
 }) {
 
-  const linkRef = React.createRef();
+  const linkRef = React.useRef();
+  const [refObj, setRefObj] = React.useState();
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      const elem = linkRef.current;
-      if (!elem) {
-        return;
-      }
-      let anchor = window.location.hash;
-      if (anchor) {
-        anchor = anchor.slice(1);
-        if (anchor.length > 0 && anchor === elem.id) {
-          focusElement(elem);
-        }
-      }
-    });
-  });
-
-  const {number, itemId, linkId} = setReference(
-    name, ref, /* incr=*/ true
+  React.useEffect(
+    () => {
+      const refObj = setReference(name, ref, /* incr= */ true);
+      setRefObj(refObj);
+    },
+    [setReference, /* eslint-disable-line react-hooks/exhaustive-deps*/]
   );
+
+  let number, itemId, linkId, loaded = false;
+  if (refObj) {
+    number = refObj.number;
+    itemId = refObj.itemId;
+    linkId = refObj.linkId;
+    loaded = true;
+  }
+
+  const elemId = group ? `${group}__${linkId}` : linkId;
+  const anchorTarget = group ? `ref__${group}__${itemId}` : `ref__${itemId}`;
+
+  React.useEffect(
+    () => {
+      if (loaded) {
+        setTimeout(() => {
+          const elem = linkRef.current;
+          if (!elem) {
+            return;
+          }
+          let anchor = window.location.hash;
+          if (anchor) {
+            anchor = anchor.slice(1);
+            if (anchor.length > 0 && anchor === elemId) {
+              focusElement(elem);
+            }
+          }
+        });
+      }
+    },
+    [loaded, elemId]
+  );
+
+  const handleClick = React.useCallback(
+    evt => {
+      evt && evt.preventDefault();
+    },
+    []
+  );
+
+  const {match: {location}, router} = useRouter();
+
+  const handleAnchorClick = React.useCallback(
+    evt => {
+      evt.preventDefault();
+      const {href} = evt.currentTarget.attributes;
+      const anchor = href.value.slice(1);
+      router.push({
+        ...location,
+        hash: `#${anchor}`
+      });
+      setTimeout(() => {
+        const elem = document.getElementById(anchor);
+        if (elem) {
+          const parentLi = elem.closest('li');
+          focusElement(parentLi);
+        }
+      });
+    },
+    [location, router]
+  );
+
+  if (!loaded) {
+    return null;
+  }
 
   const trigger = (
     <sup><a className={style['ref-link']}
      onClick={handleClick}
      ref={linkRef}
-     id={linkId} href={`#ref__${itemId}`}>
+     id={elemId} href={`#${anchorTarget}`}>
       [{number}]
     </a></sup>
   );
@@ -69,7 +124,7 @@ function RefLinkInternal({
        trigger={trigger}>
         <a
          onClick={handleAnchorClick}
-         href={`#ref__${itemId}`}>
+         href={`#${anchorTarget}`}>
           {number}
         </a>.{' '}
         {buildRef(getReference(name))}
@@ -77,26 +132,10 @@ function RefLinkInternal({
     ),
     trigger
   );
-
-  function handleClick(evt) {
-    evt && evt.preventDefault();
-  }
-
-  function handleAnchorClick(evt) {
-    const {href} = evt.currentTarget.attributes;
-    const anchor = href.value.slice(1);
-    setTimeout(() => {
-      const elem = document.getElementById(anchor);
-      if (elem) {
-        const parentLi = elem.closest('li');
-        focusElement(parentLi);
-      }
-    });
-  }
-
 }
 
 RefLinkInternal.propTypes = {
+  group: PropTypes.string,
   name: PropTypes.string,
   authors: PropTypes.string,
   year: PropTypes.string,
@@ -109,16 +148,22 @@ RefLinkInternal.propTypes = {
 
 const MemoRefLinkInternal = React.memo(
   RefLinkInternal,
-  ({name: prev}, {name: next}) => prev === next
+  ({
+    group, prevGroup,
+    name: prevName
+  }, {
+    group: nextGroup,
+    name: nextName
+  }) => prevGroup === nextGroup && prevName === nextName
 );
 
 
-export default function RefLink({name, identifier, ...props}) {
+export default function RefLink({group, name, identifier, ...props}) {
   const refContext = React.useContext(ReferenceContext);
 
   if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
     identifier = identifier.slice(0, identifier.length - 7);
-    return <InlineRef name={identifier} />;
+    return <InlineRef group={group} name={identifier} />;
   }
 
   name = name || identifier;
@@ -141,7 +186,8 @@ export default function RefLink({name, identifier, ...props}) {
   return (
     <MemoRefLinkInternal
      {...props}
-     key={name}
+     key={`${group}${name}`}
+     group={group}
      name={name}
      refContext={refContext} />
   );

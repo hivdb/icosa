@@ -7,6 +7,7 @@ import ConfigContext from './config-context';
 import ReportSection from './report-section';
 
 import References, {
+  useAutoUpdate,
   ReferenceContext,
   useReference,
   LoadExternalRefData
@@ -35,18 +36,24 @@ export default function ReferencesSection() {
     display => !display, false
   );
 
-  return (
-    <ReferenceContext.Consumer>
-      {({hasAnyReference}) => hasAnyReference() ?
-        <ReportSection
-         title="References"
-         display={display}
-         className={style['reference-section']}
-         toggleDisplay={toggleDisplay}
-         collapsable>
-          <LoadExternalRefData />
-          <References />
-        </ReportSection> : null}
-    </ReferenceContext.Consumer>
-  );
+  const {
+    hasAnyReference
+  } = React.useContext(ReferenceContext);
+
+  useAutoUpdate();
+
+  if (hasAnyReference()) {
+    return (
+      <ReportSection
+       title="References"
+       display={display}
+       className={style['reference-section']}
+       toggleDisplay={toggleDisplay}
+       collapsable>
+        <LoadExternalRefData />
+        <References />
+      </ReportSection>
+    );
+  }
+  return null;
 }

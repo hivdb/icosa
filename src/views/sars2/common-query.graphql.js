@@ -54,6 +54,11 @@ const seqLevel = `
         DOI
         URL
       }
+      items {
+        reference { refName }
+        rxName
+        fold
+      }
       itemsByAntibody {
         antibodies {
           name
@@ -64,6 +69,11 @@ const seqLevel = `
         cumulativeFold {
           median: percentile(p: 50)
         } 
+        references { refName }
+        items {
+          reference { refName }
+          fold
+        }
       }
     }
   }

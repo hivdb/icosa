@@ -8,8 +8,7 @@ import {
   ReferenceContext,
   useReference,
   RefLink,
-  RefDefinition,
-  LoadExternalRefData
+  RefDefinition
 } from '../references';
 
 import MarkdownLink from './link';
@@ -101,7 +100,6 @@ function ExtendedMarkdown({
     jsx = (
       <ReferenceContext.Provider value={refContext}>
         {jsx}
-        <LoadExternalRefData />
         <OptReferences
          disableAnchor={disableHeadingTagAnchor}
          level={referenceHeadingTagLevel}
