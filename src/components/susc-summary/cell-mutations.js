@@ -15,7 +15,7 @@ export default function CellMutations({mutations, variants}) {
         {shortMutations.map(({text}, idx) => (
           <React.Fragment key={idx}>
             {idx > 0 ?
-              <span className={style['inline-divider']}>+</span> : null}
+              <span className={style['inline-divider']}> + </span> : null}
             <span className={style['mutation']}>
               {text}
             </span>

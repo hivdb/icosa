@@ -85,6 +85,9 @@ function buildColumnDefs(itemsByMutations) {
       render: (mutations, {variants}) => (
         <CellMutations {...{mutations, variants}} />
       ),
+      bodyCellStyle: {
+        maxWidth: '14rem'
+      },
       sort: [({mutations}) => [
         mutations.length,
         ...mutations.map(({position, AAs}) => [position, AAs])
