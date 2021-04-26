@@ -106,7 +106,12 @@ function SeqSummary(props) {
             }
 
             else if (child.type === OutbreakInfo) {
-              return <OutbreakInfoReal key={key} {...pangolin} />;
+              return (
+                <OutbreakInfoReal
+                 key={key}
+                 config={config}
+                 {...pangolin} />
+              );
             }
 
             else if (child.type === MinPrevalence) {

@@ -1,64 +1,42 @@
 import React from 'react';
-import memoize from 'lodash/memoize';
 import ExtLink from '../../link/external';
 
-import useSmartAsync from '../../../utils/use-smart-async';
 import InlineLoader from '../../inline-loader';
 import {usePangoLineage} from './pango-lineage';
 
 import style from './style.module.scss';
 
 
-const fetchOutbreakLineage = memoize(
-  async function(lineage) {
-    const url = new URL('https://api.outbreak.info/genomics/lineage');
-    url.searchParams.append('name', lineage);
-
-    const resp = await fetch(url);
-    const {success, results} = await resp.json();
-    if (success) {
-      return results.map(
-        ({name, total_count: totalCount}) => ({name, totalCount})
-      );
-    }
-    else {
-      throw new Error('Unable to access api.outbreak.info');
-    }
-  }
-);
-
-
-function useOutbreakInfo(pangolin) {
+function useOutbreakInfo(props) {
   const {
     data: pangoData,
-    error: pangoError,
-    isPending: pangoIsPending} = usePangoLineage(pangolin);
-  const pangoLoaded = !pangoError && !pangoIsPending;
-  const asyncFetch = React.useCallback(
-    async ({lineage}) => {
-      if (pangoLoaded) {
-        return await fetchOutbreakLineage(lineage);
-      }
-      return [];
-    },
-    [pangoLoaded]
-  );
-
-  const {
-    data,
     error,
     isPending
-  } = useSmartAsync({
-    promiseFn: asyncFetch,
-    lineage: pangoLoaded ? pangoData.lineage : undefined
-  });
-  const loaded = pangoLoaded && !error && !isPending;
-  return {data, error, isPending: !loaded};
+  } = usePangoLineage(props);
+  const {
+    config: {
+      outbreakInfo: {
+        lineages: {
+          results
+        }
+      }
+    }
+  } = props;
+  let data = [];
+  if (!error && !isPending) {
+    data = results.filter(
+      ({name}) => (
+        name.toLocaleUpperCase('en-US') ===
+        pangoData.lineage.toLocaleUpperCase('en-US')
+      )
+    );
+  }
+  return {data, error, isPending};
 }
 
 
-export default function OutbreakInfo(pangolin) {
-  const {data, error, isPending} = useOutbreakInfo(pangolin);
+export default function OutbreakInfo(props) {
+  const {data, error, isPending} = useOutbreakInfo(props);
 
   let child;
   if (error) {
@@ -70,7 +48,7 @@ export default function OutbreakInfo(pangolin) {
   else {
     child = <ul className={style['outbreak-info-list']}>
       {data.length === 0 ? <li>PANGO lineage not available</li> : null}
-      {data.map(({name, totalCount}) => {
+      {data.map(({name, total_count: totalCount}) => {
         const url = new URL('https://outbreak.info/situation-reports');
         url.searchParams.append('pango', name);
         return <li key={name}>
