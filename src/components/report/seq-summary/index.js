@@ -10,7 +10,8 @@ import {PrettyPairwiseButton, PrettyPairwiseList} from './pretty-pairwise';
 import MultilineGeneRangeReal from './multiline-gene-range';
 import InlineGeneRangeReal from './inline-gene-range';
 import GeneMutationsReal from './gene-mutations';
-import PangolinLineageReal from './pangolin-lineage';
+import PangoLineageReal from './pango-lineage';
+import OutbreakInfoReal from './outbreak-info';
 import SubtypeReal from './subtype';
 import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
@@ -25,7 +26,8 @@ const InlineGeneRange = () => null;
 const MultilineGeneRange = () => null;
 const GeneMutations = () => null;
 const Subtype = () => null;
-const PangolinLineage = () => null;
+const PangoLineage = () => null;
+const OutbreakInfo = () => null;
 const MinPrevalence = () => null;
 const MinCodonReads = () => null;
 const MinPositionReads = () => null;
@@ -76,9 +78,6 @@ function SeqSummary(props) {
       </div>
       <div className={style['desc-list']}>
         <dl>
-          {children.some(child => child.type === InlineGeneRange) && (
-            <InlineGeneRangeReal config={config} {...{geneSeqs}} />
-          )}
           {geneSeqs.map((geneSeq, idx) => {
             return <React.Fragment key={idx}>
               {children.some(child => child.type === MultilineGeneRange) && (
@@ -89,39 +88,66 @@ function SeqSummary(props) {
               )}
             </React.Fragment>;
           })}
-          {children.some(child => child.type === Subtype) && (
-            <SubtypeReal {...{bestMatchingSubtype, subtypes}} />
-          )}
-          {children.some(child => child.type === MedianReadDepth) && (
-            <MedianReadDepthReal {...{readDepthStats}} />
-          )}
-          {children.some(child => child.type === PangolinLineage) && (
-            <PangolinLineageReal {...pangolin} />
-          )}
-          {children.some(child => child.type === MinPrevalence) && (
-            <MinPrevalenceReal
-             match={match}
-             router={router}
-             config={config}
-             {...{minPrevalence}} />
-          )}
-          {children.some(child => child.type === MinCodonReads) && (
-            <MinCodonReadsReal
-             match={match}
-             router={router}
-             config={config}
-             {...{minCodonReads}} />
-          )}
-          {children.some(child => child.type === MinPositionReads) && (
-            <MinPositionReadsReal
-             match={match}
-             router={router}
-             config={config}
-             {...{minPositionReads}} />
-          )}
-          {showSDRMs && children.some(child => child.type === SDRMs) && (
-            <SDRMList {...{geneSeqs}} />
-          )}
+          {children.map((child, key) => {
+            if (child.type === InlineGeneRange) {
+              return <InlineGeneRangeReal {...{key, config, geneSeqs}} />;
+            }
+
+            else if (child.type === Subtype) {
+              return <SubtypeReal {...{key, bestMatchingSubtype, subtypes}} />;
+            }
+
+            else if (child.type === MedianReadDepth) {
+              return <MedianReadDepthReal {...{key, readDepthStats}} />;
+            }
+
+            else if (child.type === PangoLineage) {
+              return <PangoLineageReal key={key} {...pangolin} />;
+            }
+
+            else if (child.type === OutbreakInfo) {
+              return <OutbreakInfoReal key={key} {...pangolin} />;
+            }
+
+            else if (child.type === MinPrevalence) {
+              return (
+                <MinPrevalenceReal
+                 key={key}
+                 match={match}
+                 router={router}
+                 config={config}
+                 {...{minPrevalence}} />
+              );
+            }
+
+            else if (child.type === MinCodonReads) {
+              return (
+                <MinCodonReadsReal
+                 key={key}
+                 match={match}
+                 router={router}
+                 config={config}
+                 {...{minCodonReads}} />
+              );
+            }
+
+            else if (child.type === MinPositionReads) {
+              return (
+                <MinPositionReadsReal
+                 key={key}
+                 match={match}
+                 router={router}
+                 config={config}
+                 {...{minPositionReads}} />
+              );
+            }
+
+            else if (showSDRMs && child.type === SDRMs) {
+              return <SDRMList {...{key, geneSeqs}} />;
+            }
+
+            return null;
+          })}
         </dl>
       </div>
       {showPrettyPairwise &&
@@ -183,7 +209,8 @@ SeqSummaryWrapper.MultilineGeneRange = MultilineGeneRange;
 SeqSummaryWrapper.InlineGeneRange = InlineGeneRange;
 SeqSummaryWrapper.GeneMutations = GeneMutations;
 SeqSummaryWrapper.Subtype = Subtype;
-SeqSummaryWrapper.PangolinLineage = PangolinLineage;
+SeqSummaryWrapper.PangoLineage = PangoLineage;
+SeqSummaryWrapper.OutbreakInfo = OutbreakInfo;
 SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
 SeqSummaryWrapper.MinPrevalence = MinPrevalence;
 SeqSummaryWrapper.MinCodonReads = MinCodonReads;

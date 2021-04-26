@@ -72,7 +72,8 @@ function SingleSeqReadsReport({
           <SeqSummary {...sequenceReadsResult} output={output}>
             <SeqSummary.InlineGeneRange />
             <SeqSummary.MedianReadDepth />
-            <SeqSummary.PangolinLineage />
+            <SeqSummary.PangoLineage />
+            <SeqSummary.OutbreakInfo />
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />
           </SeqSummary>

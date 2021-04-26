@@ -56,7 +56,8 @@ function SingleSequenceReport({
           <SeqSummary {...sequenceResult} {...{output, strain}}>
             <SeqSummary.InlineGeneRange />
             <SeqSummary.PrettyPairwise />
-            <SeqSummary.PangolinLineage />
+            <SeqSummary.PangoLineage />
+            <SeqSummary.OutbreakInfo />
           </SeqSummary>
           <ReportSection title="Sequence quality assessment">
             <MutViewer {...{
