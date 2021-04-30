@@ -14,6 +14,7 @@ import ReportSection from './report-section';
 import MutationList from './mutation-list';
 import ConfigContext from './config-context';
 import RefsSection, {RefContextWrapper} from './references';
+import useDownloadCodFreqs from './download-codfreqs';
 
 export {
   DRInterpretation, DRMutationScores,
@@ -22,5 +23,6 @@ export {
   SeqReadsAnalysisQA, SequenceAnalysisQAChart,
   MutationStats, MutationViewer, ReportSection,
   MutationList, ConfigContext, RefsSection,
-  RefContextWrapper, ReportHeader
+  RefContextWrapper, ReportHeader,
+  useDownloadCodFreqs
 };

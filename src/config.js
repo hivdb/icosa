@@ -1,4 +1,4 @@
-async function popPrevalence(dataURI) {
+/* async function popPrevalence(dataURI) {
   const resp = await fetch(dataURI);
   const data = await resp.json();
   const pcntLookup = data.reduce((acc, row) => {
@@ -27,7 +27,7 @@ async function popRefAminoAcid(dataURI) {
     return row;
   });
 }
-
+*/
 
 const cmsPrefix = (
   'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/pages'
@@ -208,7 +208,7 @@ const config = {
       query: 'stopCodonSites'
     }
   ],
-  codFreqExtraColumns: [
+  /* codFreqExtraColumns: [
     {
       name: 'refAminoAcid',
       callback: popRefAminoAcid(
@@ -237,7 +237,7 @@ const config = {
         'main/resources/aapcnt/rx-all_taxon-SARSr.json'
       )
     }
-  ],
+  ], */
   mutAnnotViewer: mutAnnotViewerConfig,
   genomeViewer: genomeViewerConfig
 };

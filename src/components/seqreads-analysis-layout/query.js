@@ -56,6 +56,26 @@ function SeqReadsAnalysisQuery({
     );
   }
 
+  const onSeqReadsExtendVariables = React.useCallback(
+    vars => {
+      vars.allSequenceReads = vars.allSequenceReads.map(
+        ({allReads, ...seqReads}) => ({
+          allReads: allReads.map(
+            ({allCodonReads, ...read}) => ({
+              allCodonReads: allCodonReads.map(
+                ({codon, reads}) => ({codon, reads})
+              ),
+              ...read
+            })
+          ),
+          ...seqReads
+        })
+      );
+      return onExtendVariables(vars);
+    },
+    [onExtendVariables]
+  );
+
   const {
     loaded,
     error,
@@ -70,7 +90,7 @@ function SeqReadsAnalysisQuery({
     initLimit,
     client,
     currentSelected,
-    onExtendVariables,
+    onExtendVariables: onSeqReadsExtendVariables,
     maxPerRequest: MAX_PER_REQUEST,
     mainInputName: 'allSequenceReads',
     inputUniqKeyName: 'name',

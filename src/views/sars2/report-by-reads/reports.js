@@ -1,8 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
+import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
-import {useReportPaginator} from '../../../components/report';
+import {
+  useDownloadCodFreqs,
+  useReportPaginator
+} from '../../../components/report';
 import PageBreak from '../../../components/page-break';
 
 import setTitle from '../../../utils/set-title';
@@ -44,6 +48,10 @@ function SeqReadsReports({
   fetchAnother
 }) {
 
+  const numSeqs = allSequenceReads.length;
+
+  const {onDownload} = useDownloadCodFreqs(allSequenceReads);
+
   const {
     onObserve,
     onDisconnect,
@@ -53,7 +61,13 @@ function SeqReadsReports({
     loaded,
     output,
     currentSelected,
-    fetchAnother
+    fetchAnother,
+    children: <>
+      <useReportPaginator.Button onClick={onDownload}>
+        <FaDownload />&nbsp;&nbsp;{numSeqs > 1 ? `All ${numSeqs} ` : null}
+        CodFreq File{numSeqs > 1 ? 's' : null}
+      </useReportPaginator.Button>
+    </>
   });
 
   const pageTitle = getPageTitle(sequenceReadsAnalysis, output);

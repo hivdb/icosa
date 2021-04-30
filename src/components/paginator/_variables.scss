@@ -1,0 +1,54 @@
+$item-size: 2.5em;
+$display-nums: var(--display-nums);
+$offset: var(--offset);
+$total: var(--total);
+$scroll-offset: var(--scroll-offset);
+$hover-offset: var(--hover-offset);
+
+$item-outer-size: #{$item-size} * 2;
+$hover-opacity: .9;
+$client-width: var(--display-nums) * #{$item-outer-size};
+$scrollbar-step-width: #{$client-width} / #{$total};
+$scrollbar-offset: #{$scrollbar-step-width} * #{$scroll-offset};
+$scrollbar-width: css-max(
+  3em,
+  calc(
+    #{$scrollbar-step-width} *
+    #{$display-nums}
+  )
+);
+$desc-width: #{$item-size} * 9;
+$desc-margin-left-main: css-min(
+  css-calc(
+    #{$item-size} - #{$desc-width} / 2 +
+    #{$item-outer-size} *
+    #{$offset}
+  ),
+  css-calc(
+    100% -
+    #{$desc-width}
+  )
+);
+$desc-margin-left: css-calc(
+  #{$item-size} *
+  #{$hover-offset} #{"+"}
+  css-max(
+    0px, var(--margin-left-main)
+  )
+);
+
+%paginator-variables {
+  --color-dark: var(--sierra-color-paginator-dark);
+  --color-dark-hover: var(--sierra-color-paginator-dark-hover);
+  --color-light: var(--sierra-color-paginator-light);
+  --color-light-hover: var(--sierra-color-paginator-light-hover);
+  --color-text: var(--sierra-color-paginator-text);
+
+  &.inverse-color {
+    --color-dark: var(--sierra-color-paginator-light);
+    --color-dark-hover: var(--sierra-color-paginator-light-hover);
+    --color-light: var(--sierra-color-paginator-dark);
+    --color-light-hover: var(--sierra-color-paginator-dark-hover);
+    --color-text: var(--sierra-color-paginator-text-inverse);
+  }
+}

@@ -1,4 +1,5 @@
 @import "../../../styles/colors";
+@import "../../paginator/variables";
 
 .report-paginator-container {
   position: sticky !important;
@@ -32,5 +33,28 @@
   }
   @media print {
     display: none;
+  }
+
+  .report-paginator-extras {
+    @extend %paginator-variables;
+    float: left;
+    .navbar-button {
+      margin-top: $item-size * 0.4;
+      border-radius: 0;
+      border: none;
+      font-size: 1.2em;
+      line-height: 1.2em;
+      font-weight: 600;
+      background-color: var(--color-dark);
+      color: var(--color-light);
+      height: $item-size * 1.2;
+      padding: 0 0.5 * $item-size;
+      min-width: 2 * $item-size;
+      cursor: pointer;
+      transition: background-color 200ms ease-in-out;
+      &:hover {
+        background-color: var(--color-dark-hover);
+      }
+    }
   }
 }

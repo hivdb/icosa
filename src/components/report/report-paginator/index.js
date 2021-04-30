@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import Paginator from '../../paginator';
 import useScrollObserver from '../../../utils/use-scroll-observer';
 
+import Button from './button';
 import style from './style.module.scss';
 
 
@@ -20,7 +22,8 @@ function getUniqKey(inputObj) {
 function ReportPaginator({
   inputObjs,
   currentSelected,
-  onSelect
+  onSelect,
+  children: extras
 }) {
   const containerRef = React.useRef();
   const [fixed, handleWindowScroll] = React.useReducer(
@@ -62,6 +65,12 @@ function ReportPaginator({
      ref={containerRef}
      data-fixed={fixed}
      className={style['report-paginator-container']}>
+      <div className={classNames(
+        style['report-paginator-extras'],
+        fixed ? style['inverse-color'] : null
+      )}>
+        {extras}
+      </div>
       <Paginator
        inverseColor={fixed}
        footnote={<>
@@ -81,15 +90,18 @@ ReportPaginator.propTypes = {
     index: PropTypes.number,
     name: PropTypes.string
   }),
-  onSelect: PropTypes.func
+  onSelect: PropTypes.func,
+  children: PropTypes.node.isRequired
 };
 
-export default function useReportPaginator({
+
+function useReportPaginator({
   inputObjs,
   loaded,
   output,
   currentSelected,
-  fetchAnother
+  fetchAnother,
+  children
 }) {
   const resetPaginatorScrollOffset = React.useCallback(
     () => {
@@ -126,7 +138,12 @@ export default function useReportPaginator({
       <ReportPaginator
        currentSelected={currentSelected}
        onSelect={onPaginatorSelect}
-       inputObjs={inputObjs} />
+       inputObjs={inputObjs}
+       children={children} />
     )
   };
 }
+
+useReportPaginator.Button = Button;
+
+export default useReportPaginator;

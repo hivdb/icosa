@@ -28,6 +28,28 @@ const SUPPORT_FORMATS =
   ".tsv, .txt, .codfreq, .codfish, .aavf";
 
 
+function reformCodFreqs(allSequenceReads, geneValidator) {
+  return allSequenceReads.map(
+    ({allReads, ...seqReads}) => ({
+      allReads: allReads.map(
+        ({allCodonReads, gene, position, ...read}) => {
+          [gene, position] = geneValidator(gene, position);
+          return {
+            allCodonReads: allCodonReads.map(
+              ({codon, reads}) => ({codon, reads})
+            ),
+            gene,
+            position,
+            ...read
+          };
+        }
+      ),
+      ...seqReads
+    })
+  );
+}
+
+
 export default function SequenceReadsInputFormWrapper(props) {
 
   return <ConfigContext.Consumer>
@@ -75,7 +97,7 @@ class SequenceReadsInputForm extends React.Component {
 
   handleSubmit = async (e) => {
     e && e.persist();
-    const {outputOptions} = this.props;
+    const {config, outputOptions} = this.props;
     let {outputOption, allFastqFiles, allSequenceReads} = this.state;
     let validated = true;
     let state = {};
@@ -87,6 +109,7 @@ class SequenceReadsInputForm extends React.Component {
     if (validated) {
       if (allFastqFiles.length > 0) {
         this.setState({isSubmitting: true});
+        const geneValidator = buildGeneValidator(config.geneValidatorDefs);
         for await (const progress of fastq2codfreq(allFastqFiles)) {
           let {loaded, codfreqs, count, total, description} = progress;
           total = Math.round(total / 0.99); // make total a little bit larger
@@ -98,7 +121,9 @@ class SequenceReadsInputForm extends React.Component {
           if (loaded) {
             allSequenceReads = [
               ...allSequenceReads,
-              ...codfreqs
+              ...reformCodFreqs(
+                codfreqs, geneValidator
+              )
             ];
             break;
           }

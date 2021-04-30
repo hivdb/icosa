@@ -148,11 +148,7 @@ async function * triggerRunner(taskKey, files) {
       `${API_SERVER}/trigger-runner`, {
         taskKey,
         runners: [{
-          reference: 'SARS2.S.fas',
-          gene: 'S'
-        }, {
-          reference: 'SARS2.RdRP.fas',
-          gene: 'RdRP'
+          profile: 'SARS2.json'
         }]
       }
     );
