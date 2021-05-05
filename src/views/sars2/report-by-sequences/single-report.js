@@ -19,6 +19,10 @@ import {
   CPSuscSummary,
   VPSuscSummary
 } from '../../../components/susc-summary';
+import {
+  formatDate,
+  formatDateTime
+} from '../format-date';
 
 import style from '../style.module.scss';
 
@@ -76,11 +80,7 @@ function SingleSequenceReport({
           </ReportSection>
           <ReportSection
            titleAnnotation={<>
-             Last updated on {new Date(
-               parseInt(cmtVersion.slice(0, 4)),
-               parseInt(cmtVersion.slice(4, 6) - 1),
-               parseInt(cmtVersion.slice(6, 8))
-             ).toLocaleDateString("en-US")}
+             Last updated on {formatDate(cmtVersion)}
            </>}
            title="Mutation comments">
             <SARS2MutComments {...sequenceResult} />
@@ -88,7 +88,7 @@ function SingleSequenceReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {formatDateTime(drdbLastUpdate)}
            </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
@@ -99,7 +99,7 @@ function SingleSequenceReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {formatDateTime(drdbLastUpdate)}
            </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
@@ -108,7 +108,7 @@ function SingleSequenceReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {formatDateTime(drdbLastUpdate)}
            </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
