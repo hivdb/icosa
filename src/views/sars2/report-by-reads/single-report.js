@@ -36,6 +36,7 @@ function useCoverages({allReads}) {
 
 
 function SingleSeqReadsReport({
+  cmtVersion,
   antibodies,
   drdbLastUpdate,
   species,
@@ -92,13 +93,21 @@ function SingleSeqReadsReport({
            title="Mutation list">
             <MutList {...sequenceReadsResult} {...{output, strain}} />
           </ReportSection>
-          <ReportSection title="Mutation comments">
+          <ReportSection
+           titleAnnotation={<>
+             Last updated on {new Date(
+               parseInt(cmtVersion.slice(0, 4)),
+               parseInt(cmtVersion.slice(4, 6) - 1),
+               parseInt(cmtVersion.slice(6, 8))
+             ).toLocaleDateString("en-US")}
+           </>}
+           title="Mutation comments">
             <SARS2MutComments {...sequenceReadsResult} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
@@ -109,7 +118,7 @@ function SingleSeqReadsReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
@@ -118,7 +127,7 @@ function SingleSeqReadsReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary

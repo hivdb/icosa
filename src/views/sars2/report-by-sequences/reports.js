@@ -36,6 +36,7 @@ function SequenceReports({
   output,
   genes,
   antibodies,
+  cmtVersion,
   drdbLastUpdate,
   species,
   match,
@@ -81,6 +82,7 @@ function SequenceReports({
           <SingleSequenceReport
            key={idx}
            antibodies={antibodies}
+           cmtVersion={cmtVersion}
            drdbLastUpdate={drdbLastUpdate}
            currentSelected={currentSelected}
            sequenceResult={seqResultLookup[header]}

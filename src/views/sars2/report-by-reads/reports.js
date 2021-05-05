@@ -37,6 +37,7 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 function SeqReadsReports({
   output,
   genes,
+  cmtVersion,
   antibodies,
   drdbLastUpdate,
   species,
@@ -99,6 +100,7 @@ function SeqReadsReports({
            key={idx}
            species={species}
            inputSequenceReads={inputSeqReads}
+           cmtVersion={cmtVersion}
            antibodies={antibodies}
            drdbLastUpdate={drdbLastUpdate}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}

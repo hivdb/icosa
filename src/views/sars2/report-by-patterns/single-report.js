@@ -22,6 +22,7 @@ import style from '../style.module.scss';
 
 
 function SinglePatternReport({
+  cmtVersion,
   drdbLastUpdate,
   antibodies,
   species,
@@ -62,13 +63,21 @@ function SinglePatternReport({
            title="Mutation list">
             <MutList {...patternResult} {...{output}} />
           </ReportSection>
-          <ReportSection title="Mutation comments">
+          <ReportSection
+           titleAnnotation={<>
+             Last updated on {new Date(
+               parseInt(cmtVersion.slice(0, 4)),
+               parseInt(cmtVersion.slice(4, 6) - 1),
+               parseInt(cmtVersion.slice(6, 8))
+             ).toLocaleDateString("en-US")}
+           </>}
+           title="Mutation comments">
             <SARS2MutComments {...patternResult} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
@@ -78,7 +87,7 @@ function SinglePatternReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
@@ -87,7 +96,7 @@ function SinglePatternReport({
           <ReportSection
            className={style['no-page-break']}
            titleAnnotation={<>
-             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+             Last updated on {new Date(drdbLastUpdate).toLocaleString("en-US")}
            </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary

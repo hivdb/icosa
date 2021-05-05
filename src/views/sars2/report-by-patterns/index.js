@@ -45,6 +45,7 @@ function ReportByPatternsContainer({
        species={species}
        match={match}
        router={router}
+       cmtVersion={config.cmtVersion}
        {...props} />
     )}
   </PatternAnalysisLayout>;

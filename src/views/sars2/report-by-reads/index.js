@@ -40,6 +40,7 @@ function ReportByReadsContainer({
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReadsReports
+       cmtVersion={config.cmtVersion}
        species={config.species}
        output={output}
        match={match}

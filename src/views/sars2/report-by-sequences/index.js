@@ -49,6 +49,7 @@ function ReportBySequencesContainer({
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReports
+       cmtVersion={config.cmtVersion}
        output={output}
        species={species}
        match={match}

@@ -31,6 +31,7 @@ function getPageTitle(patternAnalysis, output) {
 
 
 function PatternReports({
+  cmtVersion,
   output,
   genes,
   antibodies,
@@ -78,6 +79,7 @@ function PatternReports({
         <React.Fragment key={idx}>
           <SinglePatternReport
            key={idx}
+           cmtVersion={cmtVersion}
            inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
