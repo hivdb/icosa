@@ -1,4 +1,5 @@
 const rootLevel = `
+  drdbLastUpdate(drdbVersion: $drdbVersion)
   antibodies(drdbVersion: $drdbVersion) {
     name
     abbrName

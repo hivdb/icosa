@@ -34,6 +34,7 @@ function PatternReports({
   output,
   genes,
   antibodies,
+  drdbLastUpdate,
   species,
   match,
   router,
@@ -89,6 +90,7 @@ function PatternReports({
            match={match}
            router={router}
            antibodies={antibodies}
+           drdbLastUpdate={drdbLastUpdate}
            genes={genes} />
           {idx + 1 < patternAnalysis.length ?
             <PageBreak /> : null}

@@ -22,6 +22,7 @@ import style from '../style.module.scss';
 
 
 function SinglePatternReport({
+  drdbLastUpdate,
   antibodies,
   species,
   match,
@@ -66,6 +67,9 @@ function SinglePatternReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
              antibodies={antibodies}
@@ -73,12 +77,18 @@ function SinglePatternReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
              {...patternResult} {...{output}} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
              {...patternResult} {...{output}} />

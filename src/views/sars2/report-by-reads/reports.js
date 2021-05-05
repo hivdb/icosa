@@ -38,6 +38,7 @@ function SeqReadsReports({
   output,
   genes,
   antibodies,
+  drdbLastUpdate,
   species,
   match,
   router,
@@ -99,6 +100,7 @@ function SeqReadsReports({
            species={species}
            inputSequenceReads={inputSeqReads}
            antibodies={antibodies}
+           drdbLastUpdate={drdbLastUpdate}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}

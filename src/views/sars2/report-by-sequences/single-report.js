@@ -24,6 +24,7 @@ import style from '../style.module.scss';
 
 
 function SingleSequenceReport({
+  drdbLastUpdate,
   antibodies,
   species,
   match,
@@ -77,6 +78,9 @@ function SingleSequenceReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
              antibodies={antibodies}
@@ -85,12 +89,18 @@ function SingleSequenceReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
              {...sequenceResult} {...{output}} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
              {...sequenceResult} {...{output}} />

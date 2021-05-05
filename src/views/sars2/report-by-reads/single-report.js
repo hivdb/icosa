@@ -37,6 +37,7 @@ function useCoverages({allReads}) {
 
 function SingleSeqReadsReport({
   antibodies,
+  drdbLastUpdate,
   species,
   match,
   router,
@@ -96,6 +97,9 @@ function SingleSeqReadsReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="MAb susceptibility summary">
             <AbSuscSummary
              antibodies={antibodies}
@@ -104,12 +108,18 @@ function SingleSeqReadsReport({
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Convalescent plasma susceptibility summary">
             <CPSuscSummary
              {...sequenceReadsResult} {...{output}} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
+           titleAnnotation={<>
+             Last updated at {new Date(drdbLastUpdate).toLocaleString("en-US")}
+           </>}
            title="Plasma from vaccinated persons susceptibility summary">
             <VPSuscSummary
              {...sequenceReadsResult} {...{output}} />

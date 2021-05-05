@@ -36,6 +36,7 @@ function SequenceReports({
   output,
   genes,
   antibodies,
+  drdbLastUpdate,
   species,
   match,
   router,
@@ -80,6 +81,7 @@ function SequenceReports({
           <SingleSequenceReport
            key={idx}
            antibodies={antibodies}
+           drdbLastUpdate={drdbLastUpdate}
            currentSelected={currentSelected}
            sequenceResult={seqResultLookup[header]}
            onObserve={onObserve}
