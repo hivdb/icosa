@@ -81,7 +81,10 @@ class ReferenceObject {
     };
   }
 
-  hasAnyReference = () => {
+  hasAnyReference = (includeInlines = false) => {
+    if (includeInlines) {
+      return !!Object.keys(this.#references).length;
+    }
     return this.getAllReferences().some(({linkIds}) => linkIds.length > 0);
   }
 

@@ -25,6 +25,10 @@ function RefDataLoader({onLoad, setReference, references}) {
         /*incr=*/false
       );
     }
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('Reference loaded.');
+    }
     onLoad();
   }, 2000);
   return null;

@@ -48,19 +48,24 @@ export default function OptReferences({
   const {hasAnyReference} = React.useContext(ReferenceContext);
   useAutoUpdate();
 
-  if (hasAnyReference()) {
-    return (
-      <Collapsable.Section
-       level={level}
-       alwaysCollapsable
-       data-section-reference="">
-        {({onLoad}) => <>
-          <HeadingTag {...{disableAnchor, level}}>{referenceTitle}</HeadingTag>
-          <LoadExternalRefData />
-          <References onLoad={onLoad} />
-        </>}
-      </Collapsable.Section>
-    );
+  if (hasAnyReference(/* includeInlines=*/true)) {
+    const hasFootnoteReferences = hasAnyReference(/* includeInlines=*/false);
+    return <>
+      <LoadExternalRefData />
+      {hasFootnoteReferences ?
+        <Collapsable.Section
+         level={level}
+         alwaysCollapsable
+         data-section-reference="">
+          {({onLoad}) => <>
+            <HeadingTag {...{disableAnchor, level}}>
+              {referenceTitle}
+            </HeadingTag>
+            <References onLoad={onLoad} />
+          </>}
+        </Collapsable.Section> :
+        null}
+    </>;
   }
   return null;
 }

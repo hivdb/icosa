@@ -3,34 +3,51 @@ import PropTypes from 'prop-types';
 import Children from 'react-children-utilities';
 import InlineLoader from '../inline-loader';
 
+import useAutoUpdate from './use-auto-update';
 import ReferenceContext from './reference-context';
 import buildRef from './build-ref';
 
 
 function InlineRef({name, identifier, ...ref}) {
-  name = name || identifier;
-  if (!name) {
+  const {
+    getReference,
+    setReference
+  } = React.useContext(ReferenceContext);
+
+  useAutoUpdate();
+
+  let finalName = name || identifier;
+  if (!finalName) {
     const {authors, year} = ref;
     if (authors) {
-      name = `${authors.split(' ', 2)[0]}${year}`;
+      finalName = `${authors.split(' ', 2)[0]}${year}`;
     }
     else {
-      name = Children.onlyText(ref.children);
+      finalName = Children.onlyText(ref.children);
     }
   }
 
-  return <ReferenceContext.Consumer>
-    {({setReference, getReference, ensureLoaded}) => {
-      setReference(
-        name, ref, /* incr=*/ false
-      );
+  React.useEffect(
+    () => {
+      setReference(finalName, ref, /* incr=*/ false);
+    },
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    [finalName, setReference]
+  );
 
-      return ensureLoaded(
-        () => buildRef(getReference(name)),
-        <InlineLoader />
-      );
-    }}
-  </ReferenceContext.Consumer>;
+  const storedRef = getReference(finalName);
+
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.log(`Render <InlineRef ${finalName} />`);
+  }
+
+  if (storedRef) {
+    return buildRef(storedRef);
+  }
+  else {
+    return <InlineLoader />;
+  }
 }
 
 InlineRef.propTypes = {
