@@ -12,6 +12,12 @@ $cell-padding: .1rem;
   }
 }
 
+.susc-summary-footnote {
+  ul > li {
+    line-height: 1.8;
+  }
+}
+
 .cell-variants {
   padding: $cell-padding 0;
   .variants {

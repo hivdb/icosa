@@ -150,9 +150,10 @@ function AntibodySuscSummary({
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const payload = buildPayload(itemsByMutations);
   const {rows, button, expanded} = useToggleDisplay(payload);
+  const [config, loading] = ConfigContext.use();
 
   if (payload.length > 0) {
-    return (
+    return <>
       <SimpleTable
        cacheKey={`${expanded}`}
        compact lastCompact disableCopy
@@ -161,16 +162,19 @@ function AntibodySuscSummary({
        columnDefs={buildColumnDefs(antibodies, itemsByMutations)}
        data={rows}
        afterTable={button} />
-    );
+      {loading ? null : <div className={style['susc-summary-footnote']}>
+        <Markdown escapeHtml={false}>
+          {config.messages['mab-footnote']}
+        </Markdown>
+      </div>}
+    </>;
   }
   else {
-    return <ConfigContext.Consumer>
-      {({messages}) => (
-        <Markdown escapeHtml={false}>
-          {messages['no-mab-susc-result']}
-        </Markdown>
-      )}
-    </ConfigContext.Consumer>;
+    return loading ? null : (
+      <Markdown escapeHtml={false}>
+        {config.messages['no-mab-susc-result']}
+      </Markdown>
+    );
   }
 }
 
