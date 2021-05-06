@@ -106,3 +106,43 @@ button.toggle-display {
     display: none;
   }
 }
+
+.mab-popup-trigger {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  @media print {
+    text-decoration: none;
+  }
+}
+
+.mab-popup {
+  &:global(-content) {
+    margin: auto;
+    background: rgb(255, 255, 255);
+    padding: 0 1rem;
+    border-radius: .4rem;
+    &[role="tooltip"] {
+      min-width: 10rem;
+      max-width: 40vw;
+      @media only screen and (max-width: 1200px) {
+        max-width: 50vw;
+      }
+      @media only screen and (max-width: 900px) {
+        max-width: 60vw;
+      }
+      border: 1px solid gray;
+    }
+  }
+  &:global(-arrow) {
+    stroke-width: 2px;
+    stroke: gray;
+    stroke-dasharray: 30px;
+    stroke-dashoffset: -54px;
+  }
+  &:global(-overlay) {
+    background: rgba(0, 0, 0, 0.5);
+    &[data-popup='tooltip'] {
+      background: transparent;
+    }
+  }
+}

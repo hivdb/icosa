@@ -9,6 +9,7 @@ import {ConfigContext} from '../report';
 import SimpleTable, {ColumnDef} from '../simple-table';
 
 import {getUniqVariants, getRowKey, decideDisplayPriority} from './funcs';
+import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
 import useToggleDisplay from './toggle-display';
@@ -125,7 +126,7 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
     }),
     ...orderedAntibodies.map(abs => new ColumnDef({
       name: '__abfold__' + abs.map(({name}) => name).join('+'),
-      label: abs.map(({name, abbrName}) => abbrName || name).join(' + '),
+      label: <LabelAntibodies antibodies={abs} />,
       render: renderFold,
       sort: ['cumulativeFold.median']
     })),
