@@ -1,20 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 
 import {
   parseAndValidateMutation
-} from '../../../utils/mutation';
+} from '../../utils/mutation';
 
 import style from './style.module.scss';
 
 
 function MutationsTagsInput({
-  config, mutations, onChange
+  config, mutations, onChange, parentClassName
 }) {
 
   const placeholder = (
     'Enter/paste mutation(s)'
+  );
+
+  const className = (
+    parentClassName ? `${parentClassName}-tagsinput` : null
   );
 
   return (
@@ -30,13 +35,28 @@ function MutationsTagsInput({
      inputProps={{
        placeholder,
        size: placeholder.length,
-       className: style['mutations-tagsinput-input']
+       className: classNames(
+         style['mutations-tagsinput-input'],
+         className ? `${className}-input` : null
+       )
      }}
-     className={style['mutations-tagsinput']}
-     focusedClassName={style['mutations-tagsinput-focused']}
+     className={classNames(
+       style['mutations-tagsinput'],
+       className
+     )}
+     focusedClassName={classNames(
+       style['mutations-tagsinput-focused'],
+       className ? `${className}-focused` : null
+     )}
      tagProps={{
-       className: style['mutations-tagsinput-tag'],
-       classNameRemove: style['mutations-tagsinput-remove']
+       className: classNames(
+         style['mutations-tagsinput-tag'],
+         className ? `${className}-tag` : null
+       ),
+       classNameRemove: classNames(
+         style['mutations-tagsinput-remove'],
+         className ? `${className}-tag` : null
+       )
      }}
      onChange={onChange} />
   );
@@ -68,6 +88,7 @@ MutationsTagsInput.propTypes = {
   mutations: PropTypes.arrayOf(
     PropTypes.string.isRequired
   ).isRequired,
+  parentClassName: PropTypes.string,
   onChange: PropTypes.func.isRequired
 };
 

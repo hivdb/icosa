@@ -1,15 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import style from './style.module.scss';
-import linkStyle from '../../link/style.module.scss';
+import linkStyle from '../link/style.module.scss';
 
 
-function MutationsErrors({allErrors, onAutoClean}) {
+function MutationsErrors({allErrors, onAutoClean, parentClassName}) {
+
+  const className = (
+    parentClassName ? `${parentClassName}-errors` : null
+  );
+
   return (
     <div
      data-display={allErrors.length > 0}
-     className={style['mutations-errors']}
+     className={classNames(
+       style['mutations-errors'],
+       className
+     )}
      style={{
        '--error-rows': allErrors.reduce(
          (acc, {errors}) => acc + errors.length + 1,
@@ -31,7 +40,10 @@ function MutationsErrors({allErrors, onAutoClean}) {
           <li key={idx}>
             <span
              data-error="true"
-             className={style['mutations-tagsinput-tag']}>
+             className={classNames(
+               style['mutations-tagsinput-tag'],
+               parentClassName ? `${parentClassName}-tagsinput-tag` : null
+             )}>
               {text}
             </span>:
             <ul>
@@ -55,6 +67,7 @@ MutationsErrors.propTypes = {
       ).isRequired
     }).isRequired
   ).isRequired,
+  parentClassName: PropTypes.string,
   onAutoClean: PropTypes.func.isRequired
 };
 

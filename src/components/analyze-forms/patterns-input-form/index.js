@@ -5,11 +5,13 @@ import {v4 as uuidv4} from 'uuid';
 import CheckboxInput from '../../checkbox-input';
 import createLocationState from '../../../utils/use-location-state';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
+import ConfigContext from '../../report/config-context';
+import MutationsInput from '../../mutations-input';
+import InlineLoader from '../../inline-loader';
 
 import BaseForm from '../base';
 import parentStyle from '../style.module.scss';
 
-import MutationsInput from './mutations-input';
 import style from './style.module.scss';
 
 
@@ -37,6 +39,7 @@ function PatternsInputForm({children, to, onSubmit}) {
     toggleRetainInputOpt
   ] = useRetainInputOpt(flag => !flag, true);
 
+  const [config, isConfigPending] = ConfigContext.use();
   const [
     patterns,
     setPatterns
@@ -60,15 +63,17 @@ function PatternsInputForm({children, to, onSubmit}) {
      onReset={handleReset}>
       {children}
       <div className={style['patterns-input-container']}>
-        {patterns.map(({uuid, name, mutations}) => (
-          <MutationsInput
-           key={uuid}
-           uuid={uuid}
-           name={name}
-           mutations={mutations}
-           onChange={handleChange}
-           isActive={true} />
-        ))}
+        {isConfigPending ? <InlineLoader /> :
+          patterns.map(({uuid, name, mutations}) => (
+            <MutationsInput
+             key={uuid}
+             uuid={uuid}
+             name={name}
+             config={config}
+             mutations={mutations}
+             onChange={handleChange}
+             isActive={true} />
+          ))}
       </div>
       <div className={parentStyle['analyze-base-form-submit-options']}>
         <CheckboxInput

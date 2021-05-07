@@ -125,7 +125,7 @@ button.toggle-display {
   &:global(-content) {
     margin: auto;
     background: rgb(255, 255, 255);
-    padding: 0 1rem;
+    padding: 1rem;
     border-radius: .4rem;
     &[role="tooltip"] {
       min-width: 10rem;

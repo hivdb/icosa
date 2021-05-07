@@ -1,6 +1,6 @@
-@import "../../../styles";
-@import "../../../styles/tabs";
-@import "../../../styles/dropdown";
+@import "../../styles";
+@import "../../styles/tabs";
+@import "../../styles/dropdown";
 
 .mutation-suggest-options {
   @extend %general-dropdown;

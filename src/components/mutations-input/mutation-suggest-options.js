@@ -4,7 +4,7 @@ import Dropdown from 'react-dropdown';
 
 import {
   expandIndel
-} from '../../../utils/mutation';
+} from '../../utils/mutation';
 
 import style from './style.module.scss';
 

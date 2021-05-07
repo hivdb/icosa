@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
-import ConfigContext from '../../report/config-context';
 import {
   sanitizeMutations
-} from '../../../utils/mutation';
+} from '../../utils/mutation';
 
 import MutationsTagsInput from './mutations-tagsinput';
 import MutationsErrors from './mutations-errors';
@@ -12,8 +12,8 @@ import MutationsErrors from './mutations-errors';
 import style from './style.module.scss';
 
 
-function MutationsInputInternal({
-  config, uuid, name, mutations, onChange, isActive
+function MutationsInput({
+  config, mutations, className, onChange, isActive, ...extras
 }) {
   const [,allErrors] = sanitizeMutations(mutations, config);
 
@@ -24,13 +24,18 @@ function MutationsInputInternal({
   });
 
   return (
-    <div key={uuid} className={style['mutation-suggest-input']}>
+    <div className={classNames(
+      style['mutation-suggest-input'],
+      className,
+    )}>
       <MutationsTagsInput
        config={config}
+       parentClassName={className}
        mutations={mutations}
        onChange={handleTagsChange} />
       <MutationsErrors
        allErrors={allErrors}
+       parentClassName={className}
        onAutoClean={handleRemoveAllErrors} />
       {/*<MutationSuggestOptions
        config={config}
@@ -42,8 +47,7 @@ function MutationsInputInternal({
     e.preventDefault();
     const [sanitized] = sanitizeMutations(mutations, config, true);
     onChange({
-      uuid,
-      name,
+      ...extras,
       mutations: sanitized
     }, false);
   }
@@ -51,8 +55,7 @@ function MutationsInputInternal({
   function handleTagsChange(mutations) {
     const [sanitized, allErrors] = sanitizeMutations(mutations, config);
     onChange({
-      uuid,
-      name,
+      ...extras,
       mutations: sanitized
     }, allErrors.length > 0);
   }
@@ -74,8 +77,7 @@ function MutationsInputInternal({
       [...mutations, mut], config
     );
     onChange({
-      uuid,
-      name,
+      ...extras,
       mutations: sanitized
     }, allErrors.length > 0);
   } */
@@ -83,13 +85,12 @@ function MutationsInputInternal({
 }
   
 
-MutationsInputInternal.propTypes = {
+MutationsInput.propTypes = {
   config: PropTypes.shape({
     geneReferences: PropTypes.object.isRequired,
     geneDisplay: PropTypes.object.isRequired
   }),
-  uuid: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
+  className: PropTypes.string,
   mutations: PropTypes.arrayOf(
     PropTypes.string.isRequired
   ).isRequired,
@@ -97,8 +98,8 @@ MutationsInputInternal.propTypes = {
   isActive: PropTypes.bool.isRequired
 };
 
-export default function MutationsInput(props) {
-  return <ConfigContext.Consumer>
-    {config => <MutationsInputInternal {...props} config={config} />}
-  </ConfigContext.Consumer>;
-}
+MutationsInput.defaultProps = {
+  isActive: true
+};
+
+export default MutationsInput;
