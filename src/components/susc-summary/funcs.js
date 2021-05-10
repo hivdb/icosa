@@ -36,7 +36,7 @@ export function decideDisplayPriority(items) {
   const results = [];
   let subsetMaxNumMiss = 0;
   let subsetMinNumMiss = Number.MAX_SAFE_INTEGER;
-  let overlapMaxNumMiss = 0;
+  let overlapMinNumMiss = Number.MAX_SAFE_INTEGER;
   let hasOverlap = false;
   for (const item of items) {
     const {
@@ -68,8 +68,8 @@ export function decideDisplayPriority(items) {
       }
       else {
         hasOverlap = true;
-        overlapMaxNumMiss = (
-          overlapMaxNumMiss > numMiss ? overlapMaxNumMiss : numMiss
+        overlapMinNumMiss = (
+          overlapMinNumMiss < numMiss ? overlapMinNumMiss : numMiss
         );
       }
     }
@@ -79,7 +79,7 @@ export function decideDisplayPriority(items) {
   if (hasOverlap && defaultType === 'SUBSET') {
     // check if we should switch place of SUBSET and OVERLAP
     // when OVERLAP have general better results than SUBSET
-    if (overlapMaxNumMiss < subsetMaxNumMiss) {
+    if (overlapMinNumMiss < subsetMinNumMiss) {
       for (const one of results) {
         if (one[1] === 1) {
           one[1] = 0;
@@ -99,10 +99,12 @@ export function decideDisplayPriority(items) {
     subsetMinNumMiss < 4
   ) {
     for (const one of results) {
-      if (one[1] === 0 && one[2] > subsetMinNumMiss) {
+      if (
+        one[0].variantMatchType === 'SUBSET'
+      ) {
         // subsetMinNumMiss is closed to EQUAL,
-        // hide inperfect matches by default
-        one[1] = 1;
+        // hide imperfect matches by default
+        one[1] = one[2] > subsetMinNumMiss ? 1 : 0;
       }
     }
   }
