@@ -3,16 +3,18 @@ import React from 'react';
 import style from './style.module.scss';
 
 
-function SIRPcntBarItem({level, pcnt}) {
-  const displayPcnt = pcnt >= 0.005 ? `${(pcnt * 100).toFixed(0)}%` : '0';
+function SIRPcntBarItem({level, pcnt, children = null}) {
+  if (children === null) {
+    children = pcnt >= 0.005 ? `${(pcnt * 100).toFixed(0)}%` : '0';
+  }
   return (
     <li
      data-level={level}
      data-pcnt={pcnt}
-     title={displayPcnt}
+     title={children}
      style={{'--level-pcnt': pcnt}}>
       <span className={style['sir-pcnt']}>
-        {displayPcnt}
+        {children}
       </span>
     </li>
   );
@@ -25,6 +27,10 @@ export default function SIRPcntBar({levelPcnts}) {
     {levelPcnts.map(({level, pcnt}) => (
       <SIRPcntBarItem key={level} level={level} pcnt={pcnt} />
     ))}
-    {isEmpty ? <li>N/A</li> : null}
+    {isEmpty ? (
+      <SIRPcntBarItem key="na" level="na" pcnt={1}>
+        N/A
+      </SIRPcntBarItem>
+    ) : null}
   </ul>;
 }

@@ -9,11 +9,17 @@ export function getUniqVariants(hitVariants) {
 }
 
 
-export function getRowKey({mutations}) {
-  return mutations.map(({text}) => text).join('+');
+export function getRowKey({mutations, vaccineName}) {
+  const mutText = mutations.map(({text}) => text).join('+');
+  if (vaccineName) {
+    return `${mutText}__${vaccineName}`;
+  }
+  else {
+    return mutText;
+  }
 }
 
-const DEFAULT_DISPLAY_2ND_TYPE_MAX_TOTAL = 3;
+// const DEFAULT_DISPLAY_2ND_TYPE_MAX_TOTAL = 3;
 // const MAX_ALLOWED_OVERLAP_MISS = 4;
 
 export function decideDisplayPriority(items) {
@@ -25,10 +31,11 @@ export function decideDisplayPriority(items) {
   );
 
   let defaultType = matchTypes[0];
-  let secondType = matchTypes[1];
+  // let secondType = matchTypes[1];
   const expandableTypes = matchTypes.slice(1, 3);
   const results = [];
   let subsetMaxNumMiss = 0;
+  let subsetMinNumMiss = Number.MAX_SAFE_INTEGER;
   let overlapMaxNumMiss = 0;
   let hasOverlap = false;
   for (const item of items) {
@@ -43,6 +50,9 @@ export function decideDisplayPriority(items) {
     if (variantMatchType === 'SUBSET') {
       subsetMaxNumMiss = (
         subsetMaxNumMiss > numMiss ? subsetMaxNumMiss : numMiss
+      );
+      subsetMinNumMiss = (
+        subsetMinNumMiss < numMiss ? subsetMinNumMiss : numMiss
       );
     }
 
@@ -79,11 +89,25 @@ export function decideDisplayPriority(items) {
         }
       }
       defaultType = 'OVERLAP';
-      secondType = 'SUBSET';
+      // secondType = 'SUBSET';
     }
   }
 
-  const shouldDisplay2ndType = (
+  if (
+    defaultType === 'SUBSET' &&
+    subsetMaxNumMiss - subsetMinNumMiss > 3 &&
+    subsetMinNumMiss < 4
+  ) {
+    for (const one of results) {
+      if (one[1] === 0 && one[2] > subsetMinNumMiss) {
+        // subsetMinNumMiss is closed to EQUAL,
+        // hide inperfect matches by default
+        one[1] = 1;
+      }
+    }
+  }
+
+  /*const shouldDisplay2ndType = (
     secondType ?
       results.filter(
         ([{variantMatchType}, displayOrder]) => (
@@ -98,7 +122,7 @@ export function decideDisplayPriority(items) {
         one[1] = 0;
       }
     }
-  }
+  }*/
 
   // re-order the 2nd display level by numMiss
   return orderBy(results, [1, 2]);

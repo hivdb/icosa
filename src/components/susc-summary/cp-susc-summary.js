@@ -152,6 +152,9 @@ function ConvPlasmaSuscSummary({
         </span>{' '}
         <span className={style['level-label']} data-level="3">
           ≥10-fold
+        </span>{' '}
+        <span className={style['level-label']} data-level="na">
+          Aggregated data only
         </span>
       </p>
     </>;

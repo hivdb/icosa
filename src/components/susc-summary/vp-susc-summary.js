@@ -21,45 +21,56 @@ const SIRLevels = [
 
 function buildPayload(vaccPlasmaSuscSummary) {
   return decideDisplayPriority(vaccPlasmaSuscSummary)
-    .map(
-      ([{
+    .reduce(
+      (acc, [{
         mutations,
         hitVariants,
-        references,
-        cumulativeCount: numSamples,
-        cumulativeFold: {median: medianFold},
-        itemsByResistLevel
-      }, displayOrder]) => {
-        const variants = getUniqVariants(hitVariants);
-        const row = {
-          mutations,
-          variants,
-          numRefs: references.length,
-          numSamples,
-          medianFold,
-          references,
-          displayOrder
-        };
-        for (const level of SIRLevels) {
-          row[`__level__${level}`] = 0;
-        }
-        let total = 0;
-        for (const {
-          resistanceLevel,
-          cumulativeCount
-        } of itemsByResistLevel) {
-          if (SIRLevels.includes(resistanceLevel)) {
-            total += cumulativeCount;
-            row[`__level__${resistanceLevel}`] = cumulativeCount;
+        itemsByVaccine
+      }, displayOrder]) => [
+        ...acc,
+        ...itemsByVaccine.map(
+          ({
+            vaccineName,
+            references,
+            cumulativeCount: numSamples,
+            cumulativeFold: {median: medianFold},
+            itemsByResistLevel
+          }) => {
+            const variants = getUniqVariants(hitVariants);
+            const row = {
+              _spanIndex: mutations,
+              mutations,
+              vaccineName,
+              variants,
+              numRefs: references.length,
+              numSamples,
+              medianFold,
+              references,
+              displayOrder
+            };
+            for (const level of SIRLevels) {
+              row[`__level__${level}`] = 0;
+            }
+            let total = 0;
+            for (const {
+              resistanceLevel,
+              cumulativeCount
+            } of itemsByResistLevel) {
+              if (SIRLevels.includes(resistanceLevel)) {
+                total += cumulativeCount;
+                row[`__level__${resistanceLevel}`] = cumulativeCount;
+              }
+            }
+            if (total > 0) {
+              for (const level of SIRLevels) {
+                row[`__level__${level}`] = row[`__level__${level}`] / total;
+              }
+            }
+            return row;
           }
-        }
-        if (total > 0) {
-          for (const level of SIRLevels) {
-            row[`__level__${level}`] = row[`__level__${level}`] / total;
-          }
-        }
-        return row;
-      }
+        )
+      ],
+      []
     )
     .filter(({displayOrder}) => displayOrder !== null);
 }
@@ -94,28 +105,38 @@ function buildColumnDefs(itemsByMutations) {
       ]]
     }),
     new ColumnDef({
+      name: 'vaccineName',
+      label: 'Vaccine',
+      multiCells: true
+    }),
+    new ColumnDef({
       name: 'numRefs',
-      label: '# studies'
+      label: '# studies',
+      multiCells: true
     }),
     new ColumnDef({
       name: 'numSamples',
-      label: '# samples'
+      label: '# samples',
+      multiCells: true
     }),
     new ColumnDef({
       name: '__level__susceptible',
       label: 'Susceptibility distribution',
       render: renderPcntBar,
+      multiCells: true,
       sortable: false
     }),
     new ColumnDef({
       name: 'medianFold',
       label: 'Median Fold',
-      render: n => n.toFixed(1)
+      render: n => n.toFixed(1),
+      multiCells: true
     }),
     new ColumnDef({
       name: 'references',
       label: 'References',
       render: refs => <CellReferences refs={refs} />,
+      multiCells: true,
       sortable: false
     })
   ];
@@ -128,7 +149,7 @@ function VaccPlasmaSuscSummary({
   ...props
 }) {
   itemsByMutations = itemsByMutations
-    .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
+    .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
   const payload = buildPayload(itemsByMutations);
   const {rows, button, expanded} = useToggleDisplay(payload);
 
@@ -152,6 +173,9 @@ function VaccPlasmaSuscSummary({
         </span>{' '}
         <span className={style['level-label']} data-level="3">
           ≥10-fold
+        </span>{' '}
+        <span className={style['level-label']} data-level="na">
+          Aggregated data only
         </span>
       </p>
     </>;

@@ -184,4 +184,10 @@
     color: white;
     background-color: color(name-cardinal);
   }
+  &[data-level="na"] {
+    background-color: #d8d8d8;
+    opacity: 0.8;
+    background-size: 8px 8px;
+    background-image: repeating-linear-gradient(-45deg, #fff 0, #fff 1px, #d8d8d8 0, #d8d8d8 50%);
+  }
 }

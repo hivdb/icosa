@@ -7,7 +7,8 @@ export default class ColumnDef {
   constructor({
     name, label, render, renderConfig = {}, sort,
     sortable = true, textAlign = 'center',
-    none = '?', multiCells = false,
+    none = '?',
+    multiCells = false,
     headCellStyle = {}, bodyCellStyle = {},
     bodyCellColSpan = 1
   }) {

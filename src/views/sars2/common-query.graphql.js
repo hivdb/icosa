@@ -125,21 +125,26 @@ const seqLevel = `
       variantMatchType
       numVariantOnlyMutations
       numQueryOnlyMutations
-      references {
-        refName
-        DOI
-        URL
-      }
-      cumulativeCount
-      cumulativeFold {
-        median: percentile(p: 50)
-      }
-      itemsByResistLevel {
-        resistanceLevel
+      itemsByVaccine {
+        vaccineName
+        vaccinePriority
+        vaccineType
+        references {
+          refName
+          DOI
+          URL
+        }
         cumulativeCount
-        itemsByVaccine {
-          vaccineName
+        cumulativeFold {
+          median: percentile(p: 50)
+        }
+        itemsByResistLevel {
+          resistanceLevel
           cumulativeCount
+          itemsByVaccine {
+            vaccineName
+            cumulativeCount
+          }
         }
       }
     }
