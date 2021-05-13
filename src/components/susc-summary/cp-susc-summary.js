@@ -24,16 +24,16 @@ function buildPayload(convPlasmaSuscSummary) {
     .map(
       ([{
         mutations,
-        hitVariants,
+        hitIsolates,
         references,
         cumulativeCount: numSamples,
         cumulativeFold: {median: medianFold},
         itemsByResistLevel
       }, displayOrder]) => {
-        const variants = getUniqVariants(hitVariants);
+        const isolates = getUniqVariants(hitIsolates);
         const row = {
           mutations,
-          variants,
+          isolates,
           numRefs: references.length,
           numSamples,
           medianFold,
@@ -82,8 +82,8 @@ function buildColumnDefs(itemsByMutations) {
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: (mutations, {variants}) => (
-        <CellMutations {...{mutations, variants}} />
+      render: (mutations, {isolates}) => (
+        <CellMutations {...{mutations, isolates}} />
       ),
       bodyCellStyle: {
         maxWidth: '14rem'

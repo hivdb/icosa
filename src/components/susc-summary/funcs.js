@@ -2,9 +2,9 @@ import uniq from 'lodash/uniq';
 import orderBy from 'lodash/orderBy';
 
 
-export function getUniqVariants(hitVariants) {
+export function getUniqVariants(hitIsolates) {
   return uniq(
-    hitVariants.map(({displayName}) => displayName).filter(d => d)
+    hitIsolates.map(({variantName}) => variantName).filter(d => d)
   );
 }
 
@@ -27,7 +27,7 @@ export function decideDisplayPriority(items) {
     return [];
   }
   const matchTypes = uniq(
-    items.map(({variantMatchType}) => variantMatchType)
+    items.map(({isolateMatchType}) => isolateMatchType)
   );
 
   let defaultType = matchTypes[0];
@@ -40,14 +40,14 @@ export function decideDisplayPriority(items) {
   let hasOverlap = false;
   for (const item of items) {
     const {
-      variantMatchType,
-      numVariantOnlyMutations,
+      isolateMatchType,
+      numIsolateOnlyMutations,
       numQueryOnlyMutations
     } = item;
-    const numMiss = numVariantOnlyMutations + numQueryOnlyMutations;
+    const numMiss = numIsolateOnlyMutations + numQueryOnlyMutations;
     let displayOrder = null;
 
-    if (variantMatchType === 'SUBSET') {
+    if (isolateMatchType === 'SUBSET') {
       subsetMaxNumMiss = (
         subsetMaxNumMiss > numMiss ? subsetMaxNumMiss : numMiss
       );
@@ -56,13 +56,13 @@ export function decideDisplayPriority(items) {
       );
     }
 
-    if (variantMatchType === defaultType) {
+    if (isolateMatchType === defaultType) {
       displayOrder = 0;
     }
-    else if (expandableTypes.includes(variantMatchType)) {
+    else if (expandableTypes.includes(isolateMatchType)) {
       displayOrder = 1;
     }
-    if (displayOrder !== null && variantMatchType === 'OVERLAP') {
+    if (displayOrder !== null && isolateMatchType === 'OVERLAP') {
       if (numMiss >= subsetMaxNumMiss) {
         displayOrder = null;
       }
@@ -100,7 +100,7 @@ export function decideDisplayPriority(items) {
   ) {
     for (const one of results) {
       if (
-        one[0].variantMatchType === 'SUBSET'
+        one[0].isolateMatchType === 'SUBSET'
       ) {
         // subsetMinNumMiss is closed to EQUAL,
         // hide imperfect matches by default
@@ -112,15 +112,15 @@ export function decideDisplayPriority(items) {
   /*const shouldDisplay2ndType = (
     secondType ?
       results.filter(
-        ([{variantMatchType}, displayOrder]) => (
-          variantMatchType === secondType && displayOrder !== null
+        ([{isolateMatchType}, displayOrder]) => (
+          isolateMatchType === secondType && displayOrder !== null
         )
       ).length : 0
   ) <= DEFAULT_DISPLAY_2ND_TYPE_MAX_TOTAL;
 
   if (shouldDisplay2ndType) {
     for (const one of results) {
-      if (one[0].variantMatchType === secondType && one[1] !== null) {
+      if (one[0].isolateMatchType === secondType && one[1] !== null) {
         one[1] = 0;
       }
     }

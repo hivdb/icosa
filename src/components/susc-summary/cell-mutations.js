@@ -5,12 +5,12 @@ import {getRowKey} from './funcs';
 import style from './style.module.scss';
 
 
-export default function CellMutations({mutations, variants}) {
+export default function CellMutations({mutations, isolates}) {
   const shortMutations = shortenMutationList(mutations);
   return (
     <div
      key={getRowKey({mutations})}
-     className={style['cell-variants']}>
+     className={style['cell-isolates']}>
       <div className={style['mutations']}>
         {shortMutations.map(({text}, idx) => (
           <React.Fragment key={idx}>
@@ -22,9 +22,9 @@ export default function CellMutations({mutations, variants}) {
           </React.Fragment>
         ))}
       </div>
-      {variants.length > 0 ? 
-        <div className={style['variants']}>
-          {variants.join('/')}
+      {isolates.length > 0 ? 
+        <div className={style['isolates']}>
+          {isolates.join('/')}
         </div> : null}
     </div>
   );

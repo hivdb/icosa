@@ -44,11 +44,11 @@ const seqLevel = `
         AAs
         text
       }
-      hitVariants {
-        displayName
+      hitIsolates {
+        variantName
       }
-      variantMatchType
-      numVariantOnlyMutations
+      isolateMatchType
+      numIsolateOnlyMutations
       numQueryOnlyMutations
       references {
         refName
@@ -88,11 +88,11 @@ const seqLevel = `
         AAs
         text
       }
-      hitVariants {
-        displayName
+      hitIsolates {
+        variantName
       }
-      variantMatchType
-      numVariantOnlyMutations
+      isolateMatchType
+      numIsolateOnlyMutations
       numQueryOnlyMutations
       references {
         refName
@@ -119,11 +119,11 @@ const seqLevel = `
         AAs
         text
       }
-      hitVariants {
-        displayName
+      hitIsolates {
+        variantName
       }
-      variantMatchType
-      numVariantOnlyMutations
+      isolateMatchType
+      numIsolateOnlyMutations
       numQueryOnlyMutations
       itemsByVaccine {
         vaccineName

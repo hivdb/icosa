@@ -24,7 +24,7 @@ function buildPayload(vaccPlasmaSuscSummary) {
     .reduce(
       (acc, [{
         mutations,
-        hitVariants,
+        hitIsolates,
         itemsByVaccine
       }, displayOrder]) => [
         ...acc,
@@ -36,12 +36,12 @@ function buildPayload(vaccPlasmaSuscSummary) {
             cumulativeFold: {median: medianFold},
             itemsByResistLevel
           }) => {
-            const variants = getUniqVariants(hitVariants);
+            const isolates = getUniqVariants(hitIsolates);
             const row = {
               _spanIndex: mutations,
               mutations,
               vaccineName,
-              variants,
+              isolates,
               numRefs: references.length,
               numSamples,
               medianFold,
@@ -93,8 +93,8 @@ function buildColumnDefs(itemsByMutations) {
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: (mutations, {variants}) => (
-        <CellMutations {...{mutations, variants}} />
+      render: (mutations, {isolates}) => (
+        <CellMutations {...{mutations, isolates}} />
       ),
       bodyCellStyle: {
         maxWidth: '14rem'

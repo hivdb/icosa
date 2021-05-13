@@ -21,12 +21,12 @@ function buildPayload(antibodySuscSummary) {
     .map(
       ([{
         mutations,
-        hitVariants,
+        hitIsolates,
         references,
         itemsByAntibody
       }, displayOrder]) => {
-        const variants = getUniqVariants(hitVariants);
-        const row = {mutations, references, variants, displayOrder};
+        const isolates = getUniqVariants(hitIsolates);
+        const row = {mutations, references, isolates, displayOrder};
         for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
           const abkey = (
             '__abfold__' +
@@ -113,8 +113,8 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: (mutations, {variants}) => (
-        <CellMutations {...{mutations, variants}} />
+      render: (mutations, {isolates}) => (
+        <CellMutations {...{mutations, isolates}} />
       ),
       bodyCellStyle: {
         maxWidth: '14rem'
