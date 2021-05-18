@@ -155,14 +155,14 @@ export default function NGSForm({className, onSubmit}) {
           {pluralize("file", fastqs.length, true)}:
         </label>
         <button type="submit" className={classNames(
-          style['btn-submit'],
-          className ? `${className}__btn-submit` : null
+          style['btn-primary'],
+          className ? `${className}__btn-primary` : null
         )}>
           Start process
         </button>
         <button type="reset" className={classNames(
-          style['btn-reset'],
-          className ? `${className}__btn-reset` : null
+          style['btn-default'],
+          className ? `${className}__btn-default` : null
         )}>
           Reset
         </button>

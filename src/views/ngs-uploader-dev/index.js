@@ -56,7 +56,7 @@ export default function NGSUploaderDev() {
         return false;
       }
     },
-    [router, location]
+    [taskKey, router, location]
   );
 
   const handleLoad = React.useCallback(
@@ -68,12 +68,20 @@ export default function NGSUploaderDev() {
     []
   );
 
+  const handleAnalyze = React.useCallback(
+    codfreqs => {
+      console.log(codfreqs);
+    },
+    []
+  );
+
   return (
     <ConfigContext.Provider value={configContext}>
       <NGSUploader
        key={taskKey || 'new-uploader'}
        taskKey={taskKey}
        onLoad={handleLoad}
+       onAnalyze={handleAnalyze}
        onTriggerRunner={handleTriggerRunner} />
     </ConfigContext.Provider>
   );

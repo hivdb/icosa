@@ -33,6 +33,7 @@ export default function NGSUploader({
   taskKey,
   onTriggerRunner,
   onLoad,
+  onAnalyze,
   className
 }) {
 
@@ -85,10 +86,12 @@ export default function NGSUploader({
     [forceUpdate, onTriggerRunner, onLoad, progressLookup]
   );
 
-
   if (progressLookup['create-task']) {
     return (
-      <NGSResults progressLookup={progressLookup} />
+      <NGSResults
+       className={className}
+       onAnalyze={onAnalyze}
+       progressLookup={progressLookup} />
     );
   }
   else {

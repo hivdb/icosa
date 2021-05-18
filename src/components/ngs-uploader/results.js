@@ -8,11 +8,19 @@ import InlineLoader from '../inline-loader';
 import style from './style.module.scss';
 
 
-export default function NGSResults({progressLookup, className}) {
+export default function NGSResults({progressLookup, className, onAnalyze}) {
   const allProgress = Object.values(progressLookup);
   const finalStep = allProgress.find(({step}) => step === 'finish-task');
   const {codfreqs} = finalStep || {codfreqs: []};
   const {onDownload} = useDownloadCodFreqs(codfreqs);
+
+  const handleAnalyze = React.useCallback(
+    e => {
+      e && e.preventDefault();
+      onAnalyze(codfreqs);
+    },
+    [onAnalyze, codfreqs]
+  );
 
   return <div className={classNames(
     style['ngs-results-container'],
@@ -58,11 +66,21 @@ export default function NGSResults({progressLookup, className}) {
          type="button"
          onClick={onDownload}
          className={classNames(
-           style['btn-download'],
-           className ? `${className}__btn-download` : null
+           style['btn-primary'],
+           className ? `${className}__btn-primary` : null
          )}>
           Download
         </button>
+        {onAnalyze ?
+          <button
+           type="button"
+           onClick={handleAnalyze}
+           className={classNames(
+             style['btn-default'],
+             className ? `${className}__btn-default` : null
+           )}>
+            Analyze
+          </button> : null}
       </div> : <InlineLoader />}
   </div>;
 }

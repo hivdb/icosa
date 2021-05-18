@@ -29,7 +29,7 @@ label.input-label {
 }
 
 .ngs-uploader-form, .ngs-results-container {
-  --desc-width: 3rem;
+  --button-min-width: 5rem;
   --button-height: 2.5rem;
   --button-interval: 1rem;
   --file-item-height: 2.5rem;
@@ -45,16 +45,16 @@ label.input-label {
   .button-group {
     margin-top: 1rem;
     position: relative;
+    display: flex;
 
     > .description {
       display: inline-block;
       white-space: nowrap;
       font-size: 1.1rem;
-      min-width: var(--desc-width);
+      line-height: var(--button-height);
     }
 
-    > .btn-submit {
-      margin: 0 var(--button-interval);
+    > .btn-primary {
       color: color(btn-text-on-dark-bg);
       background-color: color(btn-primary-bg);
       &:hover:not(:disabled) {
@@ -63,29 +63,24 @@ label.input-label {
       }
     }
 
-    > .btn-download {
-      margin-left: var(--button-interval);
-      color: color(btn-text-on-dark-bg);
-      background-color: color(btn-primary-bg);
-      &:hover:not(:disabled) {
-        color: color(btn-text-on-dark-bg);
-        background-color: color(btn-primary-hover-bg);
-      }
-    }
-
-    > .btn-reset {
+    > .btn-default {
       background-color: #e0e0e0;
       &:hover:not(:disabled) {
         background-color: #c0c0c0;
       }
     }
 
-    > .btn-submit, > .btn-reset, > .btn-download {
+    > button {
       cursor: pointer;
       height: var(--button-height);
-      width: calc((100% - var(--desc-width)) / 2 - var(--button-interval));
+      min-width: var(--button-min-width);
       border: none;
       transition: all 200ms ease-in-out;
+      margin: 0 var(--button-interval);
+      flex-grow: 1;
+      &:last-child {
+        margin-right: 0;
+      }
     }
 
   }
