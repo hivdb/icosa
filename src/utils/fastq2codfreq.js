@@ -140,9 +140,14 @@ async function triggerRunner(taskKey, files) {
 
 async function * fetchRunnerProgress(taskKey) {
   let currentFileNames = {};
+  let prevTaskId = null;
   let prevCount = 0;
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
+    if (ecsTaskId !== prevTaskId) {
+      prevCount = 0;
+      prevTaskId = ecsTaskId;
+    }
     switch (op) {
       case 'progress': {
         const {count, total, fastqs} = event;

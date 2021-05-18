@@ -2,6 +2,7 @@ import React from 'react';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import {useDownloadCodFreqs} from '../report';
+import InlineLoader from '../inline-loader';
 // import ProgressBar from 'react-progressbar';
 
 import style from './style.module.scss';
@@ -62,6 +63,6 @@ export default function NGSResults({progressLookup, className}) {
          )}>
           Download
         </button>
-      </div> : null}
+      </div> : <InlineLoader />}
   </div>;
 }
