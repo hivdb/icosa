@@ -1,0 +1,232 @@
+@import "../../styles";
+@import "../../styles/tabs";
+@import "../../styles/dropdown";
+
+label.input-label {
+  @include inline-input-label(8rem);
+}
+
+.input-group {
+  margin-bottom: 1rem;
+
+  .header-input {
+    @extend %inline-input;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 30rem;
+  }
+
+  .header-input-notation {
+    @extend %inline-input-notation;
+  }
+
+  &.sequence-input {
+    @extend %textarea;
+    resize: vertical;
+    width: 100%;
+  }
+
+}
+
+.ngs-uploader-form, .ngs-results-container {
+  --desc-width: 3rem;
+  --button-height: 2.5rem;
+  --button-interval: 1rem;
+  --file-item-height: 2.5rem;
+  --file-item-v-padding: 0.5rem;
+  --file-item-h-padding: 0.8rem;
+  --file-item-icon-size: 1.1rem;
+  --result-item-height: 1.2rem;
+  --progress-bar-height: .5rem;
+  --result-progress-width: 9.5rem;
+  --result-desc-v-padding: .25rem;
+  --result-desc-h-padding: 1rem;
+
+  .button-group {
+    margin-top: 1rem;
+    position: relative;
+
+    > .description {
+      display: inline-block;
+      white-space: nowrap;
+      font-size: 1.1rem;
+      min-width: var(--desc-width);
+    }
+
+    > .btn-submit {
+      margin: 0 var(--button-interval);
+      color: color(btn-text-on-dark-bg);
+      background-color: color(btn-primary-bg);
+      &:hover:not(:disabled) {
+        color: color(btn-text-on-dark-bg);
+        background-color: color(btn-primary-hover-bg);
+      }
+    }
+
+    > .btn-download {
+      margin-left: var(--button-interval);
+      color: color(btn-text-on-dark-bg);
+      background-color: color(btn-primary-bg);
+      &:hover:not(:disabled) {
+        color: color(btn-text-on-dark-bg);
+        background-color: color(btn-primary-hover-bg);
+      }
+    }
+
+    > .btn-reset {
+      background-color: #e0e0e0;
+      &:hover:not(:disabled) {
+        background-color: #c0c0c0;
+      }
+    }
+
+    > .btn-submit, > .btn-reset, > .btn-download {
+      cursor: pointer;
+      height: var(--button-height);
+      width: calc((100% - var(--desc-width)) / 2 - var(--button-interval));
+      border: none;
+      transition: all 200ms ease-in-out;
+    }
+
+  }
+
+  &[data-num-files="0"] .button-group {
+    display: none;
+  }
+
+  .ngs-input {
+    background-color: color(input-bg);
+    border: 1px solid color(dividing-line);
+    padding: 2rem 0;
+  
+    .placeholder {
+      width: 100%;
+      display: block;
+      text-align: center;
+      line-height: 1.15em;
+      font-weight: 600;
+      font-size: 2rem;
+      color: rgba(0,0,0,.4);
+  
+      &:after {
+        content: 'or';
+        margin-top: .5rem;
+        display: block;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: black;
+      }
+    }
+  
+    .browse-files {
+      display: block;
+      color: black;
+      border: 1px solid color(dividing-line);
+      border-radius: 0;
+      width: 12rem;
+      height: var(--button-height);
+      white-space: nowrap;
+      text-align: center;
+      margin-top: .5rem;
+      margin-right: auto;
+      margin-left: auto;
+      cursor: pointer;
+      transition: all 200ms ease-in-out;
+      background-color: white;
+  
+      &:hover {
+        background-color: black;
+        color: white;
+        border-color: white;
+      }
+    }
+  }
+  
+  ul.preview-files {
+    max-height: 23.4rem;
+    overflow: auto;
+    margin: 0;
+    padding-left: 0;
+    &[data-drag-active="true"]::before {
+      display: block;
+      color: color(seqreads-preview-placeholder-hover-text);
+    }
+    > li {
+      border: 1px solid color(dividing-line);
+      margin: 1rem 0;
+      position: relative;
+      list-style-type: none;
+      white-space: nowrap;
+      height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+      line-height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+      padding: var(--file-item-v-padding) var(--file-item-h-padding);
+      box-sizing: content-box;
+      vertical-align: middle;
+      > svg.file-icon {
+        display: inline-block;
+        padding: calc((var(--file-item-height) - 2 * var(--file-item-v-padding) - var(--file-item-icon-size)) / 2) 0;
+        font-size: var(--file-item-icon-size);
+        color: color(seqreads-preview-file-icon);
+      }
+      > svg.remove {
+        display: inline-block;
+        padding: calc((var(--file-item-height) - 2 * var(--file-item-v-padding) - var(--file-item-icon-size)) / 2) 0;
+        font-size: var(--file-item-icon-size);
+        color: color(seqreads-preview-remove-file);
+        cursor: pointer;
+      }
+      span.file-name {
+        display: inline-block;
+        box-sizing: border-box;
+        padding-left: calc(var(--file-item-h-padding) * 0.5);
+        padding-right: var(--file-item-h-padding);
+        height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+        width: calc(100% - 2rem);
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
+
+  ul.ngs-results {
+    list-style-type: none;
+    padding-left: 0;
+    > li {
+      position: relative;
+      border: 1px solid black;
+      background-color: rgba(0,0,0,.05);
+      > .result-desc, > .result-progress {
+        display: inline-block;
+        box-sizing: content-box;
+        line-height: var(--result-item-height);
+        height: calc(var(--result-item-height);
+        margin-top: var(--result-desc-v-padding);
+        margin-bottom: calc(var(--result-desc-v-padding) + var(--progress-bar-height) / 2);
+        overflow: hidden;
+      }
+      > .result-desc {
+        width: calc(100% - var(--result-desc-h-padding) * 2 - var(--result-progress-width));
+        margin-left: var(--result-desc-h-padding);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      > .result-progress {
+        text-align: right;
+        margin-right: var(--result-desc-h-padding);
+        width: var(--result-progress-width);
+      }
+      &:not(:first-child) {
+        margin-top: .5rem;
+      }
+      &::before {
+        content: '';
+        display: block;
+        height: var(--progress-bar-height);
+        width: calc(100% * var(--percent));
+        background-color: color(progress-bar);
+      }
+    }
+  }
+
+}

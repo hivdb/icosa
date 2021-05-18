@@ -19,6 +19,7 @@
     "graphql-tag.macro": "^2.0.1",
     "iwanthue": "^1.4.0",
     "lodash": "^4.17.19",
+    "pluralize": "^8.0.0",
     "query-string": "^6.13.8",
     "react": "16.13.x",
     "react-dom": "16.13.x",

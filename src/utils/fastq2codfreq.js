@@ -2,28 +2,6 @@ import axios from 'axios';
 import sleep from 'sleep-promise';
 
 const API_SERVER = 'https://codfreq-api.hivdb.org';
-const WT_CREATE_TASK = 1;
-const WT_DIRECT_UPLOAD = 1;
-const WT_TRIGGER_RUNNER = 1;
-
-
-function calcUploadWeight(file) {
-  return parseInt(file.size / 262144);
-}
-
-
-function calcRunnerWeight(file) {
-  return parseInt(file.size / 65536);
-}
-
-
-function calcTotalFileWeight(files) {
-  let sum = 0;
-  for (const file of files) {
-    sum += calcUploadWeight(file) + calcRunnerWeight(file);
-  }
-  return sum;
-}
 
 
 function handleResponseError(e) {
@@ -62,12 +40,14 @@ async function * uploadFile(file, url, fields) {
     .post(url, formData, {
       onUploadProgress: evt => {
         const nextProgress = new Promise(nextResolve => {
-          const pcnt = evt.loaded / fileSize;
-          if (pcnt >= 1) {
+          if (evt.loaded >= fileSize) {
             return;
           }
           setTimeout(() => {
-            resolve([pcnt, nextProgress]);
+            resolve([
+              evt.loaded,
+              nextProgress
+            ]);
             resolve = nextResolve;
           }, 0);
         });
@@ -76,31 +56,29 @@ async function * uploadFile(file, url, fields) {
     .then(() => resolve([1, null]))
     .catch((e) => handleResponseError(e))
   );
-  const fileWeight = calcUploadWeight(file);
-  let floorWeight = 0;
-  let accWeight = 0;
+  let prevCount = 0;
   while (progress !== null) {
     const payload = await progress;
-    const pcnt = payload[0];
+    const count = payload[0];
     progress = payload[1];
-    if (pcnt < 1) {
-      accWeight = fileWeight * pcnt;
-      const newFloorWeight = Math.floor(accWeight);
-      if (newFloorWeight > floorWeight) {
+    if (count < fileSize) {
+      if (count > prevCount) {
         yield {
+          step: `upload:${file.name}`,
           description: `Uploading ${file.name}...`,
-          weight: newFloorWeight - floorWeight
+          count,
+          total: fileSize
         };
-        floorWeight = newFloorWeight;
+        prevCount = count;
       }
     }
-    else {
-      yield {
-        description: `Uploaded ${file.name}.`,
-        weight: fileWeight - floorWeight
-      };
-    }
   }
+  yield {
+    step: `upload:${file.name}`,
+    description: `Uploaded ${file.name}`,
+    count: fileSize,
+    total: fileSize
+  };
 }
 
 
@@ -118,8 +96,10 @@ async function * uploadFiles(taskKey, files) {
     presignedPosts
   } = resp.data;
   yield {
+    step: 'upload-credential',
     description: 'Retriving uploading credential...',
-    weight: WT_DIRECT_UPLOAD
+    count: 1,
+    total: 1
   };
   for (let i = 0; i < files.length; i ++) {
     const file = files[i];
@@ -142,7 +122,7 @@ function getDistinctFileNames(all_filenames) {
 }
 
 
-async function * triggerRunner(taskKey, files) {
+async function triggerRunner(taskKey, files) {
   try {
     await axios.post(
       `${API_SERVER}/trigger-runner`, {
@@ -155,48 +135,33 @@ async function * triggerRunner(taskKey, files) {
   } catch (e) {
     handleResponseError(e);
   }
-  yield {
-    description: 'Triggering parallel task runners...',
-    weight: WT_TRIGGER_RUNNER
-  };
-  const fileWeightMap = files.reduce((acc, f) => {
-    acc[f.name] = calcRunnerWeight(f);
-    return acc;
-  }, {});
+}
+
+
+async function * fetchRunnerProgress(taskKey) {
   let currentFileNames = {};
-  let accWeights = {};
-  let prevAccWeights = {};
+  let prevCount = 0;
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
     switch (op) {
       case 'progress': {
         const {count, total, fastqs} = event;
-        const pcnt = count / total;
         const fnames = fastqs.filter(fn => fn).map(fn => {
           fn = fn.split('/');
           return fn[fn.length - 1];
         });
         currentFileNames[ecsTaskId] = fnames;
-        let accWeight = 0;
-        for (const fname of fnames) {
-          accWeight += (
-            pcnt * fileWeightMap[fname] / numTasks
-          );
-        }
-        accWeights[ecsTaskId] = Math.floor(accWeight);
-        if (
-          !prevAccWeights[ecsTaskId] ||
-          accWeights[ecsTaskId] < prevAccWeights[ecsTaskId]
-        ) {
-          prevAccWeights[ecsTaskId] = 0;
-        }
-        if (accWeights[ecsTaskId] > prevAccWeights[ecsTaskId]) {
+        if (count > prevCount) {
           const fnames = getDistinctFileNames(Object.values(currentFileNames));
           yield {
+            step: `process-${ecsTaskId}-${fnames.join(', ')}`,
             description: `Processing file(s) ${fnames.join(', ')}...`,
-            weight: accWeights[ecsTaskId] - prevAccWeights[ecsTaskId]
+            numParallels: numTasks,
+            parallelTaskId: ecsTaskId,
+            count,
+            total
           };
-          prevAccWeights[ecsTaskId] = accWeights[ecsTaskId];
+          prevCount = count;
         }
         break;
       }
@@ -210,7 +175,6 @@ async function * triggerRunner(taskKey, files) {
 async function * fetchRunnerLogs(taskKey) {
   let startTime = undefined;
   while (true) {
-    await sleep(5000);
     let resp;
     try {
       resp = await axios.post(
@@ -248,6 +212,7 @@ async function * fetchRunnerLogs(taskKey) {
       break;
     }
     startTime = newStartTime;
+    await sleep(5000);
   }
 }
 
@@ -267,38 +232,109 @@ async function fetchCodfreqs(taskKey) {
 }
 
 
-export default async function * fastq2codfreq(files) {
-  let count = WT_CREATE_TASK;
-  const total = (
-    WT_CREATE_TASK +
-    WT_DIRECT_UPLOAD +
-    WT_TRIGGER_RUNNER +
-    calcTotalFileWeight(files)
-  );
-  const {taskKey} = await createTask();
+export async function * restoreTask(taskKey) {
   let loaded = false;
   yield {
     loaded,
-    description: 'Creating FASTQ-to-CodFreq task...',
-    count, total
+    taskKey,
+    step: 'create-task',
+    description: 'Creating task...',
+    count: 1,
+    total: 1
   };
-  for await (const progress of uploadFiles(taskKey, files)) {
-    const {description, weight} = progress;
-    count += weight;
-    yield {loaded, description, count, total};
+  yield {
+    loaded,
+    taskKey,
+    step: 'trigger-runner',
+    description: (
+      'Triggering parallel task runners, this may take 1-2 minutes...'
+    ),
+    count: 1,
+    total: 1
+  };
+  try {
+    for await (const progress of fetchRunnerProgress(taskKey)) {
+      yield {
+        loaded,
+        taskKey,
+        ...progress
+      };
+    }
   }
-  for await (const progress of triggerRunner(taskKey, files)) {
-    const {description, weight} = progress;
-    count += weight;
-    yield {loaded, description, count, total};
+  catch (e) {
+    if (/this task is not triggered yet/.test(e.message)) {
+      yield {
+        loaded,
+        taskKey,
+        step: 'trigger-runner',
+        description: 'Try fetching task results...',
+        count: 1,
+        total: 1
+      };
+    }
+    else {
+      throw e;
+    }
   }
   const codfreqs = await fetchCodfreqs(taskKey);
   loaded = true;
   yield {
     loaded,
+    taskKey,
+    step: 'finish-task',
     description: 'Task finished.',
-    count: total,
-    total,
+    count: 1,
+    total: 1,
+    codfreqs
+  };
+}
+
+
+export default async function * fastq2codfreq(files) {
+  const {taskKey} = await createTask();
+  let loaded = false;
+  yield {
+    loaded,
+    taskKey,
+    step: 'create-task',
+    description: 'Creating task...',
+    count: 1,
+    total: 1
+  };
+  for await (const progress of uploadFiles(taskKey, files)) {
+    yield {
+      loaded,
+      taskKey,
+      ...progress
+    };
+  }
+  await triggerRunner(taskKey, files);
+  yield {
+    loaded,
+    taskKey,
+    step: 'trigger-runner',
+    description: (
+      'Triggering parallel task runners, this may take 1-2 minutes...'
+    ),
+    count: 1,
+    total: 1
+  };
+  for await (const progress of fetchRunnerProgress(taskKey)) {
+    yield {
+      loaded,
+      taskKey,
+      ...progress
+    };
+  }
+  const codfreqs = await fetchCodfreqs(taskKey);
+  loaded = true;
+  yield {
+    loaded,
+    taskKey,
+    step: 'finish-task',
+    description: 'Task finished.',
+    count: 1,
+    total: 1,
     codfreqs
   };
 }

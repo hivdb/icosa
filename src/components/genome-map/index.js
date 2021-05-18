@@ -9,8 +9,7 @@ import DownloadSVG from '../download-svg';
 
 import style from './style.module.scss';
 
-
-export {presetShape} from './prop-types';
+export {presetShape};
 
 
 export default class GenomeMap extends React.Component {
