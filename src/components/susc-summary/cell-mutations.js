@@ -10,7 +10,7 @@ export default function CellMutations({mutations, isolates}) {
   return (
     <div
      key={getRowKey({mutations})}
-     className={style['cell-isolates']}>
+     className={style['cell-variants']}>
       <div className={style['mutations']}>
         {shortMutations.map(({text}, idx) => (
           <React.Fragment key={idx}>
@@ -23,7 +23,7 @@ export default function CellMutations({mutations, isolates}) {
         ))}
       </div>
       {isolates.length > 0 ? 
-        <div className={style['isolates']}>
+        <div className={style['variants']}>
           {isolates.join('/')}
         </div> : null}
     </div>

@@ -29,7 +29,7 @@ function updateProgress({
 }
 
 
-export default function NGSUploader({
+export default function NGS2CodFreq({
   taskKey,
   onTriggerRunner,
   onLoad,

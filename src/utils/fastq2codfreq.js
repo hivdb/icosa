@@ -140,14 +140,9 @@ async function triggerRunner(taskKey, files) {
 
 async function * fetchRunnerProgress(taskKey) {
   let currentFileNames = {};
-  let prevTaskId = null;
-  let prevCount = 0;
+  let prevCounts = {};
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
-    if (ecsTaskId !== prevTaskId) {
-      prevCount = 0;
-      prevTaskId = ecsTaskId;
-    }
     switch (op) {
       case 'progress': {
         const {count, total, fastqs} = event;
@@ -156,7 +151,7 @@ async function * fetchRunnerProgress(taskKey) {
           return fn[fn.length - 1];
         });
         currentFileNames[ecsTaskId] = fnames;
-        if (count > prevCount) {
+        if (count > (prevCounts[ecsTaskId] || 0)) {
           const fnames = getDistinctFileNames(Object.values(currentFileNames));
           yield {
             step: `process-${ecsTaskId}-${fnames.join(', ')}`,
@@ -166,7 +161,7 @@ async function * fetchRunnerProgress(taskKey) {
             count,
             total
           };
-          prevCount = count;
+          prevCounts[ecsTaskId] = count;
         }
         break;
       }

@@ -28,7 +28,7 @@ label.input-label {
 
 }
 
-.ngs-uploader-form, .ngs-results-container {
+.ngs2codfreq-form, .ngs-results-container {
   --button-min-width: 5rem;
   --button-height: 2.5rem;
   --button-interval: 1rem;
@@ -158,16 +158,16 @@ label.input-label {
       padding: var(--file-item-v-padding) var(--file-item-h-padding);
       box-sizing: content-box;
       vertical-align: middle;
-      > svg.file-icon {
+      > svg {
         display: inline-block;
+        vertical-align: baseline;
         padding: calc((var(--file-item-height) - 2 * var(--file-item-v-padding) - var(--file-item-icon-size)) / 2) 0;
         font-size: var(--file-item-icon-size);
+      }
+      > svg.file-icon {
         color: color(seqreads-preview-file-icon);
       }
       > svg.remove {
-        display: inline-block;
-        padding: calc((var(--file-item-height) - 2 * var(--file-item-v-padding) - var(--file-item-icon-size)) / 2) 0;
-        font-size: var(--file-item-icon-size);
         color: color(seqreads-preview-remove-file);
         cursor: pointer;
       }

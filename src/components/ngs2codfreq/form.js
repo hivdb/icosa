@@ -89,7 +89,7 @@ export default function NGSForm({className, onSubmit}) {
     <form
      data-num-files={fastqs.length}
      className={classNames(
-       style['ngs-uploader-form'],
+       style['ngs2codfreq-form'],
        className ? `${className}__form` : null
      )}
      onSubmit={handleSubmit}
@@ -109,8 +109,8 @@ export default function NGSForm({className, onSubmit}) {
               style['placeholder'],
               className ? `${className}__placeholder` : null
             )}>
-              {config.messages['ngs-uploader-placeholder'] ||
-               '<ngs-uploader-placeholder>'}
+              {config.messages['ngs2codfreq-placeholder'] ||
+               '<ngs2codfreq-placeholder>'}
             </div>
             <button type="button" className={classNames(
               style['browse-files'],

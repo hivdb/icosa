@@ -7,6 +7,7 @@ import FormsContainer from './container';
 import PatternsInputForm from './patterns-input-form';
 import SequenceInputForm from './sequence-input-form';
 import SequenceReadsInputForm from './sequence-reads-input-form';
+import NGS2CodFreqForm from './ngs2codfreq-form';
 
 
 const tabNames = [
@@ -34,49 +35,36 @@ export function getBasePath(location) {
 }
 
 
-export default class AnalyzeForms extends React.Component {
+function AnalyzeForms({
+  match,
+  basePath,
+  onSubmit,
+  children,
+  patternsTo,
+  sequencesTo,
+  readsTo,
+  sequencesOutputOptions,
+  seqReadsOutputOptions,
+  enableReads,
+  hideReads,
+  ...otherProps
+}) {
 
-  static propTypes = {
-    match: matchShape.isRequired,
-    router: routerShape.isRequired,
-    onSubmit: PropTypes.func,
-    //onTabSwitch: React.PropTypes.func,
-    basePath: PropTypes.string.isRequired,
-    patternsTo: PropTypes.string.isRequired,
-    sequencesTo: PropTypes.string.isRequired,
-    readsTo: PropTypes.string,
-    enableReads: PropTypes.bool.isRequired,
-    hideReads: PropTypes.bool.isRequired,
-    sequencesOutputOptions: PropTypes.object,
-    seqReadsOutputOptions: PropTypes.object,
-    children: PropTypes.node
-  }
+  const tabName = getCurrentTab(match.location);
+  const tabIndex = tabIndice[tabName] || 0;
 
-  static defaultProps = {
-    enableReads: false,
-    hideReads: false
-  }
+  const commonProps = {...otherProps, onSubmit, children};
+  const isCurTabSeqReads = tabIndex === 2;
+  const hideTabOthers = enableReads && hideReads && isCurTabSeqReads;
+  const hideTabReads = !enableReads && !hideReads;
 
-  getTabIndex(loc = this.props.match.location) {
-    const tabName = getCurrentTab(loc);
-    return tabIndice[tabName] || 0;
-  }
-
-  render() {
-    const {
-      basePath, onSubmit, children,
-      enableReads, hideReads, ...otherProps
-    } = this.props;
-    const commonProps = {...otherProps, onSubmit, children};
-    const isCurTabSeqReads = this.getTabIndex() === 2;
-    const hideTabOthers = enableReads && hideReads && isCurTabSeqReads;
-    const hideTabReads = !enableReads && !hideReads;
-
-    return (
-      <FormsContainer>
+  return <>
+    <FormsContainer>
+      {tabName === 'ngs2codfreq' ?
+        null :
         <Tabs
          onSelect={() => null}
-         selectedIndex={this.getTabIndex()}>
+         selectedIndex={tabIndex}>
           <TabList>
             <Tab style={hideTabOthers ? {display: 'none'} : null}>
               <Link to={`${basePath}/by-patterns/`}>
@@ -96,24 +84,52 @@ export default class AnalyzeForms extends React.Component {
           </TabList>
           <TabPanel>
             <PatternsInputForm
-             to={this.props.patternsTo}
+             to={patternsTo}
              {...commonProps} />
           </TabPanel>
           <TabPanel>
             <SequenceInputForm
-             to={this.props.sequencesTo}
-             outputOptions={this.props.sequencesOutputOptions}
+             to={sequencesTo}
+             outputOptions={sequencesOutputOptions}
              {...commonProps} />
           </TabPanel>
           <TabPanel>
             <SequenceReadsInputForm
-             to={this.props.readsTo}
-             outputOptions={this.props.seqReadsOutputOptions}
+             to={readsTo}
+             outputOptions={seqReadsOutputOptions}
              {...commonProps} />
           </TabPanel>
-        </Tabs>
-      </FormsContainer>
-    );
-  }
+        </Tabs>}
+      {tabName === 'by-reads' || tabName === 'ngs2codfreq' ?
+        <NGS2CodFreqForm
+         redirectTo={`${basePath}/ngs2codfreq/`}
+         analyzeTo={readsTo}
+        /> : null}
+    </FormsContainer>
+  </>;
+  
 
 }
+
+AnalyzeForms.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  onSubmit: PropTypes.func,
+  //onTabSwitch: React.PropTypes.func,
+  basePath: PropTypes.string.isRequired,
+  patternsTo: PropTypes.string.isRequired,
+  sequencesTo: PropTypes.string.isRequired,
+  readsTo: PropTypes.string,
+  enableReads: PropTypes.bool.isRequired,
+  hideReads: PropTypes.bool.isRequired,
+  sequencesOutputOptions: PropTypes.object,
+  seqReadsOutputOptions: PropTypes.object,
+  children: PropTypes.node
+};
+
+AnalyzeForms.defaultProps = {
+  enableReads: false,
+  hideReads: false
+};
+
+export default AnalyzeForms;

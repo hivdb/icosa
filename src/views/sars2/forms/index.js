@@ -35,7 +35,10 @@ function SierraForms({
 }) {
 
   const basePath = getBasePath(match.location);
-  const title = config.messages[`${curAnalysis}-form-title`];
+  const title = (
+    config.messages[`${curAnalysis}-form-title`] ||
+    `<${curAnalysis}-form-title>`
+  );
 
   setTitle(title);
 
@@ -46,7 +49,8 @@ function SierraForms({
       </IntroHeader>
     </Intro>
     <Markdown escapeHtml={false}>
-      {config.messages[`${curAnalysis}-form-desc`]}
+      {config.messages[`${curAnalysis}-form-desc`] ||
+        `&lt;${curAnalysis}-form-desc&gt;`}
     </Markdown>
     <AnalyzeForms
      basePath={basePath}

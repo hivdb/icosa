@@ -55,6 +55,12 @@ export default function SARS2Routes({
       )}/>
       <Route path="report/" Component={ReportBySeqReads} />
     </Route>
+    <Route path="ngs2codfreq/" render={({props}) => (
+      <SeqAnaForms
+       {...props} {...formProps}
+       pathPrefix={pathPrefix}
+       curAnalysis="ngs2codfreq" />
+    )} />
     <Redirect to={({location: {pathname}}) => (
       `${pathname}${pathname.endsWith('/') ? '' : '/'}by-patterns/`
     )} />

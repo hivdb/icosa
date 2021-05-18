@@ -1,7 +1,7 @@
 import React from 'react';
 import {useRouter} from 'found';
 
-import NGSUploader from '../../components/ngs-uploader';
+import NGS2CodFreq from '../../components/ngs2codfreq';
 import ConfigContext, {
   configWrapper
 } from '../../components/report/config-context';
@@ -29,7 +29,7 @@ function reformCodFreqs(allSequenceReads, geneValidator) {
 }
 
 
-export default function NGSUploaderDev() {
+export default function NGS2CodFreqDev() {
   const {
     router,
     match: {
@@ -77,7 +77,7 @@ export default function NGSUploaderDev() {
 
   return (
     <ConfigContext.Provider value={configContext}>
-      <NGSUploader
+      <NGS2CodFreq
        key={taskKey || 'new-uploader'}
        taskKey={taskKey}
        onLoad={handleLoad}

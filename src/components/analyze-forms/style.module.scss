@@ -2,16 +2,46 @@
 @import "../../styles/tabs";
 @import "../../styles/dropdown";
 
-.analyze-form-container {
-  .analyze-form-tabs {
-    width: 100%;
-  }
-}
-
 .analyze-form-tabs {
+  display: flex;
+  align-items: stretch;
   @extend %react-tabs-container;
   margin-top: 1rem;
-  background-color: color(panel-bg);
+
+  :global(.react-tabs) {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 3;
+    &:global(__tab--selected) {
+      background-color: color(panel-bg);
+    }
+    &:global(__tab-panel--selected) {
+      background-color: color(panel-bg);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+  }
+
+  .analyze-ngs2codfreq {
+    &:global(__form), &:global(__results-container) {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      margin-top: 29px;
+      margin-left: 1rem;
+      &:first-child:last-child {
+        margin-left: 0;
+        margin-right: 40%;
+      }
+    }
+    &:global(__input) {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+    }
+  }
 }
 
 
@@ -35,6 +65,7 @@ label.input-label {
 
   &.sequence-input {
     @extend %textarea;
+    flex-grow: 1;
     resize: vertical;
     width: 100%;
   }
@@ -65,6 +96,9 @@ fieldset.output-options {
 }
 
 .analyze-base-form {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
   .analyze-base-form-buttons {
     margin-top: 1rem;
   }
@@ -117,6 +151,12 @@ ul.file-options {
 }
 
 ul.sequence-reads-preview {
+  flex-grow: 1;
+  &:empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   background-color: color(input-bg);
   border: 1px solid color(dividing-line);
   min-height: 7.8rem;
@@ -127,13 +167,11 @@ ul.sequence-reads-preview {
   position: relative;
   &:before {
     content: attr(data-placeholder);
-    position: absolute;
     width: 100%;
     display: none;
     text-align: center;
     line-height: 1.15em;
     font-weight: 700;
-    margin-top: 2rem;
     font-size: 3rem;
     color: color(seqreads-preview-placeholder-text);
   }

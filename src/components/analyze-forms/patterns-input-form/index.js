@@ -57,7 +57,6 @@ function PatternsInputForm({children, to, onSubmit}) {
      retainInputLabel="Save input mutations in my browser for future use"
      resetDisabled={disabled}
      submitDisabled={submitDisabled}
-     className={style.mutationInputForm}
      to={to}
      onSubmit={handleSubmit}
      onReset={handleReset}>

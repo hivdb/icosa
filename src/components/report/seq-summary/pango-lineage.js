@@ -68,7 +68,9 @@ export default function PangoLineage(pangolin) {
   }
   else {
     const {lineage, probability, version} = data;
-    child = `${lineage} (Prob=${probability.toFixed(1)}; ${version})`;
+    child = `${lineage} (Prob=${
+      probability === null ? 'NA': probability.toFixed(1)
+    }; ${version})`;
   }
   return <>
     <dt>PANGO lineage:</dt>

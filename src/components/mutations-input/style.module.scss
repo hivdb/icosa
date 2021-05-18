@@ -6,12 +6,6 @@
   @extend %general-dropdown;
 }
 
-
-.patterns-input-container {
-  // @include grid($flex-wrap: wrap, $gutter: 18px);
-  margin-bottom: .5rem;
-}
-
 .mutation-suggest-input {
   // @include grid-col($col: 1, $grid-columns: 3, $gutter: 18px, $condensed: true);
   // gutter="18px"
@@ -20,9 +14,13 @@
   // cellWidth="1/3"
   width: 100%;
   margin-bottom: 1rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 
   .mutations-tagsinput {
     @extend %inline-input;
+    flex-grow: 1;
     font-size: .9rem;
     overflow: hidden;
     min-height: 8rem;
