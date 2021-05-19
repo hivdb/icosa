@@ -56,6 +56,10 @@ function SierraForms({
      basePath={basePath}
      match={match}
      router={router}
+     ngs2codfreqSide={<Markdown escapeHtml={false}>
+       {config.messages['codfreq-example'] ||
+         `&lt;codfreq-example&gt;`}
+     </Markdown>}
      patternsTo={`${basePath}/by-patterns/report/`}
      sequencesTo={`${basePath}/by-sequences/report/`}
      enableReads readsTo={`${basePath}/by-reads/report/`}

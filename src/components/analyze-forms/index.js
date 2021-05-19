@@ -47,6 +47,7 @@ function AnalyzeForms({
   seqReadsOutputOptions,
   enableReads,
   hideReads,
+  ngs2codfreqSide,
   ...otherProps
 }) {
 
@@ -105,6 +106,7 @@ function AnalyzeForms({
          redirectTo={`${basePath}/ngs2codfreq/`}
          analyzeTo={readsTo}
         /> : null}
+      {tabName === 'ngs2codfreq' ? ngs2codfreqSide : null}
     </FormsContainer>
   </>;
   

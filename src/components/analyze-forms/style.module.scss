@@ -1,6 +1,7 @@
 @import "../../styles";
 @import "../../styles/tabs";
 @import "../../styles/dropdown";
+@import "../../styles/functions";
 
 .analyze-form-tabs {
   display: flex;
@@ -30,9 +31,11 @@
       flex-direction: column;
       margin-top: 29px;
       margin-left: 1rem;
-      &:first-child:last-child {
+      &:first-child {
+        flex-grow: unset;
+        width: 60%;
         margin-left: 0;
-        margin-right: 40%;
+        margin-right: css-min(10%, 4rem);
       }
     }
     &:global(__input) {
