@@ -6,7 +6,11 @@ export default function useExtendVariables({
 }) {
   return React.useCallback(
     vars => {
-      const {location: {state: {algorithm}}} = match;
+      const {
+        location: {
+          state: {algorithm} = {}
+        }
+      } = match;
       vars.algorithm = algorithm;
       vars.drdbVersion = config.drdbVersion;
       vars.cmtVersion = config.cmtVersion;

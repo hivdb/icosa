@@ -1,6 +1,12 @@
 import React from 'react';
+import {v4 as uuidv4} from 'uuid';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
+
+import {ConfigContext} from '../report';
+import {
+  sanitizeMutations
+} from '../../utils/mutation';
 
 
 function useCurrentSelected({
@@ -34,8 +40,24 @@ function usePatterns() {
   const {
     match: {location: loc}
   } = useRouter();
+  const [config, isConfigPending] = ConfigContext.use();
 
-  const {patterns} = loc.state;
+  let {patterns} = loc.state || {patterns: []};
+  let {name, mutations} = loc.query || {};
+  if (!isConfigPending && mutations) {
+    mutations = mutations
+      .split(/\s*[,+]\s*/g)
+      .filter(mut => mut);
+    [mutations] = sanitizeMutations(mutations, config, true);
+    if (!name) {
+      name = mutations.join('+');
+    }
+    patterns = [{
+      uuid: uuidv4(),
+      name,
+      mutations
+    }];
+  }
   return patterns;
 }
 

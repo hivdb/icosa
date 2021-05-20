@@ -9,7 +9,7 @@ import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
 
-// import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
+import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
 
 
 function loadExampleCodonReads(examples) {
@@ -39,6 +39,9 @@ function SierraForms({
     config.messages[`${curAnalysis}-form-title`] ||
     `<${curAnalysis}-form-title>`
   );
+  const patternsTo = `${basePath}/by-patterns/report/`;
+  const sequencesTo = `${basePath}/by-sequences/report/`;
+  const readsTo = `${basePath}/by-reads/report/`;
 
   setTitle(title);
 
@@ -60,23 +63,27 @@ function SierraForms({
        {config.messages['codfreq-example'] ||
          `&lt;codfreq-example&gt;`}
      </Markdown>}
-     patternsTo={`${basePath}/by-patterns/report/`}
-     sequencesTo={`${basePath}/by-sequences/report/`}
-     enableReads readsTo={`${basePath}/by-reads/report/`}
+     patternsTo={patternsTo}
+     sequencesTo={sequencesTo}
+     enableReads readsTo={readsTo}
      exampleFasta={loadExampleFasta(config.sequenceExamples)} 
      exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples)}
      sequencesOutputOptions={{
        __printable: {
          label: 'Printable HTML'
-       }/*,
+       },
        tsv: {
-         label: "Spreadsheets (TSV)",
+         label: "Spreadsheets (CSV)",
          subOptions,
          defaultSubOptions: subOptions.map((_, idx) => idx),
          renderer: props => (
-           <SeqTabularReports {...props} />
+           <SeqTabularReports
+            patternsTo={patternsTo}
+            sequencesTo={sequencesTo}
+            readsTo={readsTo}
+            {...props} />
          )
-       }*/
+       }
      }}
      seqReadsOutputOptions={{
        __printable: {

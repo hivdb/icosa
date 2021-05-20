@@ -1,7 +1,13 @@
-import gql from 'graphql-tag.macro';
+import gql from 'graphql-tag';
+import {
+  rootLevel,
+  seqLevel,
+  geneSeqLevel
+} from '../common-query.graphql';
 
 export default gql`
   fragment TabularReportBySequences_Root on Root {
+    ${rootLevel}
     allGenes: genes {
       name
       refSequence
@@ -12,9 +18,11 @@ export default gql`
     inputSequence { header }
     availableGenes { name }
     mixturePcnt
+    ${seqLevel}
     alignedGeneSequences {
       firstAA
       lastAA
+      ${geneSeqLevel}
       gene { name }
       mutations {
         text
@@ -26,22 +34,9 @@ export default gql`
         hasStop
         isUnsequenced
         isAmbiguous
-        isUnusual
       }
       frameShifts {
         text
-      }
-    }
-    drugResistance {
-      gene { name }
-      commentsByTypes {
-        commentType
-        comments {
-          text
-          boundMutation {
-            text
-          }
-        }
       }
     }
   }

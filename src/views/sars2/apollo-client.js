@@ -47,9 +47,13 @@ function buildClient(config) {
 
 export default function useApolloClient({
   config,
+  skip = false,
   payload
 }) {
   const {current} = React.useRef({});
+  if (skip) {
+    return null;
+  }
 
   if (!current.client || !isEqual(current.payload, payload)) {
     current.client = buildClient(config);

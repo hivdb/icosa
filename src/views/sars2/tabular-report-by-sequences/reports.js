@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {makeZip} from '../../../utils/download';
-import {tsvStringify} from '../../../utils/csv';
+import {makeZip, makeDownload} from '../../../utils/download';
+import {csvStringify} from '../../../utils/csv';
 
 import {subOptionProcessors} from './sub-options';
 
@@ -44,7 +44,8 @@ export default class SequenceTabularReports extends React.Component {
       subOptionIndices,
       allGenes,
       sequenceAnalysis,
-      onFinish
+      onFinish,
+      ...props
     } = this.props;
     if (loaded) {
       const files = [];
@@ -52,6 +53,7 @@ export default class SequenceTabularReports extends React.Component {
         const processor = subOptionProcessors[idx];
         for (
           const {
+            folder,
             tableName,
             header,
             rows,
@@ -61,23 +63,34 @@ export default class SequenceTabularReports extends React.Component {
           processor({
             allGenes,
             sequenceAnalysis,
-            config
+            config,
+            ...props
           })
         ) {
-          const tsvHeader = header.join('\t');
-          const tsvRows = rows.map(
-            row => tsvStringify(row, {missing, header})
+          const csvHeader = header.join(',');
+          const csvRows = rows.map(
+            row => csvStringify(row, {missing, header})
           );
-          const tsvText = (
-            `${tsvHeader}\n${tsvRows.join('\n')}`
+          const csvText = (
+            `${csvHeader}\n${csvRows.join('\n')}`
           );
           files.push({
-            fileName: `${tableName}.tsv`,
-            data: tsvText
+            folder,
+            fileName: `${tableName}.csv`,
+            data: `\ufeff${csvText}`
           });
         }
       }
-      makeZip('analysis-reports.zip', files);
+      if (files.length === 1) {
+        const [{
+          fileName,
+          data
+        }] = files;
+        makeDownload(fileName, 'text/csv', data);
+      }
+      else {
+        makeZip('analysis-reports.zip', files);
+      }
       onFinish();
     }
     return null;

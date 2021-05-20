@@ -116,7 +116,7 @@ function SequenceAnalysisQuery({
   }
 
   return <>
-    {loaded ? null : <FixedLoader />}
+    {(showProgressBar || loaded) ? null : <FixedLoader />}
     {progressbar}
     {childNode}
   </>;

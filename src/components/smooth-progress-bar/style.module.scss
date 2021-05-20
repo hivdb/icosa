@@ -1,7 +1,6 @@
 @import "../../styles";
 
 .progress-bar-container {
-  margin-top: 1.5rem;
   &[data-loaded="true"] {
     display: none;
   }

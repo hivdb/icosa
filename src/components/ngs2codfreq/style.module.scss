@@ -218,6 +218,7 @@ label.input-label {
         content: '';
         display: block;
         height: var(--progress-bar-height);
+        transition: width 0.5s ease-in-out;
         width: calc(100% * var(--percent));
         background-color: color(progress-bar);
       }

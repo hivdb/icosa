@@ -3,9 +3,14 @@ import JSZip from 'jszip';
 export function makeZip(fileName, files) {
   let zip = new JSZip();
   let reports = zip.folder(fileName.replace(/\.zip$/, ''));
-  files.forEach(({fileName, data}) => (
-    reports.file(fileName, data)
-  ));
+  files.forEach(({folder, fileName, data}) => {
+    if (folder) {
+      reports.folder(folder).file(fileName, data);
+    }
+    else {
+      reports.file(fileName, data);
+    }
+  });
   return zip
     .generateAsync({
       type: 'blob',

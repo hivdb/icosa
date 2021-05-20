@@ -137,7 +137,7 @@ function SeqReadsAnalysisQuery({
   }
 
   return <>
-    {loaded ? null : <FixedLoader />}
+    {(showProgressBar || loaded) ? null : <FixedLoader />}
     {progressbar}
     {childNode}
   </>;

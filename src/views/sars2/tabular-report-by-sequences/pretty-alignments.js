@@ -49,7 +49,8 @@ function prettyAlignments({
       rows.push(row);
     }
     tables.push({
-      tableName: `Pretty${geneDisplay[geneKey]}AA`,
+      folder: 'PrettyAA',
+      tableName: `PrettyAA_${geneDisplay[geneKey] || geneKey}`,
       header,
       rows,
       missing: '-'

@@ -42,6 +42,7 @@
 
   --sierra-color-type-main: var(--sierra-color-name-redberry);
   --sierra-color-type-main-lighter: var(--sierra-color-name-cardinal);
+  --sierra-color-type-highlight: var(--sierra-color-name-supernova);
 
   --sierra-color-body-bg: var(--sierra-color-name-tutu);
   --sierra-color-body-text: var(--sierra-color-name-thunder);
@@ -52,7 +53,7 @@
   --sierra-color-modal-dialog-bg: var(--sierra-color-name-tutu);
   //--sierra-color-modal-close: var(--sierra-color-name-dustygray);
   //--sierra-color-modal-close-hover: var(--sierra-color-name-thunder);
-  --sierra-color-progress-bar: var(--sierra-color-name-supernova);
+  --sierra-color-progress-bar: var(--sierra-color-type-highlight);
 
   //--sierra-color-slider-dot: var(--sierra-color-name-scorpion);
   //--sierra-color-slider-dot-active: var(--sierra-color-type-main);
@@ -145,12 +146,12 @@
   --sierra-color-paginator-dark: var(--sierra-color-type-main);
   --sierra-color-paginator-dark-hover: var(--sierra-color-type-main-lighter);
   --sierra-color-paginator-light: var(--sierra-color-name-tutu);
-  --sierra-color-paginator-light-hover: var(--sierra-color-name-supernova);
+  --sierra-color-paginator-light-hover: var(--sierra-color-type-highlight);
   --sierra-color-paginator-text: var(--sierra-color-name-thunder);
   --sierra-color-paginator-text-inverse: var(--sierra-color-name-tutu);
 
   --sierra-color-paginator-text-hover: var(--sierra-color-name-thunder);
-  --sierra-color-paginator-text-hover-bg: var(--sierra-color-name-supernova);
+  --sierra-color-paginator-text-hover-bg: var(--sierra-color-type-highlight);
   //--sierra-color-paginator-text-current: var(--sierra-color-name-tutu);
   //--sierra-color-paginator-text-current-bg: var(--sierra-color-type-main);
   //--sierra-color-paginator-text-current-hover-bg: var(--sierra-color-type-main-lighter);
@@ -205,8 +206,8 @@
   --sierra-color-table-head-row-hover-bg: var(--sierra-color-name-tana);
   --sierra-color-table-row-odd-bg: var(--sierra-color-name-tutu);
   --sierra-color-table-row-even-bg: var(--sierra-color-name-pampas);
-  --sierra-color-table-row-hover-bg: rgba(  var(--sierra-color-name-supernova), 0.7);
-  --sierra-color-table-row-hl-bg: var(--sierra-color-name-supernova);
+  --sierra-color-table-row-hover-bg: rgba(  var(--sierra-color-type-highlight), 0.7);
+  --sierra-color-table-row-hl-bg: var(--sierra-color-type-highlight);
 
   --sierra-color-warning-text: var(--sierra-color-name-persian-red);
   --sierra-color-validation-critical-bg: var(--sierra-color-name-thunder);
@@ -236,13 +237,13 @@
   --sierra-color-seqviewer-position-item-hover-border: var(--sierra-color-name-silver);
   --sierra-color-seqviewer-position-item-active-border: var(--sierra-color-type-main-lighter);
   --sierra-color-seqviewer-position-item-hover-bg: var(--sierra-color-name-egg-white);
-  --sierra-color-seqviewer-position-item-active-bg: var(--sierra-color-name-supernova);
+  --sierra-color-seqviewer-position-item-active-bg: var(--sierra-color-type-highlight);
   --sierra-color-seqviewer-position-item-posnum-text: var(--sierra-color-name-dustygray);
   --sierra-color-seqviewer-amino-acid-text: var(--sierra-color-type-main);
   --sierra-color-seqviewer-amino-acid-hover-bg: var(--sierra-color-name-egg-white);
-  --sierra-color-seqviewer-amino-acid-active-bg: var(--sierra-color-name-supernova);
+  --sierra-color-seqviewer-amino-acid-active-bg: var(--sierra-color-type-highlight);
 
   --sierra-color-mut-annot-editor-dialog-border: var(--sierra-color-type-main);
 
-  --sierra-color-susc-summary-selected-bg: var(--sierra-color-name-supernova);
+  --sierra-color-susc-summary-selected-bg: var(--sierra-color-type-highlight);
 }

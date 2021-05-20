@@ -19,7 +19,7 @@ const SIRLevels = [
 ];
 
 
-function buildPayload(vaccPlasmaSuscSummary) {
+export function buildPayload(vaccPlasmaSuscSummary) {
   return decideDisplayPriority(vaccPlasmaSuscSummary)
     .reduce(
       (acc, [{

@@ -3,39 +3,63 @@
 @import "../../styles/dropdown";
 @import "../../styles/functions";
 
+
 .analyze-form-tabs {
+  --tab-height: 1.4rem;
+  --tab-v-padding: 0.42rem;
+  --tab-h-padding: 0.84rem;
   display: flex;
   align-items: stretch;
   @extend %react-tabs-container;
   margin-top: 1rem;
-
-  :global(.react-tabs) {
-    display: flex;
+  @media only screen and (max-width: 900px) {
     flex-direction: column;
-    flex-grow: 3;
-    &:global(__tab--selected) {
-      background-color: color(panel-bg);
-    }
-    &:global(__tab-panel--selected) {
-      background-color: color(panel-bg);
+  }
+
+  :global {
+    .react-tabs {
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
+      flex-grow: 3;
+      &__tab {
+        box-sizing: content-box;
+        height: var(--tab-height);
+        line-height: var(--tab-height);
+        padding: var(--tab-v-padding) var(--tab-h-padding);
+      }
+      &__tab--selected {
+        background-color: color(panel-bg);
+      }
+      &__tab-panel--selected {
+        background-color: color(panel-bg);
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      & + :local(.analyze-ngs2codfreq) {
+        &:global(__form), &:global(__results-container) {
+          margin-top: calc(var(--tab-height) + 2 * var(--tab-v-padding));
+        }
+      }
     }
   }
 
   .analyze-ngs2codfreq {
     &:global(__form), &:global(__results-container) {
-      flex-grow: 1;
       display: flex;
+      flex-basis: css-max(32%, 32rem);
       flex-direction: column;
-      margin-top: 29px;
       margin-left: 1rem;
       &:first-child {
-        flex-grow: unset;
-        width: 60%;
+        flex-basis: css-max(60%, 60rem);
         margin-left: 0;
         margin-right: css-min(10%, 4rem);
+      }
+      @media only screen and (max-width: 900px) {
+        margin-left: 0;
+        &:first-child {
+          margin-right: 0;
+        }
       }
     }
     &:global(__input) {

@@ -1,15 +1,18 @@
-import seqSummaries from './sequence-summaries';
-import mutComments from './mutation-comments';
+import seqSummary from './sars2-sequence-summary';
+import suscSummary from './sars2-susc-summary';
+import mutComments from './sars2-mutation-comments';
 import prettyAlignments from './pretty-alignments';
 
 const subOptions = [
-  'Sequence quality summaries',
+  'Sequence summary',
+  'Susceptibility summary',
   'Mutation comments',
   'Pretty amino acid alignments'
 ];
 
 const subOptionProcessors = [
-  seqSummaries,
+  seqSummary,
+  suscSummary,
   mutComments,
   prettyAlignments
 ];

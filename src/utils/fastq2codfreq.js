@@ -111,17 +111,6 @@ async function * uploadFiles(taskKey, files) {
 }
 
 
-function getDistinctFileNames(all_filenames) {
-  const distinct = new Set();
-  for (const filenames of all_filenames) {
-    for (const fname of filenames) {
-      distinct.add(fname);
-    }
-  }
-  return Array.from(distinct);
-}
-
-
 async function triggerRunner(taskKey, files) {
   try {
     await axios.post(
@@ -139,7 +128,6 @@ async function triggerRunner(taskKey, files) {
 
 
 async function * fetchRunnerProgress(taskKey) {
-  let currentFileNames = {};
   let prevCounts = {};
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
@@ -150,18 +138,17 @@ async function * fetchRunnerProgress(taskKey) {
           fn = fn.split('/');
           return fn[fn.length - 1];
         });
-        currentFileNames[ecsTaskId] = fnames;
-        if (count > (prevCounts[ecsTaskId] || 0)) {
-          const fnames = getDistinctFileNames(Object.values(currentFileNames));
+        const fnamesText =fnames.join(', ');
+        if (count > (prevCounts[fnamesText] || 0)) {
           yield {
-            step: `process-${ecsTaskId}-${fnames.join(', ')}`,
-            description: `Processing file(s) ${fnames.join(', ')}...`,
+            step: `process-${ecsTaskId}-${fnamesText}`,
+            description: `Processing file(s) ${fnamesText}...`,
             numParallels: numTasks,
             parallelTaskId: ecsTaskId,
             count,
             total
           };
-          prevCounts[ecsTaskId] = count;
+          prevCounts[fnamesText] = count;
         }
         break;
       }

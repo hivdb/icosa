@@ -1,9 +1,11 @@
 import React from 'react';
-import buildApolloClient from '../apollo-client';
+import {useRouter} from 'found';
+import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../components/report/config-context';
 import SequenceAnalysisLayout from 
   '../../../components/sequence-analysis-layout';
+import useExtendVariables from '../use-extend-variables';
 
 import query from './query.graphql';
 import SeqTabularReports from './reports';
@@ -16,36 +18,50 @@ export default function TabularReportBySequencesContainer({
   subOptionIndices,
   sequences,
   algorithm,
-  onFinish
+  onFinish,
+  patternsTo,
+  sequencesTo,
+  readsTo
 }) {
 
-  return (
-    <ConfigContext.Consumer>
-      {config => {
-        const client = buildApolloClient(config);
-        return <SequenceAnalysisLayout
-         query={query}
-         client={client}
-         sequences={sequences}
-         currentSelected={{index: 0}}
-         renderPartialResults={false}
-         lazyLoad={false}
-         onExtendVariables={handleExtendVariables}>
-          {props => (
-            <SeqTabularReports
-             config={config}
-             species={species}
-             subOptionIndices={subOptionIndices}
-             onFinish={onFinish}
-             {...props} />
-          )}
-        </SequenceAnalysisLayout>;
-      }}
-    </ConfigContext.Consumer>
-  );
+  const {match} = useRouter();
+  const [config, isConfigPending] = ConfigContext.use();
+  const client = useApolloClient({
+    config,
+    skip: isConfigPending,
+    payload: sequences
+  });
 
-  function handleExtendVariables(vars) {
-    vars.algorithm = algorithm;
-    return vars;
+  const handleExtendVariables = useExtendVariables({
+    config,
+    match
+  });
+
+  if (isConfigPending) {
+    return null;
   }
+
+  return <SequenceAnalysisLayout
+   species={config.species}
+   query={query}
+   client={client}
+   sequences={sequences}
+   currentSelected={{index: 0}}
+   renderPartialResults={false}
+   lazyLoad={false}
+   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   onExtendVariables={handleExtendVariables}>
+    {props => (
+      <SeqTabularReports
+       config={config}
+       species={species}
+       subOptionIndices={subOptionIndices}
+       onFinish={onFinish}
+       patternsTo={patternsTo}
+       sequencesTo={sequencesTo}
+       readsTo={readsTo}
+       {...props} />
+    )}
+  </SequenceAnalysisLayout>;
+
 }

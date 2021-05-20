@@ -19,7 +19,7 @@ const SIRLevels = [
 ];
 
 
-function buildPayload(convPlasmaSuscSummary) {
+export function buildPayload(convPlasmaSuscSummary) {
   return decideDisplayPriority(convPlasmaSuscSummary)
     .map(
       ([{

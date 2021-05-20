@@ -1,5 +1,4 @@
 function mutationComments({
-  currentProgramVersion,
   sequenceAnalysis,
   config
 }) {

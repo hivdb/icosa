@@ -16,7 +16,7 @@ import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
 
 
-function buildPayload(antibodySuscSummary) {
+export function buildPayload(antibodySuscSummary) {
   return decideDisplayPriority(antibodySuscSummary)
     .map(
       ([{
@@ -72,7 +72,7 @@ function renderFold(resultItem) {
 }
 
 
-function findComboAntibodies(antibodySuscSummary) {
+export function findComboAntibodies(antibodySuscSummary) {
   const combos = [];
   for (const {itemsByAntibody} of antibodySuscSummary) {
     for (const {antibodies} of itemsByAntibody) {
@@ -90,7 +90,7 @@ function findComboAntibodies(antibodySuscSummary) {
 }
 
 
-function makeOrderedAntibodies(antibodies, comboAntibodies) {
+export function makeOrderedAntibodies(antibodies, comboAntibodies) {
   antibodies = antibodies.map(({name, abbrName, priority}) => [
     {name, abbrName, priority}
   ]);
