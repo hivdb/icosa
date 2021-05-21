@@ -93,6 +93,7 @@ label.input-label {
     background-color: color(input-bg);
     border: 1px solid color(dividing-line);
     padding: 2rem 0;
+    cursor: pointer;
   
     .placeholder {
       width: 100%;
@@ -102,16 +103,7 @@ label.input-label {
       font-weight: 600;
       font-size: 2rem;
       color: rgba(0,0,0,.4);
-  
-      &:after {
-        content: 'or';
-        margin-top: .5rem;
-        display: block;
-        text-align: center;
-        font-size: 1.5rem;
-        font-weight: 400;
-        color: black;
-      }
+      margin-bottom: 1.5rem;
     }
   
     .browse-files {
@@ -126,15 +118,14 @@ label.input-label {
       margin-top: .5rem;
       margin-right: auto;
       margin-left: auto;
-      cursor: pointer;
       transition: all 200ms ease-in-out;
       background-color: white;
-  
-      &:hover {
-        background-color: black;
-        color: white;
-        border-color: white;
-      }
+    }
+
+    &:hover .browse-files {
+      background-color: black;
+      color: white;
+      border-color: white;
     }
   }
   
