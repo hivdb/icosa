@@ -21,7 +21,7 @@ function MutationsInput({
     option => {
       onChange({
         ...extras,
-        ...(option || {mutations: []})
+        ...(option || {name: null, mutations: []})
       }, false);
     },
     [onChange, extras]
