@@ -46,9 +46,12 @@
   .mutation-prefills {
     display: flex;
     flex-direction: column;
-    min-width: css-max(15%, 15rem);
+    min-width: css-max(18%, 18rem);
+    max-width: css-max(18%, 18rem);
     margin-right: 1rem;
     > select {
+      @extend %input-general;
+      border-radius: 0;
       flex-grow: 1;
       padding: .4rem 0;
       > option {
