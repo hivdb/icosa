@@ -15,14 +15,21 @@ function MutationsTagsInput({
 }) {
 
   const placeholder = (
-    'Enter/paste mutation(s)'
+    config.messages['pattern-analysis-input-placeholder'] ||
+    '<pattern-analysis-input-placeholder>'
   );
 
   const className = (
     parentClassName ? `${parentClassName}-tagsinput` : null
   );
 
-  return (
+  return <div className={style['mutations-tagsinput-container']}>
+    <label>
+      {
+        config.messages['pattern-analysis-input-label'] ||
+        '<pattern-analysis-input-label>'
+      }
+    </label>
     <TagsInput
      key="tagsInput"
      tabIndex="0"
@@ -59,7 +66,7 @@ function MutationsTagsInput({
        )
      }}
      onChange={onChange} />
-  );
+  </div>;
 
   function renderMutTag({tag, key, onRemove, classNameRemove, className}) {
     const {text, errors} = parseAndValidateMutation(tag, config);

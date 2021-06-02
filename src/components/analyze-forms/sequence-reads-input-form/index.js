@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
 import ProgressBar from 'react-progressbar';
-import {routerShape, matchShape} from 'found';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
 
@@ -52,8 +51,6 @@ const SUPPORT_FORMATS =
 
 function SequenceReadsInputForm(props) {
   const {
-    match,
-    router,
     to,
     onSubmit,
     children,
@@ -205,7 +202,7 @@ function SequenceReadsInputForm(props) {
 
   return (
     <BaseForm
-     {...{match, router, to}}
+     to={to}
      resetDisabled={!allowSubmit || isSubmitting}
      submitDisabled={!allowSubmit || isSubmitting}
      onSubmit={handleSubmit}
@@ -274,9 +271,6 @@ function SequenceReadsInputForm(props) {
 }
 
 SequenceReadsInputForm.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  config: PropTypes.object.isRequired,
   children: PropTypes.node,
   to: PropTypes.string,
   outputOptions: PropTypes.object,

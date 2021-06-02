@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {routerShape, matchShape} from 'found';
 
 import {parseFasta} from '../../utils/fasta';
 import BigData from '../../utils/big-data';
@@ -24,8 +23,6 @@ const exampleFastaPropType = PropTypes.shape({
 export default class SequenceInputForm extends React.Component {
 
   static propTypes = {
-    match: matchShape.isRequired,
-    router: routerShape.isRequired,
     children: PropTypes.node,
     childrenPlacement: PropTypes.oneOf(['top', 'bottom']).isRequired,
     exampleFasta: PropTypes.arrayOf(exampleFastaPropType),
@@ -188,7 +185,7 @@ export default class SequenceInputForm extends React.Component {
   render() {
     const {outputOptions} = this;
     const {
-      match, router, to, children,
+      to, children,
       childrenPlacement, exampleFasta
     } = this.props;
     const {
@@ -200,7 +197,7 @@ export default class SequenceInputForm extends React.Component {
 
     return (
       <BaseForm
-       {...{match, router, to}}
+       to={to}
        resetDisabled={
          (sequence === '' && header === '' && !showExamples) || isSubmitting
        }

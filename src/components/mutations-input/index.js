@@ -8,6 +8,7 @@ import {
 
 import MutationsTagsInput from './mutations-tagsinput';
 import MutationsErrors from './mutations-errors';
+import useMutationPrefills from './mutation-prefills';
 // import MutationSuggestOptions from './mutation-suggest-options';
 import style from './style.module.scss';
 
@@ -16,6 +17,16 @@ function MutationsInput({
   config, mutations, className, onChange, isActive, ...extras
 }) {
   const [,allErrors] = sanitizeMutations(mutations, config);
+  const handlePrefillSelect = React.useCallback(
+    option => {
+      onChange({
+        ...extras,
+        ...(option || {mutations: []})
+      }, false);
+    },
+    [onChange, extras]
+  );
+  const prefillElement = useMutationPrefills(handlePrefillSelect, config);
 
   React.useEffect(() => {
     if (allErrors.length > 0) {
@@ -28,11 +39,15 @@ function MutationsInput({
       style['mutation-suggest-input'],
       className,
     )}>
-      <MutationsTagsInput
-       config={config}
-       parentClassName={className}
-       mutations={mutations}
-       onChange={handleTagsChange} />
+      <div className={style['mutation-main-input']}>
+        {prefillElement}
+        <div className={style['or']}>or</div>
+        <MutationsTagsInput
+         config={config}
+         parentClassName={className}
+         mutations={mutations}
+         onChange={handleTagsChange} />
+      </div>
       <MutationsErrors
        allErrors={allErrors}
        parentClassName={className}
@@ -99,7 +114,8 @@ MutationsInput.propTypes = {
 };
 
 MutationsInput.defaultProps = {
-  isActive: true
+  isActive: true,
+  mutations: []
 };
 
 export default MutationsInput;

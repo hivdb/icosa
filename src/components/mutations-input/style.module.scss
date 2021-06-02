@@ -1,6 +1,8 @@
 @import "../../styles";
 @import "../../styles/tabs";
 @import "../../styles/dropdown";
+@import "../../styles/functions";
+
 
 .mutation-suggest-options {
   @extend %general-dropdown;
@@ -12,17 +14,79 @@
   // smallCellWidth="1"
   // mediumCellWidth="1/2"
   // cellWidth="1/3"
+  --placeholder-color: rgba(0,0,0,.42);
   width: 100%;
   margin-bottom: 1rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 
+  .mutation-main-input {
+    flex-grow: 1;
+    display: flex;
+    align-items: stretch;
+
+    @media only screen and (max-width: 900px) {
+      flex-direction: column;
+
+      .mutation-prefills {
+        margin-right: 0;
+        & + .or {
+          margin-top: 1rem;
+          margin-right: 0;
+        }
+      }
+    }
+  }
+
+  .or {
+    display: none;
+  }
+
+  .mutation-prefills {
+    display: flex;
+    flex-direction: column;
+    min-width: css-max(15%, 15rem);
+    margin-right: 1rem;
+    > select {
+      flex-grow: 1;
+      padding: .4rem 0;
+      > option {
+        font-size: .9rem;
+        font-family: monospace;
+        padding: .0625rem .75rem;
+
+        &.clear-prefill {
+          color: var(--placeholder-color);
+        }
+      }
+    }
+    & + .or {
+      display: block;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 5rem;
+      margin-right: 1rem;
+    }
+  }
+
+  .mutations-tagsinput-container {
+    flex-grow: 1;
+  }
+
+  .mutation-prefills, .mutations-tagsinput-container {
+    > label {
+      display: block;
+      line-height: 2rem;
+      height: 2rem;
+    }
+  }
+
   .mutations-tagsinput {
     @extend %inline-input;
-    flex-grow: 1;
     font-size: .9rem;
-    overflow: hidden;
+    overflow-y: auto;
     min-height: 8rem;
     cursor: text;
   }
@@ -34,6 +98,9 @@
     border: none;
     &:focus {
       outline: none;
+    }
+    &::placeholder {
+      color: var(--placeholder-color);
     }
   }
 
