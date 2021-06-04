@@ -32,19 +32,26 @@ function prettyAlignments({
       const geneSeq = seqResult.alignedGeneSequences.find(
         ({gene: {name}}) => name === geneKey
       );
-      const {firstAA, lastAA, mutations} = geneSeq;
-      for (let pos0 = 0; pos0 < firstAA - 1; pos0 ++) {
-        row[`${pos0 + 1}`] = '.';
-      }
-      for (const mut of mutations) {
-        let {position, displayAAs} = mut;
-        if (displayAAs === '-') {
-          displayAAs = 'del';
+      if (geneSeq) {
+        const {firstAA, lastAA, mutations} = geneSeq;
+        for (let pos0 = 0; pos0 < firstAA - 1; pos0 ++) {
+          row[`${pos0 + 1}`] = '.';
         }
-        row[`${position}`] = displayAAs;
+        for (const mut of mutations) {
+          let {position, displayAAs} = mut;
+          if (displayAAs === '-') {
+            displayAAs = 'del';
+          }
+          row[`${position}`] = displayAAs;
+        }
+        for (let pos0 = lastAA; pos0 < geneSize; pos0 ++) {
+          row[`${pos0 + 1}`] = '.';
+        }
       }
-      for (let pos0 = lastAA; pos0 < geneSize; pos0 ++) {
-        row[`${pos0 + 1}`] = '.';
+      else {
+        for (let pos0 = 0; pos0 < geneSize; pos0 ++) {
+          row[`${pos0 + 1}`] = '.';
+        }
       }
       rows.push(row);
     }
