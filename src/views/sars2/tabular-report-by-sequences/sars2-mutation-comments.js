@@ -6,7 +6,6 @@ function mutationComments({
   sequenceAnalysis,
   config
 }) {
-  const rows = [];
   const {geneDisplay} = config;
   let header = [
     'Sequence Name',
@@ -20,6 +19,7 @@ function mutationComments({
       inputSequence: {header: seqName},
       mutationComments
     } = seqResult;
+    const rows = [];
     for (const {triggeredMutations, version, comment} of mutationComments) {
       const muts = shortenMutList(triggeredMutations).map(({
         gene: {name}, text
