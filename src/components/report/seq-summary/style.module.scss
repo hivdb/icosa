@@ -13,7 +13,8 @@
     .has-dropdown {
       @extend %small-dropdown;
       :global .Dropdown-root {
-        width: 6rem;
+        width: 8rem;
+        display: inline-block;
       }
       // display: inline-block;
       margin-top: 0.2rem;
@@ -24,7 +25,9 @@
           width: 100%;
         }
       }
-      
+      .dropdown-after {
+        margin-left: .5rem;
+      }
     }
     dt.warning {
       font-weight: 600;

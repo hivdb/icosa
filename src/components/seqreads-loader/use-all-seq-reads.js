@@ -20,6 +20,7 @@ export default function useAllSeqReads({
 }) {
   let {
     strain,
+    maxMixturePcnt,
     minPrevalence,
     minCodonReads,
     minPositionReads
@@ -28,12 +29,17 @@ export default function useAllSeqReads({
   let {
     location: {
       query: {
+        mixpcnt: mixPcnt,
         cutoff,
         cdreads,
         posreads
       } = {}
     } = {}
   } = match;
+  mixPcnt = parseFloat(mixPcnt);
+  if (!isNaN(mixPcnt)) {
+    maxMixturePcnt = mixPcnt;
+  }
   cutoff = parseFloat(cutoff);
   if (!isNaN(cutoff)) {
     minPrevalence = cutoff;
@@ -58,6 +64,7 @@ export default function useAllSeqReads({
           allOrigSeqReads.map(sr => ({
             ...sr,  // deep-copy to avoid cache
             strain,
+            maxMixturePcnt,
             minPrevalence,
             minCodonReads,
             minPositionReads
@@ -68,6 +75,7 @@ export default function useAllSeqReads({
     },
     [
       strain,
+      maxMixturePcnt,
       minPrevalence,
       minCodonReads,
       minPositionReads,

@@ -31,6 +31,9 @@ export default gql`
     }
     ${seqLevel}
     availableGenes { name }
+    mixturePcnt
+    maxMixturePcnt
+    actualMinPrevalence
     minPrevalence
     minCodonReads
     minPositionReads

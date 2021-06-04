@@ -13,6 +13,7 @@ import GeneMutationsReal from './gene-mutations';
 import PangoLineageReal from './pango-lineage';
 import OutbreakInfoReal from './outbreak-info';
 import SubtypeReal from './subtype';
+import MaxMixturePcntReal from './max-mixture-pcnt';
 import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
@@ -28,6 +29,7 @@ const GeneMutations = () => null;
 const Subtype = () => null;
 const PangoLineage = () => null;
 const OutbreakInfo = () => null;
+const MaxMixturePcnt = () => null;
 const MinPrevalence = () => null;
 const MinCodonReads = () => null;
 const MinPositionReads = () => null;
@@ -47,6 +49,9 @@ function SeqSummary(props) {
     availableGenes,
     pangolin,
     readDepthStats,
+    maxMixturePcnt,
+    mixturePcnt,
+    actualMinPrevalence,
     minPrevalence,
     minCodonReads,
     minPositionReads,
@@ -114,6 +119,17 @@ function SeqSummary(props) {
               );
             }
 
+            else if (child.type === MaxMixturePcnt) {
+              return (
+                <MaxMixturePcntReal
+                 key={key}
+                 match={match}
+                 router={router}
+                 config={config}
+                 {...{maxMixturePcnt, mixturePcnt}} />
+              );
+            }
+
             else if (child.type === MinPrevalence) {
               return (
                 <MinPrevalenceReal
@@ -121,7 +137,7 @@ function SeqSummary(props) {
                  match={match}
                  router={router}
                  config={config}
-                 {...{minPrevalence}} />
+                 {...{minPrevalence, actualMinPrevalence}} />
               );
             }
 
@@ -217,6 +233,7 @@ SeqSummaryWrapper.Subtype = Subtype;
 SeqSummaryWrapper.PangoLineage = PangoLineage;
 SeqSummaryWrapper.OutbreakInfo = OutbreakInfo;
 SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
+SeqSummaryWrapper.MaxMixturePcnt = MaxMixturePcnt;
 SeqSummaryWrapper.MinPrevalence = MinPrevalence;
 SeqSummaryWrapper.MinCodonReads = MinCodonReads;
 SeqSummaryWrapper.MinPositionReads = MinPositionReads;
