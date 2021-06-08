@@ -85,7 +85,7 @@ label.input-label {
 
   }
 
-  &[data-num-files="0"] .button-group {
+  &[data-num-pairs="0"] .button-group {
     display: none;
   }
 
@@ -132,31 +132,121 @@ label.input-label {
   ul.preview-files {
     max-height: 23.4rem;
     overflow: auto;
-    margin: 0;
+    margin: .5rem 0 0;
     padding-left: 0;
-    &[data-drag-active="true"]::before {
-      display: block;
-      color: color(seqreads-preview-placeholder-hover-text);
+    &[data-drag-active="false"] {
+      li[draggable="true"]:hover {
+        border: 2px dashed rgba(0,0,0,.3);
+        background-color: rgba(0,0,0,.1);
+      }
     }
     > li {
       border: 1px solid color(dividing-line);
-      margin: 1rem 0;
-      position: relative;
-      list-style-type: none;
-      white-space: nowrap;
-      height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+      margin: .5rem 0;
+      box-sizing: content-box;
       line-height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
       padding: var(--file-item-v-padding) var(--file-item-h-padding);
-      box-sizing: content-box;
+
+      &.fastq-pair-item {
+        height: auto;
+        $label-width: 3.5rem;
+        > label {
+          display: inline-block;
+          width: $label-width;
+        }
+        > input {
+          @extend %inline-input;
+          box-sizing: border-box;
+          width: calc(100% - #{$label-width + 2.1rem});
+          margin-right: .5rem;
+        }
+        &[data-n="1"] {
+          > input {
+            width: calc(100% - #{$label-width + 0.5rem});
+          }
+          > .split {
+            display: none;
+          }
+        }
+        > ul.fastq-pair-list {
+          margin: .5rem 0 0;
+          padding-left: 0;
+          > li:not(.drop-placeholder) {
+            height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+            padding: .15rem;
+            margin: .5rem 0;
+          }
+        }
+      }
+    }
+    li {
+      &.drop-placeholder {
+        border: none;
+        height: 0;
+        padding: 0;
+        margin: 0;
+        transition: all 0s linear 10ms;
+        * {
+          display: none;
+        }
+        &[data-await-dropping="true"] {
+          height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
+          padding: .15rem;
+          margin-top: .25rem;
+          margin-bottom: .25rem;
+          border: 2px dashed rgba(0,0,0,.3);
+          background-color: rgba(0,0,0,.1);
+          * {
+            display: inline-block;
+          }
+        }
+        &[data-dropping="true"] {
+          border: 2px dashed rgba(0,0,0,.8);
+          background-color: rgba(0,0,0,.4);
+        }
+      }
+      list-style-type: none;
+      position: relative;
+      white-space: nowrap;
       vertical-align: middle;
+      &[draggable="true"] {
+        cursor: grab;
+        border: 2px solid transparent;
+        &:active, &[data-dragging] {
+          border: 2px dashed color(type-main-lighter);
+          background-color: rgba(0,0,0,.1);
+        }
+        &:active, &[data-dragging] {
+          cursor: grabbing;
+        }
+        span.file-name {
+          width: calc(100% - 4.03rem);
+        }
+      }
+      &[draggable="false"] {
+        span.file-name {
+          width: calc(100% - 2.6rem);
+        }
+      }
       > svg {
         display: inline-block;
-        vertical-align: baseline;
         padding: calc((var(--file-item-height) - 2 * var(--file-item-v-padding) - var(--file-item-icon-size)) / 2) 0;
         font-size: var(--file-item-icon-size);
       }
       > svg.file-icon {
         color: color(seqreads-preview-file-icon);
+      }
+      > svg.split {
+        path {
+          stroke-width: 48px;
+        }
+        transform: rotate(90deg);
+        color: color(seqreads-preview-move-file);
+        cursor: pointer;
+      }
+      > svg.move {
+        color: color(seqreads-preview-move-file);
+        margin-right: 0.5rem;
       }
       > svg.remove {
         color: color(seqreads-preview-remove-file);
@@ -168,9 +258,6 @@ label.input-label {
         padding-left: calc(var(--file-item-h-padding) * 0.5);
         padding-right: var(--file-item-h-padding);
         height: calc(var(--file-item-height) - 2 * var(--file-item-v-padding));
-        width: calc(100% - 2rem);
-        text-overflow: ellipsis;
-        overflow: hidden;
       }
     }
   }

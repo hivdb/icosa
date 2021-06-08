@@ -14,7 +14,7 @@ function MaxMixturePcnt({
 
   return <>
     <dt className={style['has-dropdown']}>
-      Expected nucleotide mixture rate:
+      Nucleotide mixture threshold:
     </dt>
     <dd className={style['has-dropdown']} data-wide-dropdown>
       <Dropdown

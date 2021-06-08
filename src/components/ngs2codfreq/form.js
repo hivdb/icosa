@@ -2,12 +2,12 @@ import React from 'react';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
-import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
-import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
 
 import {ConfigContext} from '../report';
 import InlineLoader from '../inline-loader';
 
+import {identifyPairs} from './fastq-pairs';
+import PreviewFiles from './preview-files';
 import style from './style.module.scss';
 
 const SUPPORT_FORMATS = ".fastq, .gz";
@@ -16,18 +16,22 @@ const SUPPORT_FORMATS = ".fastq, .gz";
 export default function NGSForm({className, onSubmit}) {
 
   const [config, isConfigPending] = ConfigContext.use();
-  const [fastqs, setFastqs] = React.useState([]);
+  const [fastqPairs, setFastqPairs] = React.useState([]);
 
   const handleUpload = React.useCallback(
     async (fileList) => {
-      const fastqFiles = [...fastqs];
+      const fastqFiles = [];
       const knownFiles = new Set();
-      for (const {name} of fastqFiles) {
-        knownFiles.add(name);
+      for (const {pair} of fastqPairs) {
+        for (const file of pair) {
+          if (file) {
+            knownFiles.add(file.name);
+          }
+        }
       }
       const unsupportedFiles = [];
       for (const file of Array.from(fileList)) {
-        const name = file.name;
+        const {name} = file;
         if (knownFiles.has(name)) {
           unsupportedFiles.push(name);
         }
@@ -36,6 +40,7 @@ export default function NGSForm({className, onSubmit}) {
         }
         else if (/\.fastq(\.gz)?$/i.test(name)) {
           fastqFiles.push(file);
+          knownFiles.add(name);
         }
         else {
           unsupportedFiles.push(name);
@@ -47,38 +52,28 @@ export default function NGSForm({className, onSubmit}) {
           unsupportedFiles.join('\n - ')
         );
       }
-      setFastqs(fastqFiles);
+      setFastqPairs([
+        ...fastqPairs,
+        ...identifyPairs(fastqFiles)
+      ]);
     },
-    [fastqs, setFastqs]
+    [fastqPairs, setFastqPairs]
   );
 
   const handleSubmit = React.useCallback(
     e => {
       e && e.preventDefault();
-      onSubmit(fastqs);
+      onSubmit(fastqPairs);
     },
-    [onSubmit, fastqs]
+    [onSubmit, fastqPairs]
   );
 
   const handleReset = React.useCallback(
     e => {
       e && e.preventDefault();
-      setFastqs([]);
+      setFastqPairs([]);
     },
-    [setFastqs]
-  );
-
-  const handleRemoveFastq = React.useCallback(
-    index => {
-      return (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const fastqFiles = [...fastqs];
-        fastqFiles.splice(index, 1);
-        setFastqs(fastqFiles);
-      };
-    },
-    [fastqs, setFastqs]
+    [setFastqPairs]
   );
 
   if (isConfigPending) {
@@ -87,7 +82,7 @@ export default function NGSForm({className, onSubmit}) {
 
   return (
     <form
-     data-num-files={fastqs.length}
+     data-num-pairs={fastqPairs.length}
      className={classNames(
        style['ngs2codfreq-form'],
        className ? `${className}__form` : null
@@ -121,29 +116,10 @@ export default function NGSForm({className, onSubmit}) {
           </div>
         </>}
       </Dropzone>
-      <ul className={classNames(
-        style['preview-files'],
-        className ? `${className}__preview-files` : null
-      )}>
-        {fastqs.map((f, idx) => (
-          <li key={`fastq-${idx}`}>
-            <FaRegFileAlt className={classNames(
-              style['file-icon'],
-              className ? `${className}__file-icon` : null
-            )} />
-            <span className={classNames(
-              style['file-name'],
-              className ? `${className}__file-name` : null
-            )}>{f.name}</span>
-            <FaTimesCircle
-             onClick={handleRemoveFastq(idx)}
-             className={classNames(
-               style.remove,
-               className ? `${className}__file-remove` : null
-             )} />
-          </li>
-        ))}
-      </ul>
+      <PreviewFiles
+       fastqPairs={fastqPairs}
+       onChange={setFastqPairs}
+       className={className} />
       <div className={classNames(
         style['button-group'],
         className ? `${className}__button-group` : null
@@ -152,7 +128,11 @@ export default function NGSForm({className, onSubmit}) {
           style['description'],
           className ? `${className}__description` : null
         )}>
-          {pluralize("file", fastqs.length, true)}:
+          {pluralize(
+            "file",
+            fastqPairs.reduce((acc, {n}) => acc + n, 0),
+            true
+          )}:
         </label>
         <button type="submit" className={classNames(
           style['btn-primary'],
