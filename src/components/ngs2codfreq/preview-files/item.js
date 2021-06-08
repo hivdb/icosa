@@ -65,12 +65,16 @@ function FASTQItem({
       )}>{file.name}</span>
       {draggable ? (
         <FaArrowsAlt
+         alt="move to merge with another single-read sequence"
+         title="move to merge with another single-read sequence"
          className={classNames(
            style.move,
            className ? `${className}__file-move` : null
          )} />
       ) : null}
       <FaTimesCircle
+       alt="remove this file"
+       title="remove this file"
        onClick={handleRemove}
        className={classNames(
          style.remove,
@@ -136,6 +140,8 @@ export default function FASTQPairItem({
        value={name} />
       {n === 2 ? (
         <AiOutlineSplitCells
+         alt="Split to two single-read sequences"
+         title="Split to two single-read sequences"
          className={style.split}
          onClick={handleSplit} />
       ) : null}
