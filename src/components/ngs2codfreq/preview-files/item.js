@@ -128,7 +128,7 @@ export default function FASTQPairItem({
        style['fastq-pair-item'],
        className ? `${className}__fastq-pair-item` : null
      )}>
-      <label for={`edit-pair-name__${name}`}>Name:</label>
+      <label htmlFor={`edit-pair-name__${name}`}>Name:</label>
       <input
        type='text'
        name={`edit-pair-name__${name}`}

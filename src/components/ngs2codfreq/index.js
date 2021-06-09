@@ -67,9 +67,9 @@ export default function NGS2CodFreq({
   );
 
   const handleSubmit = React.useCallback(
-    async fastqs => {
-      if (fastqs.length > 0) {
-        for await (const progress of fastq2codfreq(fastqs)) {
+    async fastqPairs => {
+      if (fastqPairs.length > 0) {
+        for await (const progress of fastq2codfreq(fastqPairs)) {
           const shouldBreak = updateProgress({
             progress,
             progressLookup,
