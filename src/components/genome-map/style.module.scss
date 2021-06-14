@@ -22,9 +22,20 @@
     }
   }
 
+  .footnote {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 1rem;
+  }
+
   &:hover {
     .button-group {
       display: flex;
+    }
+    .footnote {
+      display: block;
     }
   }
 

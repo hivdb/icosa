@@ -3,10 +3,11 @@
     "name": "sars2-variant-clusters",
     "label": "SARS-CoV-2 Variant Clusters",
     "width": 1840,
-    "height": 580,
+    "height": 80,
     "paddingLeft": 380,
     "paddingRight": 60,
     "paddingTop": 20,
+    "footnote": "This work is made available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)",
     "positionGroups": [
       {
         "name": "B.1.1.7",
