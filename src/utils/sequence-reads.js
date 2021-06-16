@@ -3,7 +3,7 @@ import {csvParse} from './csv';
 
 
 function testTSV(text) {
-  return /\t/.test(text);
+  return !!text && /\t/.test(text);
 }
 
 
@@ -259,26 +259,67 @@ function parseCodFreq(
 }
 
 
+const utrBegin = /^# *--- *untranslated regions begin *---/;
+const utrEnd = /^# *--- *untranslated regions end *---/;
+const utrPattern = (
+  /# *(?<name>[\S]+) (?<refStart>\d+)\.\.(?<refEnd>\d+): *(?<consensus>[\S]+)/
+);
+
+function parseUntransRegions(rows) {
+  let begin = false;
+  const results = [];
+  const remainRows = [];
+  for (const row of rows) {
+    if (utrEnd.test(row)) {
+      begin = false;
+    }
+    else if (begin) {
+      const match = utrPattern.exec(row);
+      if (match) {
+        const {name, refStart, refEnd, consensus} = match.groups;
+        results.push({
+          name,
+          refStart: Number(refStart),
+          refEnd: Number(refEnd),
+          consensus
+        });
+      }
+    }
+    else if (utrBegin.test(row)) {
+      begin = true;
+    }
+    else {
+      remainRows.push(row);
+    }
+  }
+  return [results, remainRows];
+}
+
+
 export function parseSequenceReads(
   name, data, geneValidator
 ) {
-  const isTSV = testTSV(data);
+  const [
+    untranslatedRegions,
+    unparsedRows
+  ] = parseUntransRegions(data.split(/[\r\n]+/g));
+  const isTSV = testTSV(unparsedRows[0]);
   let rows;
   if (isTSV) {
-    rows = data.split(/[\r\n]+/g);
-    if (rows[0].startsWith('##fileformat=AAVF')) {
+    if (unparsedRows[0].startsWith('##fileformat=AAVF')) {
       return parseAAVF(
-        name, rows, geneValidator
+        name, unparsedRows, geneValidator
       );
     }
     else {
-      rows = rows.map(tsvrow);
+      rows = unparsedRows.map(tsvrow);
     }
   }
   else {
-    rows = csvParse(data, false);
+    rows = csvParse(unparsedRows.join('\n'), false);
   }
-  return parseCodFreq(
-    name, rows, geneValidator
-  );
+  return {
+    ...parseCodFreq(name, rows, geneValidator),
+    untranslatedRegions
+  };
 }

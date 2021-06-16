@@ -148,6 +148,21 @@ async function * fetchRunnerProgress(taskKey) {
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
     switch (op) {
+      case 'alignment': {
+        const {status, query, target} = event;
+        let qname = query.split('/');
+        qname = qname[qname.length - 1];
+        yield {
+          step: `align-${ecsTaskId}-${qname}`,
+          description: (
+            `Aligning ${qname} with ${target} using Minimap2, ` +
+            'this may take 1-2 minutes...'
+          ),
+          count: status === 'working' ? 0 : 1,
+          total: 1
+        };
+        break;
+      }
       case 'progress': {
         const {count, total, fastqs} = event;
         const fnames = fastqs.filter(fn => fn).map(fn => {

@@ -6,7 +6,7 @@ import {translateCodon} from '../../utils/codonutils';
 import {makeZip, makeDownload} from '../../utils/download';
 
 
-async function dumpReads(allReads) {
+function dumpReads(allReads) {
   const rows = [];
   const header = [
     'gene', 'position', 'totalReads',
@@ -47,14 +47,27 @@ async function dumpReads(allReads) {
 }
 
 
+function dumpUTR(untranslatedRegions) {
+  const rows = [];
+  if (untranslatedRegions && untranslatedRegions.length > 0) {
+    rows.push('# --- untranslated regions begin ---');
+    for (const {name, refStart, refEnd, consensus} of untranslatedRegions) {
+      rows.push(`# ${name} ${refStart}..${refEnd}: ${consensus}`);
+    }
+    rows.push('# --- untranslated regions end ---\n');
+  }
+  return rows.join('\n');
+}
+
+
 export default function useDownloadCodFreqs(allSequenceReads) {
 
   const onDownload = React.useCallback(
     async (e) => {
       e && e.preventDefault();
       const files = [];
-      for (const {name, allReads} of allSequenceReads) {
-        const data = await dumpReads(allReads);
+      for (const {name, allReads, untranslatedRegions} of allSequenceReads) {
+        const data = dumpUTR(untranslatedRegions) + dumpReads(allReads);
         const fileName = name.replace(
           /(?:\.codf(?:ish|req))?\.[^.]+$/i,
           '.codfreq.txt');

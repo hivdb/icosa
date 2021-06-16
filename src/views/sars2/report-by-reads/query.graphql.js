@@ -37,6 +37,7 @@ export default gql`
     minPrevalence
     minCodonReads
     minPositionReads
+    assembledConsensus
     ${includeFragment(seqReadsSummaryFragment, 'SequenceReadsAnalysis')}
     allGeneSequenceReads {
       firstAA
