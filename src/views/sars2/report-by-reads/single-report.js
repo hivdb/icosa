@@ -76,6 +76,7 @@ function SingleSeqReadsReport({
       {sequenceReadsResult ? <>
         <RefContextWrapper>
           <SeqSummary {...sequenceReadsResult} output={output}>
+            <SeqSummary.DownloadConsensus />
             <SeqSummary.InlineGeneRange />
             <SeqSummary.MedianReadDepth />
             <SeqSummary.PangoLineage />

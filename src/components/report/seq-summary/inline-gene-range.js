@@ -41,7 +41,7 @@ function InlineGeneRange({config, geneSeqs}) {
     {geneSeqs.length < allGenes.length && <>
       <dt className={style.warning}>
         Following gene
-        {allGenes.length - geneSeqs.length > 1 ? 's are ' : 'is '}
+        {allGenes.length - geneSeqs.length > 1 ? 's are ' : ' is '}
         missing:
       </dt>
       <dd className={style.warning}>

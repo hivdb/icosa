@@ -204,6 +204,7 @@ const geneSeqLevel = `
     isAmbiguous
     isDRM
     totalReads
+    triplet
     allAAReads {
       aminoAcid
       numReads

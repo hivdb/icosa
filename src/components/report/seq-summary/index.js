@@ -6,6 +6,7 @@ import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
 
 import {SDRMButton, SDRMList} from './sdrm-list';
+import DownloadConsensusReal from './download-consensus';
 import {PrettyPairwiseButton, PrettyPairwiseList} from './pretty-pairwise';
 import MultilineGeneRangeReal from './multiline-gene-range';
 import InlineGeneRangeReal from './inline-gene-range';
@@ -22,6 +23,7 @@ import ConfigContext from '../config-context';
 
 
 const SDRMs = () => null;
+const DownloadConsensus = () => null;
 const PrettyPairwise = () => null;
 const InlineGeneRange = () => null;
 const MultilineGeneRange = () => null;
@@ -42,6 +44,11 @@ function SeqSummary(props) {
     match,
     router,
     output,
+    name,
+    maxMixturePcnt,
+    minPrevalence,
+    minCodonReads,
+    assembledConsensus,
     bestMatchingSubtype,
     subtypes,
     alignedGeneSequences,
@@ -49,11 +56,8 @@ function SeqSummary(props) {
     availableGenes,
     pangolin,
     readDepthStats,
-    maxMixturePcnt,
     mixturePcnt,
     actualMinPrevalence,
-    minPrevalence,
-    minCodonReads,
     minPositionReads,
     children
   } = props;
@@ -78,6 +82,15 @@ function SeqSummary(props) {
            disablePrettyPairwise,
            showPrettyPairwise,
            togglePrettyPairwise
+          }} />
+        )}
+        {children.some(child => child.type === DownloadConsensus) && (
+          <DownloadConsensusReal {...{
+            name,
+            assembledConsensus,
+            maxMixturePcnt,
+            minPrevalence,
+            minCodonReads
           }} />
         )}
       </div>
@@ -225,6 +238,7 @@ function SeqSummaryWrapper(props) {
 }
 
 SeqSummaryWrapper.SDRMs = SDRMs;
+SeqSummaryWrapper.DownloadConsensus = DownloadConsensus;
 SeqSummaryWrapper.PrettyPairwise = PrettyPairwise;
 SeqSummaryWrapper.MultilineGeneRange = MultilineGeneRange;
 SeqSummaryWrapper.InlineGeneRange = InlineGeneRange;
