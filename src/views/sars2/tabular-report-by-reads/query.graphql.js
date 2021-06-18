@@ -17,6 +17,9 @@ export default gql`
   fragment TabularReportBySeqReads on SequenceReadsAnalysis {
     name
     ${seqLevel}
+    readDepthStats {
+      median: percentile(p: 50)
+    }
     availableGenes { name }
     mixturePcnt
     maxMixturePcnt

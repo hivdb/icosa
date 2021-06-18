@@ -1,6 +1,7 @@
 function prettyAlignments({
   allGenes,
   sequenceAnalysis,
+  sequenceReadsAnalysis,
   config
 }) {
   const {geneDisplay} = config;
@@ -25,11 +26,16 @@ function prettyAlignments({
         }, {})
       }
     ];
-    for (const seqResult of sequenceAnalysis) {
+    const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+    for (const seqResult of seqResults) {
+      const seqName = seqResult.name || seqResult.inputSequence.header;
       const row = {
-        'Sequence Name': seqResult.inputSequence.header
+        'Sequence Name': seqName
       };
-      const geneSeq = seqResult.alignedGeneSequences.find(
+      const geneSeq = (
+        seqResult.alignedGeneSequences ||
+        seqResult.allGeneSequenceReads
+      ).find(
         ({gene: {name}}) => name === geneKey
       );
       if (geneSeq) {
@@ -39,8 +45,12 @@ function prettyAlignments({
         }
         for (const mut of mutations) {
           let {position, displayAAs} = mut;
-          if (displayAAs === '-') {
-            displayAAs = 'del';
+          if (displayAAs.includes('-')) {
+            displayAAs = (
+              [displayAAs.replace('-', ''), 'del']
+                .filter(n => n)
+                .join('/')
+            );
           }
           row[`${position}`] = displayAAs;
         }

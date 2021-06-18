@@ -130,6 +130,9 @@ label.input-label {
   }
   
   ul.preview-files {
+    &:empty {
+      margin: 0;
+    }
     max-height: 23.4rem;
     overflow: auto;
     margin: .5rem 0 0;

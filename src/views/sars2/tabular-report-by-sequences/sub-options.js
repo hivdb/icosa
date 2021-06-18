@@ -1,7 +1,7 @@
 import seqSummary from './sars2-sequence-summary';
 import suscSummary from '../tabular-report/sars2-susc-summary';
 import mutComments from '../tabular-report/sars2-mutation-comments';
-import prettyAlignments from './pretty-alignments';
+import prettyAlignments from '../tabular-report/pretty-alignments';
 
 const subOptions = [
   'Sequence summary',

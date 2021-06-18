@@ -16,9 +16,8 @@ function DownloadConsensus({
 }) {
   const onDownload = React.useCallback(
     () => {
-      const pureName = name.replace(/(\.codfreq)?(\.txt|csv|tsv)?$/i, '');
       const fasta = `>${
-        pureName
+        name
       } cdreads: ${
         minCodonReads
       }; cutoff: ${
@@ -26,7 +25,7 @@ function DownloadConsensus({
       }; mixpcnt: ${
         maxMixturePcnt
       }\n${assembledConsensus}`;
-      makeDownload(`${pureName}.fas`, 'application/fasta', fasta);
+      makeDownload(`${name}.fas`, 'application/fasta', fasta);
     },
     [name, maxMixturePcnt, minPrevalence, minCodonReads, assembledConsensus]
   );

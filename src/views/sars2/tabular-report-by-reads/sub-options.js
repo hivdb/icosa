@@ -1,20 +1,23 @@
-// import seqSummary from './sars2-sequence-summary';
+import seqReadsSummary from './sars2-seqreads-summary';
+import assembledConsensus from './assembled-consensus';
 import suscSummary from '../tabular-report/sars2-susc-summary';
 import mutComments from '../tabular-report/sars2-mutation-comments';
-// import prettyAlignments from './pretty-alignments';
+import prettyAlignments from '../tabular-report/pretty-alignments';
 
 const subOptions = [
-  // 'Sequence summary',
+  'Sequence summary',
+  'Consensus sequence (FASTA)',
   'Susceptibility summary',
   'Mutation comments',
-  // 'Pretty amino acid alignments'
+  'Pretty amino acid alignments'
 ];
 
 const subOptionProcessors = [
-  // seqSummary,
+  seqReadsSummary,
+  assembledConsensus,
   suscSummary,
-  mutComments
-  // prettyAlignments
+  mutComments,
+  prettyAlignments
 ];
 
 export {subOptions, subOptionProcessors};

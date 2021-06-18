@@ -5,7 +5,11 @@ import {subOptionProcessors} from './sub-options';
 
 
 function SeqReadsTabularReports(props) {
-  return useTabularReports({...props, subOptionProcessors});
+  return useTabularReports({
+    ...props,
+    subOptionProcessors,
+    zipName: 'NGS-analysis-reports.zip'
+  });
 }
 
 SeqReadsTabularReports.propTypes = {

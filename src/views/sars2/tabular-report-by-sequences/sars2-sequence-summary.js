@@ -13,7 +13,7 @@ function joinCols(row, ...cols) {
 }
 
 
-function getMutations(geneSeqs, geneFilter, raw = false) {
+function getMutations(geneSeqs, geneFilter, geneDisplay, raw = false) {
   let results = [];
   for (const geneSeq of geneSeqs.filter(
     ({gene: {name}}) => geneFilter(name)
@@ -32,13 +32,15 @@ function getMutations(geneSeqs, geneFilter, raw = false) {
     }
   }
   return results.map(
-    ({gene, text}) => gene === 'S' ? text : `${gene}:${text}`
+    ({gene, text}) => (
+      gene === 'S' ? text : `${geneDisplay[gene] || gene}:${text}`
+    )
   );
 }
 
 
 function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
-  const mutText = getMutations(geneSeqs, geneFilter, true);
+  const mutText = getMutations(geneSeqs, geneFilter, {}, true);
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
   query.set('name', seqName);
@@ -74,8 +76,12 @@ function sequenceSummary({
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations(geneSeqs, gene => gene === 'S'),
-      'Other Mutations': getMutations(geneSeqs, gene => gene !== 'S'),
+      'Spike Mutations': getMutations(
+        geneSeqs, gene => gene === 'S', geneDisplay
+      ),
+      'Other Mutations': getMutations(
+        geneSeqs, gene => gene !== 'S', geneDisplay
+      ),
       'Permanent Link (Spike Only)': getPermanentLink(
         seqName, geneSeqs, patternsTo, gene => gene === 'S'
       ),

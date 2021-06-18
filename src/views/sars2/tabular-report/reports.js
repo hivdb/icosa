@@ -4,6 +4,7 @@ import {csvStringify} from '../../../utils/csv';
 
 
 function useTabularReports({
+  zipName = 'analysis-reports.zip',
   subOptionProcessors,
   loaded,
   config,
@@ -62,7 +63,7 @@ function useTabularReports({
       makeDownload(fileName, mimeType, data);
     }
     else {
-      makeZip('analysis-reports.zip', files);
+      makeZip(zipName, files);
     }
     onFinish && onFinish();
   }
