@@ -68,9 +68,7 @@ export default function useDownloadCodFreqs(allSequenceReads) {
       const files = [];
       for (const {name, allReads, untranslatedRegions} of allSequenceReads) {
         const data = dumpUTR(untranslatedRegions) + dumpReads(allReads);
-        const fileName = name.replace(
-          /(?:\.codf(?:ish|req))?\.[^.]+$/i,
-          '.codfreq.txt');
+        const fileName = `${name.replace(/\.codfreq$/, '')}.codfreq.txt`;
         files.push({fileName, data});
       }
       if (files.length > 1) {
