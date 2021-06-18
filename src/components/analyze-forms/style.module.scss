@@ -105,7 +105,11 @@ fieldset.output-options {
     @extend %legend;
   }
   > .children {
-    margin-top: 1rem;
+    margin-top: .3rem;
+    > span[class*="general-checkbox-input"] {
+      margin-top: .7rem;
+      display: inline-block;
+    }
   }
 }
 
