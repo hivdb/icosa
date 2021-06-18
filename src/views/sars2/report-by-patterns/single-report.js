@@ -29,7 +29,6 @@ function SinglePatternReport({
   cmtVersion,
   drdbLastUpdate,
   antibodies,
-  species,
   match,
   router,
   patternResult,
@@ -112,7 +111,6 @@ function SinglePatternReport({
 SinglePatternReport.propTypes = {
   currentSelected: PropTypes.object,
   onSelect: PropTypes.func.isRequired,
-  species: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   patternResult: PropTypes.object,

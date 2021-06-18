@@ -13,7 +13,6 @@ import PatternReports from './reports';
 
 function ReportByPatternsContainer({
   config,
-  species,
   router,
   match,
   lazyLoad,
@@ -42,7 +41,6 @@ function ReportByPatternsContainer({
     {props => (
       <PatternReports
        output={output}
-       species={species}
        match={match}
        router={router}
        cmtVersion={config.cmtVersion}

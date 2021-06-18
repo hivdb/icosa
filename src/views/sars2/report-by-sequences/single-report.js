@@ -31,7 +31,6 @@ function SingleSequenceReport({
   cmtVersion,
   drdbLastUpdate,
   antibodies,
-  species,
   match,
   router,
   sequenceResult,
@@ -124,7 +123,6 @@ function SingleSequenceReport({
 
 SingleSequenceReport.propTypes = {
   currentSelected: PropTypes.object,
-  species: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   antibodies: PropTypes.array.isRequired,
   sequenceResult: PropTypes.object,

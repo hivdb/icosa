@@ -50,7 +50,7 @@ ReportSection.propTypes = {
   display: PropTypes.bool.isRequired,
   toggleDisplay: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  titleAnnotation: PropTypes.string,
+  titleAnnotation: PropTypes.node,
   children: PropTypes.node.isRequired
 };
 

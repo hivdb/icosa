@@ -4,14 +4,14 @@ import useTabularReports from '../tabular-report/reports';
 import {subOptionProcessors} from './sub-options';
 
 
-function SequenceTabularReports(props) {
+function SeqReadsTabularReports(props) {
   return useTabularReports({...props, subOptionProcessors});
 }
 
-SequenceTabularReports.propTypes = {
+SeqReadsTabularReports.propTypes = {
   ...useTabularReports.propTypes,
-  sequences: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
+  sequenceReadsAnalysis: PropTypes.array.isRequired
 };
 
-export default SequenceTabularReports;
+export default SeqReadsTabularReports;

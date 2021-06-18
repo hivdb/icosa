@@ -2,28 +2,20 @@ import gql from 'graphql-tag';
 import {
   rootLevel,
   seqLevel,
-  pangolinQuery,
   geneSeqLevel
 } from '../common-query.graphql';
 
-
 export default gql`
-  fragment ReportBySequenceReadsRoot on Root {
+  fragment TabularReportBySeqReads_Root on Root {
     ${rootLevel}
+    allGenes: genes {
+      name
+      refSequence
+      length
+    }
   }
-
-  fragment ReportBySequenceReads on SequenceReadsAnalysis {
+  fragment TabularReportBySeqReads on SequenceReadsAnalysis {
     name
-    strain { display }
-    ${pangolinQuery}
-    readDepthStats {
-      median: percentile(p: 50)
-      p95: percentile(p: 95)
-    }
-    validationResults {
-      level
-      message
-    }
     ${seqLevel}
     availableGenes { name }
     mixturePcnt
@@ -37,11 +29,17 @@ export default gql`
       firstAA
       lastAA
       ${geneSeqLevel}
-      unsequencedRegions {
-        size
-        regions {
-          posStart posEnd
-        }
+      gene { name }
+      mutations {
+        text
+        position
+        displayAAs
+        primaryType
+        isInsertion
+        isDeletion
+        hasStop
+        isUnsequenced
+        isAmbiguous
       }
     }
   }

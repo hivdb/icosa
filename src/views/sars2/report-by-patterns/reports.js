@@ -36,7 +36,6 @@ function PatternReports({
   genes,
   antibodies,
   drdbLastUpdate,
-  species,
   match,
   router,
   loaded,
@@ -71,7 +70,7 @@ function PatternReports({
 
   return <>
     {output === 'printable' ?
-      <PrintHeader species={species} /> :
+      <PrintHeader /> :
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
@@ -88,7 +87,6 @@ function PatternReports({
            output={output}
            name={pat.name}
            index={idx}
-           species={species}
            match={match}
            router={router}
            antibodies={antibodies}
@@ -104,7 +102,6 @@ function PatternReports({
 
 PatternReports.propTypes = {
   output: PropTypes.string.isRequired,
-  species: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,

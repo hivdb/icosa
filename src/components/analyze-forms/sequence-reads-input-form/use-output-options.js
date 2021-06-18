@@ -46,7 +46,7 @@ export default function useOutputOptions({outputOptions: origOutputOptions}) {
   );
 
   const hasOptions = Object.keys(outputOptions || {}).length > 1;
-  const hasOptionChild = Object.keys(outputOption.children || {}).length > 0;
+  const hasOptionChild = outputOption.children !== null;
 
   let jsx = null;
   if (hasOptions) {

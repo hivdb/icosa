@@ -41,7 +41,6 @@ function ReportByReadsContainer({
     {props => (
       <SeqReadsReports
        cmtVersion={config.cmtVersion}
-       species={config.species}
        output={output}
        match={match}
        router={router}

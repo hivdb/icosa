@@ -1,7 +1,7 @@
-import React from 'react';
 import {useRouter} from 'found';
 
 import BigData from '../../utils/big-data';
+import useAddParams from './use-add-params';
 
 
 function useAllOrigSeqReads(match) {
@@ -53,34 +53,15 @@ export default function useAllSeqReads({
     minPositionReads = posreads;
   }
   const [allOrigSeqReads, isPending] = useAllOrigSeqReads(match);
-  // useMemo to ensure the returning array uses the same ref
-  return React.useMemo(
-    () => {
-      if (isPending) {
-        return [undefined, true];
-      }
-      else {
-        return [
-          allOrigSeqReads.map(sr => ({
-            ...sr,  // deep-copy to avoid cache
-            strain,
-            maxMixturePcnt,
-            minPrevalence,
-            minCodonReads,
-            minPositionReads
-          })),
-          false
-        ];
-      }
-    },
-    [
+  return useAddParams({
+    params: {
       strain,
       maxMixturePcnt,
       minPrevalence,
       minCodonReads,
-      minPositionReads,
-      allOrigSeqReads,
-      isPending
-    ]
-  );
+      minPositionReads
+    },
+    allSequenceReads: allOrigSeqReads,
+    skip: isPending
+  });
 }

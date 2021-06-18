@@ -3,9 +3,10 @@ import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../components/report/config-context';
-import SequenceAnalysisLayout from 
-  '../../../components/sequence-analysis-layout';
+import SeqReadsAnalysisLayout from 
+  '../../../components/seqreads-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
+import useAddParams from '../../../components/seqreads-loader/use-add-params';
 
 import query from './query.graphql';
 import SeqTabularReports from './reports';
@@ -13,9 +14,9 @@ import SeqTabularReports from './reports';
 export {subOptions} from './sub-options';
 
 
-export default function TabularReportBySequencesContainer({
-  subOptionIndices,
-  sequences,
+export default function TabularReportByReadsContainer({
+  children,
+  allSequenceReads,
   algorithm,
   onFinish,
   patternsTo
@@ -23,25 +24,32 @@ export default function TabularReportBySequencesContainer({
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
-  const client = useApolloClient({
-    config,
-    skip: isConfigPending,
-    payload: sequences
-  });
 
   const handleExtendVariables = useExtendVariables({
     config,
     match
   });
 
-  if (isConfigPending) {
+  const [allSeqReadsWithParams, isPending] = useAddParams({
+    params: config ? config.seqReadsDefaultParams : null,
+    allSequenceReads,
+    skip: isConfigPending
+  });
+
+  const client = useApolloClient({
+    config,
+    skip: isConfigPending || isPending,
+    payload: allSeqReadsWithParams
+  });
+
+  if (isConfigPending || isPending) {
     return null;
   }
 
-  return <SequenceAnalysisLayout
+  return <SeqReadsAnalysisLayout
    query={query}
    client={client}
-   sequences={sequences}
+   allSequenceReads={allSeqReadsWithParams}
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
@@ -50,11 +58,11 @@ export default function TabularReportBySequencesContainer({
     {props => (
       <SeqTabularReports
        config={config}
-       subOptionIndices={subOptionIndices}
+       children={children}
        onFinish={onFinish}
        patternsTo={patternsTo}
        {...props} />
     )}
-  </SequenceAnalysisLayout>;
+  </SeqReadsAnalysisLayout>;
 
 }

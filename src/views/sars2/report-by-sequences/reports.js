@@ -38,7 +38,6 @@ function SequenceReports({
   antibodies,
   cmtVersion,
   drdbLastUpdate,
-  species,
   match,
   router,
   loaded,
@@ -91,7 +90,6 @@ function SequenceReports({
            output={output}
            header={header}
            index={idx}
-           species={species}
            match={match} />
           {idx + 1 < sequenceAnalysis.length ?
             <PageBreak /> : null}
@@ -104,7 +102,6 @@ function SequenceReports({
 
 SequenceReports.propTypes = {
   output: PropTypes.string.isRequired,
-  species: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   loaded: PropTypes.bool.isRequired,
   sequences: PropTypes.array.isRequired,

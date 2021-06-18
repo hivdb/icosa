@@ -9,7 +9,12 @@ import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
 
-import SeqTabularReports, {subOptions} from '../tabular-report-by-sequences';
+import SeqTabularReports, {
+  subOptions as seqSubOptions
+} from '../tabular-report-by-sequences';
+import ReadsTabularReports, {
+  subOptions as readsSubOptions
+} from '../tabular-report-by-reads';
 
 
 function loadExampleCodonReads(examples) {
@@ -72,10 +77,10 @@ function SierraForms({
        __printable: {
          label: 'Printable HTML'
        },
-       tsv: {
+       csv: {
          label: "Spreadsheets (CSV)",
-         subOptions,
-         defaultSubOptions: subOptions.map((_, idx) => idx),
+         subOptions: seqSubOptions,
+         defaultSubOptions: seqSubOptions.map((_, idx) => idx),
          renderer: props => (
            <SeqTabularReports
             patternsTo={patternsTo}
@@ -88,6 +93,18 @@ function SierraForms({
      seqReadsOutputOptions={{
        __printable: {
          label: 'Printable HTML'
+       },
+       csv: {
+         label: "FASTA and Spreadsheets (CSV)",
+         children: readsSubOptions,
+         defaultChildren: readsSubOptions.map((_, idx) => idx),
+         renderer: props => (
+           <ReadsTabularReports
+            patternsTo={patternsTo}
+            sequencesTo={sequencesTo}
+            readsTo={readsTo}
+            {...props} />
+         )
        }
      }}
     />

@@ -63,6 +63,7 @@ function buildCPTable({
 function cpSuscSummary({
   currentProgramVersion,
   drdbLastUpdate,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   config
 }) {
@@ -81,11 +82,14 @@ function cpSuscSummary({
     'Version'
   ];
   const tables = [];
-  for (const seqResult of sequenceAnalysis) {
+  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  for (const seqResult of seqResults) {
     const {
-      inputSequence: {header: seqName},
+      inputSequence: {header: seqName1} = {},
+      name: seqName2,
       convPlasmaSuscSummary
     } = seqResult;
+    const seqName = seqName1 || seqName2;
     const itemsByMutations = convPlasmaSuscSummary.itemsByMutations
       .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
     const rows = buildCPTable({

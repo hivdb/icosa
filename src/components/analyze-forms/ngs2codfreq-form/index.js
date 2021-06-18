@@ -8,10 +8,15 @@ import InlineLoader from '../../inline-loader';
 import {buildGeneValidator} from '../../../utils/sequence-reads';
 import style from '../style.module.scss';
 
+const SUFFIX_PATTERN = (
+  /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
+);
+
 
 function reformCodFreqs(allSequenceReads, geneValidator) {
   return allSequenceReads.map(
-    ({allReads, ...seqReads}) => ({
+    ({allReads, name, ...seqReads}) => ({
+      name: name.replace(SUFFIX_PATTERN, ''),
       allReads: allReads.map(
         ({allCodonReads, gene, position, ...read}) => {
           [gene, position] = geneValidator(gene, position);

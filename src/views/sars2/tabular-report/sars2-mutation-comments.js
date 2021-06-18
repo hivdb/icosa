@@ -3,6 +3,7 @@ import shortenMutList from '../../../utils/shorten-mutation-list';
 
 function mutationComments({
   currentProgramVersion,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   config
 }) {
@@ -14,11 +15,14 @@ function mutationComments({
     'Version'
   ];
   const tables = [];
-  for (const seqResult of sequenceAnalysis) {
+  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  for (const seqResult of seqResults) {
     const {
-      inputSequence: {header: seqName},
+      inputSequence: {header: seqName1} = {},
+      name: seqName2,
       mutationComments
     } = seqResult;
+    const seqName = seqName1 || seqName2;
     const rows = [];
     for (const {triggeredMutations, version, comment} of mutationComments) {
       const muts = shortenMutList(triggeredMutations).map(({

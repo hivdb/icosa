@@ -65,6 +65,7 @@ function buildVPTable({
 function vpSuscSummary({
   currentProgramVersion,
   drdbLastUpdate,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   config
 }) {
@@ -84,11 +85,14 @@ function vpSuscSummary({
     'Version'
   ];
   const tables = [];
-  for (const seqResult of sequenceAnalysis) {
+  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  for (const seqResult of seqResults) {
     const {
-      inputSequence: {header: seqName},
+      inputSequence: {header: seqName1} = {},
+      name: seqName2,
       vaccPlasmaSuscSummary
     } = seqResult;
+    const seqName = seqName1 || seqName2;
     const itemsByMutations = vaccPlasmaSuscSummary.itemsByMutations
       .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
     const rows = buildVPTable({

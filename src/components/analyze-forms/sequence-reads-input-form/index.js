@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
-import ProgressBar from 'react-progressbar';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
 
@@ -26,27 +25,9 @@ const SUPPORT_FORMATS =
   "text/tsv, text/plain, " +
   ".tsv, .txt, .codfreq, .codfish, .aavf";
 
-
-/*function reformCodFreqs(allSequenceReads, geneValidator) {
-  return allSequenceReads.map(
-    ({allReads, ...seqReads}) => ({
-      allReads: allReads.map(
-        ({allCodonReads, gene, position, ...read}) => {
-          [gene, position] = geneValidator(gene, position);
-          return {
-            allCodonReads: allCodonReads.map(
-              ({codon, reads}) => ({codon, reads})
-            ),
-            gene,
-            position,
-            ...read
-          };
-        }
-      ),
-      ...seqReads
-    })
-  );
-}*/
+const SUFFIX_PATTERN = (
+  /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
+);
 
 
 function SequenceReadsInputForm(props) {
@@ -65,11 +46,7 @@ function SequenceReadsInputForm(props) {
 
   const [config, isConfigPending] = ConfigContext.use();
   const [isSubmitting, setSubmitting] = React.useState(false);
-  const [progress, setProgress] = React.useState({
-    percent: 0,
-    count: 0,
-    total: 0
-  });
+  const [optionResult, setOptionResult] = React.useState(null);
   const [allSequenceReads, setAllSeqReads] = React.useState([]);
 
   const handleReset = React.useCallback(
@@ -101,17 +78,13 @@ function SequenceReadsInputForm(props) {
           setSubmitting(true);
           state.allSequenceReads = allSequenceReads;
           state.children = outputOption.children;
-          outputOptions[outputOption.name].callback(state)
-            .progress(({
-              percent,
-              processedLength: count,
-              seqLength: total
-            }) => setProgress({
-              percent: parseInt(percent * 100),
-              count,
-              total
-            }))
-            .done(() => setSubmitting(false));
+          state.onFinish = () => setTimeout(() => {
+            setSubmitting(false);
+            setOptionResult(null);
+          });
+          setOptionResult(
+            outputOptions[outputOption.name].renderer(state)
+          );
         }
       }
       return [validated, state];
@@ -122,7 +95,7 @@ function SequenceReadsInputForm(props) {
       outputOptions,
       allSequenceReads,
       setSubmitting,
-      setProgress
+      setOptionResult
     ]
   );
 
@@ -137,7 +110,7 @@ function SequenceReadsInputForm(props) {
         let name = url.split('/');
         name = name[name.length - 1];
         allSequenceReads.push(parseSequenceReads(
-          name,
+          name.replace(SUFFIX_PATTERN, ''),
           data,
           geneValidator
         ));
@@ -166,7 +139,7 @@ function SequenceReadsInputForm(props) {
         else {
           const data = await readFile(file);
           allSequenceReads.push(parseSequenceReads(
-            name,
+            name.replace(SUFFIX_PATTERN, ''),
             data,
             geneValidator
           ));
@@ -256,13 +229,7 @@ function SequenceReadsInputForm(props) {
         null : style.hidden)
       }>
         <div className={style.inner}>
-          <strong>
-            {('Analyzing sequence (' +
-             `${process.count}/${process.total} finished) ...`)}
-          </strong>
-          <ProgressBar
-           className={style['progress-bar']}
-           completed={progress.percent} />
+          {optionResult}
         </div>
       </div>
     </BaseForm>

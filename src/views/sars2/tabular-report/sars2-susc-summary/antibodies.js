@@ -73,6 +73,7 @@ function abSuscSummary({
   currentProgramVersion,
   drdbLastUpdate,
   antibodies,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   config
 }) {
@@ -87,11 +88,14 @@ function abSuscSummary({
     'Version'
   ];
   const tables = [];
-  for (const seqResult of sequenceAnalysis) {
+  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  for (const seqResult of seqResults) {
     const {
-      inputSequence: {header: seqName},
+      inputSequence: {header: seqName1} = {},
+      name: seqName2,
       antibodySuscSummary
     } = seqResult;
+    const seqName = seqName1 || seqName2;
     const itemsByMutations = antibodySuscSummary.itemsByMutations
       .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
     const comboAntibodies = findComboAntibodies(itemsByMutations);

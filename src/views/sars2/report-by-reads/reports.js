@@ -40,7 +40,6 @@ function SeqReadsReports({
   cmtVersion,
   antibodies,
   drdbLastUpdate,
-  species,
   match,
   router,
   loaded,
@@ -98,7 +97,6 @@ function SeqReadsReports({
         <React.Fragment key={idx}>
           <SingleSeqReadsReport
            key={idx}
-           species={species}
            inputSequenceReads={inputSeqReads}
            cmtVersion={cmtVersion}
            antibodies={antibodies}
@@ -125,7 +123,6 @@ SeqReadsReports.propTypes = {
   output: PropTypes.string.isRequired,
   genes: PropTypes.array.isRequired,
   antibodies: PropTypes.array.isRequired,
-  species: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,

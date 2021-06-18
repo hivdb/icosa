@@ -13,7 +13,6 @@ import SeqReports from './reports';
 
 function ReportBySequencesContainer({
   config,
-  species,
   lazyLoad,
   output,
   match,
@@ -38,7 +37,6 @@ function ReportBySequencesContainer({
   });
 
   return <SeqAnalysisLayout
-   species={config.species}
    query={query}
    client={client}
    sequences={sequences}
@@ -51,7 +49,6 @@ function ReportBySequencesContainer({
       <SeqReports
        cmtVersion={config.cmtVersion}
        output={output}
-       species={species}
        match={match}
        {...props} />
     )}
