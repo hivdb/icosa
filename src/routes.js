@@ -4,6 +4,7 @@ import {Route} from 'found';
 import Layout from './components/layout';
 import Home from './views/home';
 import SARS2Routes from './views/sars2';
+import HIV1Routes from './views/hiv';
 import MutAnnotViewerRoutes from './views/mut-annot-viewer';
 import GenomeViewerRoutes from './views/genome-viewer';
 import NGS2CodFreqDev from './views/ngs2codfreq-dev';
@@ -25,6 +26,9 @@ const routes = (
        Component={SeqReadsThresholdNomogramDebugger}
        path="seqreads-threshold-nomogram-debugger" />
       {SARS2Routes({
+        config: {refDataLoader: DebugRefDataLoader}
+      })}
+      {HIV1Routes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}

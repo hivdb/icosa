@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
-import ConfigContext from '../../../utils/config-context';
-
 import AnalyzeForms, {getBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
+import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
 
 import SeqTabularReports, {
@@ -29,19 +28,15 @@ function loadExampleFasta(examples) {
   }));
 }
 
-
-SierraForms.propTypes = {
-  config: PropTypes.object,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  curAnalysis: PropTypes.string.isRequired
-};
-
 function SierraForms({
   config,
   curAnalysis,
   match,
-  router
+  match: {
+    location: {query = {}}
+  },
+  router,
+  pathPrefix,
 }) {
 
   const basePath = getBasePath(match.location);
@@ -70,7 +65,7 @@ function SierraForms({
      match={match}
      router={router}
      ngsRunners={[{
-       profile: 'SARS2.json'
+       profile: 'HIV1.json'
      }]}
      ngs2codfreqSide={<Markdown escapeHtml={false}>
        {config.messages['codfreq-example'] ||
@@ -79,7 +74,7 @@ function SierraForms({
      patternsTo={patternsTo}
      sequencesTo={sequencesTo}
      enableReads readsTo={readsTo}
-     exampleFasta={loadExampleFasta(config.sequenceExamples)}
+     exampleFasta={loadExampleFasta(config.sequenceExamples)} 
      exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples)}
      sequencesOutputOptions={{
        __printable: {
@@ -118,6 +113,13 @@ function SierraForms({
     />
   </>;
 }
+
+SierraForms.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  curAnalysis: PropTypes.string.isRequired,
+  pathPrefix: PropTypes.string.isRequired,
+};
 
 export default function SierraFormsWithConfig(props) {
   return <ConfigContext.Consumer>

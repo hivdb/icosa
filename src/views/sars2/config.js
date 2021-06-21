@@ -43,8 +43,6 @@ const config = {
     'localhost:3009': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2',
     '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev'
   },
-  mutationGenePattern: /^(RDRP|S)/i,
-  seqReadsDefaultCutoff: 0.2, // 20%
   mutationTypesByGenes: {
     nsp1: {
       Other: 'Other'
@@ -123,7 +121,6 @@ const config = {
     }
   },
   maxProteinSize: 1273, // S protein
-  seqReadsDefaultStrain: 'SARS2',
   seqReadsCodonCovBgColors: {
     RdRP: '#f0f0f0',
     S: '#ffffff'
@@ -159,36 +156,6 @@ const config = {
       name: 'stopCodonSites',
       label: '# Stops',
       query: 'stopCodonSites'
-    }
-  ],
-  codFreqExtraColumns: [
-    {
-      name: 'refAminoAcid',
-      callback: popRefAminoAcid(
-        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
-        'main/resources/genes.json'
-      )
-    },
-    {
-      name: 'covdbSARS2Pcnt',
-      callback: popPrevalence(
-        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
-        'main/resources/aapcnt/rx-all_taxon-SARS2.json'
-      )
-    },
-    {
-      name: 'covdbSARSPcnt',
-      callback: popPrevalence(
-        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
-        'main/resources/aapcnt/rx-all_taxon-SARS.json'
-      )
-    },
-    {
-      name: 'covdbSARSrPcnt',
-      callback: popPrevalence(
-        'https://raw.githubusercontent.com/hivdb/sierra-sars2/master/src/' +
-        'main/resources/aapcnt/rx-all_taxon-SARSr.json'
-      )
     }
   ]
 };

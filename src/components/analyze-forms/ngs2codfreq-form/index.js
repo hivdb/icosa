@@ -38,6 +38,7 @@ function reformCodFreqs(allSequenceReads, geneValidator) {
 
 
 export default function NGS2CodFreqForm({
+  runners,
   redirectTo,
   analyzeTo
 }) {
@@ -89,6 +90,7 @@ export default function NGS2CodFreqForm({
        className={style['analyze-ngs2codfreq']}
        key={taskKey || 'new-ngs2codfreq'}
        taskKey={taskKey}
+       runners={runners}
        onAnalyze={handleAnalyze}
        onTriggerRunner={handleTriggerRunner} />
     );

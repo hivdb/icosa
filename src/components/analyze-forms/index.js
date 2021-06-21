@@ -69,6 +69,7 @@ export default function AnalyzeForms({
   seqReadsOutputOptions,
   enableReads,
   hideReads,
+  ngsRunners,
   ngs2codfreqSide,
   ...otherProps
 }) {
@@ -125,6 +126,7 @@ export default function AnalyzeForms({
         </Tabs>}
       {tabName === 'by-reads' || tabName === 'ngs2codfreq' ?
         <NGS2CodFreqForm
+         runners={ngsRunners}
          redirectTo={`${basePath}/ngs2codfreq/`}
          analyzeTo={readsTo}
         /> : null}

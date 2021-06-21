@@ -120,7 +120,7 @@ async function * uploadFiles(taskKey, filePairs) {
 }
 
 
-async function triggerRunner(taskKey, filePairs) {
+async function triggerRunner(taskKey, filePairs, runners) {
   const pairInfo = filePairs.map(
     ({name, pair, n}) => ({
       name,
@@ -130,13 +130,16 @@ async function triggerRunner(taskKey, filePairs) {
   );
 
   try {
-    await axios.post(`${API_SERVER}/trigger-runner`, {
-      taskKey,
-      runners: [{
-        profile: 'SARS2.json'
-      }],
-      pairInfo
-    });
+    await axios.post(
+      `${API_SERVER}/trigger-runner`,
+      {
+        taskKey,
+        runners, //: [{
+        //  profile: 'SARS2.json'
+        //}],
+        pairInfo
+      }
+    );
   } catch (e) {
     handleResponseError(e);
   }
@@ -393,7 +396,7 @@ export async function * restoreTask(taskKey) {
 }
 
 
-export default async function * fastq2codfreq(filePairs) {
+export default async function * fastq2codfreq(filePairs, runners) {
   const {taskKey} = await createTask();
   let loaded = false;
   yield {
@@ -411,7 +414,7 @@ export default async function * fastq2codfreq(filePairs) {
       ...progress
     };
   }
-  await triggerRunner(taskKey, filePairs);
+  await triggerRunner(taskKey, filePairs, runners);
   yield {
     loaded,
     taskKey,

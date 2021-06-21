@@ -34,7 +34,8 @@ export default function NGS2CodFreq({
   onTriggerRunner,
   onLoad,
   onAnalyze,
-  className
+  className,
+  runners
 }) {
 
   const [, forceUpdate] = React.useReducer(n => n + 1, 0);
@@ -69,7 +70,7 @@ export default function NGS2CodFreq({
   const handleSubmit = React.useCallback(
     async fastqPairs => {
       if (fastqPairs.length > 0) {
-        for await (const progress of fastq2codfreq(fastqPairs)) {
+        for await (const progress of fastq2codfreq(fastqPairs, runners)) {
           const shouldBreak = updateProgress({
             progress,
             progressLookup,
@@ -83,7 +84,7 @@ export default function NGS2CodFreq({
         }
       }
     },
-    [forceUpdate, onTriggerRunner, onLoad, progressLookup]
+    [forceUpdate, onTriggerRunner, onLoad, progressLookup, runners]
   );
 
   if (progressLookup['create-task']) {
