@@ -76,7 +76,7 @@ function seqReadsSummary({
       name: seqName,
       readDepthStats = {},
       availableGenes: genes,
-      maxMixturePcnt,
+      maxMixtureRate,
       minPrevalence,
       minCodonReads,
       allGeneSequenceReads: geneSeqs
@@ -91,7 +91,7 @@ function seqReadsSummary({
         geneSeqs, gene => gene !== 'S', geneDisplay
       ),
       'Median Read Depth': readDepthStats.median,
-      'NA Mixture Threshold': `≤${maxMixturePcnt * 100}%`,
+      'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'Read Depth Threshold by Codon': minCodonReads,
       'Permanent Link (Spike Only)': getPermanentLink(

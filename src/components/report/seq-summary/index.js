@@ -14,7 +14,7 @@ import GeneMutationsReal from './gene-mutations';
 import PangoLineageReal from './pango-lineage';
 import OutbreakInfoReal from './outbreak-info';
 import SubtypeReal from './subtype';
-import MaxMixturePcntReal from './max-mixture-pcnt';
+import MaxMixtureRateReal from './max-mixture-rate';
 import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
@@ -31,7 +31,7 @@ const GeneMutations = () => null;
 const Subtype = () => null;
 const PangoLineage = () => null;
 const OutbreakInfo = () => null;
-const MaxMixturePcnt = () => null;
+const MaxMixtureRate = () => null;
 const MinPrevalence = () => null;
 const MinCodonReads = () => null;
 const MinPositionReads = () => null;
@@ -45,7 +45,7 @@ function SeqSummary(props) {
     router,
     output,
     name,
-    maxMixturePcnt,
+    maxMixtureRate,
     minPrevalence,
     minCodonReads,
     assembledConsensus,
@@ -56,7 +56,7 @@ function SeqSummary(props) {
     availableGenes,
     pangolin,
     readDepthStats,
-    mixturePcnt,
+    mixtureRate,
     actualMinPrevalence,
     minPositionReads,
     children
@@ -88,7 +88,7 @@ function SeqSummary(props) {
           <DownloadConsensusReal {...{
             name,
             assembledConsensus,
-            maxMixturePcnt,
+            maxMixtureRate,
             minPrevalence,
             minCodonReads
           }} />
@@ -132,14 +132,14 @@ function SeqSummary(props) {
               );
             }
 
-            else if (child.type === MaxMixturePcnt) {
+            else if (child.type === MaxMixtureRate) {
               return (
-                <MaxMixturePcntReal
+                <MaxMixtureRateReal
                  key={key}
                  match={match}
                  router={router}
                  config={config}
-                 {...{maxMixturePcnt, mixturePcnt}} />
+                 {...{maxMixtureRate, mixtureRate}} />
               );
             }
 
@@ -247,7 +247,7 @@ SeqSummaryWrapper.Subtype = Subtype;
 SeqSummaryWrapper.PangoLineage = PangoLineage;
 SeqSummaryWrapper.OutbreakInfo = OutbreakInfo;
 SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
-SeqSummaryWrapper.MaxMixturePcnt = MaxMixturePcnt;
+SeqSummaryWrapper.MaxMixtureRate = MaxMixtureRate;
 SeqSummaryWrapper.MinPrevalence = MinPrevalence;
 SeqSummaryWrapper.MinCodonReads = MinCodonReads;
 SeqSummaryWrapper.MinPositionReads = MinPositionReads;

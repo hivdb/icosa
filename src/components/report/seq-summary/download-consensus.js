@@ -10,7 +10,7 @@ import parentStyle from '../style.module.scss';
 function DownloadConsensus({
   name,
   assembledConsensus,
-  maxMixturePcnt,
+  maxMixtureRate,
   minPrevalence,
   minCodonReads
 }) {
@@ -22,12 +22,12 @@ function DownloadConsensus({
         minCodonReads
       }; cutoff: ${
         minPrevalence
-      }; mixpcnt: ${
-        maxMixturePcnt
+      }; mixrate: ${
+        maxMixtureRate
       }\n${assembledConsensus}`;
       makeDownload(`${name}.fas`, 'application/fasta', fasta);
     },
-    [name, maxMixturePcnt, minPrevalence, minCodonReads, assembledConsensus]
+    [name, maxMixtureRate, minPrevalence, minCodonReads, assembledConsensus]
   );
   return <Button
    className={parentStyle.button}

@@ -26,8 +26,8 @@ export default gql`
     }
     ${seqLevel}
     availableGenes { name }
-    mixturePcnt
-    maxMixturePcnt
+    mixtureRate
+    maxMixtureRate
     actualMinPrevalence
     minPrevalence
     minCodonReads

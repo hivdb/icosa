@@ -20,7 +20,7 @@ export default function useAllSeqReads({
 }) {
   let {
     strain,
-    maxMixturePcnt,
+    maxMixtureRate,
     minPrevalence,
     minCodonReads,
     minPositionReads
@@ -29,16 +29,16 @@ export default function useAllSeqReads({
   let {
     location: {
       query: {
-        mixpcnt: mixPcnt,
+        mixrate: mixRate,
         cutoff,
         cdreads,
         posreads
       } = {}
     } = {}
   } = match;
-  mixPcnt = parseFloat(mixPcnt);
-  if (!isNaN(mixPcnt)) {
-    maxMixturePcnt = mixPcnt;
+  mixRate = parseFloat(mixRate);
+  if (!isNaN(mixRate)) {
+    maxMixtureRate = mixRate;
   }
   cutoff = parseFloat(cutoff);
   if (!isNaN(cutoff)) {
@@ -56,7 +56,7 @@ export default function useAllSeqReads({
   return useAddParams({
     params: {
       strain,
-      maxMixturePcnt,
+      maxMixtureRate,
       minPrevalence,
       minCodonReads,
       minPositionReads

@@ -6,7 +6,7 @@ function assembledConsensus({
     const {
       name,
       assembledConsensus: seq,
-      maxMixturePcnt,
+      maxMixtureRate,
       minPrevalence,
       minCodonReads
     } = seqResult;
@@ -17,8 +17,8 @@ function assembledConsensus({
         minCodonReads
       }; cutoff: ${
         minPrevalence
-      }; mixpcnt: ${
-        maxMixturePcnt
+      }; mixrate: ${
+        maxMixtureRate
       }`
     );
     fasta.push(seq);

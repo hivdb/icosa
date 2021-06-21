@@ -24,7 +24,8 @@ function MinPrevalence({
        name="cutoff"
        onChange={handleChange} />
       <span className={style['dropdown-after']}>
-        (actual: ≥{(actualValue * 100).toPrecision(2)}%)
+        (actual: {actualValue === 1. ? '100%' : `≥${(actualValue *
+        100).toPrecision(2)}%`})
       </span>
     </dd>
   </>;

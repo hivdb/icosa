@@ -3,7 +3,13 @@ import React from 'react';
 
 export default function useAddParams({
   allSequenceReads,
-  params,
+  params: {
+    strain,
+    maxMixtureRate,
+    minPrevalence,
+    minCodonReads,
+    minPositionReads
+  },
   skip
 }) {
   // useMemo to ensure the returning array uses the same ref
@@ -16,12 +22,24 @@ export default function useAddParams({
         return [
           allSequenceReads.map(sr => ({
             ...sr,  // deep-copy to avoid cache
-            ...params
+            strain,
+            maxMixtureRate,
+            minPrevalence,
+            minCodonReads,
+            minPositionReads
           })),
           false
         ];
       }
     },
-    [allSequenceReads, params, skip]
+    [
+      allSequenceReads,
+      strain,
+      maxMixtureRate,
+      minPrevalence,
+      minCodonReads,
+      minPositionReads,
+      skip
+    ]
   );
 }

@@ -21,8 +21,8 @@ export default gql`
       median: percentile(p: 50)
     }
     availableGenes { name }
-    mixturePcnt
-    maxMixturePcnt
+    mixtureRate
+    maxMixtureRate
     actualMinPrevalence
     minPrevalence
     minCodonReads

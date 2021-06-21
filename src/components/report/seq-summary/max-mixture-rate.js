@@ -4,12 +4,12 @@ import Dropdown from 'react-dropdown';
 import style from './style.module.scss';
 
 
-function MaxMixturePcnt({
+function MaxMixtureRate({
   match,
   router,
-  config: {seqReadsMaxMixturePcnt: options},
-  maxMixturePcnt: curValue,
-  mixturePcnt: actualValue
+  config: {seqReadsMaxMixtureRate: options},
+  maxMixtureRate: curValue,
+  mixtureRate: actualValue
 }) {
 
   return <>
@@ -24,19 +24,20 @@ function MaxMixturePcnt({
        name="cutoff"
        onChange={handleChange} />
       <span className={style['dropdown-after']}>
-        (actual: {(actualValue * 100).toPrecision(2)}%)
+        (actual: {actualValue === 0. ? 0 : (actualValue *
+        100).toPrecision(2)}%)
       </span>
     </dd>
   </>;
 
-  function handleChange({value: mixpcnt}) {
+  function handleChange({value: mixrate}) {
     const newLoc = {...match.location};
     newLoc.query = newLoc.query ? newLoc.query : {};
-    newLoc.query.mixpcnt = mixpcnt;
+    newLoc.query.mixrate = mixrate;
     router.push(newLoc);
   }
 
 }
 
 
-export default React.memo(MaxMixturePcnt);
+export default React.memo(MaxMixtureRate);

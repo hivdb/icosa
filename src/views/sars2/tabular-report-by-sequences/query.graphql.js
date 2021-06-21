@@ -17,7 +17,7 @@ export default gql`
   fragment TabularReportBySequences on SequenceAnalysis {
     inputSequence { header }
     availableGenes { name }
-    mixturePcnt
+    mixtureRate
     ${seqLevel}
     alignedGeneSequences {
       firstAA

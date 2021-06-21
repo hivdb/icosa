@@ -80,7 +80,7 @@ function SingleSeqReadsReport({
             <SeqSummary.MedianReadDepth />
             <SeqSummary.PangoLineage />
             <SeqSummary.OutbreakInfo />
-            <SeqSummary.MaxMixturePcnt />
+            <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />
           </SeqSummary>
