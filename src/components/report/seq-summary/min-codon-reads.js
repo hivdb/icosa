@@ -49,7 +49,7 @@ function MinCodonReads({
 
   return <>
     <dt className={style['has-dropdown']}>
-      Read depth threshold by codon:
+      Minimum codon occurrence:
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown
