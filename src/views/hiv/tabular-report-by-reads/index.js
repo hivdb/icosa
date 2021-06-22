@@ -53,7 +53,6 @@ export default function TabularReportByReadsContainer({
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

@@ -6,7 +6,7 @@ const config = {
   graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
-      'http://localhost:8111/sierra/graphql'),
+      'http://localhost:8111/sierra/rest/graphql'),
   server_host: (
     window.__NODE_ENV === 'production' ?
       '' : 'http://localhost:8111'
@@ -15,7 +15,6 @@ const config = {
     'hivdb.stanford.edu': 'cms.hivdb.org/prod',
     'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
     'staging2.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging2',
-    'localhost:3012': 's3-us-west-2.amazonaws.com/cms.hivdb.org/localhost',
     '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/localhost'
   },
   mutationTypesByGenes: {

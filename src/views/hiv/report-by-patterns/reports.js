@@ -31,11 +31,8 @@ function getPageTitle(patternAnalysis, output) {
 
 
 function PatternReports({
-  cmtVersion,
   output,
   genes,
-  antibodies,
-  drdbLastUpdate,
   match,
   router,
   loaded,
@@ -78,7 +75,6 @@ function PatternReports({
         <React.Fragment key={idx}>
           <SinglePatternReport
            key={idx}
-           cmtVersion={cmtVersion}
            inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
@@ -89,8 +85,6 @@ function PatternReports({
            index={idx}
            match={match}
            router={router}
-           antibodies={antibodies}
-           drdbLastUpdate={drdbLastUpdate}
            genes={genes} />
           {idx + 1 < patternAnalysis.length ?
             <PageBreak /> : null}

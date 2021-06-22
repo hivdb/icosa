@@ -17,13 +17,13 @@ import ReadsTabularReports, {
 } from '../tabular-report-by-reads';
 
 
-function loadExampleCodonReads(examples) {
-  return examples.map(getFullLink);
+function loadExampleCodonReads(examples, config) {
+  return examples.map(url => getFullLink(url, config));
 }
 
-function loadExampleFasta(examples) {
+function loadExampleFasta(examples, config) {
   return examples.map(({url, title}) => ({
-    url: getFullLink(url),
+    url: getFullLink(url, config),
     title
   }));
 }
@@ -74,8 +74,8 @@ function SierraForms({
      patternsTo={patternsTo}
      sequencesTo={sequencesTo}
      enableReads readsTo={readsTo}
-     exampleFasta={loadExampleFasta(config.sequenceExamples)} 
-     exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples)}
+     exampleFasta={loadExampleFasta(config.sequenceExamples, config)} 
+     exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples, config)}
      sequencesOutputOptions={{
        __printable: {
          label: 'Printable HTML'

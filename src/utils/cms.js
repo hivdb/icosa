@@ -30,17 +30,17 @@ export async function loadPage(pageName) {
 }
 
 
-export function getFullLink(path) {
+export function getFullLink(path, localConfig) {
   let stage;
   if (!window.__SERVER_RENDERING) {
     const {hostname} = window.location;
-    stage = config.cmsStages[hostname];
+    stage = localConfig.cmsStages[hostname];
     if (!stage) {
-      stage = config.cmsStages['*'];
+      stage = localConfig.cmsStages['*'];
     }
   }
   else {
-    stage = config.cmsStages['hivdb.stanford.edu'];
+    stage = localConfig.cmsStages['hivdb.stanford.edu'];
   }
   return `https://${stage}/${path}`;
 }

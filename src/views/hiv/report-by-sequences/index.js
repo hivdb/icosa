@@ -43,11 +43,9 @@ function ReportBySequencesContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReports
-       cmtVersion={config.cmtVersion}
        output={output}
        match={match}
        {...props} />

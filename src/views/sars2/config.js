@@ -1,34 +1,3 @@
-async function popPrevalence(dataURI) {
-  const resp = await fetch(dataURI);
-  const data = await resp.json();
-  const pcntLookup = data.reduce((acc, row) => {
-    acc[`${row.gene}${row.position}${row.aa}`] = row.percent;
-    return acc;
-  }, {});
-  return async (colname, rows) => rows.map((row) => {
-    row[colname] = (
-      `${pcntLookup[`${row.gene}${row.position}${row.aminoAcid}`] * 100 ||
-      .0}%`
-    );
-    return row;
-  });
-}
-
-
-async function popRefAminoAcid(dataURI) {
-  const resp = await fetch(dataURI);
-  const data = await resp.json();
-  const geneLookup = data.reduce((acc, row) => {
-    acc[row.abstractGene] = row.refSequence;
-    return acc;
-  }, {});
-  return async (colname, rows) => rows.map((row) => {
-    row[colname] = geneLookup[row.gene][row.position - 1];
-    return row;
-  });
-}
-
-
 const config = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/' +

@@ -9,20 +9,8 @@ import {
   ReportHeader,
   ReportSection,
   MutationList as MutList,
-  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
-
-import SARS2MutComments from '../../../components/sars2-mutation-comments';
-import {
-  AbSuscSummary,
-  CPSuscSummary,
-  VPSuscSummary
-} from '../../../components/susc-summary';
-import {
-  formatDate,
-  formatDateTime
-} from '../format-date';
 
 import style from '../style.module.scss';
 
@@ -40,9 +28,6 @@ function useCoverages({allReads}) {
 
 
 function SingleSeqReadsReport({
-  cmtVersion,
-  antibodies,
-  drdbLastUpdate,
   match,
   router,
   inputSequenceReads,
@@ -78,8 +63,6 @@ function SingleSeqReadsReport({
             <SeqSummary.DownloadConsensus />
             <SeqSummary.InlineGeneRange />
             <SeqSummary.MedianReadDepth />
-            <SeqSummary.PangoLineage />
-            <SeqSummary.OutbreakInfo />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />
@@ -98,43 +81,6 @@ function SingleSeqReadsReport({
            title="Mutation list">
             <MutList {...sequenceReadsResult} {...{output, strain}} />
           </ReportSection>
-          <ReportSection
-           titleAnnotation={<>
-             Last updated on {formatDate(cmtVersion)}
-           </>}
-           title="Mutation comments">
-            <SARS2MutComments {...sequenceReadsResult} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="MAb susceptibility summary">
-            <AbSuscSummary
-             antibodies={antibodies}
-             {...sequenceReadsResult}
-             {...{output, strain}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Convalescent plasma susceptibility summary">
-            <CPSuscSummary
-             {...sequenceReadsResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Plasma from vaccinated persons susceptibility summary">
-            <VPSuscSummary
-             {...sequenceReadsResult} {...{output}} />
-          </ReportSection>
-          <RefsSection />
         </RefContextWrapper>
       </> : null}
     </article>
@@ -143,7 +89,6 @@ function SingleSeqReadsReport({
 }
 
 SingleSeqReadsReport.propTypes = {
-  antibodies: PropTypes.array.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   inputSequenceReads: PropTypes.object.isRequired,

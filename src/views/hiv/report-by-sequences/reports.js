@@ -35,9 +35,6 @@ function getPageTitle(sequenceAnalysis, output) {
 function SequenceReports({
   output,
   genes,
-  antibodies,
-  cmtVersion,
-  drdbLastUpdate,
   match,
   router,
   loaded,
@@ -80,9 +77,6 @@ function SequenceReports({
         <React.Fragment key={idx}>
           <SingleSequenceReport
            key={idx}
-           antibodies={antibodies}
-           cmtVersion={cmtVersion}
-           drdbLastUpdate={drdbLastUpdate}
            currentSelected={currentSelected}
            sequenceResult={seqResultLookup[header]}
            onObserve={onObserve}
@@ -106,14 +100,12 @@ SequenceReports.propTypes = {
   loaded: PropTypes.bool.isRequired,
   sequences: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
-  antibodies: PropTypes.array.isRequired,
   sequenceAnalysis: PropTypes.array.isRequired,
   fetchAnother: PropTypes.func.isRequired
 };
 
 SequenceReports.defaultProps = {
-  genes: [],
-  antibodies: []
+  genes: []
 };
 
 export default SequenceReports;

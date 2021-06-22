@@ -1,5 +1,7 @@
 const rootLevel = `
-  drdbLastUpdate(drdbVersion: $drdbVersion)
+  currentVersion {
+    display
+  }
 `;
 
 const seqLevel = `

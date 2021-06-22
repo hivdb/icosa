@@ -36,11 +36,9 @@ function ReportByReadsContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReadsReports
-       cmtVersion={config.cmtVersion}
        output={output}
        match={match}
        router={router}

@@ -37,9 +37,6 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 function SeqReadsReports({
   output,
   genes,
-  cmtVersion,
-  antibodies,
-  drdbLastUpdate,
   match,
   router,
   loaded,
@@ -98,9 +95,6 @@ function SeqReadsReports({
           <SingleSeqReadsReport
            key={idx}
            inputSequenceReads={inputSeqReads}
-           cmtVersion={cmtVersion}
-           antibodies={antibodies}
-           drdbLastUpdate={drdbLastUpdate}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
@@ -122,7 +116,6 @@ function SeqReadsReports({
 SeqReadsReports.propTypes = {
   output: PropTypes.string.isRequired,
   genes: PropTypes.array.isRequired,
-  antibodies: PropTypes.array.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,

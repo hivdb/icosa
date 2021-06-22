@@ -36,14 +36,12 @@ function ReportByPatternsContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
    onExtendVariables={onExtendVariables}>
     {props => (
       <PatternReports
        output={output}
        match={match}
        router={router}
-       cmtVersion={config.cmtVersion}
        {...props} />
     )}
   </PatternAnalysisLayout>;
