@@ -7,14 +7,22 @@ export default function Home() {
   return <div>
     <ul>
       <li>
-        <Link to="/sars2/by-patterns/">SARS2 Patterns Analysis</Link>
+        SARS-CoV-2 Analysis Program
         <ul>
+          <li><Link to="/sars2/by-patterns/">By mutations</Link></li>
           <li><Link to="/sars2/by-sequences/">By sequence</Link></li>
-          <li><Link to="/sars2/by-reads/">By reads</Link></li>
+          <li><Link to="/sars2/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/sars2/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
         </ul>
       </li>
       <li>
-        <Link to="/ngs-uploader/">NGS Uploader DevTools</Link>
+        HIV-1 Analysis Program
+        <ul>
+          <li><Link to="/hiv/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hiv/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hiv/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/hiv/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
       </li>
       <li>
         <Link to="/mut-annot-viewer/">Mutation Annotation Viewer</Link>

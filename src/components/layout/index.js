@@ -45,10 +45,7 @@ class LayoutInner extends React.Component {
       <div id="hivdb-layout">
         <ul>
           <li>
-            <a href="/sars2/by-sequences/">Sequence Analysis</a>
-          </li>
-          <li>
-            <a href="/sars2/by-reads/">NGS Reads Analysis</a>
+            <a href="/">Home</a>
           </li>
         </ul>
         <div className={className} style={customStyle}>
