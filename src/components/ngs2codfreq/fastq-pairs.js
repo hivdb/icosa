@@ -67,7 +67,7 @@ function suggestPairName({
     reverse
   }
 }) {
-  let pairName = fileName.split(/\.fastq(?:\.gz)/i)[0];
+  let pairName = fileName.split(/\.fastq(?:\.gz)?/i)[0];
   if (reverse === -1) {
     // single strand
     return pairName;
