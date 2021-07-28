@@ -44,6 +44,10 @@ function _csvParse(text) {
       }
     }
   }
+  if (rowBuffer.length > 0 || cellBuffer.length > 0) {
+    rowBuffer.push(csvUnescape(cellBuffer.join('')));
+    rows.push(rowBuffer);
+  }
   return rows;
 }
 
