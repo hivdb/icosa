@@ -5,7 +5,7 @@ import {v4 as uuidv4} from 'uuid';
 import CheckboxInput from '../../checkbox-input';
 import createLocationState from '../../../utils/use-location-state';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
-import ConfigContext from '../../report/config-context';
+import ConfigContext from '../../../utils/config-context';
 import MutationsInput from '../../mutations-input';
 import InlineLoader from '../../inline-loader';
 

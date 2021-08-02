@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
+import ConfigContext from '../../../utils/config-context';
+
 import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
 
@@ -19,7 +21,6 @@ import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
 import MedianReadDepthReal from './median-read-depth';
-import ConfigContext from '../config-context';
 
 
 const SDRMs = () => null;

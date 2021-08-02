@@ -39,7 +39,7 @@ function InlineRef({name, identifier, ...ref}) {
 
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
-    console.log(`Render <InlineRef ${finalName} />`);
+    console.debug(`Render <InlineRef ${finalName} />`);
   }
 
   if (storedRef) {

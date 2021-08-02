@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import reEscape from 'escape-string-regexp';
 
+import ConfigContext from '../../utils/config-context';
+
 import style from './style.module.scss';
-import ConfigContext from './config-context';
 
 
 function highlight(key, comment, highlightText) {

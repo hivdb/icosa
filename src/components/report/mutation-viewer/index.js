@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import GenomeMap from '../../genome-map';
 import GMRegion from '../../genome-map/region';
 import shortenMutationList from '../../../utils/shorten-mutation-list';
-import ConfigContext from '../config-context';
+import ConfigContext from '../../../utils/config-context';
 import PresetSelection from './preset-selection';
 
 import style from './style.module.scss';

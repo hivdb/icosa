@@ -11,7 +11,7 @@ const SeqReadsContext = React.createContext({});
 function SeqReadsAnalysisContainer(props) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
-    console.log(
+    console.debug(
       'render SeqReadsAnalysisContainer',
       (new Date()).getTime()
     );

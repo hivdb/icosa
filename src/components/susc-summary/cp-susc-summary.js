@@ -1,10 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Markdown from '../markdown';
-import {ConfigContext} from '../report';
 import SIRPcntBar from '../sir-pcnt-bar';
 import SimpleTable, {ColumnDef} from '../simple-table';
 
+import ConfigContext from '../../utils/config-context';
+
+import {cpSuscSummaryShape} from './prop-types';
 import {getRowKey, getUniqVariants, decideDisplayPriority} from './funcs';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
@@ -30,18 +33,20 @@ export function buildPayload(convPlasmaSuscSummary) {
         cumulativeFold: {median: medianFold},
         itemsByResistLevel
       }, displayOrder]) => {
-        const isolates = getUniqVariants(hitIsolates);
+        const variants = getUniqVariants(hitIsolates);
         const row = {
           mutations,
-          isolates,
+          variants,
           numRefs: references.length,
           numSamples,
           medianFold,
           references,
-          displayOrder
+          displayOrder,
+          levels: {}
+
         };
         for (const level of SIRLevels) {
-          row[`__level__${level}`] = 0;
+          row.levels[level] = 0;
         }
         let total = 0;
         for (const {
@@ -50,12 +55,12 @@ export function buildPayload(convPlasmaSuscSummary) {
         } of itemsByResistLevel) {
           if (SIRLevels.includes(resistanceLevel)) {
             total += cumulativeCount;
-            row[`__level__${resistanceLevel}`] = cumulativeCount;
+            row.levels[resistanceLevel] = cumulativeCount;
           }
         }
         if (total > 0) {
           for (const level of SIRLevels) {
-            row[`__level__${level}`] = row[`__level__${level}`] / total;
+            row.levels[level] = row.levels[level] / total;
           }
         }
         return row;
@@ -66,9 +71,11 @@ export function buildPayload(convPlasmaSuscSummary) {
 
 function renderPcntBar(_, row) {
   const {
-    __level__susceptible: levelS = 0,
-    '__level__partial-resistance': levelI = 0,
-    __level__resistant: levelR = 0
+    levels: {
+      susceptible: levelS = 0,
+      'partial-resistance': levelI = 0,
+      resistant: levelR = 0
+    }
   } = row;
   return <SIRPcntBar levelPcnts={[
     {level: '1', pcnt: levelS},
@@ -77,13 +84,13 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function buildColumnDefs(itemsByMutations) {
+function useColumnDefs() {
   const colDefs = [
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: (mutations, {isolates}) => (
-        <CellMutations {...{mutations, isolates}} />
+      render: (mutations, {variants}) => (
+        <CellMutations {...{mutations, variants}} />
       ),
       bodyCellStyle: {
         maxWidth: '14rem'
@@ -102,7 +109,7 @@ function buildColumnDefs(itemsByMutations) {
       label: '# samples'
     }),
     new ColumnDef({
-      name: '__level__susceptible',
+      name: 'levels.susceptible',
       label: 'Susceptibility distribution',
       render: renderPcntBar,
       sortable: false
@@ -123,24 +130,22 @@ function buildColumnDefs(itemsByMutations) {
 }
 
 
-function ConvPlasmaSuscSummary({
-  convPlasmaSuscSummary: {itemsByMutations},
-  ...props
+function ConvPlasmaSuscSummaryTable({
+  rows,
+  openRefInNewWindow = false
 }) {
-  itemsByMutations = itemsByMutations
-    .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
-  const payload = buildPayload(itemsByMutations);
-  const {rows, button, expanded} = useToggleDisplay(payload);
+  const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
+  const columnDefs = useColumnDefs();
 
-  if (payload.length > 0) {
+  if (rows.length > 0) {
     return <>
       <SimpleTable
        cacheKey={`${expanded}`}
        compact lastCompact disableCopy
        className={style['susc-summary']}
        getRowKey={getRowKey}
-       columnDefs={buildColumnDefs(itemsByMutations)}
-       data={rows}
+       columnDefs={columnDefs}
+       data={displayRows}
        afterTable={button} />
       <p>
         Susceptibility levels:{' '}
@@ -168,6 +173,35 @@ function ConvPlasmaSuscSummary({
       )}
     </ConfigContext.Consumer>;
   }
+}
+
+
+ConvPlasmaSuscSummaryTable.propTypes = {
+  rows: PropTypes.arrayOf(
+    cpSuscSummaryShape.isRequired
+  ).isRequired,
+  openRefInNewWindow: PropTypes.bool.isRequired
+};
+
+
+ConvPlasmaSuscSummaryTable.defaultProps = {
+  openRefInNewWindow: false
+};
+
+
+function ConvPlasmaSuscSummary({
+  convPlasmaSuscSummary: {itemsByMutations},
+  ...props
+}) {
+  itemsByMutations = itemsByMutations
+    .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
+  const payload = buildPayload(itemsByMutations);
+
+  return (
+    <ConvPlasmaSuscSummaryTable
+     rows={payload}
+     openRefInNewWindow />
+  );
 }
 
 

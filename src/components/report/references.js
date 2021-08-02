@@ -1,9 +1,9 @@
 import React from 'react';
 import InlineLoader from '../inline-loader';
 
+import ConfigContext from '../../utils/config-context';
 import createPersistedReducer from '../../utils/use-persisted-reducer';
 
-import ConfigContext from './config-context';
 import ReportSection from './report-section';
 
 import References, {

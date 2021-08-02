@@ -9,7 +9,7 @@ import {calcInitOffsetLimit} from '../cumu-query';
 function SequenceAnalysisContainer(props) {
   if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console
-    console.log(
+    console.debug(
       "render SequenceAnalysisContainer",
       (new Date()).getTime()
     );

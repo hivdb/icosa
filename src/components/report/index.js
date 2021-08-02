@@ -12,7 +12,7 @@ import MutationViewer from './mutation-viewer';
 import ReportHeader from './report-header';
 import ReportSection from './report-section';
 import MutationList from './mutation-list';
-import ConfigContext from './config-context';
+import ConfigContext from '../../utils/config-context';
 import RefsSection, {RefContextWrapper} from './references';
 import useDownloadCodFreqs from './download-codfreqs';
 

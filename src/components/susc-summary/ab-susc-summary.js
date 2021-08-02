@@ -1,45 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import maxBy from 'lodash/maxBy';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
 import uniqWith from 'lodash/uniqWith';
 
 import Markdown from '../markdown';
-import {ConfigContext} from '../report';
 import SimpleTable, {ColumnDef} from '../simple-table';
+
+import ConfigContext from '../../utils/config-context';
 
 import {getUniqVariants, getRowKey, decideDisplayPriority} from './funcs';
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
 import useToggleDisplay from './toggle-display';
+import {
+  antibodyShape,
+  abSuscSummaryShape
+} from './prop-types';
 import style from './style.module.scss';
-
-
-export function buildPayload(antibodySuscSummary) {
-  return decideDisplayPriority(antibodySuscSummary)
-    .map(
-      ([{
-        mutations,
-        hitIsolates,
-        references,
-        itemsByAntibody
-      }, displayOrder]) => {
-        const isolates = getUniqVariants(hitIsolates);
-        const row = {mutations, references, isolates, displayOrder};
-        for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
-          const abkey = (
-            '__abfold__' +
-            sortBy(antibodies, ['priority'])
-              .map(({name}) => name).join('+')
-          );
-          row[abkey] = cumdata;
-        }
-        return row;
-      }
-    )
-    .filter(({displayOrder}) => displayOrder !== null);
-}
 
 
 function renderFold(resultItem) {
@@ -62,17 +43,11 @@ function renderFold(resultItem) {
     <div className={style['fold']}>
       {fold}<sub>{cumulativeCount}</sub>
     </div>
-    {/*<div className={style['iqr']}>
-      {p25.toFixed(1)}-{p75.toFixed(1)}
-    </div>
-    <div className={style['range']}>
-      {min.toFixed(1)}-{max.toFixed(1)}
-    </div>*/}
   </div>;
 }
 
 
-export function findComboAntibodies(antibodySuscSummary) {
+function findComboAntibodies(antibodySuscSummary) {
   const combos = [];
   for (const {itemsByAntibody} of antibodySuscSummary) {
     for (const {antibodies} of itemsByAntibody) {
@@ -90,7 +65,33 @@ export function findComboAntibodies(antibodySuscSummary) {
 }
 
 
-export function makeOrderedAntibodies(antibodies, comboAntibodies) {
+function buildPayload(antibodySuscSummary) {
+  return decideDisplayPriority(antibodySuscSummary)
+    .map(
+      ([{
+        mutations,
+        hitIsolates,
+        references,
+        itemsByAntibody
+      }, displayOrder]) => {
+        const variants = getUniqVariants(hitIsolates);
+        const row = {mutations, references, variants, displayOrder, fold: {}};
+        for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
+          const abkey = (
+            sortBy(antibodies, ['priority'])
+              .map(({name}) => name).join('+')
+          );
+          row.fold[abkey] = cumdata;
+        }
+        return row;
+      }
+    )
+    .filter(({displayOrder}) => displayOrder !== null);
+}
+
+
+function getAntibodyColumns(antibodies, antibodySuscSummary) {
+  const comboAntibodies = findComboAntibodies(antibodySuscSummary);
   antibodies = antibodies.map(({name, abbrName, priority}) => [
     {name, abbrName, priority}
   ]);
@@ -106,15 +107,13 @@ export function makeOrderedAntibodies(antibodies, comboAntibodies) {
 }
 
 
-function buildColumnDefs(antibodies, antibodySuscSummary) {
-  const comboAntibodies = findComboAntibodies(antibodySuscSummary);
-  const orderedAntibodies = makeOrderedAntibodies(antibodies, comboAntibodies);
-  const colDefs = [
+function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
+  return React.useMemo(() => [
     new ColumnDef({
       name: 'mutations',
       label: 'Variant',
-      render: (mutations, {isolates}) => (
-        <CellMutations {...{mutations, isolates}} />
+      render: (mutations, {variants}) => (
+        <CellMutations {...{mutations, variants}} />
       ),
       bodyCellStyle: {
         maxWidth: '14rem'
@@ -124,8 +123,8 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
         ...mutations.map(({position, AAs}) => [position, AAs])
       ]]
     }),
-    ...orderedAntibodies.map(abs => new ColumnDef({
-      name: '__abfold__' + abs.map(({name}) => name).join('+'),
+    ...antibodyColumns.map(abs => new ColumnDef({
+      name: 'fold.' + abs.map(({name}) => name).join('+'),
       label: <LabelAntibodies antibodies={abs} />,
       render: renderFold,
       sort: ['cumulativeFold.median']
@@ -133,34 +132,35 @@ function buildColumnDefs(antibodies, antibodySuscSummary) {
     new ColumnDef({
       name: 'references',
       label: 'References',
-      render: refs => <CellReferences refs={refs} />,
+      render: refs => (
+        <CellReferences
+         refs={refs}
+         openRefInNewWindow={openRefInNewWindow} />
+      ),
       sortable: false
     })
-  ];
-  return colDefs;
+  ], [antibodyColumns, openRefInNewWindow]);
 }
 
 
-function AntibodySuscSummary({
-  antibodies,
-  antibodySuscSummary: {itemsByMutations},
-  ...props
+function AntibodySuscSummaryTable({
+  rows,
+  antibodyColumns,
+  openRefInNewWindow
 }) {
-  itemsByMutations = itemsByMutations
-    .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-  const payload = buildPayload(itemsByMutations);
-  const {rows, button, expanded} = useToggleDisplay(payload);
+  const columnDefs = useColumnDefs({antibodyColumns, openRefInNewWindow});
+  const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
   const [config, loading] = ConfigContext.use();
 
-  if (payload.length > 0) {
+  if (rows.length > 0) {
     return <>
       <SimpleTable
        cacheKey={`${expanded}`}
        compact lastCompact disableCopy
        getRowKey={getRowKey}
        className={style['susc-summary']}
-       columnDefs={buildColumnDefs(antibodies, itemsByMutations)}
-       data={rows}
+       columnDefs={columnDefs}
+       data={displayRows}
        afterTable={button} />
       {loading ? null : <div className={style['susc-summary-footnote']}>
         <Markdown escapeHtml={false}>
@@ -178,5 +178,50 @@ function AntibodySuscSummary({
   }
 }
 
+AntibodySuscSummaryTable.propTypes = {
+  antibodyColumns: PropTypes.arrayOf(
+    PropTypes.arrayOf(antibodyShape.isRequired).isRequired
+  ).isRequired,
+  rows: PropTypes.arrayOf(
+    abSuscSummaryShape.isRequired
+  ).isRequired,
+  openRefInNewWindow: PropTypes.bool.isRequired
+};
+
+AntibodySuscSummaryTable.defaultProps = {
+  openRefInNewWindow: false
+};
+
+function AntibodySuscSummary({
+  antibodies,
+  antibodySuscSummary: {itemsByMutations},
+  ...props
+}) {
+  itemsByMutations = itemsByMutations
+    .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
+  const antibodyColumns = React.useMemo(
+    () => getAntibodyColumns(antibodies, itemsByMutations),
+    [antibodies, itemsByMutations]
+  );
+  const payload = React.useMemo(
+    () => buildPayload(itemsByMutations),
+    [itemsByMutations]
+  );
+
+  return (
+    <AntibodySuscSummaryTable
+     rows={payload}
+     antibodyColumns={antibodyColumns}
+     openRefInNewWindow
+    />
+  );
+}
+
+export {
+  buildPayload,
+  useColumnDefs,
+  getAntibodyColumns,
+  AntibodySuscSummaryTable
+};
 
 export default React.memo(AntibodySuscSummary);

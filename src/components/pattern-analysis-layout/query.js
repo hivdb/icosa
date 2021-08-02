@@ -144,4 +144,9 @@ PatternAnalysisQuery.propTypes = {
 };
 
 
+PatternAnalysisQuery.defaultProps = {
+  showProgressBar: false
+};
+
+
 export default PatternAnalysisQuery;

@@ -3,7 +3,8 @@ import pluralize from 'pluralize';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
 
-import {ConfigContext} from '../report';
+import ConfigContext from '../../utils/config-context';
+
 import InlineLoader from '../inline-loader';
 
 import {identifyPairs} from './fastq-pairs';

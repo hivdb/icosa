@@ -11,7 +11,7 @@ function PaginatorArrow({
 }) {
   if (process.env.NODE_ENV !== "production") {
     // eslint-disable-next-line no-console
-    console.log(
+    console.debug(
       `render PaginatorArrow ${direction}`,
       (new Date()).getTime()
     );

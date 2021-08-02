@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
+import ConfigContext from '../../../utils/config-context';
+
 import AnalyzeForms, {getBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
-import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
 
 import SeqTabularReports, {

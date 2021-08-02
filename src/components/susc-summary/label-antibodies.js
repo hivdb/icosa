@@ -1,13 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Popup from 'reactjs-popup';
 
 import Markdown from '../markdown';
 import {ConfigContext} from '../report';
 
+import {antibodyShape} from './prop-types';
 import style from './style.module.scss';
 
 
-export default function LabelAntibodies({antibodies}) {
+function LabelAntibodies({antibodies}) {
   const descMsg = `mab-description-${
     antibodies.map(({name}) => name).join('+').toLocaleLowerCase('en-US')
   }`;
@@ -46,3 +48,10 @@ export default function LabelAntibodies({antibodies}) {
     );
   }
 }
+
+LabelAntibodies.propTypes = {
+  antibodies: PropTypes.arrayOf(antibodyShape.isRequired).isRequired
+};
+
+
+export default LabelAntibodies;

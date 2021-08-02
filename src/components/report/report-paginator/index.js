@@ -91,7 +91,7 @@ ReportPaginator.propTypes = {
     name: PropTypes.string
   }),
   onSelect: PropTypes.func,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node
 };
 
 

@@ -4,7 +4,7 @@ import {useRouter} from 'found';
 import NGS2CodFreq from '../../components/ngs2codfreq';
 import ConfigContext, {
   configWrapper
-} from '../../components/report/config-context';
+} from '../../utils/config-context';
 
 
 function reformCodFreqs(allSequenceReads, geneValidator) {

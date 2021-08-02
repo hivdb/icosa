@@ -2,7 +2,8 @@ import React from 'react';
 import {useRouter} from 'found';
 
 import BigData from '../../../utils/big-data';
-import {ConfigContext} from '../../report';
+import ConfigContext from '../../../utils/config-context';
+
 import NGS2CodFreq from '../../ngs2codfreq';
 import InlineLoader from '../../inline-loader';
 import {buildGeneValidator} from '../../../utils/sequence-reads';

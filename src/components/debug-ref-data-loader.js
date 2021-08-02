@@ -5,7 +5,7 @@ export default function DebugRefDataLoader({
 }) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
-    console.log('Mounting DebugRefDataLoader...');
+    console.debug('Mounting DebugRefDataLoader...');
     setTimeout(() => {
       references.map(ref => setReference(ref.name, {...ref}, false));
     });

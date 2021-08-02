@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import nestedGet from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import classNames from 'classnames';
-import style from './style.module.scss';
-import ColumnDef from './column-def';
 import {FaCaretUp} from '@react-icons/all-files/fa/FaCaretUp';
 import {FaCaretDown} from '@react-icons/all-files/fa/FaCaretDown';
 import {FaSortDown} from '@react-icons/all-files/fa/FaSortDown';
 import {FaSortUp} from '@react-icons/all-files/fa/FaSortUp';
 import {FaSort} from '@react-icons/all-files/fa/FaSort';
+
+import style from './style.module.scss';
+import ColumnDef from './column-def';
+import {columnDefShape} from './prop-types';
 import {dumpCSV, dumpTSV, dumpExcelSimple} from '../../utils/sheet-utils';
 
 import {makeDownload} from '../../utils/download';
@@ -39,13 +41,34 @@ function getNextDirection(direction) {
 }
 
 
-function groupBySpanIndex(rows) {
+function countGroups(rows, name) {
+  let numGroups = 0;
+  let prevRow;
+  let prevName;
+  for (const row of rows) {
+    let curName;
+    if (prevRow && prevRow[name] === row[name]) {
+      curName = prevName;
+    }
+    else {
+      curName = row[name];
+      numGroups ++;
+    }
+    prevRow = row;
+    prevName = curName;
+  }
+  return numGroups;
+}
+
+
+function groupByColumns(rows, columns, rowIdxOffset = 0) {
+  const {name, idx} = columns.shift();
   const groups = [];
   let prevRow;
   let prevGroup;
   for (const row of rows) {
     let curGroup;
-    if (prevRow && prevRow._spanIndex === row._spanIndex) {
+    if (prevRow && prevRow[name] === row[name]) {
       prevGroup.push(row);
       curGroup = prevGroup;
     }
@@ -56,7 +79,35 @@ function groupBySpanIndex(rows) {
     prevRow = row;
     prevGroup = curGroup;
   }
-  return groups;
+  if (columns.length === 0) {
+    return {
+      colName: name,
+      colIdx: idx,
+      rowIdxOffset,
+      allNumRows: groups.map(group => group.length)
+    };
+  }
+  else {
+    const subGroups = [];
+    let subGroupRowIdxOffset = rowIdxOffset;
+    for (const subRows of groups) {
+      subGroups.push(groupByColumns(
+        subRows, [...columns], subGroupRowIdxOffset
+      ));
+      subGroupRowIdxOffset += subRows.length;
+    }
+    return {
+      colName: name,
+      colIdx: idx,
+      rowIdxOffset,
+      allNumRows: subGroups.map(
+        ({allNumRows}) => allNumRows.reduce(
+          (acc, numRows) => acc + numRows, 0
+        )
+      ),
+      subGroups
+    };
+  }
 }
 
 
@@ -68,21 +119,9 @@ export default class SimpleTable extends React.Component {
     compact: PropTypes.bool.isRequired,
     lastCompact: PropTypes.bool.isRequired,
     sheetName: PropTypes.string.isRequired,
-    columnDefs: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      label: PropTypes.node.isRequired,
-      render: PropTypes.func.isRequired,
-      sort: PropTypes.oneOfType([
-        PropTypes.func.isRequired,
-        PropTypes.arrayOf(
-          PropTypes.oneOfType([
-            PropTypes.func.isRequired,
-            PropTypes.string.isRequired
-          ]).isRequired
-        ).isRequired
-      ]).isRequired,
-      sortable: PropTypes.bool.isRequired
-    })),
+    columnDefs: PropTypes.arrayOf(
+      columnDefShape.isRequired
+    ).isRequired,
     getRowKey: PropTypes.func.isRequired,
     data: PropTypes.arrayOf(
       PropTypes.object.isRequired
@@ -307,24 +346,47 @@ export default class SimpleTable extends React.Component {
     const matrix = new Array(sortedData.length).fill(1).map(
       () => new Array(columnDefs.length).fill(1)
     );
-    if (columnDefs.every(({multiCells}) => !multiCells)) {
+
+    const rowSpanColumns = columnDefs
+      .map(({name, multiCells}, idx) => ({
+        name,
+        multiCells,
+        numGroups: countGroups(sortedData, name),
+        idx
+      }))
+      .filter(({multiCells}) => !multiCells)
+      .sort(({numGroups: a}, {numGroups: b}) => a - b);
+
+    if (rowSpanColumns.length === columnDefs.length) {
       return matrix;
     }
-    const groupedData = groupBySpanIndex(sortedData);
-    let idx = 0;
-    for (const group of groupedData) {
-      const rowSpan = group.length;
-      for (let jdx = 0; jdx < columnDefs.length; jdx ++) {
-        if (columnDefs[jdx].multiCells) {
-          continue;
+
+    let curGroup = groupByColumns(sortedData, rowSpanColumns);
+    const groupStack = [];
+    do {
+      const {subGroups} = curGroup;
+      if (subGroups && subGroups.length > 0) {
+        groupStack.push(curGroup);
+        curGroup = subGroups.shift();
+      }
+      else {
+        const {colIdx, rowIdxOffset, allNumRows} = curGroup;
+        let curRowIdx = rowIdxOffset;
+        for (const numRows of allNumRows) {
+          matrix[curRowIdx][colIdx] = numRows;
+          for (let offset = 1; offset < numRows; offset ++) {
+            matrix[curRowIdx + offset][colIdx] = 0;
+          }
+          curRowIdx += numRows;
         }
-        matrix[idx][jdx] = rowSpan;
-        for (let offset = 1; offset < rowSpan; offset ++) {
-          matrix[idx + offset][jdx] = 0;
+        if (groupStack.length > 0) {
+          curGroup = groupStack.pop();
+        }
+        else {
+          curGroup = null;
         }
       }
-      idx += rowSpan;
-    }
+    } while(curGroup);
     return matrix;
   }
 
@@ -352,7 +414,7 @@ export default class SimpleTable extends React.Component {
     const {disableCopy} = this.props;
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.log('render table', (new Date()).getTime());
+      console.debug('render table', (new Date()).getTime());
     }
 
     return <>

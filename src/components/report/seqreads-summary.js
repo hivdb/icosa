@@ -6,10 +6,10 @@ import {FaEye} from '@react-icons/all-files/fa/FaEye';
 import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash';
 import Dropdown from 'react-dropdown';
 
+import ConfigContext from '../../utils/config-context';
 import {includeFragment} from '../../utils/graphql-helper';
 import Button from '../button';
 import style from './style.module.scss';
-import ConfigContext from './config-context';
 import DownloadCodFreqs from './download-codfreqs';
 
 // import CodonGraph from './codon-graph';

@@ -1,6 +1,6 @@
+import nestedGet from 'lodash/get';
 import {
-  findComboAntibodies,
-  makeOrderedAntibodies,
+  getAntibodyColumns,
   buildPayload
 } from '../../../../components/susc-summary/ab-susc-summary';
 
@@ -31,17 +31,17 @@ function buildAbTable({
   itemsByMutations,
   geneDisplay,
   drdbLastUpdate,
-  orderedAntibodies
+  antibodyColumns
 }) {
   const rows = [];
   for (const {
     mutations,
     references,
-    isolates,
+    variants,
     ...abData
   } of buildPayload(itemsByMutations)) {
     const shorten = shortenMutList(mutations);
-    const variant = isolates.join('/');
+    const variant = variants.join('/');
     const row = {
       'Sequence Name': seqName,
       'Mutations': shorten.map(
@@ -53,13 +53,13 @@ function buildAbTable({
       'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate
     };
-    for (const abs of orderedAntibodies) {
+    for (const abs of antibodyColumns) {
       const abText = abs
         .map(({name, abbrName}) => abbrName || name)
         .join('+');
-      const item = abData[`__abfold__${
+      const item = nestedGet(abData, `fold.${
         abs.map(({name}) => name).join('+')
-      }`];
+      }`);
       row[`Median Fold: ${abText}`] = extractFold(item);
       row[`# Results: ${abText}`] = extractCumuCount(item);
     }
@@ -98,13 +98,12 @@ function abSuscSummary({
     const seqName = seqName1 || seqName2;
     const itemsByMutations = antibodySuscSummary.itemsByMutations
       .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-    const comboAntibodies = findComboAntibodies(itemsByMutations);
-    const orderedAntibodies = makeOrderedAntibodies(
-      antibodies, comboAntibodies
+    const antibodyColumns = getAntibodyColumns(
+      antibodies, itemsByMutations
     );
     const header = [
       ...commonHeader,
-      ...orderedAntibodies.reduce(
+      ...antibodyColumns.reduce(
         (acc, abs) => {
           const abText = abs
             .map(({name, abbrName}) => abbrName || name)
@@ -122,7 +121,7 @@ function abSuscSummary({
       itemsByMutations,
       geneDisplay,
       drdbLastUpdate,
-      orderedAntibodies
+      antibodyColumns
     });
     tables.push({
       folder: 'susc-mab',

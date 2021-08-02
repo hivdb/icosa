@@ -1,11 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import shortenMutationList from '../../utils/shorten-mutation-list';
 
 import {getRowKey} from './funcs';
+import {mutationShape} from './prop-types';
 import style from './style.module.scss';
 
 
-export default function CellMutations({mutations, isolates}) {
+function CellMutations({mutations, variants}) {
   const shortMutations = shortenMutationList(mutations);
   return (
     <div
@@ -22,10 +24,18 @@ export default function CellMutations({mutations, isolates}) {
           </React.Fragment>
         ))}
       </div>
-      {isolates.length > 0 ? 
+      {variants.length > 0 ? 
         <div className={style['variants']}>
-          {isolates.join('/')}
+          {variants.join('/')}
         </div> : null}
     </div>
   );
 }
+
+CellMutations.propTypes = {
+  mutations: PropTypes.arrayOf(mutationShape.isRequired).isRequired,
+  variants: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired
+};
+
+
+export default CellMutations;

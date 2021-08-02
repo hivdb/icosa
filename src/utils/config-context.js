@@ -1,4 +1,4 @@
-import createAsyncContext from '../../utils/async-context';
+import createAsyncContext from './async-context';
 
 
 export async function configWrapper(config) {

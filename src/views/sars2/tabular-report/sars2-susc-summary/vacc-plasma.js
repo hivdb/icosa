@@ -1,3 +1,5 @@
+import nestedGet from 'lodash/get';
+
 import {
   buildPayload
 } from '../../../../components/susc-summary/vp-susc-summary';
@@ -24,11 +26,14 @@ function buildVPTable({
     numSamples,
     medianFold,
     references,
-    isolates,
+    variants,
     ...vpData
   } of buildPayload(itemsByMutations)) {
     const shorten = shortenMutList(mutations);
-    const variant = isolates.join('/');
+    const variant = variants.join('/');
+    const level1 = nestedGet(vpData, 'levels.susceptible');
+    const level2 = nestedGet(vpData, 'levels.partial-resistance');
+    const level3 = nestedGet(vpData, 'levels.resistant');
     const row = {
       'Sequence Name': seqName,
       'Mutations': shorten.map(
@@ -41,16 +46,13 @@ function buildVPTable({
       '# Studies': numRefs,
       '# Samples': numSamples,
       '<3-Fold': (
-        isNaN(vpData['__level__susceptible']) ?
-          null : `${vpData['__level__susceptible'] * 100}%`
+        isNaN(level1) ? null : `${level1 * 100}%`
       ),
       '3-9-Fold': (
-        isNaN(vpData['__level__partial-resistance']) ?
-          null : `${vpData['__level__partial-resistance'] * 100}%`
+        isNaN(level2) ? null : `${level2 * 100}%`
       ),
       '≥10-Fold': (
-        isNaN(vpData['__level__resistant']) ?
-          null : `${vpData['__level__resistant'] * 100}%`
+        isNaN(level3) ? null : `${level3 * 100}%`
       ),
       'Median Fold': formatFold(medianFold),
       'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),

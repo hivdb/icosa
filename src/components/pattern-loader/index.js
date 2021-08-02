@@ -3,7 +3,8 @@ import {v4 as uuidv4} from 'uuid';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
-import {ConfigContext} from '../report';
+import ConfigContext from '../../utils/config-context';
+
 import {
   sanitizeMutations
 } from '../../utils/mutation';

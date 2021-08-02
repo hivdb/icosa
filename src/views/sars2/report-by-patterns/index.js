@@ -2,7 +2,7 @@ import React from 'react';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
-import ConfigContext from '../../../components/report/config-context';
+import ConfigContext from '../../../utils/config-context';
 import PatternLoader from '../../../components/pattern-loader';
 import PatternAnalysisLayout from 
   '../../../components/pattern-analysis-layout';

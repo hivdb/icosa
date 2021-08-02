@@ -11,10 +11,11 @@ import {
 } from '../../../utils/sequence-reads';
 import BigData from '../../../utils/big-data';
 import readFile from '../../../utils/read-file';
+import ConfigContext from '../../../utils/config-context';
+
 import BaseForm from '../base';
 import FileInput from '../../file-input';
 import Link from '../../link/basic';
-import {ConfigContext} from '../../report';
 import InlineLoader from '../../inline-loader';
 
 import style from '../style.module.scss';

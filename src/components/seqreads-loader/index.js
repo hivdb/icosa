@@ -4,7 +4,7 @@ import {useRouter} from 'found';
 
 import FixedLoader from '../fixed-loader';
 
-import {ConfigContext} from '../report';
+import ConfigContext from '../../utils/config-context';
 
 import useAllSeqReads from './use-all-seq-reads';
 

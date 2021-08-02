@@ -1,5 +1,5 @@
 import React from 'react';
-import ConfigContext from '../config-context';
+import ConfigContext from '../../../utils/config-context';
 
 import GeneMutationList from './gene-mutation-list';
 import style from './style.module.scss';

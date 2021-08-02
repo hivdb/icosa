@@ -8,7 +8,7 @@ import defaultConfig from './config';
 
 import ConfigContext, {
   configWrapper
-} from '../../components/report/config-context';
+} from '../../utils/config-context';
 import CustomColors from '../../components/custom-colors';
 
 const SeqAnaForms = lazy(() => import('./forms'));

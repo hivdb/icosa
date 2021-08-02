@@ -110,7 +110,6 @@ function SinglePatternReport({
 
 SinglePatternReport.propTypes = {
   currentSelected: PropTypes.object,
-  onSelect: PropTypes.func.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   patternResult: PropTypes.object,
@@ -118,6 +117,10 @@ SinglePatternReport.propTypes = {
   index: PropTypes.number.isRequired,
   antibodies: PropTypes.array.isRequired,
   onObserve: PropTypes.func.isRequired
+};
+
+SinglePatternReport.defaultProps = {
+  antibodies: []
 };
 
 export default SinglePatternReport;

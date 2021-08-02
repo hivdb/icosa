@@ -1,11 +1,12 @@
 import React from 'react';
 
+import ConfigContext from '../../utils/config-context';
+
 import Intro, {
   IntroHeader,
   IntroHeaderSupplement
 } from '../../components/intro';
 import Button from '../../components/button';
-import {ConfigContext} from '../../components/report';
 import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
 
 

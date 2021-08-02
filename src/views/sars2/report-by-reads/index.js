@@ -2,7 +2,7 @@ import React from 'react';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
-import ConfigContext from '../../../components/report/config-context';
+import ConfigContext from '../../../utils/config-context';
 import SeqReadsLoader from '../../../components/seqreads-loader';
 import SeqReadsAnalysisLayout from 
   '../../../components/seqreads-analysis-layout';
