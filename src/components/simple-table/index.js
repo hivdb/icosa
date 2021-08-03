@@ -1,4 +1,5 @@
 import React from 'react';
+import sleep from 'sleep-promise';
 import PropTypes from 'prop-types';
 import nestedGet from 'lodash/get';
 import sortBy from 'lodash/sortBy';
@@ -9,12 +10,13 @@ import {FaSortDown} from '@react-icons/all-files/fa/FaSortDown';
 import {FaSortUp} from '@react-icons/all-files/fa/FaSortUp';
 import {FaSort} from '@react-icons/all-files/fa/FaSort';
 
+import {dumpCSV, dumpTSV, dumpExcelSimple} from '../../utils/sheet-utils';
+import {makeDownload} from '../../utils/download';
+import Loader from '../inline-loader';
+
 import style from './style.module.scss';
 import ColumnDef from './column-def';
 import {columnDefShape} from './prop-types';
-import {dumpCSV, dumpTSV, dumpExcelSimple} from '../../utils/sheet-utils';
-
-import {makeDownload} from '../../utils/download';
 
 export {ColumnDef};
 
@@ -145,6 +147,7 @@ export default class SimpleTable extends React.Component {
     super(...arguments);
     const {data} = this.props;
     this.state = {
+      sorting: false,
       sortedByColumn: null,
       sortedData: data,
       sortDirection: null,
@@ -220,7 +223,11 @@ export default class SimpleTable extends React.Component {
           ''
       ));
     }
-    return () => {
+    return async () => {
+      this.setState({sorting: true});
+
+      await sleep(0); // await for sorting=true applied
+
       let {sortedByColumn, sortDirection, sortedData} = this.state;
 
       if (column === sortedByColumn) {
@@ -243,6 +250,7 @@ export default class SimpleTable extends React.Component {
       }
 
       this.setState({
+        sorting: false,
         sortedByColumn,
         sortedData,
         sortDirection
@@ -402,7 +410,7 @@ export default class SimpleTable extends React.Component {
     const {
       sortedByColumn, sortedData,
       sortDirection, enableRowSpan,
-      copying, showOptMenu,
+      sorting, copying, showOptMenu,
       defaultOpt
     } = this.state;
     const context = columnDefs.reduce((acc, {name}) => {
@@ -422,6 +430,7 @@ export default class SimpleTable extends React.Component {
        ref={this.table}
        data-nocopy={disableCopy}
        data-copying={copying}
+       data-sorting={sorting}
        data-compact={compact}
        data-last-compact={lastCompact}
        className={classNames(
@@ -473,6 +482,9 @@ export default class SimpleTable extends React.Component {
                   </th>
                 ))}
               </tr>
+              <div className={style['loader-container']}>
+                <Loader />
+              </div>
             </thead>
             <tbody>
               {sortedData.map((row, idx) => (

@@ -251,6 +251,16 @@ table.simple-table {
   }
 }
 
+.loader-container {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  text-align: center;
+}
+
 .simple-table-container {
   position: relative;
   margin-top: 1rem;
@@ -267,9 +277,12 @@ table.simple-table {
     background-color: transparent;
     transition: background-color 150ms ease-in-out;
   }
-  &[data-copying="true"]::after {
+  &[data-copying="true"]::after, &[data-sorting="true"]::after {
     z-index: 0;
     background-color: rgba(0, 0, 0, .2);
+  }
+  &[data-sorting="true"] .loader-container {
+    display: block;
   }
   &[data-compact="true"] {
     width: auto;
@@ -287,6 +300,9 @@ table.simple-table {
     table.simple-table {
       > thead > tr > th, > tbody > tr > td {
         padding: .4rem;
+      }
+      > tbody {
+        position: relative;
       }
     }
     .simple-table-scroll {
