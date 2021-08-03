@@ -226,7 +226,8 @@ export default class SimpleTable extends React.Component {
     return async () => {
       this.setState({sorting: true});
 
-      await sleep(0); // await for sorting=true applied
+      // await for sorting=true applied (transition takes 150ms)
+      await sleep(300);
 
       let {sortedByColumn, sortDirection, sortedData} = this.state;
 
