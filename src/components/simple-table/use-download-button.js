@@ -126,6 +126,9 @@ export default function useDownloadButton({
         const node = tableRef.current.querySelector('table');
         let content = [];
         for (const row of node.rows) {
+          if (row.dataset.skipCopy) {
+            continue;
+          }
           let tr = [];
           for (const cell of row.cells) {
             tr.push(cell.innerText);

@@ -69,7 +69,7 @@ function SimpleTableTable({
                  onSort={handleSort} />
               ))}
             </tr>
-            <tr className={style['loader-container']}>
+            <tr data-skip-copy className={style['loader-container']}>
               <th colSpan={columnDefs.length}>
                 <Loader />
               </th>
