@@ -121,7 +121,7 @@ export default function useDownloadButton({
   const readTableData = React.useCallback(
     async () => {
       setCopying(true);
-      await sleep(300);
+      await sleep(600);
       try {
         const node = tableRef.current.querySelector('table');
         let content = [];

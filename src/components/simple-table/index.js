@@ -37,11 +37,11 @@ function SimpleTable({
     sheetName
   });
 
-  // Use useEffect to delay setting `enableRowSpan` for one cycle.
+  // Use useEffect to delay setting `enableRowSpan` for 300ms.
   // Allow `copying` being passed to data-copying ASAP.
   React.useEffect(
     () => {
-      setTimeout(() => setEnableRowSpan(!copying));
+      setTimeout(() => setEnableRowSpan(!copying), 200);
     },
     [setEnableRowSpan, copying]
   );
