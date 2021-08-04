@@ -30,12 +30,19 @@ function SimpleTable({
   const tableRef = React.useRef();
   const [mobileLabelWidth, setMobileLabelWidth] = React.useState('auto');
   const [sorting, setSorting] = React.useState(false);
+  const [enableRowSpan, setEnableRowSpan] = React.useState(true);
 
   const {copying, element: downloadButton} = useDownloadButton({
     tableRef,
     sheetName
   });
-  const enableRowSpan = !copying;
+
+  // Use useEffect to delay setting `enableRowSpan` for one cycle.
+  // Allow `copying` being passed to data-copying ASAP.
+  React.useEffect(
+    () => setEnableRowSpan(!copying),
+    [setEnableRowSpan, copying]
+  );
 
   React.useEffect(
     () => { 
