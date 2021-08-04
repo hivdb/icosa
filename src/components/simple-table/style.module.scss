@@ -131,6 +131,21 @@ table.simple-table {
           }
         }
       }
+      &.loader-container {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        font-size: 2rem;
+        text-align: center;
+        border: none;
+        > th {
+          display: block;
+          background-color: transparent;
+          border: none;
+        }
+      }
     }
   }
 
@@ -153,6 +168,9 @@ table.simple-table {
         }
         &.center {
           text-align: center;
+        }
+        @media only screen and (min-width: 768px) {
+          max-width: var(--desktop-max-width);
         }
       }
       &:hover {
@@ -249,16 +267,6 @@ table.simple-table {
       width: 70%;
     }
   }
-}
-
-.loader-container {
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  padding: 1rem 2rem;
-  font-size: 2rem;
-  text-align: center;
 }
 
 .simple-table-container {

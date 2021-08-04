@@ -21,4 +21,13 @@ const columnDefShape = PropTypes.shape({
   bodyCellColSpan: PropTypes.number.isRequired
 });
 
-export {columnDefShape};
+const sortStateShape = PropTypes.shape({
+  byColumn: PropTypes.string,
+  direction: PropTypes.oneOf(['ascending', 'descending']),
+  sortedData: PropTypes.arrayOf(
+    PropTypes.object.isRequired
+  ).isRequired
+});
+
+
+export {columnDefShape, sortStateShape};

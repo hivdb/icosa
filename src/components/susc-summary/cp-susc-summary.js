@@ -93,7 +93,7 @@ function useColumnDefs() {
         <CellMutations {...{mutations, variants}} />
       ),
       bodyCellStyle: {
-        maxWidth: '14rem'
+        '--desktop-max-width': '14rem'
       },
       sort: [({mutations}) => [
         mutations.length,
