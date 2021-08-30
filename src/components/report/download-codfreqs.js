@@ -14,17 +14,13 @@ function dumpReads(allReads) {
   ];
   for (let {
     gene, position, totalReads,
-    allCodonReads, aminoAcid, percent
+    allCodonReads, aminoAcid
   } of allReads) {
-    for (let {
-      codon, reads
-    } of allCodonReads) {
+    for (const {codon, reads} of allCodonReads) {
       if (!aminoAcid) {
         aminoAcid = translateCodon(codon);
       }
-      if (!percent) {
-        percent = (reads / totalReads).toFixed(6);
-      }
+      const percent = (reads / totalReads).toFixed(3);
       rows.push({
         gene, position, totalReads,
         codon, reads, aminoAcid, percent
