@@ -14,7 +14,6 @@ import CellTd from './cell-td';
 
 function SimpleTableTable({
   data,
-  cacheKey,
   onBeforeSort,
   onSort,
   columnDefs,
@@ -28,7 +27,7 @@ function SimpleTableTable({
   const [
     sortState,
     setSortState
-  ] = useSortState(data, cacheKey);
+  ] = useSortState(data);
 
   const handleSort = React.useCallback(
     sortState => {
@@ -113,7 +112,6 @@ function SimpleTableTable({
 SimpleTableTable.propTypes = {
   color: PropTypes.string,
   className: PropTypes.string,
-  cacheKey: PropTypes.string,
   columnDefs: PropTypes.arrayOf(
     columnDefShape.isRequired
   ).isRequired,

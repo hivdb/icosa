@@ -102,7 +102,7 @@ function SimpleTable({
        style={tableScrollStyle}>
         <SimpleTableTable
          data={data}
-         cacheKey={cacheKey}
+         key={cacheKey}
          onBeforeSort={onBeforeSort}
          onSort={onSort}
          columnDefs={columnDefs}
