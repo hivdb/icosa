@@ -14,7 +14,7 @@ function SimpleTableCellTd({
   columnDef,
   enableRowSpan
 }) {
-  
+
   return React.useMemo(
     () => {
       const {
@@ -52,7 +52,7 @@ function SimpleTableCellTd({
       enableRowSpan
     ]
   );
-  
+
 }
 
 SimpleTableCellTd.propTypes = {

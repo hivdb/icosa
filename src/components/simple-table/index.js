@@ -34,20 +34,25 @@ function SimpleTable({
 
   const {copying, element: downloadButton} = useDownloadButton({
     tableRef,
-    sheetName
+    sheetName,
+    columnDefs
   });
 
   // Use useEffect to delay setting `enableRowSpan` for 300ms.
   // Allow `copying` being passed to data-copying ASAP.
   React.useEffect(
     () => {
-      setTimeout(() => setEnableRowSpan(!copying), 200);
+      let prevent = false;
+      setTimeout(() => prevent || setEnableRowSpan(!copying), 200);
+      return () => {
+        prevent = true;
+      };
     },
     [setEnableRowSpan, copying]
   );
 
   React.useEffect(
-    () => { 
+    () => {
       if (!tableRef.current) {
         return;
       }
@@ -117,7 +122,7 @@ function SimpleTable({
     </div>
     <div className={style.clearfix} />
   </>;
-  
+
 }
 SimpleTable.propTypes = {
   compact: PropTypes.bool.isRequired,

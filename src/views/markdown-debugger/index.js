@@ -6,7 +6,7 @@ import tableData from './table-data.json';
 const webpackMarkdownLoader = require.context(
   '!raw-loader!./',
   false,
-  /\.md$/,
+  /\.md$/
 );
 
 const markdownFiles = webpackMarkdownLoader

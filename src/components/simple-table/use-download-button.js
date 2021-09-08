@@ -1,5 +1,7 @@
 import React from 'react';
+import uniq from 'lodash/uniq';
 import sleep from 'sleep-promise';
+import startCase from 'lodash/startCase';
 import {FaCaretUp} from '@react-icons/all-files/fa/FaCaretUp';
 import {FaCaretDown} from '@react-icons/all-files/fa/FaCaretDown';
 
@@ -56,10 +58,14 @@ function useDefaultDownloadOption({onSave}) {
   React.useEffect(
     () => {
       window.addEventListener(
-        OPT_CHANGE_EVENT, handleChange, false
+        OPT_CHANGE_EVENT,
+        handleChange,
+        false
       );
       return () => window.removeEventListener(
-        OPT_CHANGE_EVENT, handleChange, false
+        OPT_CHANGE_EVENT,
+        handleChange,
+        false
       );
     },
     [handleChange]
@@ -93,10 +99,14 @@ function useOptMenu() {
   React.useEffect(
     () => {
       document.addEventListener(
-        'click', condHideDownloadOptMenu, false
+        'click',
+        condHideDownloadOptMenu,
+        false
       );
       return () => document.removeEventListener(
-        'click', condHideDownloadOptMenu, false
+        'click',
+        condHideDownloadOptMenu,
+        false
       );
     },
     [condHideDownloadOptMenu]
@@ -106,6 +116,7 @@ function useOptMenu() {
 
 
 export default function useDownloadButton({
+  columnDefs,
   sheetName,
   tableRef
 }) {
@@ -124,24 +135,66 @@ export default function useDownloadButton({
       await sleep(600);
       try {
         const node = tableRef.current.querySelector('table');
+        let header = [];
         let content = [];
+        const labels = [];
         for (const row of node.rows) {
           if (row.dataset.skipCopy) {
             continue;
           }
-          let tr = [];
-          for (const cell of row.cells) {
-            tr.push(cell.innerText);
+          if (row.parentElement.tagName === 'THEAD') {
+            for (const cell of row.cells) {
+              labels.push(cell.innerText);
+            }
+            continue;
           }
+          let tr = {};
+          for (let i = 0; i < columnDefs.length; i ++) {
+            const cell = row.cells[i];
+            const colDef = columnDefs[i];
+            const label = labels[i] || startCase(colDef.name);
+            if (colDef.exportCell) {
+              // columnDef can supply an "exportCell" method
+              const payload = JSON.parse(row.dataset.payload);
+              const cellData = colDef.exportCell(
+                payload[colDef.name],
+                payload
+              );
+              if (cellData instanceof Array) {
+                for (const one of cellData) {
+                  for (const key in one) {
+                    tr[`${label}: ${key}`] = one[key];
+                  }
+                }
+              }
+              else if (cellData instanceof Object) {
+                for (const key in cellData) {
+                  tr[`${label}: ${key}`] = cellData[key];
+                }
+              }
+              else {
+                tr[label] = cellData;
+              }
+            }
+            else {
+              tr[label] = cell.innerText;
+            }
+          }
+          header = uniq([
+            ...header,
+            ...Object.keys(tr)
+          ]);
           content.push(tr);
         }
-        return content;
+        return [header, ...content.map(trmap => header.map(
+          field => trmap[field]
+        ))];
       }
       finally {
         setCopying(false);
       }
     },
-    [tableRef, setCopying]
+    [tableRef, columnDefs]
   );
 
   const handleCopy = React.useCallback(
@@ -247,5 +300,5 @@ export default function useDownloadButton({
     element,
     copying
   };
-  
+
 }

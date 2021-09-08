@@ -25,7 +25,9 @@ export function dumpTSV(rows, delimiter = '\t', utf8bom = false) {
 }
 
 export function dumpExcelSimple(
-  rows, sheetName = 'Sheet1', config = {}
+  rows,
+  sheetName = 'Sheet1',
+  config = {}
 ) {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows);
@@ -41,9 +43,9 @@ export function dumpExcelSimple(
   }
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
   const wopts = {
-    bookType:'xlsx',
+    bookType: 'xlsx',
     bookSST: true,
-    type:'array',
+    type: 'array',
     cellStyles: true
   };
   const wbout = XLSX.write(wb, wopts);

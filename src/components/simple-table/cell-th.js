@@ -1,8 +1,6 @@
 import React from 'react';
 import sleep from 'sleep-promise';
 import PropTypes from 'prop-types';
-import nestedGet from 'lodash/get';
-import sortBy from 'lodash/sortBy';
 import {FaSortDown} from '@react-icons/all-files/fa/FaSortDown';
 import {FaSortUp} from '@react-icons/all-files/fa/FaSortUp';
 import {FaSort} from '@react-icons/all-files/fa/FaSort';
@@ -39,25 +37,6 @@ function SimpleTableCellTh({
     headCellStyle
   } = columnDef;
 
-  const sortFunc = React.useMemo(
-    () => {
-      let sortFunc = sort;
-      if (sortFunc && typeof sortFunc !== 'function') {
-        const sortKeys = sortFunc.map(key => (
-          key instanceof Function ? key : `${name}.${key}`
-        ));
-        sortFunc = value => sortBy(value, item => sortKeys.map(
-          key => key instanceof Function ?
-            key(item) :
-            nestedGet(item, key) ||
-            ''
-        ));
-      }
-      return sortFunc;
-    },
-    [sort, name]
-  );
-
   const handleSort = React.useCallback(
     async () => {
       let {
@@ -65,14 +44,14 @@ function SimpleTableCellTh({
         direction,
         sortedData
       } = sortState;
-      
+
       if (name === byColumn) {
         direction = getNextDirection(direction);
       }
       else {
         direction = 'ascending';
       }
-      
+
       byColumn = name;
 
       onBeforeSort && onBeforeSort({
@@ -87,7 +66,7 @@ function SimpleTableCellTh({
         sortedData = data;
       }
       else if (direction === 'ascending') {
-        sortedData = sortFunc(sortedData, name);
+        sortedData = sort(sortedData, name);
       }
       else { // descending
         sortedData = sortedData.reverse();
@@ -100,7 +79,7 @@ function SimpleTableCellTh({
       });
 
     },
-    [data, sortState, onBeforeSort, onSort, name, sortFunc]
+    [data, sortState, onBeforeSort, onSort, name, sort]
   );
 
   const {

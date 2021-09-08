@@ -52,7 +52,9 @@ function groupByColumns(rows, columns, rowIdxOffset = 0) {
     let subGroupRowIdxOffset = rowIdxOffset;
     for (const subRows of groups) {
       subGroups.push(groupByColumns(
-        subRows, [...columns], subGroupRowIdxOffset
+        subRows,
+        [...columns],
+        subGroupRowIdxOffset
       ));
       subGroupRowIdxOffset += subRows.length;
     }
@@ -61,9 +63,7 @@ function groupByColumns(rows, columns, rowIdxOffset = 0) {
       colIdx: idx,
       rowIdxOffset,
       allNumRows: subGroups.map(
-        ({allNumRows}) => allNumRows.reduce(
-          (acc, numRows) => acc + numRows, 0
-        )
+        ({allNumRows}) => allNumRows.reduce((acc, numRows) => acc + numRows, 0)
       ),
       subGroups
     };
@@ -78,9 +78,10 @@ export default function useRowSpanMatrix({
 
   return React.useMemo(
     () => {
-      const matrix = new Array(data.length).fill(1).map(
-        () => new Array(columnDefs.length).fill(1)
-      );
+      const matrix = new Array(data.length).fill(1)
+        .map(
+          () => new Array(columnDefs.length).fill(1)
+        );
 
       const rowSpanColumns = columnDefs
         .map(({name, multiCells}, idx) => ({
@@ -121,7 +122,7 @@ export default function useRowSpanMatrix({
             curGroup = null;
           }
         }
-      } while(curGroup);
+      } while (curGroup);
       return matrix;
     },
     [columnDefs, data]

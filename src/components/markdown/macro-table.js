@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import toPath from 'lodash/toPath';
 import nestedGet from 'lodash/get';
 import sortBy from 'lodash/sortBy';
@@ -6,6 +7,7 @@ import OrigMarkdown from 'react-markdown/with-html';
 
 import macroPlugin from './macro-plugin';
 import SimpleTable, {ColumnDef} from '../simple-table';
+import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
 
 import style from './style.module.scss';
 
@@ -44,6 +46,12 @@ function defaultRenderer(mdProps, cmsPrefix) {
 const renderFuncs = {
 
   default: defaultRenderer,
+
+  template: (tpl, mdProps, cmsPrefix) => {
+    const renderTpl = createUnsafeRenderFromTpl(tpl, true);
+    return (...args) => defaultRenderer(mdProps, cmsPrefix)(renderTpl(...args));
+  },
+
   nl2br(mdProps, cmsPrefix) {
     return value => defaultRenderer(mdProps, cmsPrefix)(nl2brMdText(value));
   },
@@ -59,7 +67,7 @@ const renderFuncs = {
 
   articleList(mdProps, cmsPrefix) {
     const freeTextRenderer = defaultRenderer(mdProps, cmsPrefix);
-    return (articles, row) => <>
+    return (articles) => <>
       {articles.map(({
         doi,
         firstAuthor: {surname} = {},
@@ -116,14 +124,13 @@ const renderFuncs = {
 
 const sortFuncs = {
 
-  articleList: rows => sortBy(
-    rows, ({references}) => references.map(
-      ({firstAuthor: {surname} = [], year}) => [surname, -year]
-    )
-  ),
+  articleList: rows => sortBy(rows, ({references}) => references.map(
+    ({firstAuthor: {surname} = [], year}) => [surname, -year]
+  )),
 
   numeric: (rows, column) => sortBy(
-    rows, row => parseInt(nestedGet(row, column))
+    rows,
+    row => parseInt(nestedGet(row, column))
   )
 
 };
@@ -133,9 +140,12 @@ function buildColumnDefs(columnDefs, mdProps, cmsPrefix) {
   const objs = [];
   const colHeaderRenderer = renderFuncs.nl2br(mdProps);
   for (const colDef of columnDefs) {
-    let {render, sort} = colDef;
+    let {render, renderTpl, sort, ...props} = colDef;
     if (typeof render === 'string') {
       render = renderFuncs[render](mdProps, cmsPrefix);
+    }
+    else if (renderTpl) {
+      render = renderFuncs.template(renderTpl, mdProps, cmsPrefix);
     }
     else {
       render = renderFuncs.default(mdProps, cmsPrefix);
@@ -147,7 +157,7 @@ function buildColumnDefs(columnDefs, mdProps, cmsPrefix) {
       colDef.label = colHeaderRenderer(colDef.label);
     }
     objs.push(new ColumnDef({
-      ...colDef, render, sort
+      render, sort, ...props
     }));
   }
   return objs;
@@ -187,6 +197,31 @@ function expandMultiCells(data, columnDefs) {
 }
 
 
+InlineParagraph.propTypes = {
+  children: PropTypes.node
+};
+
+function InlineParagraph({children}) {
+  return <>{children}</>;
+}
+
+
+Table.propTypes = {
+  cacheKey: PropTypes.string,
+  columnDefs: PropTypes.array,
+  data: PropTypes.array,
+  compact: PropTypes.bool,
+  lastCompact: PropTypes.bool,
+  references: PropTypes.array,
+  mdProps: PropTypes.shape({
+    renderers: PropTypes.object
+  }),
+  cmsPrefix: PropTypes.string,
+  tableScrollStyle: PropTypes.object,
+  tableStyle: PropTypes.object
+};
+
+
 export function Table({
   cacheKey,
   columnDefs,
@@ -197,11 +232,11 @@ export function Table({
   mdProps: {renderers, ...mdProps},
   cmsPrefix,
   tableScrollStyle = {},
-  tableStyle = {}}
-) {
+  tableStyle = {}
+}) {
   renderers = {
     ...renderers,
-    paragraph: ({children}) => <>{children}</>
+    paragraph: InlineParagraph
   };
   columnDefs = buildColumnDefs(columnDefs, {...mdProps, renderers}, cmsPrefix);
   data = expandMultiCells(data, columnDefs);
@@ -225,7 +260,7 @@ export function Table({
 
 
 export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
-  return ({tableName, compact, lastCompact, ...props}) => {
+  return ({tableName, compact, lastCompact}) => {
     compact = compact !== undefined;
     lastCompact = lastCompact !== undefined;
     if (tableName in tables) {

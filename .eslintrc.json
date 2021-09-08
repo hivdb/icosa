@@ -21,7 +21,12 @@
     "indent": [
       "warn",
       2,
-      {"SwitchCase": 1, "ignoredNodes": ["JSXElement *"]}
+      {"SwitchCase": 1, "ignoredNodes": [
+        "JSXElement", "JSXAttribute", "JSXIdentifier", "JSXNamespacedName",
+        "JSXMemberExpression", "JSXSpreadAttribute", "JSXExpressionContainer",
+        "JSXOpeningElement", "JSXClosingElement", "JSXText",
+        "JSXEmptyExpression", "JSXSpreadChild"
+      ]}
     ],
     "max-len": [
       "warn",
@@ -40,7 +45,118 @@
       "warn",
       { "allow": ["warn", "error"] }
     ],
+    "comma-spacing": [
+      "warn",
+      {"before": false, "after": true}
+    ],
+    "key-spacing": [
+      "warn",
+      {"beforeColon": false, "afterColon": true}
+    ],
+    "keyword-spacing": [
+      "warn",
+      {"before": true, "after": true}
+    ],
+    "object-property-newline": [
+      "warn",
+      {"allowAllPropertiesOnSameLine": true}
+    ],
+    "object-curly-newline": [
+      "warn",
+      {"consistent": true, "multiline": true}
+    ],
+    "object-shorthand": [
+      "warn",
+      "always"
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "never"
+    ],
+    "array-bracket-spacing": [
+      "warn",
+      "never"
+    ],
+    "space-in-parens": [
+      "warn",
+      "never"
+    ],
+    "space-infix-ops": [
+      "warn"
+    ],
+    "comma-dangle": [
+      "warn",
+      "never"
+    ],
+    "comma-style": [
+      "warn",
+      "last"
+    ],
+    "operator-linebreak": [
+      "warn",
+      "after"
+    ],
+    "camelcase": [
+      "warn",
+      {
+        "properties": "always",
+        "ignoreDestructuring": false,
+        "ignoreImports": false,
+        "ignoreGlobals": false
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "warn",
+      {"max": 2, "maxEOF": 0}
+    ],
+    "no-trailing-spaces": [
+      "warn"
+    ],
+    "array-bracket-newline": [
+      "warn",
+      "consistent"
+    ],
+    "array-element-newline": [
+      "warn",
+      "consistent"
+    ],
+    "function-call-argument-newline": [
+      "warn",
+      "consistent"
+    ],
+    "function-paren-newline": [
+      "warn",
+      "multiline-arguments"
+    ],
+    "newline-per-chained-call": [
+      "warn",
+      {"ignoreChainWithDepth": 2}
+    ],
+    "no-irregular-whitespace": "error",
+    "no-multi-spaces": "warn",
+    "no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false
+      }
+    ],
     "react/jsx-indent-props": ["warn", 1],
-    "react/jsx-indent": ["warn", 2]
+    "react/jsx-indent": ["warn", 2],
+    "react/jsx-first-prop-new-line": [
+      "warn",
+      "multiline-multiprop"
+    ],
+    "react/prop-types": "warn",
+    "react/default-props-match-prop-types": [
+      "warn",
+      {"allowRequiredDefaults": true}
+    ],
+    "react/no-unused-prop-types": "warn",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {"enableDangerousAutofixThisMayCauseInfiniteLoops": true}
+    ]
   }
 }

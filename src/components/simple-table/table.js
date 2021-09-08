@@ -76,7 +76,9 @@ function SimpleTableTable({
           </thead>
           <tbody>
             {sortState.sortedData.map((row, idx) => (
-              <tr key={getRowKey(row) || idx}>
+              <tr
+               key={getRowKey(row) || idx}
+               data-payload={JSON.stringify(row)}>
                 {columnDefs.map((columnDef, jdx) => (
                   <CellTd
                    key={jdx}
@@ -106,7 +108,7 @@ function SimpleTableTable({
       rowSpanMatrix
     ]
   );
-  
+
 }
 
 SimpleTableTable.propTypes = {
