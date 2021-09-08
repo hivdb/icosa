@@ -77,7 +77,7 @@ function coerceRender({render, decorator, renderTpl, none}) {
 
 
 function coerceExportCell({exportCell, exportRaw, decorator}) {
-  let myExportCell;
+  let myExportCell = exportCell;
   if (!exportCell && exportRaw) {
     myExportCell = cellData => cellData;
   }
