@@ -67,7 +67,7 @@ function coerceRender({render, decorator, renderTpl, none}) {
   }
   if (decorator) {
     return (cellData, ...args) => (
-      myRender(decorator(cellData), ...args)
+      myRender(decorator(cellData, ...args), ...args)
     );
   }
   else {
@@ -83,7 +83,7 @@ function coerceExportCell({exportCell, exportRaw, decorator}) {
   }
   if (decorator && myExportCell) {
     return (cellData, ...args) => (
-      myExportCell(decorator(cellData), ...args)
+      myExportCell(decorator(cellData, ...args), ...args)
     );
   }
   else {
@@ -96,7 +96,8 @@ function coerceSort({sort, decorator, name}) {
   let mySort = sort;
   if (!sort && decorator) {
     mySort = rows => sortBy(rows, row => decorator(
-      nestedGet(row, name)
+      nestedGet(row, name),
+      row
     ));
   }
   else if (!sort) {
