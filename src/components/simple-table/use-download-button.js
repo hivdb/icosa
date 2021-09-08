@@ -220,9 +220,14 @@ export default function useDownloadButton({
           );
           content.push(tr);
         }
-        return [header, ...content.map(trmap => header.map(
-          field => trmap[field]
-        ))];
+        const headerWithValue = header.filter(
+          h => content.some(row => row[h])
+        );
+        return [headerWithValue, ...content.map(
+          trmap => headerWithValue.map(
+            field => trmap[field]
+          )
+        )];
       }
       finally {
         setCopying(false);
