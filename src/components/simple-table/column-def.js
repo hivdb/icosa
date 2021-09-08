@@ -128,6 +128,7 @@ export default class ColumnDef {
    *
    * @param {string} name         - Column internal name/key, required.
    * @param {node} label          - Display name/label.
+   * @param {string} exportLabel  - Label used in TSV/CSV/Excel output.
    * @param {function} decorator  - A function to decorate cell data before it
    *                                was passed to render, exportCell, and the
    *                                default sort function. Note any customized
@@ -166,6 +167,7 @@ export default class ColumnDef {
   constructor({
     name,
     label,
+    exportLabel,
     decorator,
     render,
     renderTpl,
@@ -183,6 +185,7 @@ export default class ColumnDef {
   }) {
     this.name = name;
     this.label = label ? label : startCase(name);
+    this.exportLabel = exportLabel;
     this.decorator = decorator;
     this.render = coerceRender({render, decorator, renderTpl, none});
     this.exportCell = coerceExportCell({exportCell, decorator, exportRaw});

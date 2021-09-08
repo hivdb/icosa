@@ -1,5 +1,4 @@
 import React from 'react';
-import uniq from 'lodash/uniq';
 import sleep from 'sleep-promise';
 import startCase from 'lodash/startCase';
 import {FaCaretUp} from '@react-icons/all-files/fa/FaCaretUp';
@@ -19,6 +18,29 @@ const DOWNLOAD_OPTS = [
   'download-excel',
   'copy-tsv'
 ];
+
+
+function mergeRetainOrder(...arrays) {
+  // modified from https://stackoverflow.com/a/53727840/2644759
+  const result = [];
+  arrays.forEach(array => {
+    array.forEach((item, idx) => {
+      // check if the item has already been added, if not, try to add
+      if (!result.includes(item)) {
+        // if item is not first item, find position of his left sibling in
+        // result array
+        if (idx > 0) {
+          const resultIdx = result.indexOf(array[idx - 1]);
+          // add item after left sibling position
+          result.splice(resultIdx + 1, 0, item);
+          return;
+        }
+        result.push(item);
+      }
+    });
+  });
+  return result;
+}
 
 
 function useDefaultDownloadOption({onSave}) {
@@ -143,8 +165,10 @@ export default function useDownloadButton({
             continue;
           }
           if (row.parentElement.tagName === 'THEAD') {
-            for (const cell of row.cells) {
-              labels.push(cell.innerText);
+            for (let i = 0; i < columnDefs.length; i ++) {
+              const cell = row.cells[i];
+              const colDef = columnDefs[i];
+              labels.push(colDef.exportLabel || cell.innerText);
             }
             continue;
           }
@@ -180,10 +204,10 @@ export default function useDownloadButton({
               tr[label] = cell.innerText;
             }
           }
-          header = uniq([
-            ...header,
-            ...Object.keys(tr)
-          ]);
+          header = mergeRetainOrder(
+            header,
+            Object.keys(tr)
+          );
           content.push(tr);
         }
         return [header, ...content.map(trmap => header.map(
