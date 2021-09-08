@@ -187,13 +187,23 @@ export default function useDownloadButton({
               if (cellData instanceof Array) {
                 for (const one of cellData) {
                   for (const key in one) {
-                    tr[`${label}: ${key}`] = one[key];
+                    if (key) {
+                      tr[`${label}: ${key}`] = one[key];
+                    }
+                    else {
+                      tr[label] = one[key];
+                    }
                   }
                 }
               }
               else if (cellData instanceof Object) {
                 for (const key in cellData) {
-                  tr[`${label}: ${key}`] = cellData[key];
+                  if (key) {
+                    tr[`${label}: ${key}`] = cellData[key];
+                  }
+                  else {
+                    tr[label] = cellData[key];
+                  }
                 }
               }
               else {
