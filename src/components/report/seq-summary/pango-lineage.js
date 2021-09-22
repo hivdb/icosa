@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import memoize from 'lodash/memoize';
 import sleep from 'sleep-promise';
 
@@ -20,7 +21,7 @@ const fetchPangolinResult = memoize(
       } = await resp.json();
       return {loaded: true, version, lineage, probability};
     }
-    while(true); // eslint-disable-line no-constant-condition
+    while (true); // eslint-disable-line no-constant-condition
   }
 );
 
@@ -56,10 +57,20 @@ export function usePangoLineage({
 }
 
 
-export default function PangoLineage(pangolin) {
+PangoLineage.propTypes = {
+  bestMatchingSubtype: PropTypes.shape({
+    display: PropTypes.string.isRequired
+  })
+};
+
+
+export default function PangoLineage({
+  bestMatchingSubtype,
+  ...pangolin
+}) {
   const {data, error, isPending} = usePangoLineage(pangolin);
 
-  let child;
+  let child, isNone;
   if (error) {
     child = `Error! ${error.message}`;
   }
@@ -68,13 +79,18 @@ export default function PangoLineage(pangolin) {
   }
   else {
     const {lineage, probability, version} = data;
+    isNone = lineage === 'None';
     child = `${lineage} (Prob=${
-      probability === null ? 'NA': probability.toFixed(1)
+      probability === null ? 'NA' : probability.toFixed(1)
     }; ${version})`;
   }
   return <>
     <dt>PANGO lineage:</dt>
     <dd>{child}</dd>
+    {isNone ? <>
+      <dt>WHO Variant (Spike):</dt>
+      <dd>{bestMatchingSubtype.display}</dd>
+    </> : null}
   </>;
 
 }

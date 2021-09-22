@@ -13,6 +13,18 @@ export default gql`
   fragment ReportBySequences on SequenceAnalysis {
     inputSequence { header }
     strain { name display }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes: subtypesV2(first: 3) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
     ${pangolinQuery}
     availableGenes { name }
     validationResults {

@@ -15,6 +15,18 @@ export default gql`
   fragment ReportBySequenceReads on SequenceReadsAnalysis {
     name
     strain { display }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes(first: 3) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
     ${pangolinQuery}
     readDepthStats {
       median: percentile(p: 50)

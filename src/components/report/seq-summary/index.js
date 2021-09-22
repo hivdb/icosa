@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {useRouter} from 'found';
+import {useRouter, matchShape, routerShape} from 'found';
 
 import ConfigContext from '../../../utils/config-context';
 
@@ -37,6 +37,30 @@ const MinPrevalence = () => null;
 const MinCodonReads = () => null;
 const MinPositionReads = () => null;
 const MedianReadDepth = () => null;
+
+
+SeqSummary.propTypes = {
+  config: PropTypes.object,
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  output: PropTypes.string,
+  name: PropTypes.string,
+  maxMixtureRate: PropTypes.number,
+  minPrevalence: PropTypes.number,
+  minCodonReads: PropTypes.number,
+  assembledConsensus: PropTypes.string,
+  bestMatchingSubtype: PropTypes.object,
+  subtypes: PropTypes.array,
+  alignedGeneSequences: PropTypes.array,
+  allGeneSequenceReads: PropTypes.array,
+  availableGenes: PropTypes.array,
+  pangolin: PropTypes.object,
+  readDepthStats: PropTypes.array,
+  mixtureRate: PropTypes.number,
+  actualMinPrevalence: PropTypes.number,
+  minPositionReads: PropTypes.number,
+  children: PropTypes.node
+};
 
 
 function SeqSummary(props) {
@@ -80,9 +104,9 @@ function SeqSummary(props) {
         )}
         {children.some(child => child.type === PrettyPairwise) && (
           <PrettyPairwiseButton {...{
-           disablePrettyPairwise,
-           showPrettyPairwise,
-           togglePrettyPairwise
+            disablePrettyPairwise,
+            showPrettyPairwise,
+            togglePrettyPairwise
           }} />
         )}
         {children.some(child => child.type === DownloadConsensus) && (
@@ -121,7 +145,12 @@ function SeqSummary(props) {
             }
 
             else if (child.type === PangoLineage) {
-              return <PangoLineageReal key={key} {...pangolin} />;
+              return (
+                <PangoLineageReal
+                 key={key}
+                 {...pangolin}
+                 {...{bestMatchingSubtype, subtypes}} />
+              );
             }
 
             else if (child.type === OutbreakInfo) {
