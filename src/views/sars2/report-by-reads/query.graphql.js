@@ -19,7 +19,7 @@ export default gql`
       display
       referenceAccession
     }
-    subtypes(first: 3) {
+    subtypes(first: 10) {
       displayWithoutDistance
       subtype { displayName }
       distancePcnt

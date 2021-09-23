@@ -4,6 +4,10 @@
 @import "../../styles/dropdown";
 
 .link-style {
+  color: color(link-text);
+  &:hover {
+    color: color(link-hover-text);
+  }
   @media print {
     color: black;
     text-decoration: none;
