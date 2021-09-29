@@ -63,7 +63,7 @@ export default class PositionGroup extends React.Component {
         <Position
          offsetY={0}
          key={`position-${pos}-${name}`}
-         position={{pos, ...posData}} />
+         position={{name, pos, ...posData}} />
       ))}
     </svg>;
   }
