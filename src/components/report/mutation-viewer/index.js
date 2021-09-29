@@ -156,6 +156,40 @@ function getCoverages(coverages, geneDefs, coverageUpperLimit) {
 }
 
 
+MutationViewer.propTypes = {
+  noUnseqRegions: PropTypes.bool.isRequired,
+  regionPresets: PropTypes.object.isRequired,
+  allGeneSeqs: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.shape({
+        name: PropTypes.string.isRequired
+      }).isRequired,
+      unsequencedRegions: PropTypes.shape({
+        regions: PropTypes.arrayOf(
+          PropTypes.shape({
+            posStart: PropTypes.number.isRequired,
+            posEnd: PropTypes.number.isRequired
+          }).isRequired
+        ).isRequired
+      })
+    }).isRequired
+  ).isRequired,
+  coverages: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.string.isRequired,
+      position: PropTypes.number.isRequired,
+      coverage: PropTypes.number.isRequired
+    }).isRequired
+  ),
+  coverageUpperLimit: PropTypes.number
+};
+
+
+MutationViewer.defaultProps = {
+  noUnseqRegions: false
+};
+
+
 function MutationViewer({
   noUnseqRegions,
   regionPresets,
@@ -210,38 +244,6 @@ function MutationViewer({
     setPreset(preset);
   }
 }
-
-
-MutationViewer.propTypes = {
-  noUnseqRegions: PropTypes.bool.isRequired,
-  allGeneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      unsequencedRegions: PropTypes.shape({
-        regions: PropTypes.arrayOf(
-          PropTypes.shape({
-            posStart: PropTypes.number.isRequired,
-            posEnd: PropTypes.number.isRequired
-          }).isRequired
-        ).isRequired
-      })
-    }).isRequired,
-  ).isRequired,
-  coverages: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.string.isRequired,
-      position: PropTypes.number.isRequired,
-      coverage: PropTypes.number.isRequired
-    }).isRequired
-  )
-};
-
-
-MutationViewer.defaultProps = {
-  noUnseqRegions: false
-};
 
 
 const MemoMutationViewer = React.memo(MutationViewer);
