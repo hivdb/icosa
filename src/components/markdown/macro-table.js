@@ -140,7 +140,7 @@ function buildColumnDefs(columnDefs, mdProps, cmsPrefix) {
   const objs = [];
   const colHeaderRenderer = renderFuncs.nl2br(mdProps);
   for (const colDef of columnDefs) {
-    let {render, renderTpl, sort, ...props} = colDef;
+    let {render, renderTpl, sort, label, ...props} = colDef;
     if (typeof render === 'string') {
       render = renderFuncs[render](mdProps, cmsPrefix);
     }
@@ -154,10 +154,10 @@ function buildColumnDefs(columnDefs, mdProps, cmsPrefix) {
       sort = sortFuncs[sort];
     }
     if (colDef.label) {
-      colDef.label = colHeaderRenderer(colDef.label);
+      label = colHeaderRenderer(label);
     }
     objs.push(new ColumnDef({
-      render, sort, ...props
+      render, sort, label, ...props
     }));
   }
   return objs;
