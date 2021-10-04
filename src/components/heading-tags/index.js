@@ -63,7 +63,7 @@ export function HeadingTag({id, level, children, disableAnchor, ...props}) {
      id={anchor}>
       {disableAnchor ? null :
       <a
-       href={`#${this.anchor}`}
+       href={`#${anchor}`}
        className={style['anchor-link']}
        data-anchor-link="">
         <FaLink name="linkify" />
