@@ -9,21 +9,41 @@ import {makeZip, makeDownload} from '../../utils/download';
 function dumpReads(allReads) {
   const rows = [];
   const header = [
-    'gene', 'position', 'totalReads',
-    'codon', 'reads', 'aminoAcid', 'percent'
+    'gene',
+    'position',
+    'totalReads',
+    'codon',
+    'reads',
+    'aminoAcid',
+    'percent'
   ];
   for (let {
-    gene, position, totalReads,
-    allCodonReads, aminoAcid
+    gene, position, totalReads, allCodonReads
   } of allReads) {
     for (const {codon, reads} of allCodonReads) {
-      if (!aminoAcid) {
-        aminoAcid = translateCodon(codon);
+      let aminoAcid;
+      const codonWithoutGap = codon.replace(/-/g, '');
+      if (codonWithoutGap === '') {
+        aminoAcid = 'del';
+      }
+      else if (codonWithoutGap.length > 5) {
+        aminoAcid = 'ins';
+      }
+      else if (codonWithoutGap.length < 3) {
+        aminoAcid = 'X';
+      }
+      else {
+        aminoAcid = translateCodon(codonWithoutGap.slice(0, 3));
       }
       const percent = (reads / totalReads).toFixed(3);
       rows.push({
-        gene, position, totalReads,
-        codon, reads, aminoAcid, percent
+        gene,
+        position,
+        totalReads,
+        codon,
+        reads,
+        aminoAcid,
+        percent
       });
     }
   }
@@ -33,7 +53,7 @@ function dumpReads(allReads) {
     }
     await (await callback)(name, rows);
   } */
-  
+
   return (
     `${tsvStringify(header)}\n` +
     `${rows.map(row => tsvStringify(row, {

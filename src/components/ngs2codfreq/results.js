@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import {useDownloadCodFreqs} from '../report';
@@ -6,6 +7,13 @@ import InlineLoader from '../inline-loader';
 // import ProgressBar from 'react-progressbar';
 
 import style from './style.module.scss';
+
+
+NGSResults.propTypes = {
+  progressLookup: PropTypes.object,
+  className: PropTypes.string,
+  onAnalyze: PropTypes.func
+};
 
 
 export default function NGSResults({progressLookup, className, onAnalyze}) {
