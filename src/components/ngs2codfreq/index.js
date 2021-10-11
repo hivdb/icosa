@@ -23,7 +23,7 @@ function updateProgress({
   }
   if (loaded) {
     onLoad && onLoad(codfreqs);
-    return true;  // should break
+    return true; // should break
   }
   return false;
 }
@@ -63,7 +63,7 @@ export default function NGS2CodFreq({
         mounted = false;
       };
     },
-    [taskKey /* eslint-disable-line react-hooks/exhaustive-deps */]
+    [taskKey/* eslint-disable-line react-hooks/exhaustive-deps */]
   );
 
   const handleSubmit = React.useCallback(

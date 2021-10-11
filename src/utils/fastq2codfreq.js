@@ -54,8 +54,7 @@ async function * uploadFile(file, url, fields) {
       }
     })
     .then(() => resolve([1, null]))
-    .catch((e) => handleResponseError(e))
-  );
+    .catch((e) => handleResponseError(e)));
   let prevCount = 0;
   while (progress !== null) {
     const payload = await progress;
@@ -94,7 +93,8 @@ async function * uploadFiles(taskKey, filePairs) {
   let resp;
   try {
     resp = await axios.post(
-      `${API_SERVER}/direct-upload`, {taskKey, fileNames}
+      `${API_SERVER}/direct-upload`,
+      {taskKey, fileNames}
     );
   } catch (e) {
     handleResponseError(e);
@@ -128,15 +128,13 @@ async function triggerRunner(taskKey, filePairs) {
   );
 
   try {
-    await axios.post(
-      `${API_SERVER}/trigger-runner`, {
-        taskKey,
-        runners: [{
-          profile: 'SARS2.json'
-        }],
-        pairInfo
-      }
-    );
+    await axios.post(`${API_SERVER}/trigger-runner`, {
+      taskKey,
+      runners: [{
+        profile: 'SARS2.json'
+      }],
+      pairInfo
+    });
   } catch (e) {
     handleResponseError(e);
   }
@@ -169,7 +167,7 @@ async function * fetchRunnerProgress(taskKey) {
           fn = fn.split('/');
           return fn[fn.length - 1];
         });
-        const fnamesText =fnames.join(', ');
+        const fnamesText = fnames.join(', ');
         if (count > (prevCounts[fnamesText] || 0)) {
           yield {
             step: `process-${ecsTaskId}-${fnamesText}`,
@@ -195,12 +193,10 @@ async function * fetchRunnerLogs(taskKey) {
   while (true) {
     let resp;
     try {
-      resp = await axios.post(
-        `${API_SERVER}/fetch-runner-logs`, {
-          taskKey,
-          ...(startTime ? {startTime: startTime.join(',')} : {})
-        }
-      );
+      resp = await axios.post(`${API_SERVER}/fetch-runner-logs`, {
+        taskKey,
+        ...(startTime ? {startTime: startTime.join(',')} : {})
+      });
     } catch (e) {
       handleResponseError(e);
     }
@@ -238,15 +234,81 @@ async function * fetchRunnerLogs(taskKey) {
 async function fetchCodfreqs(taskKey) {
   let resp;
   try {
-    resp = await axios.post(
-      `${API_SERVER}/fetch-codfreqs`, {
+    resp = await fetch(`${API_SERVER}/fetch-codfreqs`, {
+      method: 'POST',
+      body: JSON.stringify({
         taskKey
-      }
-    );
+      })
+    });
   } catch (e) {
     handleResponseError(e);
   }
-  return resp.data.codfreqs;
+  const beginMarker = '"codfreqs": [';
+  const sepMarker = ', ';
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  const codfreqs = [];
+  let buffer = '';
+  let begin = false;
+  let allDone = false;
+  let numBraces = 0;
+  let unprocessedText = '';
+
+  // The response from fetch-codfreqs can be very huge,
+  // following is a hack way to extract each codfreq and
+  // parse them separatedly.
+  do {
+    const {done, value} = await reader.read();
+    let text = unprocessedText + decoder.decode(value);
+    if (begin) {
+      unprocessedText = '';
+    }
+    else {
+      const idx = text.indexOf(beginMarker);
+      if (idx < 0) {
+        unprocessedText = text;
+        continue;
+      }
+      text = text.slice(idx + beginMarker.length);
+      begin = true;
+    }
+    let offset = 0;
+    do {
+      let openIdx = text.indexOf('{', offset);
+      let closeIdx = text.indexOf('}', offset);
+      openIdx = openIdx > -1 ? openIdx : text.length;
+      closeIdx = closeIdx > -1 ? closeIdx : text.length + 1;
+      if (openIdx < text.length && openIdx < closeIdx) {
+        numBraces ++;
+        offset = openIdx + 1;
+      }
+      else if (closeIdx < text.length && closeIdx < openIdx) {
+        numBraces --;
+        offset = closeIdx + 1;
+      }
+      else {
+        offset = text.length;
+      }
+    } while (numBraces > 0 && offset < text.length);
+    buffer += text.slice(0, offset);
+    if (numBraces === 0) {
+      codfreqs.push(JSON.parse(buffer));
+      const remains = text.slice(offset);
+      if (remains.startsWith(sepMarker)) {
+        buffer = '';
+        unprocessedText = remains.slice(sepMarker.length);
+      }
+      else {
+        allDone = true;
+        break;
+      }
+    }
+    if (done) {
+      allDone = true;
+      break;
+    }
+  } while (!allDone);
+  return codfreqs;
 }
 
 
