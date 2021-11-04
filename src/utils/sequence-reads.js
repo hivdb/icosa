@@ -44,9 +44,7 @@ export function buildGeneValidator(geneValidatorDefs) {
 }
 
 
-function parseAAVF(
-  name, rows, geneValidator
-) {
+function parseAAVF(name, rows, geneValidator) {
   const gpMap = {};
   const gpRefMap = {};
   for (let row of rows) {
@@ -57,7 +55,7 @@ function parseAAVF(
     if (row[0].startsWith('#') || !row.some(c => !!c)) {
       continue;
     }
-    let [, gene, pos,,,,altFreq, coverage, info] = row;
+    let [, gene, pos,,,, altFreq, coverage, info] = row;
     pos = parseInt(pos, 10);
     if (isNaN(pos)) {
       continue;
@@ -80,7 +78,7 @@ function parseAAVF(
     for (const infochunk of info.split(/;/g)) {
       let [key, val] = infochunk.split(/=/g);
       key = key.trim();
-      switch(key) {
+      switch (key) {
         case 'RC':
           refCodon = val.trim().toUpperCase();
           break;
@@ -124,13 +122,14 @@ function parseAAVF(
     const allCodonReads = (
       altCodons
         .map((codon, idx) => ({
-          codon: codon, reads: altCodonCounts[idx] || 0
+          codon, reads: altCodonCounts[idx] || 0
         }))
         .filter(({codon}) => codon !== refCodon)
     );
     if (!(gpKey in gpMap)) {
       gpMap[gpKey] = {
-        gene, position: pos,
+        gene,
+        position: pos,
         totalReads: coverage,
         allCodonReads: []
       };
@@ -163,8 +162,14 @@ function parseAAVF(
 
 function detectCodFreqDialect(firstRow) {
   if (isEqual(firstRow, [
-    'gene', 'pos', 'depth', 'codon',
-    'v_count', 'v_name', 'depth_F', 'v_fwd'
+    'gene',
+    'pos',
+    'depth',
+    'codon',
+    'v_count',
+    'v_name',
+    'depth_F',
+    'v_fwd'
   ])) {
     return 'virolab';
   }
@@ -174,9 +179,7 @@ function detectCodFreqDialect(firstRow) {
 }
 
 
-function parseCodFreq(
-  name, rows, geneValidator
-) {
+function parseCodFreq(name, rows, geneValidator) {
   const gpMap = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
   const [firstRow] = rows;
@@ -224,8 +227,10 @@ function parseCodFreq(
       const gpKey = `${gene}$$##$$${aaPos}`;
       if (!(gpKey in gpMap)) {
         gpMap[gpKey] = {
-          gene, position: aaPos,
-          totalReads, allCodonReads: []
+          gene,
+          position: aaPos,
+          totalReads,
+          allCodonReads: []
         };
       }
       gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
@@ -244,8 +249,10 @@ function parseCodFreq(
         const gpKey = `${gene}$$##$$${pos}`;
         if (!(gpKey in gpMap)) {
           gpMap[gpKey] = {
-            gene, position: pos,
-            totalReads, allCodonReads: []
+            gene,
+            position: pos,
+            totalReads,
+            allCodonReads: []
           };
         }
         gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
@@ -296,9 +303,7 @@ function parseUntransRegions(rows) {
 }
 
 
-export function parseSequenceReads(
-  name, data, geneValidator
-) {
+export function parseSequenceReads(name, data, geneValidator) {
   const [
     untranslatedRegions,
     unparsedRows
@@ -307,9 +312,7 @@ export function parseSequenceReads(
   let rows;
   if (isTSV) {
     if (unparsedRows[0].startsWith('##fileformat=AAVF')) {
-      return parseAAVF(
-        name, unparsedRows, geneValidator
-      );
+      return parseAAVF(name, unparsedRows, geneValidator);
     }
     else {
       rows = unparsedRows.map(tsvrow);

@@ -21,7 +21,7 @@ export default function useAddParams({
       else {
         return [
           allSequenceReads.map(sr => ({
-            ...sr,  // deep-copy to avoid cache
+            ...sr, // deep-copy to avoid cache
             strain,
             maxMixtureRate,
             minPrevalence,
