@@ -193,7 +193,7 @@ ul.sequence-reads-preview {
   min-height: 7.8rem;
   max-height: 23.4rem;
   overflow: auto;
-  margin-left: 0;
+  margin: 0 2px 1rem;
   padding-left: 0;
   position: relative;
   &:before {
@@ -251,5 +251,25 @@ ul.sequence-reads-preview {
     }
     width: 6.5rem;
     white-space: nowrap;
+  }
+}
+
+.dropzone {
+  position: relative;
+}
+
+.loading-mask {
+  padding: 1rem 2rem;
+  font-size: 3rem;
+  background-color: rgba(0,0,0,.05);
+  margin: 0 2px 1rem;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  &:not([data-loading]) {
+    display: none;
   }
 }

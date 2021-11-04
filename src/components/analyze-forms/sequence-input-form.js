@@ -118,7 +118,7 @@ export default class SequenceInputForm extends React.Component {
 
   handleUpload = (filelist) => {
     const file = filelist[0];
-    if (!file || !(/^text\/.+$|^$/.test(file.type))) {
+    if (!file || !(/^text\/.+$|^application\/x-gzip$|^$/.test(file.type))) {
       return;
     }
     /*let fileName = file.name;
@@ -226,7 +226,11 @@ export default class SequenceInputForm extends React.Component {
           <FileInput
            onChange={this.handleUpload}
            name="fasta-file"
-           accept="text/plain,text/x-fasta,.fasta,.fas,.fna" />
+           accept={
+             "application/x-gzip,text/plain,text/x-fasta," +
+             ".gz," +
+             ".fasta,.fas,.fna"
+           } />
           <span className={style['file-options']}>
             {!showExamples && exampleFasta && exampleFasta.length > 0 ?
               <Link
@@ -261,18 +265,18 @@ export default class SequenceInputForm extends React.Component {
             <legend>Output options</legend>
             <div>
               {Object.entries(outputOptions)
-               .sort()
-               .map(([value, {label}], idx) => (
-                 <RadioInput
-                  key={idx}
-                  id={`output-options-${idx}`}
-                  name="output-options"
-                  value={value}
-                  onChange={this.handleOOChange}
-                  checked={value === outputOption}>
-                   {label}
-                 </RadioInput>
-               ))}
+                .sort()
+                .map(([value, {label}], idx) => (
+                  <RadioInput
+                   key={idx}
+                   id={`output-options-${idx}`}
+                   name="output-options"
+                   value={value}
+                   onChange={this.handleOOChange}
+                   checked={value === outputOption}>
+                    {label}
+                  </RadioInput>
+                ))}
             </div>
             {hasOptionChild ?
               <div className={style.children}>
@@ -280,22 +284,21 @@ export default class SequenceInputForm extends React.Component {
                  className={style['input-label']}
                  htmlFor="output-options-child">Select outputs: </label>
                 {outputOptions[outputOption].subOptions
-                .map((label, idx) => (
-                  <CheckboxInput
-                   id={`output-options-child-${idx}`}
-                   name="output-option-children"
-                   key={idx} value={idx}
-                   onChange={this.handleOOChildChange}
-                   checked={outputSubOptions.has(idx)}>
-                    {label}
-                  </CheckboxInput>
-                ))}
+                  .map((label, idx) => (
+                    <CheckboxInput
+                     id={`output-options-child-${idx}`}
+                     name="output-option-children"
+                     key={idx} value={idx}
+                     onChange={this.handleOOChildChange}
+                     checked={outputSubOptions.has(idx)}>
+                      {label}
+                    </CheckboxInput>
+                  ))}
               </div> : null}
-          </fieldset>
-          : null}
+          </fieldset> :
+          null}
         {childrenPlacement === 'bottom' ? children : null}
-        <div className={classNames(
-          style['loading-modal'], isSubmitting ?
+        <div className={classNames(style['loading-modal'], isSubmitting ?
           null : style.hidden)
         }>
           <div className={style.inner}>

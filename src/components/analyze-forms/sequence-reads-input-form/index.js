@@ -23,8 +23,12 @@ import style from '../style.module.scss';
 import useOutputOptions from './use-output-options';
 
 const SUPPORT_FORMATS =
-  "text/tsv, text/plain, " +
-  ".tsv, .txt, .codfreq, .codfish, .aavf";
+  "application/x-gzip, " +
+  "text/csv, " +
+  "text/tab-separated-values, " +
+  "text/plain, " +
+  ".csv, .tsv, .txt, .codfreq, .codfish, .aavf" +
+  ".csv.gz, .tsv.gz, .txt.gz, .codfreq.gz, .codfish.gz, .aavf.gz";
 
 const SUFFIX_PATTERN = (
   /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
@@ -45,6 +49,7 @@ function SequenceReadsInputForm(props) {
     outputOptionElement
   } = useOutputOptions(props);
 
+  const [loading, setLoading] = React.useState(false);
   const [config, isConfigPending] = ConfigContext.use();
   const [isSubmitting, setSubmitting] = React.useState(false);
   const [optionResult, setOptionResult] = React.useState(null);
@@ -61,9 +66,7 @@ function SequenceReadsInputForm(props) {
       let validated = true;
       let state = {};
       if (onSubmit) {
-        [validated, state] = await onSubmit(
-          e, allSequenceReads
-        );
+        [validated, state] = await onSubmit(e, allSequenceReads);
       }
       if (validated) {
         if (outputOption.name.startsWith('__')) {
@@ -103,6 +106,7 @@ function SequenceReadsInputForm(props) {
   const handleLoadExamples = React.useCallback(
     async (e) => {
       e && e.preventDefault();
+      setLoading(true);
       const geneValidator = buildGeneValidator(config.geneValidatorDefs);
       const allSequenceReads = [];
       for (const url of exampleCodonReads) {
@@ -117,12 +121,14 @@ function SequenceReadsInputForm(props) {
         ));
       }
       setAllSeqReads(allSequenceReads);
+      setLoading(false);
     },
     [setAllSeqReads, config, exampleCodonReads]
   );
 
   const handleUpload = React.useCallback(
     async (fileList) => {
+      setLoading(true);
       const knownFiles = new Set();
       const geneValidator = buildGeneValidator(config.geneValidatorDefs);
       for (const {name} of allSequenceReads) {
@@ -144,6 +150,7 @@ function SequenceReadsInputForm(props) {
             data,
             geneValidator
           ));
+          setAllSeqReads([...allSequenceReads]);
         }
       }
       if (unsupportedFiles.length > 0) {
@@ -152,7 +159,7 @@ function SequenceReadsInputForm(props) {
           unsupportedFiles.join('\n - ')
         );
       }
-      setAllSeqReads([...allSequenceReads]);
+      setLoading(false);
     },
     [config, setAllSeqReads, allSequenceReads]
   );
@@ -168,7 +175,10 @@ function SequenceReadsInputForm(props) {
     },
     [allSequenceReads, setAllSeqReads]
   );
-  const allowSubmit = allSequenceReads.length > 0;
+  const allowSubmit = (
+    !loading &&
+    allSequenceReads.length > 0
+  );
 
   if (isConfigPending) {
     return <InlineLoader />;
@@ -203,30 +213,36 @@ function SequenceReadsInputForm(props) {
       <Dropzone
        accept={SUPPORT_FORMATS}
        onDrop={(acceptedFiles) => handleUpload(acceptedFiles)}>
-        {({getRootProps, getInputProps, isDragActive}) => <>
-          <input {...getInputProps()} />
-          <ul
-           data-drag-active={isDragActive}
-           data-placeholder={
-             config.messages['seqreads-analysis-form-placeholder']
-           }
-           {...getRootProps({className: style['sequence-reads-preview']})}>
-            {allSequenceReads.map((sr, idx) => (
-              <li key={`codfreq-${idx}`}>
-                <FaRegFileAlt className={style['file-icon']} />
-                <br />
-                <span className={style['file-name']}>{sr.name}</span>
-                <FaTimesCircle
-                 onClick={handleRemove(idx)}
-                 className={style.remove} />
-              </li>
-            ))}
-          </ul>
-        </>}
+        {({getRootProps, getInputProps, isDragActive}) => (
+          <div className={style.dropzone}>
+            <input {...getInputProps()} />
+            <ul
+             data-drag-active={isDragActive}
+             data-placeholder={
+               config.messages['seqreads-analysis-form-placeholder']
+             }
+             {...getRootProps({className: style['sequence-reads-preview']})}>
+              {allSequenceReads.map((sr, idx) => (
+                <li key={`codfreq-${idx}`}>
+                  <FaRegFileAlt className={style['file-icon']} />
+                  <br />
+                  <span className={style['file-name']}>{sr.name}</span>
+                  <FaTimesCircle
+                   onClick={handleRemove(idx)}
+                   className={style.remove} />
+                </li>
+              ))}
+            </ul>
+            <div
+             className={style['loading-mask']}
+             {...(loading ? {'data-loading': ''} : null)}>
+              <InlineLoader />
+            </div>
+          </div>
+        )}
       </Dropzone>
       {outputOptionElement}
-      <div className={classNames(
-        style['loading-modal'], isSubmitting ?
+      <div className={classNames(style['loading-modal'], isSubmitting ?
         null : style.hidden)
       }>
         <div className={style.inner}>
@@ -235,7 +251,7 @@ function SequenceReadsInputForm(props) {
       </div>
     </BaseForm>
   );
-  
+
 }
 
 SequenceReadsInputForm.propTypes = {

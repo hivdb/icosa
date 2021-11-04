@@ -40,6 +40,7 @@
     "create-hash": "1.2.0",
     "farce": "^0.4.1",
     "fast-memoize": "^2.5.2",
+    "fflate": "^0.7.1",
     "flexbox-grid-mixins": "^0.2.1",
     "griddle-react": "^1.13.1",
     "jszip": "^3.4.0",
