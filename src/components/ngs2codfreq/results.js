@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
-import {useDownloadCodFreqs} from '../report';
+import {downloadCodfreqs} from '../../utils/fastq2codfreq';
 import InlineLoader from '../inline-loader';
 // import ProgressBar from 'react-progressbar';
 
@@ -10,17 +10,30 @@ import style from './style.module.scss';
 
 
 NGSResults.propTypes = {
+  taskKey: PropTypes.string.isRequired,
   progressLookup: PropTypes.object,
   className: PropTypes.string,
   onAnalyze: PropTypes.func
 };
 
 
-export default function NGSResults({progressLookup, className, onAnalyze}) {
+export default function NGSResults({
+  taskKey,
+  progressLookup,
+  className,
+  onAnalyze
+}) {
   const allProgress = Object.values(progressLookup);
   const finalStep = allProgress.find(({step}) => step === 'finish-task');
   const {codfreqs} = finalStep || {codfreqs: []};
-  const {onDownload} = useDownloadCodFreqs(codfreqs);
+
+  const onDownload = React.useCallback(
+    e => {
+      e && e.preventDefault();
+      downloadCodfreqs(taskKey);
+    },
+    [taskKey]
+  );
 
   const handleAnalyze = React.useCallback(
     e => {

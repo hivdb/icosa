@@ -1,6 +1,8 @@
 import axios from 'axios';
 import sleep from 'sleep-promise';
 
+import {makeDownload} from './download';
+
 const API_SERVER = 'https://codfreq-api.hivdb.org';
 
 
@@ -228,6 +230,27 @@ async function * fetchRunnerLogs(taskKey) {
     startTime = newStartTime;
     await sleep(5000);
   }
+}
+
+
+export async function downloadCodfreqs(taskKey) {
+  let resp;
+  try {
+    resp = await fetch(`${API_SERVER}/fetch-codfreqs-zip`, {
+      method: 'POST',
+      body: JSON.stringify({
+        taskKey
+      })
+    });
+  } catch (e) {
+    handleResponseError(e);
+  }
+  makeDownload(
+    'codfreqs.zip',
+    'application/zip',
+    await resp.blob(),
+    true
+  );
 }
 
 

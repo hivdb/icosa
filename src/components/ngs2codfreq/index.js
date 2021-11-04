@@ -89,6 +89,7 @@ export default function NGS2CodFreq({
   if (progressLookup['create-task']) {
     return (
       <NGSResults
+       taskKey={taskKey}
        className={className}
        onAnalyze={onAnalyze}
        progressLookup={progressLookup} />
