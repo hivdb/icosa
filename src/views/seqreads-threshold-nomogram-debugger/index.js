@@ -9,14 +9,18 @@ export default function SeqReadsTresholdNomogramDebugger() {
   const {
     cutoffKeyPoints,
     maxMixtureRate: mixtureRateThreshold,
-    minPrevalence: minPrevalenceThreshold
+    minPrevalence: minPrevalenceThreshold,
+    mixtureRate: mixtureRateActual,
+    actualMinPrevalence: minPrevalenceActual
   } = report;
 
   return (
     <Nomogram {...{
       cutoffKeyPoints,
       mixtureRateThreshold,
-      minPrevalenceThreshold
+      minPrevalenceThreshold,
+      mixtureRateActual,
+      minPrevalenceActual
     }}/>
   );
 

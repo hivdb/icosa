@@ -5,6 +5,7 @@ import CutoffCurve from './cutoff-curve';
 import MixtureRateAxis, {useMixtureRateScale} from './mixture-rate-axis';
 import MinPrevalenceAxis, {useMinPrevalenceScale} from './min-prevalence-axis';
 import ThresholdLine from './threshold-line';
+import ActualThreshold from './actual-threshold';
 
 
 const CutoffKeyPoint = PropTypes.shape({
@@ -21,7 +22,8 @@ SeqReadsThresholdNomogram.propTypes = {
   ).isRequired,
   mixtureRateThreshold: PropTypes.number.isRequired,
   minPrevalenceThreshold: PropTypes.number.isRequired,
-
+  mixtureRateActual: PropTypes.number.isRequired,
+  minPrevalenceActual: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   mixtureRateDomain: PropTypes.arrayOf(
@@ -53,6 +55,8 @@ export default function SeqReadsThresholdNomogram({
   cutoffKeyPoints,
   mixtureRateThreshold,
   minPrevalenceThreshold,
+  mixtureRateActual,
+  minPrevalenceActual,
   width,
   height,
   mixtureRateDomain,
@@ -105,6 +109,11 @@ export default function SeqReadsThresholdNomogram({
        scaleX={mixtureRateScale}
        scaleY={minPrevalenceScale}
        color="#1c75d4" />
+      <ActualThreshold
+       thresholdX={mixtureRateActual}
+       thresholdY={minPrevalenceActual}
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale} />
     </svg>
   );
 }

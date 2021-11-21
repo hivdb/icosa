@@ -15,7 +15,7 @@ export function useMinPrevalenceScale({
     constants.paddingV -
     constants.axisTitleFontSize -
     2 * constants.axisTitlePadding -
-    constants.axisLabelFontSize -
+    constants.xAxisLabelHeight -
     constants.axisTickSize
   );
   const axisEnd = constants.paddingV;
@@ -111,5 +111,15 @@ export default function MinPrevalenceAxis({
         {pcntFormat(tick)}
       </text>
     ))}
+    <text
+     writing-mode="vertical-rl"
+     transform="rotate(-180)"
+     x={- constants.paddingH}
+     y={- scale.range().reduce((a, b) => a + b, 0) / 2}
+     fontSize={constants.axisTitleFontSize}
+     fill="#000"
+     textAnchor="middle">
+      Mutation detection threshold
+    </text>
   </g>;
 }

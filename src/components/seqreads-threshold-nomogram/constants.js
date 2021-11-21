@@ -5,10 +5,14 @@ const constants = {
   axisTickSize: 5,
   axisTitleFontSize: 16,
   axisTitlePadding: 4,
-  yAxisLabelWidth: 40,
+  yAxisLabelWidth: 25,
+  xAxisLabelHeight: 20,
   axisStrokeWidth: 1,
   xAxisOffsetV: 5,
-  yAxisOffsetH: -5
+  yAxisOffsetH: -5,
+  actualThresholdRadius: 4,
+  actualThresholdArrowLineSize: 15,
+  actualThresholdFontSize: 12
 };
 
 export default constants;

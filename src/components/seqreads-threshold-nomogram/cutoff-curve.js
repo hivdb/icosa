@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {line, curveStepBefore} from 'd3-shape';
+import {line, /*curveMonotoneX, */curveStepBefore} from 'd3-shape';
 
 
 function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}) {
   return React.useMemo(
     () => line()
       .curve(curveStepBefore)
+      // .curve(curveMonotoneX)
       .x(d => mixtureRateScale(d.mixtureRate))
       .y(d => minPrevalenceScale(d.minPrevalence)),
     [minPrevalenceScale, mixtureRateScale]

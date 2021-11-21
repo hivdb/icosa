@@ -92,7 +92,7 @@ export default function MixtureRateAxis({
     constants.paddingV -
     constants.axisTitleFontSize -
     2 * constants.axisTitlePadding -
-    constants.axisLabelFontSize -
+    constants.xAxisLabelHeight -
     constants.axisTickSize +
     constants.xAxisOffsetV
   );
@@ -120,5 +120,13 @@ export default function MixtureRateAxis({
         {pcntFormat(tick)}
       </text>
     ))}
+    <text
+     x={scale.range().reduce((a, b) => a + b, 0) / 2}
+     y={height - constants.paddingV}
+     fontSize={constants.axisTitleFontSize}
+     fill="#000"
+     textAnchor="middle">
+      Nucleotide mixture threshold
+    </text>
   </g>;
 }
