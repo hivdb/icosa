@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import CutoffCurve from './cutoff-curve';
 import MixtureRateAxis, {useMixtureRateScale} from './mixture-rate-axis';
 import MinPrevalenceAxis, {useMinPrevalenceScale} from './min-prevalence-axis';
+import ThresholdLine from './threshold-line';
 
 
 const CutoffKeyPoint = PropTypes.shape({
@@ -83,6 +85,26 @@ export default function SeqReadsThresholdNomogram({
        {...sizeProps}
        scale={minPrevalenceScale}
        ticks={minPrevalenceTicks} />
+      <CutoffCurve
+       {...{
+         mixtureRateScale,
+         minPrevalenceScale,
+         cutoffKeyPoints
+       }} />
+      <ThresholdLine
+       direction="vertical"
+       threshold={mixtureRateThreshold}
+       thresholdCmp="<"
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale}
+       color="#cf0a17" />
+      <ThresholdLine
+       direction="horizontal"
+       threshold={minPrevalenceThreshold}
+       thresholdCmp=">"
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale}
+       color="#1c75d4" />
     </svg>
   );
 }
