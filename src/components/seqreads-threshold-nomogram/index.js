@@ -1,0 +1,88 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import MixtureRateAxis, {useMixtureRateScale} from './mixture-rate-axis';
+import MinPrevalenceAxis, {useMinPrevalenceScale} from './min-prevalence-axis';
+
+
+const CutoffKeyPoint = PropTypes.shape({
+  mixtureRate: PropTypes.number.isRequired,
+  minPrevalence: PropTypes.number.isRequired,
+  isAboveMixtureRateThreshold: PropTypes.bool.isRequired,
+  isBelowMinPrevalenceThreshold: PropTypes.bool.isRequired
+});
+
+
+SeqReadsThresholdNomogram.propTypes = {
+  cutoffKeyPoints: PropTypes.arrayOf(
+    CutoffKeyPoint.isRequired
+  ).isRequired,
+  mixtureRateThreshold: PropTypes.number.isRequired,
+  minPrevalenceThreshold: PropTypes.number.isRequired,
+
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  mixtureRateDomain: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  minPrevalenceDomain: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  mixtureRateTicks: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  minPrevalenceTicks: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired
+
+};
+
+SeqReadsThresholdNomogram.defaultProps = {
+  width: 800,
+  height: 400,
+  mixtureRateDomain: [0, 0.02],
+  minPrevalenceDomain: [0, 0.3],
+  mixtureRateTicks: [0, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02],
+  minPrevalenceTicks: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+};
+
+
+export default function SeqReadsThresholdNomogram({
+  cutoffKeyPoints,
+  mixtureRateThreshold,
+  minPrevalenceThreshold,
+  width,
+  height,
+  mixtureRateDomain,
+  minPrevalenceDomain,
+  mixtureRateTicks,
+  minPrevalenceTicks
+}) {
+  const sizeProps = {
+    width,
+    height
+  };
+  const mixtureRateScale = useMixtureRateScale({
+    ...sizeProps,
+    mixtureRateDomain
+  });
+  const minPrevalenceScale = useMinPrevalenceScale({
+    ...sizeProps,
+    minPrevalenceDomain
+  });
+
+  return (
+    <svg
+     fontFamily='"Source Sans Pro", "Helvetica Neue", Helvetica'
+     viewBox={`0 0 ${width} ${height}`}>
+      <MixtureRateAxis
+       {...sizeProps}
+       scale={mixtureRateScale}
+       ticks={mixtureRateTicks} />
+      <MinPrevalenceAxis
+       {...sizeProps}
+       scale={minPrevalenceScale}
+       ticks={minPrevalenceTicks} />
+    </svg>
+  );
+}

@@ -10,6 +10,8 @@ import NGS2CodFreqDev from './views/ngs2codfreq-dev';
 import MarkdownDebugger from './views/markdown-debugger';
 import MarkdownDebugger2 from './views/markdown-debugger2';
 import DebugRefDataLoader from './components/debug-ref-data-loader';
+import SeqReadsThresholdNomogramDebugger from
+  './views/seqreads-threshold-nomogram-debugger';
 import config from './config';
 
 const routes = (
@@ -19,6 +21,9 @@ const routes = (
       <Route Component={NGS2CodFreqDev} path="ngs2codfreq" />
       <Route Component={MarkdownDebugger} path="markdown-debugger" />
       <Route Component={MarkdownDebugger2} path="markdown-debugger2" />
+      <Route
+       Component={SeqReadsThresholdNomogramDebugger}
+       path="seqreads-threshold-nomogram-debugger" />
       {SARS2Routes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
