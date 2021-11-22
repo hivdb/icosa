@@ -23,6 +23,7 @@ export default function ActualThreshold({
   const cx = scaleX(thresholdX);
   const cy = scaleY(thresholdY);
   const {
+    strokeWidth,
     actualThresholdArrowLineSize: lineSize,
     actualThresholdRadius: radius,
     actualThresholdFontSize: fontSize
@@ -48,6 +49,7 @@ export default function ActualThreshold({
      cy={cy}
      r={radius}
      stroke={MAIN_COLOR}
+     strokeWidth={strokeWidth}
      fill="#fcdb03" />
     <line
      x1={cx + lineSize + radius * 1.5}
@@ -55,7 +57,7 @@ export default function ActualThreshold({
      y1={cy - lineSize - radius * 1.5}
      y2={cy - radius * 1.5}
      stroke={MAIN_COLOR}
-     strokeWidth="1"
+     strokeWidth={strokeWidth}
      markerEnd="url(#pointer)" />
     <text
      x={cx + lineSize + radius * 2}

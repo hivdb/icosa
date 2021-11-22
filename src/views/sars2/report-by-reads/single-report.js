@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 
 import {
   // DRInterpretation, DRMutationScores,
@@ -39,12 +38,24 @@ function useCoverages({allReads}) {
 }
 
 
+SingleSeqReadsReport.propTypes = {
+  cmtVersion: PropTypes.string,
+  antibodies: PropTypes.array.isRequired,
+  drdbLastUpdate: PropTypes.string,
+  inputSequenceReads: PropTypes.object.isRequired,
+  sequenceReadsResult: PropTypes.object,
+  output: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func.isRequired
+};
+
+
 function SingleSeqReadsReport({
   cmtVersion,
   antibodies,
   drdbLastUpdate,
-  match,
-  router,
   inputSequenceReads,
   sequenceReadsResult,
   output,
@@ -83,6 +94,7 @@ function SingleSeqReadsReport({
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />
+            <SeqSummary.ThresholdNomogram />
           </SeqSummary>
           <ReportSection title="Sequence quality assessment">
             <MutViewer {...{
@@ -141,17 +153,6 @@ function SingleSeqReadsReport({
   );
 
 }
-
-SingleSeqReadsReport.propTypes = {
-  antibodies: PropTypes.array.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  inputSequenceReads: PropTypes.object.isRequired,
-  sequenceReadsResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired
-};
 
 
 export default React.memo(

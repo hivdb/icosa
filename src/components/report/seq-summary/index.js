@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {useRouter, matchShape, routerShape} from 'found';
 
 import ConfigContext from '../../../utils/config-context';
+import {CutoffKeyPoint} from '../../seqreads-threshold-nomogram';
 
 import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
@@ -21,6 +22,7 @@ import MinPrevalenceReal from './min-prevalence';
 import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
 import MedianReadDepthReal from './median-read-depth';
+import ThresholdNomogramReal from './threshold-nomogram';
 
 
 const SDRMs = () => null;
@@ -37,6 +39,7 @@ const MinPrevalence = () => null;
 const MinCodonReads = () => null;
 const MinPositionReads = () => null;
 const MedianReadDepth = () => null;
+const ThresholdNomogram = () => null;
 
 
 SeqSummary.propTypes = {
@@ -45,6 +48,7 @@ SeqSummary.propTypes = {
   router: routerShape.isRequired,
   output: PropTypes.string,
   name: PropTypes.string,
+  cutoffKeyPoints: PropTypes.arrayOf(CutoffKeyPoint.isRequired).isRequired,
   maxMixtureRate: PropTypes.number,
   minPrevalence: PropTypes.number,
   minCodonReads: PropTypes.number,
@@ -70,6 +74,7 @@ function SeqSummary(props) {
     router,
     output,
     name,
+    cutoffKeyPoints,
     maxMixtureRate,
     minPrevalence,
     minCodonReads,
@@ -217,6 +222,14 @@ function SeqSummary(props) {
       {showPrettyPairwise &&
         children.some(child => child.type === PrettyPairwise) &&
         <PrettyPairwiseList {...{geneSeqs}} />}
+      {children.some(child => child.type === ThresholdNomogram) &&
+        <ThresholdNomogramReal {...{
+          cutoffKeyPoints,
+          maxMixtureRate,
+          minPrevalence,
+          mixtureRate,
+          actualMinPrevalence
+        }} />}
     </section>
   );
 
@@ -281,5 +294,6 @@ SeqSummaryWrapper.MaxMixtureRate = MaxMixtureRate;
 SeqSummaryWrapper.MinPrevalence = MinPrevalence;
 SeqSummaryWrapper.MinCodonReads = MinCodonReads;
 SeqSummaryWrapper.MinPositionReads = MinPositionReads;
+SeqSummaryWrapper.ThresholdNomogram = ThresholdNomogram;
 
 export default SeqSummaryWrapper;

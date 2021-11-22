@@ -3,7 +3,7 @@ import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
-import SequenceAnalysisLayout from 
+import SequenceAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import {line, /*curveMonotoneX, */curveStepBefore} from 'd3-shape';
 
+import constants from './constants';
+
 
 function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}) {
   return React.useMemo(
@@ -45,6 +47,7 @@ export default function CutoffCurve({
     <path
      d={pathData}
      stroke="#000"
+     strokeWidth={constants.strokeWidth}
      fill="none" />
   </g>;
 }

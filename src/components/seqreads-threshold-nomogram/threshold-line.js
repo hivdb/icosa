@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import constants from './constants';
+
 
 ThresholdLine.propTypes = {
   direction: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
@@ -30,7 +32,8 @@ export default function ThresholdLine({
   const uniqId = `threshold-${direction}-${thresholdCmp}${threshold}`;
   const lineProps = {
     strokeDasharray,
-    stroke: color
+    stroke: color,
+    strokeWidth: constants.strokeWidth
   };
   const rectProps = {
     fill: `url(#${uniqId})`,

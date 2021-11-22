@@ -1,7 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
+
+
+MaxMixtureRate.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  config: PropTypes.shape({
+    seqReadsMaxMixtureRate: PropTypes.number.isRequired
+  }),
+  maxMixtureRate: PropTypes.number.isRequired,
+  mixtureRate: PropTypes.number.isRequired
+};
 
 
 function MaxMixtureRate({
@@ -11,6 +24,16 @@ function MaxMixtureRate({
   maxMixtureRate: curValue,
   mixtureRate: actualValue
 }) {
+
+  const handleChange = React.useCallback(
+    ({value: mixrate}) => {
+      const newLoc = {...match.location};
+      newLoc.query = newLoc.query ? newLoc.query : {};
+      newLoc.query.mixrate = mixrate;
+      router.push(newLoc);
+    },
+    [match.location, router]
+  );
 
   return <>
     <dt className={style['has-dropdown']}>
@@ -30,14 +53,7 @@ function MaxMixtureRate({
     </dd>
   </>;
 
-  function handleChange({value: mixrate}) {
-    const newLoc = {...match.location};
-    newLoc.query = newLoc.query ? newLoc.query : {};
-    newLoc.query.mixrate = mixrate;
-    router.push(newLoc);
-  }
-
 }
 
 
-export default React.memo(MaxMixtureRate);
+export default MaxMixtureRate;

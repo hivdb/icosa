@@ -107,7 +107,7 @@ export default function MixtureRateAxis({
      d={pathData}
      fill="none"
      stroke="#000"
-     strokeWidth={constants.axisStrokeWidth}
+     strokeWidth={constants.strokeWidth}
     />
     {ticks.map(tick => (
       <text

@@ -8,7 +8,7 @@ import ThresholdLine from './threshold-line';
 import ActualThreshold from './actual-threshold';
 
 
-const CutoffKeyPoint = PropTypes.shape({
+export const CutoffKeyPoint = PropTypes.shape({
   mixtureRate: PropTypes.number.isRequired,
   minPrevalence: PropTypes.number.isRequired,
   isAboveMixtureRateThreshold: PropTypes.bool.isRequired,

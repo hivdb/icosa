@@ -124,4 +124,51 @@
     }
   }
 
+  .threshold-nomogram {
+    $nomogram-width: 55rem;
+    $nomogram-width-s1: 50rem;
+    $nomogram-width-s2: 45rem;
+    $nomogram-width-s3: 40rem;
+    $nomogram-width-s4: 35rem;
+    $nomogram-min-left: 37rem;
+    position: relative;
+    height: 1rem;
+    clear: both;
+    > svg {
+      max-width: $nomogram-width;
+      position: absolute;
+      right: 0;
+      bottom: -1rem;
+    }
+
+    @media only screen and (max-width: 91rem) {
+      height: 3.5rem;
+      > svg {
+        max-width: $nomogram-width-s1;
+      }
+    }
+
+    @media only screen and (max-width: 77rem) {
+      height: 1.5rem;
+      > svg {
+        max-width: $nomogram-width-s2;
+      }
+    }
+
+    @media only screen and (max-width: 73rem) {
+      > svg {
+        max-width: $nomogram-width-s3;
+      }
+    }
+
+    @media only screen and (max-width: 69rem) {
+      height: auto;
+      > svg {
+        position: relative;
+        max-width: 100%;
+        left: 0;
+      }
+    }
+  }
+
 }
