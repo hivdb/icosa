@@ -72,7 +72,8 @@ const fragmentOptionShape = PropTypes.shape({
 const curAnnotNamesArray = PropTypes.arrayOf(PropTypes.string.isRequired);
 
 const curAnnotNameLookupShape = PropTypes.objectOf(
-  curAnnotNamesArray.isRequired);
+  curAnnotNamesArray.isRequired
+);
 
 export {
   annotShape,

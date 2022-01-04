@@ -10,6 +10,12 @@ import {geneToDrugClass} from './common';
 
 export default class PrevalenceData extends React.Component {
 
+  static propTypes = {
+    data: PropTypes.string.isRequired,
+    rowData: PropTypes.object.isRequired,
+    metadata: PropTypes.object.isRequired
+  }
+
   static contextTypes = {
     gene: PropTypes.string.isRequired
   }

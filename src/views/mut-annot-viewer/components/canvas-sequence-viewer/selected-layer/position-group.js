@@ -35,7 +35,7 @@ export default class PositionGroup extends React.Component {
         selectedBackgroundColor
       }
     } = this.props;
-    const bgColor = isAnchor ? 'transparent': selectedBackgroundColor;
+    const bgColor = isAnchor ? 'transparent' : selectedBackgroundColor;
 
     return (
       <Group {...pos2Coord(pos)}>

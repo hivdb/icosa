@@ -27,7 +27,8 @@ function useCurrentSelected({
         return {index: 0, name: allSequenceReads[0].name};
       }
       const index = Math.max(
-        0, allSequenceReads.findIndex(({name: seqH}) => seqH === name)
+        0,
+        allSequenceReads.findIndex(({name: seqH}) => seqH === name)
       );
       return {index, name: allSequenceReads[index].name};
     },

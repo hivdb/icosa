@@ -18,9 +18,7 @@ export default function GenomeViewerRoutes({
   colors,
   className
 } = {}) {
-  const wrapperClassName = makeClassNames(
-    style['genome-viewer'], className
-  );
+  const wrapperClassName = makeClassNames(style['genome-viewer'], className);
 
   return <Route path={pathPrefix} Component={wrapper}>
     <Route render={({props}) => {
@@ -39,15 +37,16 @@ export default function GenomeViewerRoutes({
        promise={promise}
        component={PresetSelection} />;
     }} />
-    <Route path=":name/" render={({props}) => {
-      const {match: {params: {name}}} = props;
-      const presetLoader = makePresetLoader(name);
-      return (
-        <GenomeViewer
-         {...props}
-         presetLoader={presetLoader} />
-      );
-    }} />
+    <Route
+     path=":name/" render={({props}) => {
+       const {match: {params: {name}}} = props;
+       const presetLoader = makePresetLoader(name);
+       return (
+         <GenomeViewer
+          {...props}
+          presetLoader={presetLoader} />
+       );
+     }} />
   </Route>;
 
   function wrapper(props) {

@@ -1,8 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
+
+MinPositionReads.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  config: PropTypes.shape({
+    seqReadsMinPositionReadsOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.number.isRequired
+      }).isRequired
+    ).isRequired
+  }).isRequired,
+  minPositionReads: PropTypes.number.isRequired
+};
 
 function MinPositionReads({
   match, router,

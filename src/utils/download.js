@@ -54,4 +54,3 @@ export function makeDownload(fileName, mediaType, data, isBlob = false) {
     setTimeout(() => document.body.removeChild(a));
   }
 }
-

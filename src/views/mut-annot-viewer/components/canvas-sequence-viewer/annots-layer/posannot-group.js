@@ -49,5 +49,3 @@ export default class PosAnnotGroup extends React.Component {
     </Group>;
   }
 }
-
-

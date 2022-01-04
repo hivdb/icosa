@@ -76,14 +76,10 @@ const genomeViewerConfig = {
 
 
 const config = {
-  graphql_url: (
+  graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
       'http://localhost:8113/Sierra-SARS2/graphql'),
-  server_host: (
-    window.__NODE_ENV === 'production' ?
-      '' : 'http://localhost:8113'
-  ),
   cmsStages: {
     'hivdb.stanford.edu': 'cms.hivdb.org/prod',
     'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
@@ -91,7 +87,7 @@ const config = {
     '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2'
   },
   mutationGenePattern: /^(RDRP|S)/i,
-  seqReadsDefaultCutoff: 0.2,  // 20%
+  seqReadsDefaultCutoff: 0.2, // 20%
   mutationTypesByGenes: {
     nsp1: {
       Other: 'Other'
@@ -169,7 +165,7 @@ const config = {
       Other: 'Other'
     }
   },
-  maxProteinSize: 1273,  // S protein
+  maxProteinSize: 1273, // S protein
   seqReadsDefaultStrain: 'SARS2',
   seqReadsCodonCovBgColors: {
     RdRP: '#f0f0f0',

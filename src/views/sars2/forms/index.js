@@ -29,15 +29,19 @@ function loadExampleFasta(examples) {
   }));
 }
 
+
+SierraForms.propTypes = {
+  config: PropTypes.object,
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  curAnalysis: PropTypes.string.isRequired
+};
+
 function SierraForms({
   config,
   curAnalysis,
   match,
-  match: {
-    location: {query = {}}
-  },
-  router,
-  pathPrefix,
+  router
 }) {
 
   const basePath = getBasePath(match.location);
@@ -72,7 +76,7 @@ function SierraForms({
      patternsTo={patternsTo}
      sequencesTo={sequencesTo}
      enableReads readsTo={readsTo}
-     exampleFasta={loadExampleFasta(config.sequenceExamples)} 
+     exampleFasta={loadExampleFasta(config.sequenceExamples)}
      exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples)}
      sequencesOutputOptions={{
        __printable: {
@@ -111,13 +115,6 @@ function SierraForms({
     />
   </>;
 }
-
-SierraForms.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  curAnalysis: PropTypes.string.isRequired,
-  pathPrefix: PropTypes.string.isRequired,
-};
 
 export default function SierraFormsWithConfig(props) {
   return <ConfigContext.Consumer>

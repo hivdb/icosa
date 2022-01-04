@@ -18,7 +18,7 @@ export default class SeqReadsAnalysisQAChart extends React.Component {
 
   constructor() {
     super(...arguments);
-    this.state = {width : this.props.output === 'printable' ? 8 * 72 : 0};
+    this.state = {width: this.props.output === 'printable' ? 8 * 72 : 0};
   }
 
   handleResize = ({width}) => {

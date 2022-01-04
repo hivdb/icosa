@@ -13,6 +13,18 @@ const useDisplayRefLink = createPersistedReducer(
 );
 
 
+MutationComment.propTypes = {
+  triggeredMutations: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.shape({
+        name: PropTypes.string.isRequired
+      }).isRequired,
+      text: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
+  comment: PropTypes.string.isRequired
+};
+
 function MutationComment({triggeredMutations, comment}) {
   const muts = shortenMutList(triggeredMutations).map(({
     gene: {name: geneName},
@@ -22,7 +34,7 @@ function MutationComment({triggeredMutations, comment}) {
   ));
   return <li key={muts.join('+')}>
     <div className={style['triggered-mutations']}>
-      {muts.map((mut, idx) => <React.Fragment key={mut}>
+      {muts.map(mut => <React.Fragment key={mut}>
         <span className={style['mut-sep']}>·</span>
         {mut}
       </React.Fragment>)}
@@ -36,10 +48,17 @@ function MutationComment({triggeredMutations, comment}) {
 }
 
 
+SARS2MutationComments.propTypes = {
+  mutationComments: PropTypes.arrayOf(
+    PropTypes.shape(MutationComment.propTypes).isRequired
+  ).isRequired
+};
+
 function SARS2MutationComments({mutationComments}) {
-  const [displayRefLink, toggleDisplayRefLink] = useDisplayRefLink(
-    display => !display, true
-  );
+  const [
+    displayRefLink,
+    toggleDisplayRefLink
+  ] = useDisplayRefLink(display => !display, true);
   if (mutationComments.length > 0) {
     return <div className={style['mutation-comments-container']}>
       <ul

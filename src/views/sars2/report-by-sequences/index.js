@@ -1,15 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {matchShape} from 'found';
 import useApolloClient from '../apollo-client';
 import useExtendVariables from '../use-extend-variables';
 
 import ConfigContext from '../../../utils/config-context';
 import SeqLoader from '../../../components/sequence-loader';
-import SeqAnalysisLayout from 
+import SeqAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 
 import query from './query.graphql';
 import SeqReports from './reports';
 
+
+ReportBySequencesContainer.propTypes = {
+  config: PropTypes.object,
+  lazyLoad: PropTypes.bool.isRequired,
+  output: PropTypes.string,
+  match: matchShape.isRequired,
+  sequences: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object
+};
 
 function ReportBySequencesContainer({
   config,
@@ -57,10 +68,18 @@ function ReportBySequencesContainer({
 }
 
 
+ReportBySequencesContainerWrapper.propTypes = {
+  match: matchShape.isRequired
+};
+
 export default function ReportBySequencesContainerWrapper(props) {
-  const {location: {
-    query: {output = 'default'} = {}
-  } = {}} = props.match;
+  const {
+    location: {
+      query: {
+        output = 'default'
+      } = {}
+    } = {}
+  } = props.match;
   const lazyLoad = output !== 'printable';
 
   return (

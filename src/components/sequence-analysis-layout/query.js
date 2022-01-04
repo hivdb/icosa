@@ -33,7 +33,24 @@ function getQuery(fragment, extraParams) {
 }
 
 
-function SequenceAnalysisQuery({
+SequenceAnalysisQuery.propTypes = {
+  lazyLoad: PropTypes.bool.isRequired,
+  renderPartialResults: PropTypes.bool.isRequired,
+  currentSelected: PropTypes.object,
+  query: PropTypes.object.isRequired,
+  extraParams: PropTypes.string,
+  sequences: PropTypes.array.isRequired,
+  initOffset: PropTypes.number.isRequired,
+  initLimit: PropTypes.number.isRequired,
+  children: PropTypes.func.isRequired,
+  client: PropTypes.any,
+  progressText: PropTypes.func.isRequired,
+  showProgressBar: PropTypes.bool.isRequired,
+  onExtendVariables: PropTypes.func.isRequired
+};
+
+
+export default function SequenceAnalysisQuery({
   lazyLoad,
   renderPartialResults,
   currentSelected,
@@ -83,7 +100,7 @@ function SequenceAnalysisQuery({
   }
 
   let progressbar = null;
-  
+
   let childNode = null;
   if (loaded || renderPartialResults) {
     const {
@@ -122,22 +139,3 @@ function SequenceAnalysisQuery({
   </>;
 
 }
-
-
-SequenceAnalysisQuery.propTypes = {
-  lazyLoad: PropTypes.bool.isRequired,
-  renderPartialResults: PropTypes.bool.isRequired,
-  query: PropTypes.object.isRequired,
-  extraParams: PropTypes.string,
-  sequences: PropTypes.array.isRequired,
-  initOffset: PropTypes.number.isRequired,
-  initLimit: PropTypes.number.isRequired,
-  children: PropTypes.func.isRequired,
-  client: PropTypes.any,
-  progressText: PropTypes.func.isRequired,
-  showProgressBar: PropTypes.bool.isRequired,
-  onExtendVariables: PropTypes.func.isRequired
-};
-
-
-export default SequenceAnalysisQuery;

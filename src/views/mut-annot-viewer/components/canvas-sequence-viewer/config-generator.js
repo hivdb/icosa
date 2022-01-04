@@ -133,7 +133,7 @@ export default class ConfigGenerator {
     });
   }
 
-  initGridConfig({baseSizePixel, canvasWidthPixel, seqFragment}) {
+  initGridConfig({canvasWidthPixel, seqFragment}) {
     const {
       posItemOuterWidthPixel
     } = this;
@@ -144,7 +144,8 @@ export default class ConfigGenerator {
     );
     const numRows = Math.ceil(seqFragmentLen / numCols);
     Object.assign(this, {
-      numCols, numRows,
+      numCols,
+      numRows,
       numPosPerPage: numCols * 10
     });
   }
@@ -309,7 +310,7 @@ export default class ConfigGenerator {
     }
     const coordPairs = [];
     const offsetY = (
-      posItemSizePixel + underscoreAnnotMarginPixel + 
+      posItemSizePixel + underscoreAnnotMarginPixel +
       locIndex * (underscoreAnnotHeightPixel + underscoreAnnotMarginPixel)
     );
     const endOffsetY = offsetY + underscoreAnnotHeightPixel;
@@ -358,7 +359,7 @@ export default class ConfigGenerator {
     return {
       x: 0,
       y: (
-        posItemSizePixel + underscoreAnnotMarginPixel + 
+        posItemSizePixel + underscoreAnnotMarginPixel +
         posLocs.length * usOuterSize +
         aaOffsetIndex * aaOuterSize
       )
@@ -589,15 +590,14 @@ export default class ConfigGenerator {
     onUpdate({
       colorBoxAnnotColorLookup,
       underscoreAnnotColorLookup,
-      aminoAcidsCatColorLookup: this.aminoAcidsCatNames.reduce(
-        (acc, name, idx) => {
+      aminoAcidsCatColorLookup: this.aminoAcidsCatNames
+        .reduce((acc, name, idx) => {
           acc[name] = (
             aminoAcidsOverrideColors[idx] ||
             COLORS[idx % COLORS.length].dark
           );
           return acc;
-        }, {}
-      )
+        }, {})
     });
   }
 

@@ -1,8 +1,39 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
 
+
+InlineGeneRange.propTypes = {
+  config: PropTypes.shape({
+    allGenes: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
+    geneDisplay: PropTypes.objectOf(
+      PropTypes.string.isRequired
+    ).isRequired,
+    highlightGenes: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired,
+  geneSeqs: PropTypes.arrayOf(
+    PropTypes.shape({
+      gene: PropTypes.shape({
+        name: PropTypes.string
+      }).isRequired,
+      unsequencedRegions: PropTypes.shape({
+        size: PropTypes.number.isRequired,
+        regions: PropTypes.arrayOf(
+          PropTypes.shape({
+            posStart: PropTypes.number.isRequired,
+            posEnd: PropTypes.number.isRequired
+          }).isRequired
+        )
+      }).isRequired
+    }).isRequired
+  ).isRequired
+};
 
 function InlineGeneRange({config, geneSeqs}) {
   const {allGenes, geneDisplay, highlightGenes} = config;
@@ -18,11 +49,12 @@ function InlineGeneRange({config, geneSeqs}) {
             gene,
             unsequencedRegions: {size, regions}
           }, idx) => (
-            <li key={idx} className={classNames(
-              style['inline-gene-range'],
-              highlightGenes.includes(gene.name) ?
-                style['hl'] : null
-            )}>
+            <li
+             key={idx} className={classNames(
+               style['inline-gene-range'],
+               highlightGenes.includes(gene.name) ?
+                 style['hl'] : null
+             )}>
               <span className={style['gene-name']}>
                 {geneDisplay[gene.name] || gene.name}
               </span>
@@ -51,11 +83,12 @@ function InlineGeneRange({config, geneSeqs}) {
               ({gene}) => gene.name === curGene
             ))
             .map((geneName, idx) => (
-              <li key={idx} className={classNames(
-                style['inline-gene-range'],
-                highlightGenes.includes(geneName) ?
-                  style['hl'] : null
-              )}>
+              <li
+               key={idx} className={classNames(
+                 style['inline-gene-range'],
+                 highlightGenes.includes(geneName) ?
+                   style['hl'] : null
+               )}>
                 <span className={style['gene-name']}>
                   {geneDisplay[geneName] || geneName}
                 </span>

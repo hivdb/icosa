@@ -5,7 +5,7 @@ import makeClassNames from 'classnames';
 import {
   posShape, citationShape,
   annotCategoryShape, curAnnotNameLookupShape,
-  annotShape,
+  annotShape
 } from '../../prop-types';
 
 import style from './style.module.scss';
@@ -27,11 +27,11 @@ export default class Legend extends React.Component {
       annotShape.isRequired
     ).isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-    citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
-    selectedPositions: PropTypes.arrayOf(
+    citations: PropTypes.objectOf(citationShape.isRequired).isRequired
+    /* selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
-    sequence: PropTypes.string.isRequired,
+    sequence: PropTypes.string.isRequired */
   }
 
   get className() {
@@ -86,7 +86,7 @@ export default class Legend extends React.Component {
          circleInBoxAnnotDef={this.circleInBoxAnnotDef}
          aminoAcidsCats={
            annotCategories
-           .filter(({annotStyle}) => annotStyle === 'aminoAcids')
+             .filter(({annotStyle}) => annotStyle === 'aminoAcids')
          }
          positionLookup={positionLookup} />
       </div>

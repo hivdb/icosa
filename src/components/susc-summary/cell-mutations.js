@@ -24,7 +24,7 @@ function CellMutations({mutations, variants}) {
           </React.Fragment>
         ))}
       </div>
-      {variants.length > 0 ? 
+      {variants.length > 0 ?
         <div className={style['variants']}>
           {variants.join('/')}
         </div> : null}

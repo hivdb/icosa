@@ -21,7 +21,7 @@ export function useLocationState(
     initValue = state[name];
   }
   const [value, setValue] = React.useState(initValue);
-  
+
   const setValueWithLocation = React.useCallback(
     newValue => {
       if (newValue instanceof Function) {
@@ -43,7 +43,9 @@ export function useLocationState(
 export default function createLocationState(name) {
 
   return (defaultValue, saveCondition) => useLocationState(
-    name, defaultValue, saveCondition
+    name,
+    defaultValue,
+    saveCondition
   );
 
 }

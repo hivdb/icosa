@@ -78,7 +78,7 @@ const CODON_TABLE = {
 
   'TAA': '*',
   'TGA': '*',
-  'TAG': '*',
+  'TAG': '*'
 };
 
 const REVERSE_CODON_TABLE = {};
@@ -138,7 +138,7 @@ export function convertToAmbiguousNa(nas) {
 
 
 function zip(...rows) {
-  return rows[0].map((_,c)=>rows.map(row=>row[c]));
+  return rows[0].map((_, c)=>rows.map(row=>row[c]));
 }
 
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 
 import {
   MutationViewer as MutViewer,
@@ -25,12 +24,27 @@ import {
 import style from '../style.module.scss';
 
 
+SinglePatternReport.propTypes = {
+  name: PropTypes.string,
+  cmtVersion: PropTypes.string,
+  drdbLastUpdate: PropTypes.string,
+  currentSelected: PropTypes.object,
+  patternResult: PropTypes.object,
+  output: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  antibodies: PropTypes.array.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func
+};
+
+SinglePatternReport.defaultProps = {
+  antibodies: []
+};
+
 function SinglePatternReport({
   cmtVersion,
   drdbLastUpdate,
   antibodies,
-  match,
-  router,
   patternResult,
   output,
   name,
@@ -56,10 +70,10 @@ function SinglePatternReport({
       {patternResult ? <>
         <RefContextWrapper>
           <ReportSection title="Sequence quality assessment">
-            <MutViewer noUnseqRegions {...{
-              allGeneSeqs: allGeneMutations,
-              output
-            }} />
+            <MutViewer
+             noUnseqRegions
+             allGeneSeqs={allGeneMutations}
+             output={output} />
           </ReportSection>
           <ReportSection
            className={style['no-page-break']}
@@ -107,20 +121,5 @@ function SinglePatternReport({
     </article>
   );
 }
-
-SinglePatternReport.propTypes = {
-  currentSelected: PropTypes.object,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  patternResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  antibodies: PropTypes.array.isRequired,
-  onObserve: PropTypes.func.isRequired
-};
-
-SinglePatternReport.defaultProps = {
-  antibodies: []
-};
 
 export default SinglePatternReport;

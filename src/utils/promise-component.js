@@ -35,7 +35,7 @@ export default class PromiseComponent extends React.Component {
       children
     };
   }
-  
+
   static getStateFromResult(result, then, component, promise) {
     let state = {};
     result = then(result);
@@ -64,9 +64,7 @@ export default class PromiseComponent extends React.Component {
       };
     }
     else {
-      return this.getStateFromResult(
-        promise, then, component, promise
-      );
+      return this.getStateFromResult(promise, then, component, promise);
     }
   }
 
@@ -91,7 +89,7 @@ export default class PromiseComponent extends React.Component {
     await this._loadAsyncData(promise, then, error, component);
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate() {
     if (this.state.loaded !== this.props.promise) {
       const {promise, then, error, component} = this.props;
       await this._loadAsyncData(promise, then, error, component);

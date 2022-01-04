@@ -34,6 +34,26 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 }
 
 
+SeqReadsReports.propTypes = {
+  cmtVersion: PropTypes.string,
+  drdbLastUpdate: PropTypes.string,
+  output: PropTypes.string.isRequired,
+  genes: PropTypes.array.isRequired,
+  antibodies: PropTypes.array.isRequired,
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object,
+  sequenceReadsAnalysis: PropTypes.array.isRequired,
+  fetchAnother: PropTypes.func.isRequired
+};
+
+SeqReadsReports.defaultProps = {
+  genes: [],
+  antibodies: []
+};
+
 function SeqReadsReports({
   output,
   genes,
@@ -116,25 +136,7 @@ function SeqReadsReports({
       ))}
     </main>
   </>;
-  
+
 }
-
-SeqReadsReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  genes: PropTypes.array.isRequired,
-  antibodies: PropTypes.array.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  sequenceReadsAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
-SeqReadsReports.defaultProps = {
-  genes: [],
-  antibodies: []
-};
 
 export default SeqReadsReports;

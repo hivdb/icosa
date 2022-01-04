@@ -68,8 +68,7 @@ export class AutoTOC extends React.Component {
       </li>
     );
   }
-  
-  
+
   tocArrayToDom(tocArray) {
     if (tocArray.length === 0) {
       return;
@@ -93,7 +92,7 @@ export class AutoTOC extends React.Component {
       return <ul>{domList}</ul>;
     }
   }
-  
+
   render() {
     const {children, className} = this.props;
     const {tocArray} = this;

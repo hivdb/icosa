@@ -29,8 +29,16 @@ function prepareData(allGeneSequenceReads) {
           proportion: pcnt
         } = scr;
         rows.push({
-          gene, pos, total, cd, count: reads, ref, aa,
-          pcnt, aaPcnt, cdPcnt: scr.codonPercent,
+          gene,
+          pos,
+          total,
+          cd,
+          count: reads,
+          ref,
+          aa,
+          pcnt,
+          aaPcnt,
+          cdPcnt: scr.codonPercent,
           isDRM: scr.isDRM,
           isUnusual: scr.isUnusual,
           isApobecMutation: scr.isApobecMutation,
@@ -51,17 +59,34 @@ function prepareData(allGeneSequenceReads) {
 
 function prepareOutput(extCodfish) {
   const header = [
-    'Gene', 'Position', 'Total', 'Codon', 'Count', 'AA',
-    'ReadsPercent', 'HIVDBAAPcnt', 'HIVDBCodonPcnt', 'IsDRM',
-    'IsUnusual', 'IsApobecMutation', 'IsApobecDRM'
+    'Gene',
+    'Position',
+    'Total',
+    'Codon',
+    'Count',
+    'AA',
+    'ReadsPercent',
+    'HIVDBAAPcnt',
+    'HIVDBCodonPcnt',
+    'IsDRM',
+    'IsUnusual',
+    'IsApobecMutation',
+    'IsApobecDRM'
   ].join(',');
   const rows = extCodfish.map(r => [
-    r.gene, r.pos, r.total, r.cd, r.count, r.aa,
-    `${r.pcnt * 100}%`, `${r.aaPcnt * 100}%`, `${r.cdPcnt * 100}%`,
-    r.isDRM ? 'Yes': '',
-    r.isUnusual ? 'Yes': '',
-    r.isApobecMutation ? 'Yes': '',
-    r.isApobecDRM ? 'Yes': ''
+    r.gene,
+    r.pos,
+    r.total,
+    r.cd,
+    r.count,
+    r.aa,
+    `${r.pcnt * 100}%`,
+    `${r.aaPcnt * 100}%`,
+    `${r.cdPcnt * 100}%`,
+    r.isDRM ? 'Yes' : '',
+    r.isUnusual ? 'Yes' : '',
+    r.isApobecMutation ? 'Yes' : '',
+    r.isApobecDRM ? 'Yes' : ''
   ].join(',')).join('\n');
   return `${header}\n${rows}`;
 }
@@ -85,8 +110,10 @@ class ExtCodfishDownload extends React.Component {
     }
     this._timeout = setTimeout(() => {
       makeDownload(
-        `${name}.ext.csv`, "text/csv",
-        prepareOutput(extCodfish));
+        `${name}.ext.csv`,
+        "text/csv",
+        prepareOutput(extCodfish)
+      );
       this.props.onFinish();
     }, 200);
     return null;
@@ -96,6 +123,11 @@ class ExtCodfishDownload extends React.Component {
 
 
 export default class ExtCodfish extends React.Component {
+
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    allGeneSequenceReads: PropTypes.array.isRequired
+  };
 
   constructor() {
     super(...arguments);

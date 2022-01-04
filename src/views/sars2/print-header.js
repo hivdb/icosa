@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -12,6 +13,10 @@ import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
 
 import style from './style.module.scss';
 
+
+PrintHeader.propTypes = {
+  curAnalysis: PropTypes.string.isRequired
+};
 
 export default function PrintHeader({curAnalysis}) {
 
@@ -39,5 +44,5 @@ export default function PrintHeader({curAnalysis}) {
       <p>Generated at {now.toLocaleString()}</p>
     </IntroHeader>
   </Intro>;
-  
+
 }

@@ -38,17 +38,13 @@ const config = {
     window.__NODE_ENV === 'production' ?
       '/graphql' :
       'http://localhost:8113/Sierra-SARS2/graphql'),
-  server_host: (
-    window.__NODE_ENV === 'production' ?
-      '' : 'http://localhost:8113'
-  ),
   cmsStages: {
     'covdb.stanford.edu': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-prod',
     'localhost:3009': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2',
     '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev'
   },
   mutationGenePattern: /^(RDRP|S)/i,
-  seqReadsDefaultCutoff: 0.2,  // 20%
+  seqReadsDefaultCutoff: 0.2, // 20%
   mutationTypesByGenes: {
     nsp1: {
       Other: 'Other'
@@ -126,7 +122,7 @@ const config = {
       Other: 'Other'
     }
   },
-  maxProteinSize: 1273,  // S protein
+  maxProteinSize: 1273, // S protein
   seqReadsDefaultStrain: 'SARS2',
   seqReadsCodonCovBgColors: {
     RdRP: '#f0f0f0',

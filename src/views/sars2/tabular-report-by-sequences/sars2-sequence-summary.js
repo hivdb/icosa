@@ -51,7 +51,6 @@ function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
 
 
 function sequenceSummary({
-  currentProgramVersion,
   sequenceAnalysis,
   config,
   patternsTo
@@ -77,16 +76,26 @@ function sequenceSummary({
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
       'Spike Mutations': getMutations(
-        geneSeqs, gene => gene === 'S', geneDisplay
+        geneSeqs,
+        gene => gene === 'S',
+        geneDisplay
       ),
       'Other Mutations': getMutations(
-        geneSeqs, gene => gene !== 'S', geneDisplay
+        geneSeqs,
+        gene => gene !== 'S',
+        geneDisplay
       ),
       'Permanent Link (Spike Only)': getPermanentLink(
-        seqName, geneSeqs, patternsTo, gene => gene === 'S'
+        seqName,
+        geneSeqs,
+        patternsTo,
+        gene => gene === 'S'
       ),
       'Permanent Link': getPermanentLink(
-        seqName, geneSeqs, patternsTo, () => true
+        seqName,
+        geneSeqs,
+        patternsTo,
+        () => true
       )
     };
     joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);

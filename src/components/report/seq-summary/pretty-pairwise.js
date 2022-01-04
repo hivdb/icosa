@@ -10,6 +10,12 @@ import parentStyle from '../style.module.scss';
 import SinglePrettyPairwise from '../pretty-pairwise';
 
 
+PrettyPairwiseButton.propTypes = {
+  disablePrettyPairwise: PropTypes.bool.isRequired,
+  showPrettyPairwise: PropTypes.bool,
+  togglePrettyPairwise: PropTypes.func
+};
+
 function PrettyPairwiseButton({
   disablePrettyPairwise,
   showPrettyPairwise,
@@ -27,17 +33,6 @@ function PrettyPairwiseButton({
 }
 
 
-function PrettyPairwiseList({geneSeqs}) {
-
-  return <div className={style['pretty-pairwise']}>
-    {geneSeqs.map(
-      ({gene: {name: gene}, prettyPairwise}, idx) => (
-        <SinglePrettyPairwise key={idx} {...{gene, prettyPairwise}} />
-      )
-    )}
-  </div>;
-}
-
 PrettyPairwiseList.propTypes = {
   geneSeqs: PropTypes.arrayOf(
     PropTypes.shape({
@@ -48,5 +43,16 @@ PrettyPairwiseList.propTypes = {
     }).isRequired
   ).isRequired
 };
+
+function PrettyPairwiseList({geneSeqs}) {
+
+  return <div className={style['pretty-pairwise']}>
+    {geneSeqs.map(
+      ({gene: {name: gene}, prettyPairwise}, idx) => (
+        <SinglePrettyPairwise key={idx} {...{gene, prettyPairwise}} />
+      )
+    )}
+  </div>;
+}
 
 export {PrettyPairwiseButton, PrettyPairwiseList};

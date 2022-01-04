@@ -116,9 +116,7 @@ export function getPosAnnotAAs(curAnnot, posAnnot) {
 }
 
 
-export function getAnnotPositions(
-  curAnnots, positionLookup, aaColorIdx = 0
-) {
+export function getAnnotPositions(curAnnots, positionLookup, aaColorIdx = 0) {
   if (curAnnots.length === 0) {
     return [];
   }
@@ -170,7 +168,9 @@ export function getAnnotPositions(
 
 
 export function calcUnderscoreAnnotLocations(
-  positionLookup, underscoreAnnots, seqLength
+  positionLookup,
+  underscoreAnnots,
+  seqLength
 ) {
   const posByAnnot = getPositionsByAnnot(positionLookup, underscoreAnnots);
   const matrix = new Array(seqLength);
@@ -180,7 +180,10 @@ export function calcUnderscoreAnnotLocations(
     if (annotLevel === 'position') {
       for (const [posStart, posEnd] of integersToRange(positions)) {
         const minAvailableLoc = matrixFindMinAvailableLoc(
-          posStart, posEnd, annotName);
+          posStart,
+          posEnd,
+          annotName
+        );
         locations.push({
           posStart,
           posEnd,

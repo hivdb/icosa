@@ -21,7 +21,7 @@ const Router = createFarceRouter({
   historyProtocol: new BrowserProtocol(),
   historyMiddlewares: [queryMiddleware],
   routeConfig: makeRouteConfig(routes),
-  render: createRender({}),
+  render: createRender({})
 });
 
 /**

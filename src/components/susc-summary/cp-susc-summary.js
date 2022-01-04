@@ -84,58 +84,71 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function useColumnDefs() {
-  const colDefs = [
-    new ColumnDef({
-      name: 'mutations',
-      label: 'Variant',
-      render: (mutations, {variants}) => (
-        <CellMutations {...{mutations, variants}} />
-      ),
-      bodyCellStyle: {
-        '--desktop-max-width': '14rem'
-      },
-      sort: [({mutations}) => [
-        mutations.length,
-        ...mutations.map(({position, AAs}) => [position, AAs])
-      ]]
-    }),
-    new ColumnDef({
-      name: 'numRefs',
-      label: '# studies'
-    }),
-    new ColumnDef({
-      name: 'numSamples',
-      label: '# samples'
-    }),
-    new ColumnDef({
-      name: 'levels.susceptible',
-      label: 'Susceptibility distribution',
-      render: renderPcntBar,
-      sortable: false
-    }),
-    new ColumnDef({
-      name: 'medianFold',
-      label: 'Median Fold',
-      render: n => n.toFixed(1)
-    }),
-    new ColumnDef({
-      name: 'references',
-      label: 'References',
-      render: refs => <CellReferences refs={refs} />,
-      sortable: false
-    })
-  ];
-  return colDefs;
+function useColumnDefs({openRefInNewWindow}) {
+  return React.useMemo(
+    () => ([
+      new ColumnDef({
+        name: 'mutations',
+        label: 'Variant',
+        render: (mutations, {variants}) => (
+          <CellMutations {...{mutations, variants}} />
+        ),
+        bodyCellStyle: {
+          '--desktop-max-width': '14rem'
+        },
+        sort: [({mutations}) => [
+          mutations.length,
+          ...mutations.map(({position, AAs}) => [position, AAs])
+        ]]
+      }),
+      new ColumnDef({
+        name: 'numRefs',
+        label: '# studies'
+      }),
+      new ColumnDef({
+        name: 'numSamples',
+        label: '# samples'
+      }),
+      new ColumnDef({
+        name: 'levels.susceptible',
+        label: 'Susceptibility distribution',
+        render: renderPcntBar,
+        sortable: false
+      }),
+      new ColumnDef({
+        name: 'medianFold',
+        label: 'Median Fold',
+        render: n => n.toFixed(1)
+      }),
+      new ColumnDef({
+        name: 'references',
+        label: 'References',
+        render: refs => (
+          <CellReferences {...{refs, openRefInNewWindow}} />
+        ),
+        sortable: false
+      })
+    ]),
+    [openRefInNewWindow]
+  );
 }
 
 
-function ConvPlasmaSuscSummaryTable({
-  rows,
-  openRefInNewWindow = false
-}) {
+ConvPlasmaSuscSummaryTable.propTypes = {
+  rows: PropTypes.arrayOf(
+    cpSuscSummaryShape.isRequired
+  ).isRequired,
+  openRefInNewWindow: PropTypes.bool.isRequired
+};
+
+
+ConvPlasmaSuscSummaryTable.defaultProps = {
+  openRefInNewWindow: false
+};
+
+function ConvPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
   const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
-  const columnDefs = useColumnDefs();
+  const columnDefs = useColumnDefs({openRefInNewWindow});
 
   if (rows.length > 0) {
     return <>
@@ -176,22 +189,14 @@ function ConvPlasmaSuscSummaryTable({
 }
 
 
-ConvPlasmaSuscSummaryTable.propTypes = {
-  rows: PropTypes.arrayOf(
-    cpSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
+ConvPlasmaSuscSummary.propTypes = {
+  convPlasmaSuscSummary: PropTypes.shape({
+    itemsByMutations: PropTypes.array.isRequired
+  }).isRequired
 };
-
-
-ConvPlasmaSuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
-};
-
 
 function ConvPlasmaSuscSummary({
-  convPlasmaSuscSummary: {itemsByMutations},
-  ...props
+  convPlasmaSuscSummary: {itemsByMutations}
 }) {
   itemsByMutations = itemsByMutations
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);

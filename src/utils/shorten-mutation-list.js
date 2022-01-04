@@ -8,8 +8,10 @@ export default function shortenMutationList(mutations) {
     (left, right) => {
       if (process.env.NODE_ENV !== 'production') {
         for (const field of [
-          'AAs', 'reference',
-          'position', 'isUnsequenced'
+          'AAs',
+          'reference',
+          'position',
+          'isUnsequenced'
         ]) {
           if (!(field in left) || !(field in right)) {
             throw new Error(

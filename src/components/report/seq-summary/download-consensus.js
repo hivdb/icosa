@@ -7,7 +7,15 @@ import Button from '../../button';
 import parentStyle from '../style.module.scss';
 
 
-function DownloadConsensus({
+DownloadConsensus.propTypes = {
+  name: PropTypes.string.isRequired,
+  assembledConsensus: PropTypes.string.isRequired,
+  maxMixtureRate: PropTypes.number.isRequired,
+  minPrevalence: PropTypes.number.isRequired,
+  minCodonReads: PropTypes.number.isRequired
+};
+
+export default function DownloadConsensus({
   name,
   assembledConsensus,
   maxMixtureRate,
@@ -36,11 +44,3 @@ function DownloadConsensus({
     Consensus sequence
   </Button>;
 }
-
-
-DownloadConsensus.propTypes = {
-  name: PropTypes.string.isRequired,
-  assembledConsensus: PropTypes.string.isRequired
-};
-
-export default DownloadConsensus;

@@ -24,7 +24,8 @@ function useCurrentSelected({
         return {index: 0, name: sequences[0].header};
       }
       const index = Math.max(
-        0, sequences.findIndex(({header: seqH}) => seqH === name)
+        0,
+        sequences.findIndex(({header: seqH}) => seqH === name)
       );
       return {index, name: sequences[index].header};
     },
@@ -51,6 +52,7 @@ function useSequences() {
       }
       else {
         return [
+          // eslint-disable-next-line no-unused-vars
           sequences.map(({size, ...seq}) => seq),
           false
         ];

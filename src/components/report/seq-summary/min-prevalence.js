@@ -1,8 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
+
+MinPrevalence.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  config: PropTypes.shape({
+    seqReadsMinPrevalenceOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.number.isRequired
+      }).isRequired
+    ).isRequired
+  }).isRequired,
+  minPrevalence: PropTypes.number.isRequired,
+  actualMinPrevalence: PropTypes.number.isRequired
+};
 
 function MinPrevalence({
   match,

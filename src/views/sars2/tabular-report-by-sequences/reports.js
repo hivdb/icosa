@@ -11,7 +11,7 @@ function SequenceTabularReports(props) {
 SequenceTabularReports.propTypes = {
   ...useTabularReports.propTypes,
   sequences: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired,
+  sequenceAnalysis: PropTypes.array.isRequired
 };
 
 export default SequenceTabularReports;

@@ -46,7 +46,7 @@ export default function useScrollObserver({
   );
 
   const observerCallback = React.useCallback(
-    async (entries) => {
+    async (/* entries */) => {
       if (!current.loaded || disabled || current.preventObserver) {
         return;
       }
@@ -175,8 +175,11 @@ export default function useScrollObserver({
       }
     },
     [
-      current, preventScrollObserver, resetScrollObserver,
-      asyncLoadNewItem, afterLoadNewItem
+      current,
+      preventScrollObserver,
+      resetScrollObserver,
+      asyncLoadNewItem,
+      afterLoadNewItem
     ]
   );
 

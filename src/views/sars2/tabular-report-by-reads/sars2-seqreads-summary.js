@@ -51,7 +51,6 @@ function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
 
 
 function seqReadsSummary({
-  currentProgramVersion,
   sequenceReadsAnalysis,
   config,
   patternsTo
@@ -85,20 +84,30 @@ function seqReadsSummary({
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
       'Spike Mutations': getMutations(
-        geneSeqs, gene => gene === 'S', geneDisplay
+        geneSeqs,
+        gene => gene === 'S',
+        geneDisplay
       ),
       'Other Mutations': getMutations(
-        geneSeqs, gene => gene !== 'S', geneDisplay
+        geneSeqs,
+        gene => gene !== 'S',
+        geneDisplay
       ),
       'Median Read Depth': readDepthStats.median,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'Read Depth Threshold by Codon': minCodonReads,
       'Permanent Link (Spike Only)': getPermanentLink(
-        seqName, geneSeqs, patternsTo, gene => gene === 'S'
+        seqName,
+        geneSeqs,
+        patternsTo,
+        gene => gene === 'S'
       ),
       'Permanent Link': getPermanentLink(
-        seqName, geneSeqs, patternsTo, () => true
+        seqName,
+        geneSeqs,
+        patternsTo,
+        () => true
       )
     };
     joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);

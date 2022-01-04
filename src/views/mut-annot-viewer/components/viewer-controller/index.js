@@ -31,10 +31,12 @@ export default class ViewerController extends React.Component {
     annotations: PropTypes.arrayOf(
       annotShape.isRequired
     ).isRequired,
+    allowEditing: PropTypes.bool,
     seqViewerSize: seqViewerSizeType.isRequired,
     onCurAnnotNameLookupChange: PropTypes.func.isRequired,
     onSeqFragmentChange: PropTypes.func.isRequired,
-    onSeqViewerSizeChange: PropTypes.func.isRequired
+    onSeqViewerSizeChange: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
   }
 
   get className() {

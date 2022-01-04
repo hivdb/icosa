@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { AxisBottom } from '@vx/axis';
-import { Group } from '@vx/group';
-import { scaleBand, scaleLinear} from '@vx/scale';
-import { withTooltip, Tooltip } from '@vx/tooltip';
+import {AxisBottom} from '@vx/axis';
+import {Group} from '@vx/group';
+import {scaleBand, scaleLinear} from '@vx/scale';
+import {withTooltip, Tooltip} from '@vx/tooltip';
 import range from 'd3-array/src/range';
 
 import config from '../../../config';
@@ -13,15 +13,15 @@ import memoize from '../../../utils/memoize-decorator';
 import style from './style.module.scss';
 
 const MAX_PROTEIN_SIZE = config.maxProteinSize;
-const margin = { top: 10, right: 10, bottom: 25, left: 10 };
+const margin = {top: 10, right: 10, bottom: 25, left: 10};
 
 // temporary solution: can not use _colors.scss
 const colors = {
-  qaChartDR: '#1b8ecc',  // blue,
-  qaChartOther: '#1c1b1c',  // thunder,
-  qaChartProblem: '#e13333',  // cinnabar,
-  qaChartUnsequenced: '#bbbbbb',  // silver,
-  dividingLine: '#969696'  // dustygray
+  qaChartDR: '#1b8ecc', // blue,
+  qaChartOther: '#1c1b1c', // thunder,
+  qaChartProblem: '#e13333', // cinnabar,
+  qaChartUnsequenced: '#bbbbbb', // silver,
+  dividingLine: '#969696' // dustygray
 };
 
 const problemAttributes = {
@@ -45,7 +45,7 @@ function ticks(start, end, tick) {
   let r = [];
   const istart = parseInt(start / 5, 10) * 5;
   const maxI = end - (MAX_PROTEIN_SIZE / 80);
-  for (let i=istart; i < maxI; i += step) {
+  for (let i = istart; i < maxI; i += step) {
     if (i > start) {
       r.push(i);
     }
@@ -86,18 +86,13 @@ class GeneChart extends React.Component {
     containerWidth: PropTypes.number.isRequired
   }
 
-  static defaultProps = {
-    output: 'default'
-  }
-
   __hash__() {
     return 'SequenceQAGeneChart';
   }
 
   get chartProps() {
     let {firstAA, lastAA} = this.props;
-    const {
-      gene, mutations, frameShifts, containerWidth} = this.props;
+    const {gene, mutations, frameShifts, containerWidth} = this.props;
     let [aaStart, aaEnd] = [1, gene.length];
     let [posRight, posLeft] = [aaStart, aaEnd];
     firstAA = isNaN(firstAA) ? 1 : Math.max(1, firstAA);
@@ -151,7 +146,7 @@ class GeneChart extends React.Component {
         const name = barData[i].name;
         for (var j in values){
           if (Object.prototype.hasOwnProperty.call(values, j)) {
-            arr.push({x:values[j].x, y:values[j].y, name:name});
+            arr.push({x: values[j].x, y: values[j].y, name});
           }
         }
       }
@@ -170,17 +165,25 @@ class GeneChart extends React.Component {
     // - ymax is the max width (containerWidth);
     // - a is the scale of x: roughly xmax * a = ymax
     const width = Math.max(
-      Math.sqrt(2 * (containerWidth-margin.left) * scale * lenAA
-              - Math.pow(scale * lenAA, 2)), 400);
+      Math.sqrt(
+        2 * (containerWidth - margin.left) * scale * lenAA -
+        Math.pow(scale * lenAA, 2)
+      ),
+      400
+    );
 
     // roughly tick every 50px
     let xAxisTickValues = ticks(firstAA, lastAA, parseInt(width / 50, 10));
     xAxisTickValues.push(firstAA);
     xAxisTickValues.push(lastAA);
-    
+
     return {
-      containerWidth, width, data: arr,
-      firstAA, lastAA, xAxisTickValues
+      containerWidth,
+      width,
+      data: arr,
+      firstAA,
+      lastAA,
+      xAxisTickValues
     };
   }
 
@@ -258,7 +261,7 @@ class GeneChart extends React.Component {
       tooltipOpen,
       tooltipData,
       tooltipTop,
-      tooltipLeft,
+      tooltipLeft
     } = this.props;
 
     const {props: {gene}, chartProps} = this;
@@ -266,14 +269,14 @@ class GeneChart extends React.Component {
 
     const xfunc = d => d.x;
     const yfunc = d => d.y;
-    
+
     const width = chartProps.containerWidth;
     const height = 65;
     const yMax = height - margin.top - margin.bottom;
 
     const xScale = scaleLinear({
       range: [chartProps.firstAA, chartProps.width],
-      domain: [chartProps.firstAA, chartProps.lastAA],
+      domain: [chartProps.firstAA, chartProps.lastAA]
     });
     const xScaleband = scaleBand({
       range: [chartProps.firstAA, chartProps.width],
@@ -282,7 +285,7 @@ class GeneChart extends React.Component {
     });
     const yScale = scaleLinear({
       range: [yMax, 0],
-      domain: [0, 80],
+      domain: [0, 80]
     });
 
     const barwidth = xScaleband.bandwidth();
@@ -290,14 +293,14 @@ class GeneChart extends React.Component {
     const compose = (scale, accessor) => (data) => scale(accessor(data));
     const xPoint = compose(xScale, xfunc);
     const yPoint = compose(yScale, yfunc);
-    
+
     return <section>
       <h3>{gene.name}</h3>
       <svg width={width} height={height + margin.top + margin.bottom}>
         <Group top={margin.top} left={margin.left}>
           {data.map((d, i) => {
             const barHeight = yMax - yPoint(d);
-            return(
+            return (
               <rect
                key={`bar-${i}`}
                x = {xPoint(d)}
@@ -305,7 +308,7 @@ class GeneChart extends React.Component {
                fill={qaGroupAttributes[d.name].color}
                width={barwidth}
                height={barHeight}
-               onMouseMove={event => {
+               onMouseMove={() => {
                  const top = yMax - barHeight;
                  const left = xPoint(d);
                  const xValue = d.x;
@@ -317,19 +320,19 @@ class GeneChart extends React.Component {
                    });
                  }
                }}
-               onMouseLeave={event => hideTooltip()}
+               onMouseLeave={() => hideTooltip()}
              />
             );
           })}
         </Group>
 
         <AxisBottom
-         top={yMax+margin.top}
-         left={barwidth/2+margin.left}
+         top={yMax + margin.top}
+         left={barwidth / 2 + margin.left}
          scale={xScale}
          stroke={colors.dividingLine}
          tickValues={chartProps.xAxisTickValues}
-         tickLabelProps={(val, i) => ({
+         tickLabelProps={() => ({
            dy: '0.25em',
            textAnchor: 'middle',
            fill: 'black'

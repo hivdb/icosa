@@ -8,6 +8,11 @@ import style from '../style.module.scss';
 
 export default class PrevalenceMutCol extends React.Component {
 
+  static propTypes = {
+    data: PropTypes.string.isRequired,
+    rowData: PropTypes.object.isRequired
+  }
+
   static contextTypes = {
     expandedRows: PropTypes.object.isRequired
   }
@@ -19,7 +24,7 @@ export default class PrevalenceMutCol extends React.Component {
     const consPosLen = 1 + pos.toString().length;
     const spaces = '      '.slice(0, consPosLen);
     const isParent = 'children' in rowData;
-    const isIndel = /^(ins|del)$|-|_/.test(aas); 
+    const isIndel = /^(ins|del)$|-|_/.test(aas);
     if (aas.indexOf('-') > -1) { aas = 'del'; }
     else if (aas.indexOf('_') > -1) { aas = 'ins'; }
     if (isParent) {

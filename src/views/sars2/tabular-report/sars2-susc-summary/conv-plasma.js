@@ -65,7 +65,6 @@ function buildCPTable({
 
 
 function cpSuscSummary({
-  currentProgramVersion,
   drdbLastUpdate,
   sequenceReadsAnalysis,
   sequenceAnalysis,

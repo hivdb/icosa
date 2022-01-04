@@ -2,7 +2,6 @@ import React from 'react';
 import {Group, Rect, Circle, Text} from 'react-konva';
 
 
-
 function getDisplayAA(aa) {
   return aa.replace('i', 'ins').replace('d', 'del');
 }

@@ -54,7 +54,7 @@ class MutAnnotViewerInner extends React.Component {
         positions,
         citations,
         comments = []
-      },
+      }
     } = this.props;
     comments = clone(comments);
     fragmentOptions = clone(fragmentOptions);
@@ -129,7 +129,7 @@ class MutAnnotViewerInner extends React.Component {
   handleCurAnnotNameLookupChange = (curAnnotNameLookup) => {
     this.setState({curAnnotNameLookup});
   }
-  
+
   handleSeqViewerSizeChange = (seqViewerSize) => {
     this.setState({seqViewerSize});
     saveSeqViewerSize(seqViewerSize);
@@ -268,13 +268,14 @@ export default class MutAnnotViewer extends React.Component {
     if (region) {
       extraProps.region = region;
     }
-    
+
     return {
       annotationLoader,
       promise: (async () => {
         const {refSequence, ...annotationData} = await annotationLoader();
         return {
-          name, display,
+          name,
+          display,
           refSeq: refSequence,
           annotationData,
           refDataLoader,

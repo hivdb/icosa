@@ -43,7 +43,7 @@ export default class GenomeViewerLoader extends React.Component {
     if (state.presetLoader === presetLoader) {
       return null;
     }
-    
+
     return {
       presetLoader,
       promise: (async () => {

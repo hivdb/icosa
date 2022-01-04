@@ -27,5 +27,3 @@ export default class SelectedLayer extends React.Component {
     </Layer>;
   }
 }
-
-

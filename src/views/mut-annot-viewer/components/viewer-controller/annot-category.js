@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 
 import {
-  annotShape, curAnnotNamesArray,
-  annotCategoryShape} from '../../prop-types';
+  annotShape,
+  curAnnotNamesArray,
+  annotCategoryShape
+} from '../../prop-types';
 import LegendContext from '../legend-context';
 import {sentenceCase} from '../../utils';
 
@@ -140,7 +142,7 @@ export default class AnnotCategory extends React.Component {
         dropdown,
         multiSelect,
         annotStyle
-      },
+      }
     } = this.props;
 
     if (display === false) {

@@ -76,10 +76,11 @@ function buildPayload(antibodySuscSummary) {
       }, displayOrder]) => {
         const variants = getUniqVariants(hitIsolates);
         const row = {mutations, references, variants, displayOrder, fold: {}};
-        for (const {antibodies, items, ...cumdata} of itemsByAntibody) {
+        for (const {antibodies, ...cumdata} of itemsByAntibody) {
           const abkey = (
             sortBy(antibodies, ['priority'])
-              .map(({name}) => name).join('+')
+              .map(({name}) => name)
+              .join('+')
           );
           row.fold[abkey] = cumdata;
         }
@@ -108,40 +109,55 @@ function getAntibodyColumns(antibodies, antibodySuscSummary) {
 
 
 function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
-  return React.useMemo(() => [
-    new ColumnDef({
-      name: 'mutations',
-      label: 'Variant',
-      render: (mutations, {variants}) => (
-        <CellMutations {...{mutations, variants}} />
-      ),
-      bodyCellStyle: {
-        '--desktop-max-width': '14rem'
-      },
-      sort: [({mutations}) => [
-        mutations.length,
-        ...mutations.map(({position, AAs}) => [position, AAs])
-      ]]
-    }),
-    ...antibodyColumns.map(abs => new ColumnDef({
-      name: 'fold.' + abs.map(({name}) => name).join('+'),
-      label: <LabelAntibodies antibodies={abs} />,
-      render: renderFold,
-      sort: ['cumulativeFold.median']
-    })),
-    new ColumnDef({
-      name: 'references',
-      label: 'References',
-      render: refs => (
-        <CellReferences
-         refs={refs}
-         openRefInNewWindow={openRefInNewWindow} />
-      ),
-      sortable: false
-    })
-  ], [antibodyColumns, openRefInNewWindow]);
+  return React.useMemo(
+    () => [
+      new ColumnDef({
+        name: 'mutations',
+        label: 'Variant',
+        render: (mutations, {variants}) => (
+          <CellMutations {...{mutations, variants}} />
+        ),
+        bodyCellStyle: {
+          '--desktop-max-width': '14rem'
+        },
+        sort: [({mutations}) => [
+          mutations.length,
+          ...mutations.map(({position, AAs}) => [position, AAs])
+        ]]
+      }),
+      ...antibodyColumns.map(abs => new ColumnDef({
+        name: 'fold.' + abs.map(({name}) => name).join('+'),
+        label: <LabelAntibodies antibodies={abs} />,
+        render: renderFold,
+        sort: ['cumulativeFold.median']
+      })),
+      new ColumnDef({
+        name: 'references',
+        label: 'References',
+        render: refs => (
+          <CellReferences {...{refs, openRefInNewWindow}} />
+        ),
+        sortable: false
+      })
+    ],
+    [antibodyColumns, openRefInNewWindow]
+  );
 }
 
+
+AntibodySuscSummaryTable.propTypes = {
+  antibodyColumns: PropTypes.arrayOf(
+    PropTypes.arrayOf(antibodyShape.isRequired).isRequired
+  ).isRequired,
+  rows: PropTypes.arrayOf(
+    abSuscSummaryShape.isRequired
+  ).isRequired,
+  openRefInNewWindow: PropTypes.bool.isRequired
+};
+
+AntibodySuscSummaryTable.defaultProps = {
+  openRefInNewWindow: false
+};
 
 function AntibodySuscSummaryTable({
   rows,
@@ -178,24 +194,17 @@ function AntibodySuscSummaryTable({
   }
 }
 
-AntibodySuscSummaryTable.propTypes = {
-  antibodyColumns: PropTypes.arrayOf(
-    PropTypes.arrayOf(antibodyShape.isRequired).isRequired
-  ).isRequired,
-  rows: PropTypes.arrayOf(
-    abSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
-};
 
-AntibodySuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
+AntibodySuscSummary.propTypes = {
+  antibodies: PropTypes.array.isRequired,
+  antibodySuscSummary: PropTypes.shape({
+    itemsByMutations: PropTypes.array.isRequired
+  }).isRequired
 };
 
 function AntibodySuscSummary({
   antibodies,
-  antibodySuscSummary: {itemsByMutations},
-  ...props
+  antibodySuscSummary: {itemsByMutations}
 }) {
   itemsByMutations = itemsByMutations
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);

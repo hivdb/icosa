@@ -11,7 +11,8 @@ export default class SmoothProgressBar extends React.Component {
     loaded: PropTypes.bool.isRequired,
     progressText: PropTypes.func.isRequired,
     progress: PropTypes.number.isRequired,
-    nextProgress: PropTypes.number.isRequired
+    nextProgress: PropTypes.number.isRequired,
+    total: PropTypes.number.isRequired
   }
 
   constructor() {
@@ -44,9 +45,19 @@ export default class SmoothProgressBar extends React.Component {
 
   render() {
     const {
-      loaded, nextProgress, progress,
-      progressText, total, ...props} = this.props;
-    let {estProgress, prevNextProgress, estInterval, timeStart} = this.state;
+      loaded,
+      nextProgress,
+      progress,
+      progressText,
+      total,
+      ...props
+    } = this.props;
+    let {
+      estProgress,
+      prevNextProgress,
+      estInterval,
+      timeStart
+    } = this.state;
     if (prevNextProgress < nextProgress) {
       estProgress = progress;
       estInterval = (new Date().getTime() - timeStart) / progress;

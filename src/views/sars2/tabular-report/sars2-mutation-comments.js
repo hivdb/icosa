@@ -2,7 +2,6 @@ import shortenMutList from '../../../utils/shorten-mutation-list';
 
 
 function mutationComments({
-  currentProgramVersion,
   sequenceReadsAnalysis,
   sequenceAnalysis,
   config

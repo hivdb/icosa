@@ -76,5 +76,3 @@ export default class HoverLayer extends React.Component {
     </Layer>;
   }
 }
-
-

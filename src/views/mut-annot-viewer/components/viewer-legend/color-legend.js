@@ -30,9 +30,7 @@ function getAllAnnotations(props) {
       continue;
     }
     const {annotations} = posdata;
-    const {annotVal, annotDesc} = getAnnotation(
-      annotations, annotName
-    );
+    const {annotVal, annotDesc} = getAnnotation(annotations, annotName);
     if (annotVal !== null) {
       const annotKey = `${annotVal}$@$@$${annotDesc}`;
       let annotObj = {

@@ -33,7 +33,7 @@ export default class PosItemLayer extends React.Component {
       config
     } = this.props;
     const seqFragment = sequence.slice(posStart - 1, posEnd);
-  
+
     return (
       <Layer>
         {Array.from(seqFragment).map((residue, pos0) => (

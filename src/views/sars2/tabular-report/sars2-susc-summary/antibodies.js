@@ -70,7 +70,6 @@ function buildAbTable({
 
 
 function abSuscSummary({
-  currentProgramVersion,
   drdbLastUpdate,
   antibodies,
   sequenceReadsAnalysis,
@@ -98,9 +97,7 @@ function abSuscSummary({
     const seqName = seqName1 || seqName2;
     const itemsByMutations = antibodySuscSummary.itemsByMutations
       .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-    const antibodyColumns = getAntibodyColumns(
-      antibodies, itemsByMutations
-    );
+    const antibodyColumns = getAntibodyColumns(antibodies, itemsByMutations);
     const header = [
       ...commonHeader,
       ...antibodyColumns.reduce(

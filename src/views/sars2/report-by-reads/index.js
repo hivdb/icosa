@@ -1,15 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {routerShape, matchShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
 import SeqReadsLoader from '../../../components/seqreads-loader';
-import SeqReadsAnalysisLayout from 
+import SeqReadsAnalysisLayout from
   '../../../components/seqreads-analysis-layout';
 
 import query from './query.graphql';
 import SeqReadsReports from './reports';
 
+
+ReportByReadsContainer.propTypes = {
+  config: PropTypes.object,
+  lazyLoad: PropTypes.bool.isRequired,
+  output: PropTypes.string,
+  router: routerShape.isRequired,
+  match: matchShape.isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object
+};
 
 function ReportByReadsContainer({
   config,
@@ -47,15 +59,20 @@ function ReportByReadsContainer({
        {...props} />
     )}
   </SeqReadsAnalysisLayout>;
-  
 
 }
 
 
+ReportByReadsContainerWrapper.propTypes = {
+  match: matchShape.isRequired
+};
+
 export default function ReportByReadsContainerWrapper(props) {
-  const {location: {
-    query: {output = 'default'} = {}
-  } = {}} = props.match;
+  const {
+    location: {
+      query: {output = 'default'} = {}
+    } = {}
+  } = props.match;
   const lazyLoad = output !== 'printable';
   return (
     <ConfigContext.Consumer>

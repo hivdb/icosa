@@ -94,16 +94,18 @@ export default class SeqViewerStage extends React.Component {
   }
 
   scrollToPos = (position) => {
-    const {config: {
-      posItemOuterHeightPixel: posItemHeight,
-      verticalMarginPixel: vMargin,
-      pos2Coord
-    }, footerHeight} = this.props;
+    const {
+      config: {
+        posItemOuterHeightPixel: posItemHeight,
+        verticalMarginPixel: vMargin,
+        pos2Coord
+      }, footerHeight
+    } = this.props;
     const {y: posOffsetY} = pos2Coord(position);
     let {pageYOffset, innerHeight: viewportHeight} = window;
     viewportHeight -= footerHeight;
     const rect = this.containerRef.current.getBoundingClientRect();
-    
+
     const posItemTop = rect.y + posOffsetY;
     const posItemBottom = posItemTop + posItemHeight;
 
@@ -167,9 +169,11 @@ export default class SeqViewerStage extends React.Component {
 
   handleGlobalKeyDown = (evt) => {
     const {key} = evt;
-    const {config: {
-      seqFragment: [absPosStart, absPosEnd]
-    }} = this.props;
+    const {
+      config: {
+        seqFragment: [absPosStart, absPosEnd]
+      }
+    } = this.props;
     let posEnd = this.state.activePos;
     const isBodyActive = document.activeElement.tagName === 'BODY';
     switch (key) {
@@ -244,7 +248,7 @@ export default class SeqViewerStage extends React.Component {
       seqFragment: [absPosStart, absPosEnd]
     } = this.props.config;
     let posEnd = this.state.activePos;
-    switch(key) {
+    switch (key) {
       case 'ArrowLeft':
         posEnd --;
         break;
@@ -302,7 +306,9 @@ export default class SeqViewerStage extends React.Component {
       this.setState({prevSelecteds: selecteds});
       selecteds = unionSelections(
         this.props.selectedPositions,
-        prevSelecteds, selecteds);
+        prevSelecteds,
+        selecteds
+      );
       this.setSelection(selecteds);
     }
     else {
@@ -310,7 +316,7 @@ export default class SeqViewerStage extends React.Component {
       this.setState({prevSelecteds: selecteds});
       this.setSelection(selecteds);
     }
-  },50)
+  }, 50)
 
   handleMouseDown = ({evt}) => {
     const {multiSel, rangeSel} = getKeyCmd(evt);
@@ -467,7 +473,7 @@ export default class SeqViewerStage extends React.Component {
       // than this.props.selectedPositions
       curSelecteds
     } = this.state;
-    
+
     return (
       <div
        ref={this.containerRef}

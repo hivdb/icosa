@@ -18,7 +18,8 @@ import LegendContext from '../legend-context';
 import {
   curAnnotNameLookupShape,
   annotCategoryShape,
-  posShape, seqViewerSizeType} from '../../prop-types';
+  posShape, seqViewerSizeType
+} from '../../prop-types';
 
 
 export default class CanvasSequenceViewer extends React.Component {
@@ -26,6 +27,7 @@ export default class CanvasSequenceViewer extends React.Component {
   static propTypes = {
     size: seqViewerSizeType.isRequired,
     className: PropTypes.string,
+    annotations: PropTypes.array,
     seqFragment: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired,
@@ -86,14 +88,10 @@ export default class CanvasSequenceViewer extends React.Component {
       );
       switch (annotStyle) {
         case 'colorBox':
-          colorBoxPositions = getAnnotPositions(
-            curAnnots, positionLookup
-          );
+          colorBoxPositions = getAnnotPositions(curAnnots, positionLookup);
           break;
         case 'circleInBox':
-          circleInBoxPositions = getAnnotPositions(
-            curAnnots, positionLookup
-          );
+          circleInBoxPositions = getAnnotPositions(curAnnots, positionLookup);
           break;
         case 'underscore':
           underscoreAnnotLocations = calcUnderscoreAnnotLocations(
@@ -105,7 +103,9 @@ export default class CanvasSequenceViewer extends React.Component {
           break;
         case 'aminoAcids':
           aminoAcidsAnnotPositions[aaAnnotIdx] = getAnnotPositions(
-            curAnnots, positionLookup, aaAnnotIdx ++
+            curAnnots,
+            positionLookup,
+            aaAnnotIdx ++
           );
           aminoAcidsCatNames.push(catName);
           aminoAcidsOverrideColors.push(cat.color);
@@ -168,7 +168,8 @@ export default class CanvasSequenceViewer extends React.Component {
       onChange
     } = this.props;
     const combinedClassName = makeClassNames(
-      style['canvas-sequence-viewer'], className
+      style['canvas-sequence-viewer'],
+      className
     );
 
     return (
@@ -188,7 +189,8 @@ export default class CanvasSequenceViewer extends React.Component {
                  noBlurSelector,
                  positionLookup,
                  selectedPositions,
-                 onChange}} />
+                 onChange
+               }} />
             );
           }}
         </LegendContext.Consumer>

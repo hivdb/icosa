@@ -16,7 +16,7 @@ const colorPalettes = [
   '#c0c0c0',
   '#e13333', // cinnabar
   '#efa244', // orange
-  '#1b8ecc'  // blue
+  '#1b8ecc' // blue
 ];
 
 
@@ -110,8 +110,10 @@ export default class CodfishGraph extends React.Component {
        height={height + margin.top + margin.bottom}>
         <Group top={margin.top} left={margin.left}>
           {bars.map(({
-            value, mutation, color,
-            footnote, accumScore, codon
+            value,
+            mutation,
+            color,
+            footnote
           }, idx) => {
             const x = xScale(mutation);
             const y = yScale(value);

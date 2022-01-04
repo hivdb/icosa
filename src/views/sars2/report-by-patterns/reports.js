@@ -30,10 +30,23 @@ function getPageTitle(patternAnalysis, output) {
 }
 
 
+PatternReports.propTypes = {
+  cmtVersion: PropTypes.string,
+  drdbLastUpdate: PropTypes.string,
+  antibodies: PropTypes.array,
+  output: PropTypes.string.isRequired,
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  patterns: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object,
+  patternAnalysis: PropTypes.array.isRequired,
+  fetchAnother: PropTypes.func.isRequired
+};
+
 function PatternReports({
   cmtVersion,
   output,
-  genes,
   antibodies,
   drdbLastUpdate,
   match,
@@ -90,8 +103,7 @@ function PatternReports({
            match={match}
            router={router}
            antibodies={antibodies}
-           drdbLastUpdate={drdbLastUpdate}
-           genes={genes} />
+           drdbLastUpdate={drdbLastUpdate} />
           {idx + 1 < patternAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>
@@ -99,16 +111,5 @@ function PatternReports({
     </main>
   </>;
 }
-
-PatternReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  patternAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
 
 export default PatternReports;

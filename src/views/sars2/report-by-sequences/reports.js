@@ -31,15 +31,29 @@ function getPageTitle(sequenceAnalysis, output) {
   return pageTitle;
 }
 
+SequenceReports.propTypes = {
+  cmtVersion: PropTypes.string,
+  drdbLastUpdate: PropTypes.string,
+  output: PropTypes.string.isRequired,
+  match: matchShape.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  sequences: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object,
+  antibodies: PropTypes.array.isRequired,
+  sequenceAnalysis: PropTypes.array.isRequired,
+  fetchAnother: PropTypes.func.isRequired
+};
+
+SequenceReports.defaultProps = {
+  antibodies: []
+};
 
 function SequenceReports({
   output,
-  genes,
   antibodies,
   cmtVersion,
   drdbLastUpdate,
   match,
-  router,
   loaded,
   sequences,
   currentSelected,
@@ -97,23 +111,7 @@ function SequenceReports({
       ))}
     </main>
   </>;
-  
+
 }
-
-SequenceReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  antibodies: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
-SequenceReports.defaultProps = {
-  genes: [],
-  antibodies: []
-};
 
 export default SequenceReports;

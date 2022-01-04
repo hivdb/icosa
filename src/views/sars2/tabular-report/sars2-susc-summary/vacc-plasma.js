@@ -65,7 +65,6 @@ function buildVPTable({
 
 
 function vpSuscSummary({
-  currentProgramVersion,
   drdbLastUpdate,
   sequenceReadsAnalysis,
   sequenceAnalysis,

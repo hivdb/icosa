@@ -38,16 +38,16 @@ export default class ValidationReport extends React.Component {
               <li
                key={idx}
                className={style[
-                `level-${level.toLowerCase().replace('_', '-')}`
-              ]}>
+                 `level-${level.toLowerCase().replace('_', '-')}`
+               ]}>
                 <strong>{levelHumanStrings[level]}</strong>: {message}
               </li>
             ))}
-          </ul>
-         : null}
+          </ul> :
+          null}
         {validationResults.length === 0 && placeholder ?
-          <div className={style.placeholder}>{placeholder}</div>
-          : null}
+          <div className={style.placeholder}>{placeholder}</div> :
+          null}
       </section>
     );
   }

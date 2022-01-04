@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
-import SeqReadsAnalysisLayout from 
+import SeqReadsAnalysisLayout from
   '../../../components/seqreads-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 import useAddParams from '../../../components/seqreads-loader/use-add-params';
@@ -13,11 +14,17 @@ import SeqTabularReports from './reports';
 
 export {subOptions} from './sub-options';
 
+TabularReportByReadsContainer.propTypes = {
+  children: PropTypes.object, // new interface used by seqreads-report
+  allSequenceReads: PropTypes.array.isRequired,
+  onFinish: PropTypes.func.isRequired,
+  patternsTo: PropTypes.string.isRequired
+};
+
 
 export default function TabularReportByReadsContainer({
   children,
   allSequenceReads,
-  algorithm,
   onFinish,
   patternsTo
 }) {

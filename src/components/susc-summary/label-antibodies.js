@@ -11,7 +11,8 @@ import style from './style.module.scss';
 
 function LabelAntibodies({antibodies}) {
   const descMsg = `mab-description-${
-    antibodies.map(({name}) => name).join('+').toLocaleLowerCase('en-US')
+    antibodies.map(({name}) => name).join('+')
+      .toLocaleLowerCase('en-US')
   }`;
   const [config, loading] = ConfigContext.use();
 

@@ -6,6 +6,11 @@ import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash';
 import Button from '../../button';
 import parentStyle from '../style.module.scss';
 
+SDRMButton.propTypes = {
+  disableSDRMs: PropTypes.bool.isRequired,
+  showSDRMs: PropTypes.bool,
+  toggleSDRMs: PropTypes.func
+};
 
 function SDRMButton({disableSDRMs, showSDRMs, toggleSDRMs}) {
   return <Button
@@ -15,25 +20,6 @@ function SDRMButton({disableSDRMs, showSDRMs, toggleSDRMs}) {
       <FaEyeSlash className={parentStyle['icon-before-text']} /> :
       <FaEye className={parentStyle['icon-before-text']} />} SDRMs
   </Button>;
-}
-
-
-function SDRMList({geneSeqs}) {
-  return <>
-    {geneSeqs.map((geneSeq, idx) => {
-      const {gene: {name: gene}, sdrms} = geneSeq;
-      return <React.Fragment key={idx}>
-        <dt>{gene} SDRMs:</dt>
-        <dd>
-          {(
-            sdrms.length > 0 ?
-              sdrms.map(sdrm => sdrm.text).join(", ") :
-              "None"
-          )}
-        </dd>
-      </React.Fragment>;
-    })}
-  </>;
 }
 
 
@@ -53,5 +39,23 @@ SDRMList.propTypes = {
 };
 
 SDRMList.defaultProps = {geneSeqs: []};
+
+function SDRMList({geneSeqs}) {
+  return <>
+    {geneSeqs.map((geneSeq, idx) => {
+      const {gene: {name: gene}, sdrms} = geneSeq;
+      return <React.Fragment key={idx}>
+        <dt>{gene} SDRMs:</dt>
+        <dd>
+          {(
+            sdrms.length > 0 ?
+              sdrms.map(sdrm => sdrm.text).join(", ") :
+              "None"
+          )}
+        </dd>
+      </React.Fragment>;
+    })}
+  </>;
+}
 
 export {SDRMButton, SDRMList};

@@ -93,7 +93,7 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function useColumnDefs() {
+function useColumnDefs({openRefInNewWindow}) {
   return React.useMemo(
     () => [
       new ColumnDef({
@@ -140,22 +140,30 @@ function useColumnDefs() {
       new ColumnDef({
         name: 'references',
         label: 'References',
-        render: refs => <CellReferences refs={refs} />,
+        render: refs => <CellReferences {...{refs, openRefInNewWindow}} />,
         multiCells: true,
         sortable: false
       })
     ],
-    []
+    [openRefInNewWindow]
   );
 }
 
 
-function VaccPlasmaSuscSummaryTable({
-  rows,
-  openRefInNewWindow = false
-}) {
+VaccPlasmaSuscSummaryTable.propTypes = {
+  rows: PropTypes.arrayOf(
+    vpSuscSummaryShape.isRequired
+  ).isRequired,
+  openRefInNewWindow: PropTypes.bool.isRequired
+};
+
+VaccPlasmaSuscSummaryTable.defaultProps = {
+  openRefInNewWindow: false
+};
+
+function VaccPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
   const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
-  const columnDefs = useColumnDefs();
+  const columnDefs = useColumnDefs({openRefInNewWindow});
 
   if (rows.length > 0) {
     return <>
@@ -196,21 +204,16 @@ function VaccPlasmaSuscSummaryTable({
 }
 
 
-VaccPlasmaSuscSummaryTable.propTypes = {
-  rows: PropTypes.arrayOf(
-    vpSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
+VaccPlasmaSuscSummary.propTypes = {
+  vaccPlasmaSuscSummary: PropTypes.shape({
+    itemsByMutations: PropTypes.array.isRequired
+  }).isRequired
 };
-
-VaccPlasmaSuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
-};
-
 
 function VaccPlasmaSuscSummary({
-  vaccPlasmaSuscSummary: {itemsByMutations},
-  ...props
+  vaccPlasmaSuscSummary: {
+    itemsByMutations
+  }
 }) {
   itemsByMutations = itemsByMutations
     .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);

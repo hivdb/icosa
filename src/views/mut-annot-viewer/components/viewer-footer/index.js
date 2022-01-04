@@ -69,7 +69,7 @@ export default class ViewerFooter extends React.Component {
     }
     this.setState({expanded: !expanded});
   }
-  
+
   render() {
     const {commentMdText, hasSelectedComments} = this;
     let {expanded} = this.state;
@@ -86,7 +86,7 @@ export default class ViewerFooter extends React.Component {
          onClick={this.toggleDisplay}>
           {expanded ? <FaArrowDown /> : <FaArrowUp />}
           {expanded ? 'Less' : 'More'}
-        </button> 
+        </button>
         <div className={style.scrollable} ref={this.scrollableRef}>
           <Markdown
            disableHeadingTagAnchor

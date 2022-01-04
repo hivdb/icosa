@@ -32,7 +32,8 @@ export default class SeqReadsQA extends React.Component {
         }).isRequired,
         internalJsonAllPositionCodonReads: PropTypes.string.isRequired
       }).isRequired
-    ).isRequired
+    ).isRequired,
+    output: PropTypes.string
   }
 
   render() {

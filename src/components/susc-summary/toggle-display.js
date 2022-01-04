@@ -1,6 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import createPersistedReducer from '../../utils/use-persisted-reducer';
 import style from './style.module.scss';
+
+
+ToggleDisplayButton.propTypes = {
+  expanded: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  numRemainRows: PropTypes.number.isRequired
+};
 
 function ToggleDisplayButton({
   expanded,
