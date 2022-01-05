@@ -2,21 +2,21 @@ import uniq from 'lodash/uniq';
 import orderBy from 'lodash/orderBy';
 
 
-export function getUniqVariants(hitIsolates) {
-  return uniq(
-    hitIsolates.map(({variantName}) => variantName).filter(d => d)
-  );
-}
-
-
-export function getRowKey({mutations, vaccineName}) {
-  const mutText = mutations.map(({text}) => text).join('+');
+export function getRowKey({variant, mutations, vaccineName}) {
+  const mutText = variant ?
+    variant.name : mutations.map(({text}) => text).join('+');
   if (vaccineName) {
     return `${mutText}__${vaccineName}`;
   }
   else {
     return mutText;
   }
+}
+
+
+export function displayFold(fold) {
+  return fold >= 1000 ?
+    '≥1,000' : `${fold.toFixed(fold > 10 ? 0 : 1)}`;
 }
 
 // const DEFAULT_DISPLAY_2ND_TYPE_MAX_TOTAL = 3;
@@ -77,11 +77,16 @@ export function decideDisplayPriority(items) {
   }
 
   if (hasOverlap && defaultType === 'SUBSET') {
-    // check if we should switch place of SUBSET and OVERLAP
-    // when OVERLAP have general better results than SUBSET
+    // check if we should switch place of SUBSET and some OVERLAP
+    // when some OVERLAP have general better results than SUBSET
     if (overlapMinNumMiss < subsetMinNumMiss) {
       for (const one of results) {
-        if (one[1] === 1) {
+        const numMiss = one[2];
+        if (
+          one[1] === 1 &&
+          numMiss < subsetMinNumMiss &&
+          numMiss - overlapMinNumMiss < subsetMinNumMiss - numMiss
+        ) {
           one[1] = 0;
         }
         else if (one[1] === 0) {

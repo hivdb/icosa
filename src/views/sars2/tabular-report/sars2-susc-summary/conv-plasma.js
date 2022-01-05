@@ -13,7 +13,7 @@ function formatFold(fold) {
 
 function buildCPTable({
   seqName,
-  itemsByMutations,
+  itemsByVariantOrMutations,
   geneDisplay,
   drdbLastUpdate
 }) {
@@ -26,7 +26,7 @@ function buildCPTable({
     references,
     variants,
     ...cpData
-  } of buildPayload(itemsByMutations)) {
+  } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
     const variant = variants.join('/');
     const level1 = nestedGet(cpData, 'levels.susceptible');
@@ -93,11 +93,12 @@ function cpSuscSummary({
       convPlasmaSuscSummary
     } = seqResult;
     const seqName = seqName1 || seqName2;
-    const itemsByMutations = convPlasmaSuscSummary.itemsByMutations
+    const itemsByVariantOrMutations = convPlasmaSuscSummary
+      .itemsByVariantOrMutations
       .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
     const rows = buildCPTable({
       seqName,
-      itemsByMutations,
+      itemsByVariantOrMutations,
       geneDisplay,
       drdbLastUpdate
     });

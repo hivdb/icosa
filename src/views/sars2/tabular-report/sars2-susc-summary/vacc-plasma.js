@@ -14,7 +14,7 @@ function formatFold(fold) {
 
 function buildVPTable({
   seqName,
-  itemsByMutations,
+  itemsByVariantOrMutations,
   geneDisplay,
   drdbLastUpdate
 }) {
@@ -28,7 +28,7 @@ function buildVPTable({
     references,
     variants,
     ...vpData
-  } of buildPayload(itemsByMutations)) {
+  } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
     const variant = variants.join('/');
     const level1 = nestedGet(vpData, 'levels.susceptible');
@@ -94,11 +94,12 @@ function vpSuscSummary({
       vaccPlasmaSuscSummary
     } = seqResult;
     const seqName = seqName1 || seqName2;
-    const itemsByMutations = vaccPlasmaSuscSummary.itemsByMutations
+    const itemsByVariantOrMutations = vaccPlasmaSuscSummary
+      .itemsByVariantOrMutations
       .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
     const rows = buildVPTable({
       seqName,
-      itemsByMutations,
+      itemsByVariantOrMutations,
       geneDisplay,
       drdbLastUpdate
     });

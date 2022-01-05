@@ -35,7 +35,9 @@ const cumFoldShape = PropTypes.shape({
 const abSuscSummaryShape = PropTypes.shape({
   mutations: PropTypes.arrayOf(mutationShape.isRequired).isRequired,
   references: PropTypes.arrayOf(refShape.isRequired).isRequired,
-  variants: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  variant: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }),
   displayOrder: PropTypes.number,
   fold: PropTypes.objectOf(cumFoldShape.isRequired).isRequired
 });
@@ -44,7 +46,9 @@ const abSuscSummaryShape = PropTypes.shape({
 const vpSuscSummaryShape = PropTypes.shape({
   mutations: PropTypes.arrayOf(mutationShape.isRequired).isRequired,
   vaccineName: PropTypes.string.isRequired,
-  variants: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  variant: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }),
   numRefs: PropTypes.number.isRequired,
   numSamples: PropTypes.number.isRequired,
   medianFold: PropTypes.number.isRequired,
@@ -58,7 +62,9 @@ const vpSuscSummaryShape = PropTypes.shape({
 
 const cpSuscSummaryShape = PropTypes.shape({
   mutations: PropTypes.arrayOf(mutationShape.isRequired).isRequired,
-  variants: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  variant: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }),
   numRefs: PropTypes.number.isRequired,
   numSamples: PropTypes.number.isRequired,
   medianFold: PropTypes.number.isRequired,

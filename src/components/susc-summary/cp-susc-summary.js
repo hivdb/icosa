@@ -8,7 +8,7 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 import ConfigContext from '../../utils/config-context';
 
 import {cpSuscSummaryShape} from './prop-types';
-import {getRowKey, getUniqVariants, decideDisplayPriority} from './funcs';
+import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
 import useToggleDisplay from './toggle-display';
@@ -26,17 +26,16 @@ export function buildPayload(convPlasmaSuscSummary) {
   return decideDisplayPriority(convPlasmaSuscSummary)
     .map(
       ([{
+        variant,
         mutations,
-        hitIsolates,
         references,
         cumulativeCount: numSamples,
         cumulativeFold: {median: medianFold},
         itemsByResistLevel
       }, displayOrder]) => {
-        const variants = getUniqVariants(hitIsolates);
         const row = {
+          variant,
           mutations,
-          variants,
           numRefs: references.length,
           numSamples,
           medianFold,
@@ -90,8 +89,8 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variants}) => (
-          <CellMutations {...{mutations, variants}} />
+        render: (mutations, {variant}) => (
+          <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
@@ -118,7 +117,7 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'medianFold',
         label: 'Median Fold',
-        render: n => n.toFixed(1)
+        render: displayFold
       }),
       new ColumnDef({
         name: 'references',
@@ -191,16 +190,16 @@ function ConvPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
 
 ConvPlasmaSuscSummary.propTypes = {
   convPlasmaSuscSummary: PropTypes.shape({
-    itemsByMutations: PropTypes.array.isRequired
+    itemsByVariantOrMutations: PropTypes.array.isRequired
   }).isRequired
 };
 
 function ConvPlasmaSuscSummary({
-  convPlasmaSuscSummary: {itemsByMutations}
+  convPlasmaSuscSummary: {itemsByVariantOrMutations}
 }) {
-  itemsByMutations = itemsByMutations
+  itemsByVariantOrMutations = itemsByVariantOrMutations
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
-  const payload = buildPayload(itemsByMutations);
+  const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
     <ConvPlasmaSuscSummaryTable

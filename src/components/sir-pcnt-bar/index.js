@@ -5,7 +5,7 @@ import style from './style.module.scss';
 
 
 SIRPcntBarItem.propTypes = {
-  level: PropTypes.number.isRequired,
+  level: PropTypes.string.isRequired,
   pcnt: PropTypes.number.isRequired,
   children: PropTypes.node
 };
@@ -31,7 +31,7 @@ function SIRPcntBarItem({level, pcnt, children = null}) {
 SIRPcntBar.propTypes = {
   levelPcnts: PropTypes.arrayOf(
     PropTypes.shape({
-      level: PropTypes.number.isRequired,
+      level: PropTypes.string.isRequired,
       pcnt: PropTypes.number.isRequired
     }).isRequired
   ).isRequired

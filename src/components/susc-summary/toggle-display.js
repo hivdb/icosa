@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createPersistedReducer from '../../utils/use-persisted-reducer';
 import style from './style.module.scss';
 
 
@@ -30,13 +29,8 @@ function ToggleDisplayButton({
 }
 
 
-const useExpanded = createPersistedReducer(
-  '--sierra-susc-summary-toggle-display'
-);
-
-
 export default function useToggleDisplay(rows) {
-  const [expanded, onToggle] = useExpanded(expanded => !expanded, false);
+  const [expanded, onToggle] = React.useReducer(expanded => !expanded, false);
   let filteredRows;
   const numRemainRows = rows.filter(
     ({displayOrder}) => displayOrder !== 0

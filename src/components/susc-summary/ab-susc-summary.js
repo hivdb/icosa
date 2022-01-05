@@ -11,7 +11,7 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import ConfigContext from '../../utils/config-context';
 
-import {getUniqVariants, getRowKey, decideDisplayPriority} from './funcs';
+import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
@@ -31,7 +31,7 @@ function renderFold(resultItem) {
     cumulativeFold: {median/*, p25, p75, min, max*/},
     cumulativeCount
   } = resultItem;
-  const fold = median >= 100 ? '≥100' : `${median.toFixed(1)}`;
+  const fold = displayFold(median);
   let level = 1;
   if (median >= 10) {
     level = 3;
@@ -69,13 +69,12 @@ function buildPayload(antibodySuscSummary) {
   return decideDisplayPriority(antibodySuscSummary)
     .map(
       ([{
+        variant,
         mutations,
-        hitIsolates,
         references,
         itemsByAntibody
       }, displayOrder]) => {
-        const variants = getUniqVariants(hitIsolates);
-        const row = {mutations, references, variants, displayOrder, fold: {}};
+        const row = {mutations, references, variant, displayOrder, fold: {}};
         for (const {antibodies, ...cumdata} of itemsByAntibody) {
           const abkey = (
             sortBy(antibodies, ['priority'])
@@ -114,8 +113,8 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variants}) => (
-          <CellMutations {...{mutations, variants}} />
+        render: (mutations, {variant}) => (
+          <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
@@ -198,23 +197,23 @@ function AntibodySuscSummaryTable({
 AntibodySuscSummary.propTypes = {
   antibodies: PropTypes.array.isRequired,
   antibodySuscSummary: PropTypes.shape({
-    itemsByMutations: PropTypes.array.isRequired
+    itemsByVariantOrMutations: PropTypes.array.isRequired
   }).isRequired
 };
 
 function AntibodySuscSummary({
   antibodies,
-  antibodySuscSummary: {itemsByMutations}
+  antibodySuscSummary: {itemsByVariantOrMutations}
 }) {
-  itemsByMutations = itemsByMutations
+  itemsByVariantOrMutations = itemsByVariantOrMutations
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const antibodyColumns = React.useMemo(
-    () => getAntibodyColumns(antibodies, itemsByMutations),
-    [antibodies, itemsByMutations]
+    () => getAntibodyColumns(antibodies, itemsByVariantOrMutations),
+    [antibodies, itemsByVariantOrMutations]
   );
   const payload = React.useMemo(
-    () => buildPayload(itemsByMutations),
-    [itemsByMutations]
+    () => buildPayload(itemsByVariantOrMutations),
+    [itemsByVariantOrMutations]
   );
 
   return (

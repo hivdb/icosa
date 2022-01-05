@@ -35,7 +35,11 @@ const seqLevel = `
     comment
   }
   antibodySuscSummary(drdbVersion: $drdbVersion) {
-    itemsByMutations {
+    itemsByVariantOrMutations {
+      variant {
+        name
+        asWildtype
+      }
       mutations {
         gene { name }
         reference
@@ -43,9 +47,6 @@ const seqLevel = `
         isUnsequenced
         AAs
         text
-      }
-      hitIsolates {
-        variantName
       }
       isolateMatchType
       numIsolateOnlyMutations
@@ -79,7 +80,11 @@ const seqLevel = `
     }
   }
   convPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByMutations {
+    itemsByVariantOrMutations {
+      variant {
+        name
+        asWildtype
+      }
       mutations {
         gene { name }
         reference
@@ -87,9 +92,6 @@ const seqLevel = `
         isUnsequenced
         AAs
         text
-      }
-      hitIsolates {
-        variantName
       }
       isolateMatchType
       numIsolateOnlyMutations
@@ -110,7 +112,11 @@ const seqLevel = `
     }
   }
   vaccPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByMutations {
+    itemsByVariantOrMutations {
+      variant {
+        name
+        asWildtype
+      }
       mutations {
         gene { name }
         reference
@@ -118,9 +124,6 @@ const seqLevel = `
         isUnsequenced
         AAs
         text
-      }
-      hitIsolates {
-        variantName
       }
       isolateMatchType
       numIsolateOnlyMutations

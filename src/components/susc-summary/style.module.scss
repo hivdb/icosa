@@ -5,12 +5,50 @@
 
 
 $cell-padding: .1rem;
+$toggle-display-btn-height: 2.5rem;
 
 .susc-summary {
   @media print {
     page-break-inside: avoid;
   }
+  &:global(__scroll) {
+    padding-bottom: $toggle-display-btn-height;
+  }
 }
+
+button.toggle-display {
+  width: calc(100% - 2px);
+  position: absolute;
+  z-index: 1000;
+  bottom: 1px;
+  border-bottom-left-radius: 0.3rem;
+  border-bottom-right-radius: 0.3rem;
+  height: calc(#{$toggle-display-btn-height} - 1px);
+  font-family: "Arial Narrow", $base-font-family;
+  border-top: 1px solid rgba(34, 36, 38, 0.15);
+  border-right: none;
+  border-bottom: none;
+  border-left: none;
+  color: #777;
+  text-shadow: 1px 1px #fff;
+  background-color: #f9fafb;
+  line-height: 2em;
+  cursor: pointer;
+  transition: background-color 100ms ease-in-out;
+  &::before {
+    content: '—\a0\a0\a0';
+  }
+  &::after {
+    content: '\a0\a0\a0—';
+  }
+  &:hover {
+    background-color: #f3f3f3;
+  }
+  @media print {
+    display: none;
+  }
+}
+
 
 .susc-summary-footnote {
   ul > li {
@@ -84,33 +122,6 @@ ol.cell-references {
   border: 1px solid black;
   padding: .25rem;
   @extend %levels-style;
-}
-
-button.toggle-display {
-  width: 100%;
-  font-family: "Arial Narrow", $base-font-family;
-  border-top: 1px solid rgba(34, 36, 38, 0.15);
-  border-right: none;
-  border-bottom: none;
-  border-left: none;
-  color: #777;
-  text-shadow: 1px 1px #fff;
-  background-color: #f9fafb;
-  line-height: 2em;
-  cursor: pointer;
-  transition: background-color 100ms ease-in-out;
-  &::before {
-    content: '—\a0\a0\a0';
-  }
-  &::after {
-    content: '\a0\a0\a0—';
-  }
-  &:hover {
-    background-color: #f3f3f3;
-  }
-  @media print {
-    display: none;
-  }
 }
 
 .mab-popup-trigger {

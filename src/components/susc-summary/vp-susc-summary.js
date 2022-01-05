@@ -7,7 +7,7 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import ConfigContext from '../../utils/config-context';
 
-import {getRowKey, getUniqVariants, decideDisplayPriority} from './funcs';
+import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
 import {vpSuscSummaryShape} from './prop-types';
 import CellMutations from './cell-mutations';
 import CellReferences from './cell-references';
@@ -26,8 +26,8 @@ function buildPayload(vaccPlasmaSuscSummary) {
   return decideDisplayPriority(vaccPlasmaSuscSummary)
     .reduce(
       (acc, [{
+        variant,
         mutations,
-        hitIsolates,
         itemsByVaccine
       }, displayOrder]) => [
         ...acc,
@@ -39,11 +39,10 @@ function buildPayload(vaccPlasmaSuscSummary) {
             cumulativeFold: {median: medianFold},
             itemsByResistLevel
           }) => {
-            const variants = getUniqVariants(hitIsolates);
             const row = {
+              variant,
               mutations,
               vaccineName,
-              variants,
               numRefs: references.length,
               numSamples,
               medianFold,
@@ -99,8 +98,8 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variants}) => (
-          <CellMutations {...{mutations, variants}} />
+        render: (mutations, {variant}) => (
+          <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
@@ -134,7 +133,7 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'medianFold',
         label: 'Median Fold',
-        render: n => n.toFixed(1),
+        render: displayFold,
         multiCells: true
       }),
       new ColumnDef({
@@ -206,18 +205,18 @@ function VaccPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
 
 VaccPlasmaSuscSummary.propTypes = {
   vaccPlasmaSuscSummary: PropTypes.shape({
-    itemsByMutations: PropTypes.array.isRequired
+    itemsByVariantOrMutations: PropTypes.array.isRequired
   }).isRequired
 };
 
 function VaccPlasmaSuscSummary({
   vaccPlasmaSuscSummary: {
-    itemsByMutations
+    itemsByVariantOrMutations
   }
 }) {
-  itemsByMutations = itemsByMutations
+  itemsByVariantOrMutations = itemsByVariantOrMutations
     .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
-  const payload = buildPayload(itemsByMutations);
+  const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
     <VaccPlasmaSuscSummaryTable

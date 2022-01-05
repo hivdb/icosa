@@ -28,7 +28,7 @@ function extractCumuCount(item) {
 
 function buildAbTable({
   seqName,
-  itemsByMutations,
+  itemsByVariantOrMutations,
   geneDisplay,
   drdbLastUpdate,
   antibodyColumns
@@ -39,7 +39,7 @@ function buildAbTable({
     references,
     variants,
     ...abData
-  } of buildPayload(itemsByMutations)) {
+  } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
     const variant = variants.join('/');
     const row = {
@@ -95,9 +95,13 @@ function abSuscSummary({
       antibodySuscSummary
     } = seqResult;
     const seqName = seqName1 || seqName2;
-    const itemsByMutations = antibodySuscSummary.itemsByMutations
+    const itemsByVariantOrMutations = antibodySuscSummary
+      .itemsByVariantOrMutations
       .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
-    const antibodyColumns = getAntibodyColumns(antibodies, itemsByMutations);
+    const antibodyColumns = getAntibodyColumns(
+      antibodies,
+      itemsByVariantOrMutations
+    );
     const header = [
       ...commonHeader,
       ...antibodyColumns.reduce(
@@ -115,7 +119,7 @@ function abSuscSummary({
     ];
     const rows = buildAbTable({
       seqName,
-      itemsByMutations,
+      itemsByVariantOrMutations,
       geneDisplay,
       drdbLastUpdate,
       antibodyColumns
