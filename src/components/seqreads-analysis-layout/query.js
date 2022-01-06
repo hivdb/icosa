@@ -33,7 +33,24 @@ function getQuery(fragment, extraParams) {
 }
 
 
-function SeqReadsAnalysisQuery({
+SeqReadsAnalysisQuery.propTypes = {
+  currentSelected: PropTypes.object,
+  query: PropTypes.object.isRequired,
+  lazyLoad: PropTypes.bool.isRequired,
+  renderPartialResults: PropTypes.bool.isRequired,
+  extraParams: PropTypes.string,
+  allSequenceReads: PropTypes.array.isRequired,
+  initOffset: PropTypes.number.isRequired,
+  initLimit: PropTypes.number.isRequired,
+  children: PropTypes.func.isRequired,
+  client: PropTypes.any,
+  progressText: PropTypes.func.isRequired,
+  showProgressBar: PropTypes.bool.isRequired,
+  onExtendVariables: PropTypes.func.isRequired
+};
+
+
+export default function SeqReadsAnalysisQuery({
   renderPartialResults,
   currentSelected,
   query: queryFragment,
@@ -143,22 +160,3 @@ function SeqReadsAnalysisQuery({
   </>;
 
 }
-
-
-SeqReadsAnalysisQuery.propTypes = {
-  query: PropTypes.object.isRequired,
-  lazyLoad: PropTypes.bool.isRequired,
-  renderPartialResults: PropTypes.bool.isRequired,
-  extraParams: PropTypes.string,
-  allSequenceReads: PropTypes.array.isRequired,
-  initOffset: PropTypes.number.isRequired,
-  initLimit: PropTypes.number.isRequired,
-  children: PropTypes.func.isRequired,
-  client: PropTypes.any,
-  progressText: PropTypes.func.isRequired,
-  showProgressBar: PropTypes.bool.isRequired,
-  onExtendVariables: PropTypes.func.isRequired
-};
-
-
-export default SeqReadsAnalysisQuery;

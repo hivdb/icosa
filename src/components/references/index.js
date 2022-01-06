@@ -24,6 +24,14 @@ export {
 };
 
 
+RefItem.propTypes = {
+  number: PropTypes.number.isRequired,
+  itemId: PropTypes.string.isRequired,
+  linkIds: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired
+};
+
 function RefItem(props) {
   const itemRef = React.useRef();
 
@@ -84,12 +92,18 @@ function RefItem(props) {
     ])}
     {children}
   </li>;
-  
+
 }
 
+References.propTypes = {
+  placeholder: PropTypes.node.isRequired
+};
 
-function References({
-  onLoad,
+References.defaultProps = {
+  placeholder: <InlineLoader />
+};
+
+export default function References({
   placeholder
 }) {
 
@@ -98,7 +112,7 @@ function References({
 
   return <ol className={style.references}>
     {ensureLoaded(
-      ({setReference, getLinkedReferences}) => (
+      ({getLinkedReferences}) => (
         getLinkedReferences().map(refProps => (
           <RefItem {...refProps} key={refProps.itemId} />
         ))
@@ -108,16 +122,3 @@ function References({
   </ol>;
 
 }
-
-References.propTypes = {
-  onLoad: PropTypes.func,
-  placeholder: PropTypes.node.isRequired
-};
-
-
-References.defaultProps = {
-  placeholder: <InlineLoader />
-};
-
-
-export default References;

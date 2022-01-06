@@ -14,7 +14,7 @@ export function parseMutation(mut, defaultGene) {
     [gene] = mut.split(':', 1);
     mut = mut.slice(gene.length + 1);
   }
-  
+
   if (/^[A-Za-z]/.test(mut)) {
     ref = mut.slice(0, 1);
     mut = mut.slice(1);

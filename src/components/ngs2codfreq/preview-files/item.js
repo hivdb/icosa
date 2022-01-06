@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
@@ -10,6 +11,19 @@ import {
 import style from '../style.module.scss';
 import DropPlaceholder from './drop-placeholder';
 
+
+FASTQItem.propTypes = {
+  file: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  onDragStart: PropTypes.func,
+  onDrag: PropTypes.func,
+  onDragEnd: PropTypes.func,
+  onRemove: PropTypes.func,
+  draggable: PropTypes.bool
+};
 
 function FASTQItem({
   file,
@@ -84,6 +98,29 @@ function FASTQItem({
   );
 }
 
+
+FASTQPairItem.propTypes = {
+  name: PropTypes.string.isRequired,
+  pair: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired
+    }).isRequired
+  ).isRequired,
+  n: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  className: PropTypes.string,
+  onDragStart: PropTypes.func,
+  onDrag: PropTypes.func,
+  onDragEnd: PropTypes.func,
+  curDragFile: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  onSplit: PropTypes.func,
+  onMove: PropTypes.func,
+  onNameChange: PropTypes.func,
+  onRemove: PropTypes.func,
+  draggable: PropTypes.bool
+};
 
 export default function FASTQPairItem({
   name,
@@ -171,7 +208,5 @@ export default function FASTQPairItem({
       </ul>
     </li>
   </>;
-  
+
 }
-
-

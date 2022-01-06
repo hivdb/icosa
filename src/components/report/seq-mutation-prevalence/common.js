@@ -20,8 +20,10 @@ function toTableRow(mutation, triplet, subtypesForAAs, allSubtypes) {
     let {AA, subtypes} of
     [...subtypesForAAs].sort(({AA: a1}, {AA: a2}) => a1 > a2)
   ) {
-    for (const {subtype: {name},
-      percentageNaive, percentageTreated} of subtypes) {
+    for (const {
+      subtype: {name},
+      percentageNaive, percentageTreated
+    } of subtypes) {
       const lower = name.toLowerCase();
       if (lower === 'all' || lower === 'other') {
         continue;
@@ -53,7 +55,11 @@ function mutationPrevalencesToTableData(prevalences, allSubtypes) {
       [...others].sort(({AA: a1}, {AA: a2}) => a1 > a2)
     ) {
       const child = toTableRow(
-        `${consensus}${position}${AA}`, '', [{AA, subtypes}], allSubtypes);
+        `${consensus}${position}${AA}`,
+        '',
+        [{AA, subtypes}],
+        allSubtypes
+      );
       children.push(child);
     }
     row.children = children;

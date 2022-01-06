@@ -17,11 +17,15 @@ import GeneMutationPrevalence from './gene-mutation-prevalence';
 
 function getColumnMetadata(subtypeStats, gene) {
   let columnMetadata = [
-    {columnName: 'mutation',
+    {
+      columnName: 'mutation',
       displayName: 'Mutation',
-      customComponent: PrevalenceMutCol},
-    {columnName: 'triplet',
-      displayName: 'NAs'}
+      customComponent: PrevalenceMutCol
+    },
+    {
+      columnName: 'triplet',
+      displayName: 'NAs'
+    }
   ];
 
   for (const type of ['Naive', 'Treated']) {
@@ -48,8 +52,8 @@ function getColumnMetadata(subtypeStats, gene) {
           break;
         }
         return result;
-      })
-    );
+      }
+    ));
   }
   return columnMetadata;
 }
@@ -60,7 +64,7 @@ export default class SeqMutationPrevalence extends React.Component {
   static propTypes = {
     mutationPrevalenceSubtypes: PropTypes.array.isRequired,
     mutationPrevalences: PropTypes.array.isRequired,
-    drugResistance: PropTypes.array.isRequired,
+    drugResistance: PropTypes.array.isRequired
   }
 
   render() {
@@ -69,7 +73,7 @@ export default class SeqMutationPrevalence extends React.Component {
       mutationPrevalences,
       drugResistance: allMutationComments
     } = this.props;
-    const rowsByGenes = 
+    const rowsByGenes =
       mutationPrevalencesToTableData(mutationPrevalences, subtypeStats);
     subtypeStats = subtypeStats
       .filter(({name}) => !(/^(All|Other)$/.test(name)));

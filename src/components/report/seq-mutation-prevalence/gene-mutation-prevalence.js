@@ -55,8 +55,10 @@ export default class GeneMutationPrevalence extends React.Component {
   }
 
   render() {
-    const {gene, rows, columns,
-      mutationComments, columnMetadata} = this.props;
+    const {
+      gene, rows, columns,
+      mutationComments, columnMetadata
+    } = this.props;
     const drugClass = geneToDrugClass[gene];
 
     return (

@@ -13,11 +13,16 @@ export default class DRInterpretation extends React.Component {
   static propTypes = {
     strain: PropTypes.string.isRequired,
     geneDR: PropTypes.shape({
+      gene: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        drugClasses: PropTypes.array.isRequired
+      }).isRequired,
+      levels: PropTypes.array.isRequired,
       algorithm: PropTypes.shape({
         family: PropTypes.string.isRequired,
         version: PropTypes.string.isRequired,
         publishDate: PropTypes.string.isRequired
-      }).isRequired,
+      }).isRequired
     }).isRequired,
     output: PropTypes.string.isRequired,
     suppressDRI: PropTypes.bool.isRequired,
@@ -36,7 +41,8 @@ export default class DRInterpretation extends React.Component {
   render() {
     const {
       strain, suppressLevels, suppressDRI,
-      geneDR, output, disabledDrugs} = this.props;
+      geneDR, output, disabledDrugs
+    } = this.props;
     const {algorithm, gene} = geneDR;
 
     return (

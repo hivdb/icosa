@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import round from 'lodash/round';
 import orderBy from 'lodash/orderBy';
 
@@ -9,6 +10,18 @@ function formatPercent(percent) {
   return round(percent, percent >= 10 ? 0 : 1) + '%';
 }
 
+
+Mutation.propTypes = {
+  text: PropTypes.string.isRequired,
+  isUnsequenced: PropTypes.bool.isRequired,
+  totalReads: PropTypes.number,
+  allAAReads: PropTypes.arrayOf(
+    PropTypes.shape({
+      aminoAcid: PropTypes.string.isRequired,
+      percent: PropTypes.number.isRequired
+    }).isRequired
+  )
+};
 
 function Mutation({text, isUnsequenced, totalReads, allAAReads}) {
   const hasTotalReads = totalReads && totalReads > 0;
@@ -26,7 +39,9 @@ function Mutation({text, isUnsequenced, totalReads, allAAReads}) {
              data-hide-aa={allAAReads.length === 1}
              className={style['aa-percent-list']}>
               {orderBy(
-                allAAReads, ['percent'], ['desc']
+                allAAReads,
+                ['percent'],
+                ['desc']
               ).map(({aminoAcid, percent}, idx) => (
                 <li key={idx} className={style['aa-percent-item']}>
                   <span className={style['amino-acid']}>

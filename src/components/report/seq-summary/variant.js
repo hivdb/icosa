@@ -20,8 +20,8 @@ Variant.propTypes = {
       }),
       distancePcnt: PropTypes.string.isRequired,
       referenceAccession: PropTypes.string.isRequired,
-      referenceCountry: PropTypes.string.isRequired,
-      referenceYear: PropTypes.number.isRequired
+      referenceCountry: PropTypes.string,
+      referenceYear: PropTypes.number
     }).isRequired
   )
 };

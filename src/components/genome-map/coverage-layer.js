@@ -47,6 +47,13 @@ function calcPath(coverages, scaleX, scaleY, posStart, posEnd) {
 }
 
 
+CovAxis.propTypes = {
+  x: PropTypes.number.isRequired,
+  scaleY: PropTypes.func.isRequired,
+  tickWidth: PropTypes.number.isRequired,
+  tickFontSize: PropTypes.number.isRequired
+};
+
 function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
   const [covStart, covEnd] = scaleY.domain();
   const yBottom = scaleY(covStart);
@@ -89,7 +96,31 @@ function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
 }
 
 
-function CoverageLayer({
+CoverageLayer.propTypes = {
+  tickWidth: PropTypes.number.isRequired,
+  tickFontSize: PropTypes.number.isRequired,
+  offsetY: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  scaleX: PropTypes.func.isRequired,
+  posStart: PropTypes.number.isRequired,
+  posEnd: PropTypes.number.isRequired,
+  fill: PropTypes.string,
+  coverageUpperLimit: PropTypes.number,
+  coverages: PropTypes.arrayOf(
+    PropTypes.shape({
+      position: PropTypes.number.isRequired,
+      coverage: PropTypes.number.isRequired
+    }).isRequired
+  ).isRequired
+};
+
+
+CoverageLayer.defaultProps = {
+  tickWidth: 8,
+  tickFontSize: 12
+};
+
+export default function CoverageLayer({
   tickWidth,
   tickFontSize,
   offsetY,
@@ -119,29 +150,3 @@ function CoverageLayer({
      d={calcPath(coverages, scaleX, scaleY, posStart, posEnd)} />
   </svg>;
 }
-
-CoverageLayer.propTypes = {
-  tickWidth: PropTypes.number.isRequired,
-  tickFontSize: PropTypes.number.isRequired,
-  offsetY: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  scaleX: PropTypes.func.isRequired,
-  posStart: PropTypes.number.isRequired,
-  posEnd: PropTypes.number.isRequired,
-  fill: PropTypes.string,
-  coverageUpperLimit: PropTypes.number,
-  coverages: PropTypes.arrayOf(
-    PropTypes.shape({
-      position: PropTypes.number.isRequired,
-      coverage: PropTypes.number.isRequired
-    }).isRequired
-  ).isRequired
-};
-
-
-CoverageLayer.defaultProps = {
-  tickWidth: 8,
-  tickFontSize: 12
-};
-
-export default CoverageLayer;

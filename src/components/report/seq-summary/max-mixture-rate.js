@@ -10,7 +10,7 @@ MaxMixtureRate.propTypes = {
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   config: PropTypes.shape({
-    seqReadsMaxMixtureRate: PropTypes.number.isRequired
+    seqReadsMaxMixtureRate: PropTypes.array.isRequired
   }),
   maxMixtureRate: PropTypes.number.isRequired,
   mixtureRate: PropTypes.number.isRequired

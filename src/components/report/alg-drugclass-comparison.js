@@ -59,28 +59,25 @@ export default class AlgDrugClassComparison extends React.Component {
 
   groupDrugScores(drugScores) {
     return Array.from(
-      drugScores.reduce(
-        (map, drugScore) => {
-          const drugName = drugScore.drug.name;
-          if (!map.has(drugName)) {
-            map.set(drugName, [drugScore.drug, new Map()]);
-          }
-          map.get(drugName)[1].set(drugScore.algorithm, drugScore);
-          return map;
-        }, new Map()
-      ).values()
+      drugScores.reduce((map, drugScore) => {
+        const drugName = drugScore.drug.name;
+        if (!map.has(drugName)) {
+          map.set(drugName, [drugScore.drug, new Map()]);
+        }
+        map.get(drugName)[1].set(drugScore.algorithm, drugScore);
+        return map;
+      }, new Map()).values()
     );
   }
 
   findAlgorithms(drugScores) {
     return Array.from(
-      drugScores.reduce(
-        (acc, [, drugScore]) => {
-          for (const algorithm of drugScore.keys()) {
-            acc.add(algorithm);
-          }
-          return acc;
-        }, new Set())
+      drugScores.reduce((acc, [, drugScore]) => {
+        for (const algorithm of drugScore.keys()) {
+          acc.add(algorithm);
+        }
+        return acc;
+      }, new Set())
     );
   }
 
@@ -99,15 +96,15 @@ export default class AlgDrugClassComparison extends React.Component {
       <div
        ref="container"
        className={classNames(
-          style['alg-drugclass-comparison-container'],
-          containerExpanded ? style.expanded : null
-        )}>
+         style['alg-drugclass-comparison-container'],
+         containerExpanded ? style.expanded : null
+       )}>
         <p className={style.instruction}>
           <Button onClick={this.toggleContainerExpanded} btnSize="small">
             {containerExpanded ?
               <FaCompress /> : <FaExpand />}
           </Button>
-          {scrolled ? 
+          {scrolled ?
             <span>Scroll right for more <FaAngleDoubleRight /></span> : '\xa0'}
         </p>
         <div className={style['alg-drugclass-comparison']}>
@@ -147,7 +144,8 @@ export default class AlgDrugClassComparison extends React.Component {
                     {algorithms.map(
                       (alg, idx) => {
                         const ds = drugScore.get(alg);
-                        return <td key={idx}
+                        return <td
+                         key={idx}
                          className={isDiff ? style['cell-diff'] : null}>
                           <div className={style['alg-comparison-card']}>
                             <dl>

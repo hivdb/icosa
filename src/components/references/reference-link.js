@@ -30,7 +30,7 @@ function RefLinkInternal({
       const refObj = setReference(name, ref, /* incr= */ true);
       setRefObj(refObj);
     },
-    [setReference, /* eslint-disable-line react-hooks/exhaustive-deps*/]
+    [setReference] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   let number, itemId, linkId, loaded = false;
@@ -99,7 +99,8 @@ function RefLinkInternal({
   }
 
   const trigger = (
-    <sup><a className={style['ref-link']}
+    <sup><a
+     className={style['ref-link']}
      onClick={handleClick}
      ref={linkRef}
      id={elemId} href={`#${anchorTarget}`}>
@@ -149,7 +150,7 @@ RefLinkInternal.propTypes = {
 const MemoRefLinkInternal = React.memo(
   RefLinkInternal,
   ({
-    group, prevGroup,
+    group: prevGroup,
     name: prevName
   }, {
     group: nextGroup,
@@ -157,6 +158,15 @@ const MemoRefLinkInternal = React.memo(
   }) => prevGroup === nextGroup && prevName === nextName
 );
 
+
+RefLink.propTypes = {
+  group: PropTypes.string,
+  name: PropTypes.string,
+  identifier: PropTypes.string,
+  authors: PropTypes.string,
+  year: PropTypes.number,
+  children: PropTypes.node
+};
 
 export default function RefLink({group, name, identifier, ...props}) {
   const refContext = React.useContext(ReferenceContext);

@@ -2,6 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import style from './style.module.scss';
 
+HLFirstWord.propTypes = {
+  children: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired
+};
 
 function HLFirstWord({children, index}) {
   children = children.split(' ');
@@ -13,6 +17,14 @@ function HLFirstWord({children, index}) {
   </>;
 }
 
+
+ReportHeader.propTypes = {
+  output: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func
+};
 
 function ReportHeader({
   output,
@@ -46,14 +58,6 @@ function ReportHeader({
     <HLFirstWord index={index}>{name}</HLFirstWord>
   </header>;
 }
-
-
-ReportHeader.propTypes = {
-  output: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired
-};
 
 
 export default React.memo(

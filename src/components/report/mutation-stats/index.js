@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
 import gql from 'graphql-tag';
 
@@ -18,7 +19,8 @@ const query = gql`
     ${config.mutStatTableColumns.filter(({query}) => !!query)
     .map(({name, query}) => (
       `${name}: ${query} { percentStart, percentStop, count }`
-    )).join('\n')}
+    ))
+    .join('\n')}
     }
   }
 `;
@@ -27,6 +29,9 @@ export {query};
 export default class MutationStats extends React.Component {
 
   static propTypes = {
+    histogram: PropTypes.object,
+    minPrevalence: PropTypes.number,
+    validationResults: PropTypes.object,
     router: routerShape.isRequired,
     match: matchShape.isRequired
   }

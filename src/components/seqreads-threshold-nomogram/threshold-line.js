@@ -85,8 +85,8 @@ export default function ThresholdLine({
   return <g>
     <defs>
       <linearGradient {...gradientProps}>
-        <stop offset="0%" opacity="0.2" stop-color={color} />
-        <stop offset="100%" opacity="0" stop-color="#fff" />
+        <stop offset="0%" opacity="0.2" stopColor={color} />
+        <stop offset="100%" opacity="0" stopColor="#fff" />
       </linearGradient>
     </defs>
     <line {...lineProps} />

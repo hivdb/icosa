@@ -14,7 +14,7 @@ function highlight(key, comment, highlightText) {
     return hl;
   }).join('|');
   hls = new RegExp(hls, 'g');
-  let match, lastIndex, j=0;
+  let match, lastIndex, j = 0;
   const rcomment = [];
   do {
     match = hls.exec(comment);
@@ -25,7 +25,7 @@ function highlight(key, comment, highlightText) {
       rcomment.push(<strong key={`${key}-${j++}`}>{match}</strong>);
       lastIndex = hls.lastIndex;
     }
-  } while(match);
+  } while (match);
   rcomment.push(comment.slice(lastIndex));
   return rcomment;
 }
@@ -64,7 +64,8 @@ export default class DRCommentByTypes extends React.Component {
                 .filter(({comments}) => (
                   !(comments.length === 0 ||
                  (displayTPV && comments.every(
-                   ({name}) => name.startsWith('DRVHighAndTPV'))
+                   ({name}) => name.startsWith('DRVHighAndTPV')
+                 )
                  ))
                 ))
                 .map(({commentType, comments}, idx) => [
@@ -91,7 +92,8 @@ export default class DRCommentByTypes extends React.Component {
                         return commentsByText.map((cmts, idx) => (
                           <li key={idx}>
                             {highlight(
-                              idx, cmts[0].text,
+                              idx,
+                              cmts[0].text,
                               cmts.reduce((l, cmt) => (
                                 l.concat(cmt.highlightText)
                               ), [])

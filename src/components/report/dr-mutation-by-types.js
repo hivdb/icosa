@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import config from '../../config';
 
 import style from './style.module.scss';
@@ -7,6 +8,13 @@ const mutTypeLabels = config.mutationTypesByGenes;
 
 
 export default class DRMutationByTypes extends React.Component {
+
+  static propTypes = {
+    gene: PropTypes.shape({
+      name: PropTypes.string.isRequired
+    }).isRequired,
+    mutationsByTypes: PropTypes.array.isRequired
+  }
 
   render() {
     const {gene, mutationsByTypes} = this.props;
@@ -31,12 +39,14 @@ export default class DRMutationByTypes extends React.Component {
               <dt
                key={`label-${mutationType.toLowerCase()}`}>
                 {mutTypeLabels[gene.name][mutationType]} Mutations:
-              </dt>);
+              </dt>
+            );
             r.push(
               <dd
                key={`list-${mutationType.toLowerCase()}`}>
                 {muts}
-              </dd>);
+              </dd>
+            );
             return r;
           }, [])}
         </dl>

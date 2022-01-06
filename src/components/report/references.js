@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import InlineLoader from '../inline-loader';
 
 import ConfigContext from '../../utils/config-context';
@@ -19,6 +20,11 @@ const useDisplayRefSection = createPersistedReducer(
   '--sierra-report-display-ref-section-opt'
 );
 
+
+RefContextWrapper.propTypes = {
+  children: PropTypes.node
+};
+
 export function RefContextWrapper({children}) {
   const [config, loading] = ConfigContext.use();
   const {refDataLoader} = config || {};
@@ -32,9 +38,10 @@ export function RefContextWrapper({children}) {
 }
 
 export default function ReferencesSection() {
-  const [display, toggleDisplay] = useDisplayRefSection(
-    display => !display, false
-  );
+  const [
+    display,
+    toggleDisplay
+  ] = useDisplayRefSection(display => !display, false);
 
   const {
     hasAnyReference

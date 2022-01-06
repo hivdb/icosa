@@ -7,7 +7,24 @@ import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 import style from './style.module.scss';
 
 
-function ReportSection({
+ReportSection.propTypes = {
+  className: PropTypes.string,
+  collapsable: PropTypes.bool.isRequired,
+  display: PropTypes.bool.isRequired,
+  toggleDisplay: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  titleAnnotation: PropTypes.node,
+  children: PropTypes.node.isRequired
+};
+
+
+ReportSection.defaultProps = {
+  collapsable: false,
+  display: true,
+  toggleDisplay: () => null
+};
+
+export default function ReportSection({
   className,
   collapsable,
   display,
@@ -17,10 +34,11 @@ function ReportSection({
   children
 }) {
   return (
-    <section className={classNames(
-      style['report-section'],
-      className
-    )} data-display={display}>
+    <section
+     className={classNames(
+       style['report-section'],
+       className
+     )} data-display={display}>
       <h2>
         {collapsable ? (
           <button
@@ -44,21 +62,3 @@ function ReportSection({
     </section>
   );
 }
-
-ReportSection.propTypes = {
-  collapsable: PropTypes.bool.isRequired,
-  display: PropTypes.bool.isRequired,
-  toggleDisplay: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-  titleAnnotation: PropTypes.node,
-  children: PropTypes.node.isRequired
-};
-
-
-ReportSection.defaultProps = {
-  collapsable: false,
-  display: true,
-  toggleDisplay: () => null
-};
-
-export default ReportSection;

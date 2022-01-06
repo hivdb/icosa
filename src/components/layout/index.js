@@ -62,7 +62,7 @@ class LayoutInner extends React.Component {
 export default class Layout extends React.Component {
 
   static propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node
   }
 
   render() {

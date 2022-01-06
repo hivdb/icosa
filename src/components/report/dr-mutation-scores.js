@@ -9,6 +9,10 @@ import style from './style.module.scss';
 
 class RuleCol extends React.Component {
 
+  static propTypes = {
+    data: PropTypes.node
+  }
+
   static contextTypes = {
     drugClass: PropTypes.object.isRequired
   }
@@ -65,7 +69,8 @@ class DRClassMutScores extends React.Component {
         mutations: {text: string},
         score: number
       }>
-    }>) {
+    }>
+  ) {
     const map = new Map();
     for (const {drug, partialScores} of scores) {
       for (const mutScore of partialScores) {
@@ -106,8 +111,7 @@ class DRClassMutScores extends React.Component {
       .map(drugScore => ({
         columnName: drugScore.drug.name,
         displayName: drugScore.drug.displayAbbr
-      }))
-    );
+      })));
     const data = this.scoresToTableData(scores);
 
     return (
@@ -123,7 +127,6 @@ class DRClassMutScores extends React.Component {
   }
 
 }
-
 
 
 export default class DRMutationScores extends React.Component {
@@ -150,7 +153,8 @@ export default class DRMutationScores extends React.Component {
           return <DRClassMutScores
            key={idx} {...{drugClass, disabledDrugs}}
            scores={geneDR.drugScores.filter(
-              ds => ds.drugClass.name === drugClass.name)}
+             ds => ds.drugClass.name === drugClass.name
+           )}
           />;
         })}
       </section>

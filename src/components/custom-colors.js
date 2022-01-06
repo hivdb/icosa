@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
 
 CustomColors.propTypes = {
-  colors: PropTypes.object.isRequired,
+  colors: PropTypes.object,
   children: PropTypes.node,
   as: PropTypes.elementType,
   style: PropTypes.object,

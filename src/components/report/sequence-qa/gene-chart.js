@@ -83,7 +83,13 @@ class GeneChart extends React.Component {
         isDeletion: PropTypes.bool.isRequired
       }).isRequired
     ),
-    containerWidth: PropTypes.number.isRequired
+    containerWidth: PropTypes.number.isRequired,
+    showTooltip: PropTypes.func,
+    hideTooltip: PropTypes.func,
+    tooltipOpen: PropTypes.bool,
+    tooltipData: PropTypes.number,
+    tooltipTop: PropTypes.number.isRequired,
+    tooltipLeft: PropTypes.number.isRequired
   }
 
   __hash__() {

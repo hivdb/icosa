@@ -112,7 +112,7 @@ export default function MinPrevalenceAxis({
       </text>
     ))}
     <text
-     writing-mode="vertical-rl"
+     writingMode="vertical-rl"
      transform="rotate(-180)"
      x={- constants.paddingH}
      y={- scale.range().reduce((a, b) => a + b, 0) / 2}

@@ -59,7 +59,7 @@ export default class MutationStats extends React.Component {
       <thead>
         <tr>
           <th>Mutation detection threshold</th>
-          {cols.map(({name, label, type}) => (
+          {cols.map(({label, type}) => (
             type === 'dividingLine' ?
               <th className={style['dividing-line']} /> :
               <th>{label}</th>
@@ -74,7 +74,7 @@ export default class MutationStats extends React.Component {
            data-current={Math.abs(ms.cutoff - currentCutoff * 100) < 1e-5}
            key={idx}>
             <td>{Number((ms.cutoff).toPrecision(1))}%</td>
-            {cols.map(({name, label, type, formatter = c=>c}) => (
+            {cols.map(({name, type, formatter = c=>c}) => (
               type === 'dividingLine' ?
                 <td className={style['dividing-line']} /> :
                 <td>{formatter(ms[name], numPositions)}</td>
