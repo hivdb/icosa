@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Collapsable from '../collapsable';
 import {HeadingTag} from '../heading-tags';
@@ -25,6 +26,13 @@ macroPlugin.addMacro('refs', (content, props) => {
 });
 
 
+StaticRefsNode.propTypes = {
+  names: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  as: PropTypes.elementType,
+  className: PropTypes.string,
+  style: PropTypes.object
+};
+
 export function StaticRefsNode({names, as = 'ul', className, style}) {
   if (as !== 'ul' && as !== 'ol') {
     as = 'ul';
@@ -41,6 +49,12 @@ export function StaticRefsNode({names, as = 'ul', className, style}) {
   );
 }
 
+
+OptReferences.propTypes = {
+  level: PropTypes.number,
+  disableAnchor: PropTypes.bool,
+  referenceTitle: PropTypes.node
+};
 
 export default function OptReferences({
   level, disableAnchor, referenceTitle

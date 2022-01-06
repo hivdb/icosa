@@ -9,6 +9,15 @@ import style from './style.module.scss';
 export default class FileInput extends React.Component {
 
   static propTypes = {
+    name: PropTypes.string,
+    accept: PropTypes.string,
+    placeholder: PropTypes.string,
+    disabled: PropTypes.bool,
+    multiple: PropTypes.bool,
+    children: PropTypes.node,
+    hideSelected: PropTypes.bool,
+    btnSize: PropTypes.string,
+    onChange: PropTypes.func,
     btnStyle: PropTypes.string.isRequired
   }
 
@@ -31,8 +40,16 @@ export default class FileInput extends React.Component {
 
   render() {
     let {
-      name, accept, placeholder, disabled, multiple,
-      children, hideSelected, btnSize, btnStyle} = this.props;
+      name,
+      accept,
+      placeholder,
+      disabled,
+      multiple,
+      children,
+      hideSelected,
+      btnSize,
+      btnStyle
+    } = this.props;
     placeholder = placeholder || "No file chosen";
     return (
       <span className={style['file-input']}>

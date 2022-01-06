@@ -53,7 +53,7 @@ function PaginatorItem({
       </a>
     </li>
   );
-  
+
 }
 
 PaginatorItem.propTypes = {

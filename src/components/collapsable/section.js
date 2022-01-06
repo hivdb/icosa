@@ -64,8 +64,7 @@ class SectionInner extends React.Component {
     );
     if (headingChild) {
       anchor = getAnchor(headingChild);
-      registerCollapsableAnchor(
-        anchor, `h${level}`, alwaysCollapsable);
+      registerCollapsableAnchor(anchor, `h${level}`, alwaysCollapsable);
     }
     const {anchor: curAnchor} = this.getCurAnchor(props);
     return {
@@ -83,10 +82,10 @@ class SectionInner extends React.Component {
      *
      * Case #1: changed by clicking the accordion (toggling)
      * Case #2: changed by URL anchor
-     * 
+     *
      * For #1, no need to update the state since the props are not changed;
      * For #2, the whole state should be reset to default if:
-     * 
+     *
      *   a) The current accordion is the `curAnchor`
      *   b) Although this accordion is not the `curAnchor`, it was explicitly
      *      required to be collapsed by `shouldCollapseOther`
@@ -149,7 +148,7 @@ class SectionInner extends React.Component {
     this.setState(newState);
   }
 
-  onLoad = (e) => {
+  onLoad = () => {
     setTimeout(() => (
       this._isMounted && this.forceUpdate()
     ));
@@ -165,10 +164,17 @@ class SectionInner extends React.Component {
 
   render() {
     const {
-      level, match, router,
-      registerCollapsableAnchor,  // unused
-      getClosestCollapsableAnchor,  // unused
-      alwaysCollapsable,  // unused
+      level,
+      // eslint-disable-next-line no-unused-vars
+      match,
+      // eslint-disable-next-line no-unused-vars
+      router,
+      // eslint-disable-next-line no-unused-vars
+      registerCollapsableAnchor,
+      // eslint-disable-next-line no-unused-vars
+      getClosestCollapsableAnchor,
+      // eslint-disable-next-line no-unused-vars
+      alwaysCollapsable,
       ...props
     } = this.props;
     const {

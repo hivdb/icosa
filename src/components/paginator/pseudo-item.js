@@ -1,14 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 
 export default class PseudoItem extends React.Component {
 
   static propTypes = {
-    name: PropTypes.string.isRequired,
+    /* name: PropTypes.string.isRequired,
     onClick: PropTypes.func,
     href: PropTypes.string,
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired */
   }
 
   render() {

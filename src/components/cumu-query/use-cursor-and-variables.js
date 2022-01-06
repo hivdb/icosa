@@ -61,7 +61,7 @@ export default function useCursorAndVariables({
       }
       const variables = {};
       variables[mainInputName] = queryObjs;
-    
+
       return {
         variables: onExtendVariables(variables),
         isEmptyQuery: queryObjs.length === 0,
@@ -70,8 +70,12 @@ export default function useCursorAndVariables({
       };
     },
     [
-      isCached, inputObjs, inputUniqKeyName,
-      mainInputName, maxPerRequest, onExtendVariables
+      isCached,
+      inputObjs,
+      inputUniqKeyName,
+      mainInputName,
+      maxPerRequest,
+      onExtendVariables
     ]
   );
 
@@ -85,8 +89,11 @@ export default function useCursorAndVariables({
       );
     },
     [
-      cursor.offset, cursor.limit,
-      inputObjs, isCached, inputUniqKeyName
+      cursor.offset,
+      cursor.limit,
+      inputObjs,
+      isCached,
+      inputUniqKeyName
     ]
   );
 

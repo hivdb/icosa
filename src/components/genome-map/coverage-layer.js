@@ -14,7 +14,8 @@ function calcPath(coverages, scaleX, scaleY, posStart, posEnd) {
     (acc, {position, coverage}) => {
       acc[position] = coverage;
       return acc;
-    }, []
+    },
+    []
   );
   let prevX = scaleX(posStart);
   let prevY = scaleY(0);
@@ -53,10 +54,15 @@ function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
   const strokeWidth = 2;
 
   const pathData = [
-    'm', x + tickWidth, yEnd + strokeWidth / 2,
-    'h', - tickWidth,
-    'v', yBottom - yEnd - strokeWidth,
-    'h', tickWidth
+    'm',
+    x + tickWidth,
+    yEnd + strokeWidth / 2,
+    'h',
+    - tickWidth,
+    'v',
+    yBottom - yEnd - strokeWidth,
+    'h',
+    tickWidth
   ];
 
   return <g id="coverage-axis">

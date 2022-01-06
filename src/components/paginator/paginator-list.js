@@ -18,7 +18,7 @@ export default function usePaginatorList({
           {childItems.map((props, idx) => (
             <PaginatorItem
              key={idx}
-             {...props} 
+             {...props}
              index={idx}
              isSelected={currentSelected === props.name}
              isHovering={currentHovering === props.name}

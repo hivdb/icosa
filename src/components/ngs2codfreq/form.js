@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
@@ -13,6 +14,11 @@ import style from './style.module.scss';
 
 const SUPPORT_FORMATS = ".fastq, .gz";
 
+
+NGSForm.propTypes = {
+  className: PropTypes.string,
+  onSubmit: PropTypes.func
+};
 
 export default function NGSForm({className, onSubmit}) {
 
@@ -97,10 +103,12 @@ export default function NGSForm({className, onSubmit}) {
           <input {...getInputProps()} />
           <div
            data-drag-active={isDragActive}
-           {...getRootProps({className: classNames(
-             style['ngs-input'],
-             className ? `${className}__input` : null
-           )})}>
+           {...getRootProps({
+             className: classNames(
+               style['ngs-input'],
+               className ? `${className}__input` : null
+             )
+           })}>
             <div className={classNames(
               style['placeholder'],
               className ? `${className}__placeholder` : null
@@ -108,10 +116,11 @@ export default function NGSForm({className, onSubmit}) {
               {config.messages['ngs2codfreq-placeholder'] ||
                '<ngs2codfreq-placeholder>'}
             </div>
-            <button type="button" className={classNames(
-              style['browse-files'],
-              className ? `${className}__browse-files` : null
-            )}>
+            <button
+             type="button" className={classNames(
+               style['browse-files'],
+               className ? `${className}__browse-files` : null
+             )}>
               Browse files
             </button>
           </div>
@@ -135,16 +144,18 @@ export default function NGSForm({className, onSubmit}) {
             true
           )}:
         </label>
-        <button type="submit" className={classNames(
-          style['btn-primary'],
-          className ? `${className}__btn-primary` : null
-        )}>
+        <button
+         type="submit" className={classNames(
+           style['btn-primary'],
+           className ? `${className}__btn-primary` : null
+         )}>
           Start process
         </button>
-        <button type="reset" className={classNames(
-          style['btn-default'],
-          className ? `${className}__btn-default` : null
-        )}>
+        <button
+         type="reset" className={classNames(
+           style['btn-default'],
+           className ? `${className}__btn-default` : null
+         )}>
           Reset
         </button>
       </div>

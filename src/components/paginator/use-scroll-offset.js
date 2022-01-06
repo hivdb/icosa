@@ -13,7 +13,8 @@ function calcInitScrollOffset({
     scrollOffset = Math.min(
       Math.max(
         getIndex(
-          currentSelected, childItems
+          currentSelected,
+          childItems
         ) - parseInt(displayNums / 2) + 1,
         0
       ),
@@ -92,5 +93,3 @@ export default function useScrollOffset({
   };
 
 }
-
-

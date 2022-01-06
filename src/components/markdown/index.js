@@ -83,6 +83,7 @@ function ExtendedMarkdown({
     // table: SimpleTableContainer,
     // parsedHtml,
     ...(inline ? {} : {root: RootWrapper}),
+    // eslint-disable-next-line react/prop-types
     ...(inline ? {paragraph: ({children}) => <>{children}</>} : null),
     ...addRenderers
   };

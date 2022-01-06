@@ -3,7 +3,6 @@ import React from 'react';
 export default function useWheelEvent({
   childItems,
   displayNums,
-  currentSelected,
   resetScrollOffset,
   onScroll
 }) {
@@ -13,7 +12,9 @@ export default function useWheelEvent({
     () => {
       const {current: elem} = navRef;
       elem.addEventListener(
-        'wheel', handleWheel, {passive: false}
+        'wheel',
+        handleWheel,
+        {passive: false}
       );
       window.addEventListener(
         '--sierra-paginator-reset-scroll',
@@ -22,7 +23,9 @@ export default function useWheelEvent({
       );
       return () => {
         elem.removeEventListener(
-          'wheel', handleWheel, {passive: false}
+          'wheel',
+          handleWheel,
+          {passive: false}
         );
         window.removeEventListener(
           '--sierra-paginator-reset-scroll',
@@ -73,5 +76,3 @@ export default function useWheelEvent({
   );
   return navRef;
 }
-
-

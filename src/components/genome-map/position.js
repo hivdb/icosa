@@ -31,6 +31,7 @@ export default class Position extends React.Component {
   }
 
   get pathData() {
+    /* eslint-disable array-element-newline */
     const {
       offsetY,
       labelFontSize,
@@ -100,7 +101,7 @@ export default class Position extends React.Component {
     }
     return propsList;
   }
-  
+
   get textProps() {
     const {
       offsetY,
@@ -116,8 +117,8 @@ export default class Position extends React.Component {
     let [x, y] = turns[turns.length - 1];
 
     y += (
-      offsetY + labelFontSize * 1.5 + height
-      + 5 + 6 * arrows.length + PATH_EXTEND_SIZE
+      offsetY + labelFontSize * 1.5 + height +
+      5 + 6 * arrows.length + PATH_EXTEND_SIZE
     );
     return {
       transform: `translate(${x}, ${y}) rotate(-60)`,

@@ -11,7 +11,7 @@ export {calcOffsetLimit, calcInitOffsetLimit};
 export default function useCumuQuery(props) {
   const {
     query,
-    client,
+    client
   } = props;
 
   const {

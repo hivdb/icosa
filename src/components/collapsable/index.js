@@ -27,7 +27,8 @@ export default class Collapsable extends React.Component {
     this.containerRef = React.createRef();
     const {levels} = this.props;
     this.collapsableContext = new CollapsableContextValue(
-      this.containerRef, levels
+      this.containerRef,
+      levels
     );
   }
 

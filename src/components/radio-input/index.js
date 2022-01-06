@@ -25,7 +25,8 @@ export default class RadioInput extends React.Component {
   render() {
     const {
       id, name, value, title, onChange, checked, disabled,
-      children, style: userStyle} = this.props;
+      children, style: userStyle
+    } = this.props;
     return (
       <span title={title} className={style['general-radio-input']}>
         <input

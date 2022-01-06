@@ -14,9 +14,14 @@ import style from './style.module.scss';
 
 
 function MutationsInput({
-  config, mutations, className, onChange, isActive, ...extras
+  config,
+  mutations,
+  className,
+  onChange,
+  isActive, // eslint-disable-line no-unused-vars
+  ...extras
 }) {
-  const [,allErrors] = sanitizeMutations(mutations, config);
+  const [, allErrors] = sanitizeMutations(mutations, config);
   const handlePrefillSelect = React.useCallback(
     option => {
       onChange({
@@ -37,7 +42,7 @@ function MutationsInput({
   return (
     <div className={classNames(
       style['mutation-suggest-input'],
-      className,
+      className
     )}>
       <div className={style['mutation-main-input']}>
         {prefillElement}
@@ -98,7 +103,7 @@ function MutationsInput({
   } */
 
 }
-  
+
 
 MutationsInput.propTypes = {
   config: PropTypes.shape({

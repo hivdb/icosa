@@ -243,7 +243,7 @@ function* findPatterns(f1, f2) {
 
 /**
  * Smartly identify paired FASTQ files
- * 
+ *
  * A valid filename pattern must meet:
  * - use one of the valid delimiters (" ", "_" or "-") to separate the filename
  *   into different chunks

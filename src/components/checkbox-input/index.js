@@ -40,9 +40,10 @@ function CheckboxInput({
      tabIndex={0}
      onKeyDown={handleKeyDown}
      className={classNames(
-       style['general-checkbox-input'], className,
-       isClipPathPolygonSupported ? style['use-polygon'] : null)
-     }>
+       style['general-checkbox-input'],
+       className,
+       isClipPathPolygonSupported ? style['use-polygon'] : null
+     )}>
       <input
        id={id} {...props}
        type="checkbox" />

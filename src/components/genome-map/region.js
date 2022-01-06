@@ -50,8 +50,10 @@ export default class Region extends React.Component {
     const y = offsetY + labelFontSize * 1.5 + height / 2 + regionOffsetY;
     const width = scaleX(posEnd) - x;
     return {
-      x1: x, x2: x + width,
-      y1: y, y2: y,
+      x1: x,
+      x2: x + width,
+      y1: y,
+      y2: y,
       strokeWidth: 2,
       stroke: fill
     };
@@ -77,7 +79,10 @@ export default class Region extends React.Component {
     return {
       x,
       y: offsetY + labelFontSize * 1.5 + regionOffsetY,
-      width, height, rx, ry: rx,
+      width,
+      height,
+      rx,
+      ry: rx,
       stroke: '#ffffff',
       strokeOpacity: .8,
       strokeWidth: 2,
@@ -115,13 +120,16 @@ export default class Region extends React.Component {
       halfWaves --;
     }
     let pathData = [
-      'm', x, offsetY + height + labelFontSize * 1.5 + regionOffsetY + 5,
+      'm',
+      x,
+      offsetY + height + labelFontSize * 1.5 + regionOffsetY + 5,
       ...waveData
     ];
     for (let i = 1; i < wavyRepeats; i ++) {
       pathData = [
         ...pathData,
-        'm', - width,
+        'm',
+        - width,
         2 * halfWaveSize + direction * (movePixel - halfWaveSize / 2),
         ...waveData
       ];
@@ -174,7 +182,8 @@ export default class Region extends React.Component {
       attrs.textAnchor = 'middle';
     }
     return {
-      x, y,
+      x,
+      y,
       fontSize: labelFontSize,
       ...attrs,
       fill: color
@@ -223,7 +232,8 @@ export default class Region extends React.Component {
       attrs.textAnchor = 'end';
     }
     return {
-      x, y,
+      x,
+      y,
       fontSize: labelFontSize,
       ...attrs,
       fill: color

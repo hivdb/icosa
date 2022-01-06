@@ -5,7 +5,6 @@ import nestGet from 'lodash/get';
 export default function useResultCache({
   inputObjs,
   mainOutputName,
-  inputUniqKeyName,
   outputUniqKeyName
 }) {
   const cache = React.useMemo(
@@ -32,24 +31,19 @@ export default function useResultCache({
     },
     [cache, mainOutputName, outputUniqKeyName]
   );
-  
+
   const restoreResults = React.useCallback(
-    ({
-      loadFirstIndex,
-      offset,
-      limit,
-      loaded
-    }) => {
+    () => {
       const mainOutputs = Object.values(cache.lookup);
-    
+
       const mergedData = {
         currentVersion: {},
         currentProgramVersion: {},
         ...cache.misc
       };
-    
+
       mergedData[mainOutputName] = mainOutputs;
-    
+
       return mergedData;
     },
     [cache, mainOutputName]

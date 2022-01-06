@@ -22,7 +22,8 @@ export default class Button extends React.Component {
     className: PropTypes.string,
     value: PropTypes.oneOfType([
       PropTypes.string,
-      PropTypes.number]),
+      PropTypes.number
+    ]),
     href: PropTypes.string,
     to: PropTypes.string,
     type: PropTypes.string,
@@ -38,10 +39,18 @@ export default class Button extends React.Component {
   }
 
   render() {
-    const {btnSize, btnStyle, btnHeight, children, ...props} = this.props;
+    const {
+      btnSize,
+      btnStyle,
+      btnHeight,
+      children, // eslint-disable-line no-unused-vars
+      ...props
+    } = this.props;
     const {href, to} = props;
     const classNames = [
-      props.className, style.btn, style[`btn-${btnSize}`],
+      props.className,
+      style.btn,
+      style[`btn-${btnSize}`],
       style[`btn-style-${btnStyle}`]
     ];
     if (btnHeight) {
@@ -57,7 +66,7 @@ export default class Button extends React.Component {
     props.role = 'button';
     return React.createElement(
       btnComponent,
-      props, 
+      props,
       <span>{this.props.children}</span>
     );
   }

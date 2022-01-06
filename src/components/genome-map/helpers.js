@@ -14,12 +14,14 @@ export function removeOverlaps(posGroup, scaleX) {
   let maxOffsetY = 0;
 
   let extendedRight = extposEnditions(
-    positions, 1,
+    positions,
+    1,
     pos => pos >= posMiddle,
     diff => diff < hGap / 2
   );
   const extendedLeft = extposEnditions(
-    positions.reverse(), -1,
+    positions.reverse(),
+    -1,
     pos => pos <= posMiddle,
     diff => -diff < hGap / 1.5
   );

@@ -61,7 +61,8 @@ export default class GenomeMap extends React.Component {
     } = this.props;
     const {height, width, paddingLeft, paddingRight} = this.state;
     return <div className={classNames(
-      style['map-container'], className
+      style['map-container'],
+      className
     )}>
       <div className={style['button-group']}>
         {extraButtons}

@@ -35,7 +35,29 @@ export function getBasePath(location) {
 }
 
 
-function AnalyzeForms({
+AnalyzeForms.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  onSubmit: PropTypes.func,
+  //onTabSwitch: React.PropTypes.func,
+  basePath: PropTypes.string.isRequired,
+  patternsTo: PropTypes.string.isRequired,
+  sequencesTo: PropTypes.string.isRequired,
+  readsTo: PropTypes.string,
+  enableReads: PropTypes.bool.isRequired,
+  hideReads: PropTypes.bool.isRequired,
+  sequencesOutputOptions: PropTypes.object,
+  seqReadsOutputOptions: PropTypes.object,
+  ngs2codfreqSide: PropTypes.node,
+  children: PropTypes.node
+};
+
+AnalyzeForms.defaultProps = {
+  enableReads: false,
+  hideReads: false
+};
+
+export default function AnalyzeForms({
   match,
   basePath,
   onSubmit,
@@ -109,29 +131,6 @@ function AnalyzeForms({
       {tabName === 'ngs2codfreq' ? ngs2codfreqSide : null}
     </FormsContainer>
   </>;
-  
+
 
 }
-
-AnalyzeForms.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  onSubmit: PropTypes.func,
-  //onTabSwitch: React.PropTypes.func,
-  basePath: PropTypes.string.isRequired,
-  patternsTo: PropTypes.string.isRequired,
-  sequencesTo: PropTypes.string.isRequired,
-  readsTo: PropTypes.string,
-  enableReads: PropTypes.bool.isRequired,
-  hideReads: PropTypes.bool.isRequired,
-  sequencesOutputOptions: PropTypes.object,
-  seqReadsOutputOptions: PropTypes.object,
-  children: PropTypes.node
-};
-
-AnalyzeForms.defaultProps = {
-  enableReads: false,
-  hideReads: false
-};
-
-export default AnalyzeForms;

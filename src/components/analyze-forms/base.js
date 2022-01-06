@@ -20,7 +20,17 @@ function useSavedInput() {
 }
 
 
-function AnalyzeBaseForm({
+AnalyzeBaseForm.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  resetDisabled: PropTypes.bool.isRequired,
+  submitDisabled: PropTypes.bool.isRequired,
+  to: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired
+};
+
+export default function AnalyzeBaseForm({
   to,
   onSubmit,
   onReset,
@@ -32,6 +42,37 @@ function AnalyzeBaseForm({
 
   const {router, match} = useRouter();
   const savedInput = useSavedInput();
+
+  const handleSubmit = React.useCallback(
+    async (e) => {
+      e.persist();
+      let [validated, state, query = {}] = await onSubmit(e);
+      const {outputOption} = state;
+      e.preventDefault();
+      if (validated) {
+      // eslint-disable-next-line no-unused-vars
+        let {location: {state: _, ...loc}} = match;
+        const pathname = to;
+        if (outputOption !== 'default') {
+          query = {...query, output: outputOption};
+        }
+        loc = {...loc, state, pathname, query};
+        router.push(loc);
+      }
+    },
+    [match, onSubmit, router, to]
+  );
+
+  const handleReset = React.useCallback(
+    (e) => {
+      e.persist();
+      // eslint-disable-next-line no-unused-vars
+      const {location: {state, ...loc}} = match;
+      router.replace(loc);
+      onReset(e);
+    },
+    [match, onReset, router]
+  );
 
   return (
     <div
@@ -60,46 +101,4 @@ function AnalyzeBaseForm({
     </div>
   );
 
-  async function handleSubmit(e) {
-    e.persist();
-    let [validated, state, query = {}] = await onSubmit(e);
-    const {outputOption} = state;
-    e.preventDefault();
-    if (validated) {
-      let {location: {state: _, ...loc}} = match;
-      const pathname = to;
-      if (outputOption !== 'default') {
-        query = {...query, output: outputOption};
-      }
-      loc = {...loc, state, pathname, query};
-      router.push(loc);
-    }
-  }
-
-  function handleReset(e) {
-    e.persist();
-    const {location: {state, ...loc}} = match;
-    router.replace(loc);
-    onReset(e);
-  }
-
 }
-
-AnalyzeBaseForm.propTypes = {
-  allowRetainingInput: PropTypes.bool.isRequired,
-  retainInputLabel: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  resetDisabled: PropTypes.bool.isRequired,
-  submitDisabled: PropTypes.bool.isRequired,
-  to: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  onReset: PropTypes.func.isRequired
-};
-
-AnalyzeBaseForm.defaultProps = {
-  allowRetainingInput: false,
-  retainInputLabel: 'Save input data in my browser for future use'
-};
-
-export default AnalyzeBaseForm;

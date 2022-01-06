@@ -1,13 +1,13 @@
 import React from 'react';
 
 export class CollapsableContextValue {
-  #containerRef;  // private
-  #collapsableLevels;  // private
-  #collapsableAnchors;  // private
+  #containerRef; // private
+  #collapsableLevels; // private
+  #collapsableAnchors; // private
 
   constructor(
-    containerRef,  // React ref to article container
-    levels  // levels (from h1 to h6) that can be collapsed
+    containerRef, // React ref to article container
+    levels // levels (from h1 to h6) that can be collapsed
   ) {
     this.#containerRef = containerRef;
     this.#collapsableLevels = levels;

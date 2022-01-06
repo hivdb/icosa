@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import {moveFile, removeFile, splicePair} from '../fastq-pairs';
@@ -16,6 +17,12 @@ function calcStep(distance) {
   return direction * Math.ceil(distance / 20);
 }
 
+
+PreviewFiles.propTypes = {
+  fastqPairs: PropTypes.array,
+  onChange: PropTypes.func,
+  className: PropTypes.string
+};
 
 export default function PreviewFiles({fastqPairs, onChange, className}) {
 
@@ -36,7 +43,7 @@ export default function PreviewFiles({fastqPairs, onChange, className}) {
   );
 
   const handleDragStart = React.useCallback(
-    (file, event) => {
+    file => {
       setCurDragFile(file);
     },
     [setCurDragFile]
@@ -59,7 +66,7 @@ export default function PreviewFiles({fastqPairs, onChange, className}) {
     [scroll, listRef]
   );
   const handleDragEnd = React.useCallback(
-    event => {
+    () => {
       setCurDragFile(null);
     },
     [setCurDragFile]

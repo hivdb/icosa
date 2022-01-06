@@ -94,7 +94,6 @@ function scaleMultipleLinears(domains, range) {
 }
 
 
-
 export default class RegionGroup extends React.Component {
   static propTypes = {
     paddingTop: PropTypes.number.isRequired,
@@ -118,7 +117,8 @@ export default class RegionGroup extends React.Component {
         regionShape.isRequired
       ).isRequired
     }),
-    moveSVGBorder: PropTypes.func.isRequired
+    moveSVGBorder: PropTypes.func.isRequired,
+    positions: PropTypes.array
   }
 
   static defaultProps = {

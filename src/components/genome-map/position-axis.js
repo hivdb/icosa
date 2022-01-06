@@ -126,14 +126,20 @@ export default class PositionAxis extends React.Component {
       }
       pathData = [
         ...pathData,
-        'h', xEnd - xStart
+        'h',
+        xEnd - xStart
       ];
       if (posEnd < globPosEnd) {
         pathData = [
           ...pathData,
-          'l', 5, -5,
-          'v', 10,
-          'l', 5, -5,
+          'l',
+          5,
+          -5,
+          'v',
+          10,
+          'l',
+          5,
+          -5
         ];
       }
     }

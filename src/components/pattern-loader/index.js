@@ -28,7 +28,8 @@ function useCurrentSelected({
         return {index: 0, name: patterns[0].name};
       }
       const index = Math.max(
-        0, patterns.findIndex(({name: patN}) => patN === name)
+        0,
+        patterns.findIndex(({name: patN}) => patN === name)
       );
       return {index, name: patterns[index].name};
     },

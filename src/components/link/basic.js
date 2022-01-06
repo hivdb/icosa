@@ -1,17 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import style from './style.module.scss';
 
+BasicLink.propTypes = {
+  children: PropTypes.node
+};
 
-export default class BasicLink extends React.Component {
-
-  render() {
-    const {children, ...props} = this.props;
-    return (
-      <a {...props} className={style.link}>
-        {children}
-      </a>
-    );
-  }
-
+export default function BasicLink({children, ...props}) {
+  return (
+    <a {...props} className={style.link}>
+      {children}
+    </a>
+  );
 }

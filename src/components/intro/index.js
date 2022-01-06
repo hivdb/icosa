@@ -1,64 +1,53 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import style from './style.module.scss';
 
 
-export class IntroHeader extends React.Component {
+IntroHeader.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
-  static propTypes = {
-    children: PropTypes.node.isRequired
-  }
-
-  render() {
-    return <header>{this.props.children}</header>;
-  }
-
+export function IntroHeader({children}) {
+  return <header>{children}</header>;
 }
 
 
-export class IntroHeaderSupplement extends React.Component {
+IntroHeaderSupplement.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
-  render() {
-    return <div className={style.supplement}>
-      {this.props.children}
-    </div>;
-  }
-
+export function IntroHeaderSupplement({children}) {
+  return <div className={style.supplement}>{children}</div>;
 }
 
 
-export default class Intro extends React.Component {
+Intro.propTypes = {
+  children: PropTypes.node.isRequired
+};
 
-  static propTypes = {
-    children: PropTypes.node.isRequired
+export default function Intro({children}) {
+  let header = null;
+  let body = [];
+  if (!(children instanceof Array)) {
+    children = [children];
+  }
+  for (const element of children) {
+    if (element && element.type === IntroHeader) {
+      header = element;
+    }
+    else {
+      body.push(element);
+    }
   }
 
-  render() {
-    let {children} = this.props;
-    let header = null;
-    let body = [];
-    if (!(children instanceof Array)) {
-      children = [children];
-    }
-    for (const element of children) {
-      if (element && element.type === IntroHeader) {
-        header = element;
-      }
-      else {
-        body.push(element);
-      }
-    }
-
-    return (
-      <div className={style.intro}>
-        {header}
-        {body.length > 0 ?
-          <section>
-            {body}
-          </section>
-         : null}
-      </div>
-    );
-  }
-
+  return (
+    <div className={style.intro}>
+      {header}
+      {body.length > 0 ?
+        <section>
+          {body}
+        </section> :
+        null}
+    </div>
+  );
 }

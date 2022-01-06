@@ -22,7 +22,8 @@ function renderLink(href, props) {
   }
   else {
     return (
-      <a href={href}
+      <a
+       href={href}
        {...others}
        rel="noopener noreferrer"
        target={target}>

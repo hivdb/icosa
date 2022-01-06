@@ -32,7 +32,29 @@ function getQuery(fragment, extraParams) {
 }
 
 
-function PatternAnalysisQuery({
+PatternAnalysisQuery.propTypes = {
+  query: PropTypes.object.isRequired,
+  extraParams: PropTypes.string,
+  patterns: PropTypes.array.isRequired,
+  initOffset: PropTypes.number.isRequired,
+  initLimit: PropTypes.number.isRequired,
+  children: PropTypes.func.isRequired,
+  client: PropTypes.any,
+  progressText: PropTypes.func.isRequired,
+  showProgressBar: PropTypes.bool.isRequired,
+  onExtendVariables: PropTypes.func.isRequired,
+  renderPartialResults: PropTypes.bool,
+  currentSelected: PropTypes.object,
+  lazyLoad: PropTypes.bool
+};
+
+
+PatternAnalysisQuery.defaultProps = {
+  showProgressBar: false
+};
+
+
+export default function PatternAnalysisQuery({
   renderPartialResults,
   currentSelected,
   query: queryFragment,
@@ -88,7 +110,7 @@ function PatternAnalysisQuery({
   }
 
   let progressbar = null;
-  
+
   let childNode = null;
 
   if (loaded || renderPartialResults) {
@@ -128,25 +150,3 @@ function PatternAnalysisQuery({
   </>;
 
 }
-
-
-PatternAnalysisQuery.propTypes = {
-  query: PropTypes.object.isRequired,
-  extraParams: PropTypes.string,
-  patterns: PropTypes.array.isRequired,
-  initOffset: PropTypes.number.isRequired,
-  initLimit: PropTypes.number.isRequired,
-  children: PropTypes.func.isRequired,
-  client: PropTypes.any,
-  progressText: PropTypes.func.isRequired,
-  showProgressBar: PropTypes.bool.isRequired,
-  onExtendVariables: PropTypes.func.isRequired
-};
-
-
-PatternAnalysisQuery.defaultProps = {
-  showProgressBar: false
-};
-
-
-export default PatternAnalysisQuery;

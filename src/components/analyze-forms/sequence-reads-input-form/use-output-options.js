@@ -12,7 +12,7 @@ export default function useOutputOptions({outputOptions: origOutputOptions}) {
     }),
     [origOutputOptions]
   );
-  
+
   const [outputOption, setOutputOption] = React.useState({
     name: '__default',
     children: null
@@ -55,18 +55,18 @@ export default function useOutputOptions({outputOptions: origOutputOptions}) {
         <legend>Output options</legend>
         <div>
           {Object.entries(outputOptions)
-           .sort()
-           .map(([value, {label}], idx) => (
-             <RadioInput
-              key={idx}
-              id={`output-options-${idx}`}
-              name="output-options"
-              value={value}
-              onChange={handleChange}
-              checked={value === outputOption.name}>
-               {label}
-             </RadioInput>
-           ))}
+            .sort()
+            .map(([value, {label}], idx) => (
+              <RadioInput
+               key={idx}
+               id={`output-options-${idx}`}
+               name="output-options"
+               value={value}
+               onChange={handleChange}
+               checked={value === outputOption.name}>
+                {label}
+              </RadioInput>
+            ))}
         </div>
         {hasOptionChild ?
           <div className={style.children}>
@@ -74,16 +74,16 @@ export default function useOutputOptions({outputOptions: origOutputOptions}) {
              className={style['input-label']}
              htmlFor="output-options-child">Select outputs: </label>
             {outputOptions[outputOption.name].children
-            .map((label, idx) => (
-              <CheckboxInput
-               id={`output-options-child-${idx}`}
-               name="output-option-children"
-               key={idx} value={idx}
-               onChange={handleChildChange}
-               checked={outputOption.children.has(idx)}>
-                {label}
-              </CheckboxInput>
-            ))}
+              .map((label, idx) => (
+                <CheckboxInput
+                 id={`output-options-child-${idx}`}
+                 name="output-option-children"
+                 key={idx} value={idx}
+                 onChange={handleChildChange}
+                 checked={outputOption.children.has(idx)}>
+                  {label}
+                </CheckboxInput>
+              ))}
           </div> : null}
       </fieldset>
     );

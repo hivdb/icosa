@@ -10,6 +10,20 @@ import {
 import style from './style.module.scss';
 
 
+MutationsTagsInput.propTypes = {
+  config: PropTypes.shape({
+    geneReferences: PropTypes.object.isRequired,
+    messages: PropTypes.objectOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }),
+  mutations: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
+  parentClassName: PropTypes.string,
+  onChange: PropTypes.func.isRequired
+};
+
 function MutationsTagsInput({
   config, mutations, onChange, parentClassName
 }) {
@@ -70,7 +84,7 @@ function MutationsTagsInput({
 
   function renderMutTag({tag, key, onRemove, classNameRemove, className}) {
     const {text, errors} = parseAndValidateMutation(tag, config);
-  
+
     return (
       <span
        key={key}
@@ -87,16 +101,5 @@ function MutationsTagsInput({
     );
   }
 }
-
-MutationsTagsInput.propTypes = {
-  config: PropTypes.shape({
-    geneReferences: PropTypes.object.isRequired
-  }),
-  mutations: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  parentClassName: PropTypes.string,
-  onChange: PropTypes.func.isRequired
-};
 
 export default MutationsTagsInput;

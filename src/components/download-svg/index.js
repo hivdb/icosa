@@ -51,6 +51,7 @@ export default class DownloadSVG extends React.Component {
   }
 
   render() {
+    // eslint-disable-next-line no-unused-vars
     const {children, target, fileName, ...props} = this.props;
 
     return (

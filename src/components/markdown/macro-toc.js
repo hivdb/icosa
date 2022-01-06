@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import macroPlugin from './macro-plugin';
@@ -13,7 +14,12 @@ macroPlugin.addMacro('toc', (content, props, {transformer, eat}) => {
 });
 
 
+TOCNodeWrapper.propTypes = {
+  className: PropTypes.string
+};
+
 export default function TOCNodeWrapper({className: globalClassName}) {
+  // eslint-disable-next-line react/prop-types
   return ({children, props: {className, ...props}}) => (
     <BasicTOC
      {...props}
