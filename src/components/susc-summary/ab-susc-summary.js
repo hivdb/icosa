@@ -14,7 +14,7 @@ import ConfigContext from '../../utils/config-context';
 import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
-import CellReferences from './cell-references';
+import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
 import {
   antibodyShape,
@@ -132,7 +132,7 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
       })),
       new ColumnDef({
         name: 'references',
-        label: 'References',
+        label: <LabelReferences />,
         render: refs => (
           <CellReferences {...{refs, openRefInNewWindow}} />
         ),

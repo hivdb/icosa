@@ -10,7 +10,7 @@ import ConfigContext from '../../utils/config-context';
 import {cpSuscSummaryShape} from './prop-types';
 import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
 import CellMutations from './cell-mutations';
-import CellReferences from './cell-references';
+import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
 
@@ -121,7 +121,7 @@ function useColumnDefs({openRefInNewWindow}) {
       }),
       new ColumnDef({
         name: 'references',
-        label: 'References',
+        label: <LabelReferences />,
         render: refs => (
           <CellReferences {...{refs, openRefInNewWindow}} />
         ),
