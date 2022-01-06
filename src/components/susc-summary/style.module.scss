@@ -21,7 +21,7 @@ $toggle-display-btn-height: 2.5rem;
 button.toggle-display {
   width: calc(100% - 2px);
   position: absolute;
-  z-index: 1000;
+  z-index: 500;
   bottom: 1px;
   border-bottom-left-radius: 0.3rem;
   border-bottom-right-radius: 0.3rem;
