@@ -37,11 +37,10 @@ function buildAbTable({
   for (const {
     mutations,
     references,
-    variants,
+    variant,
     ...abData
   } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
-    const variant = variants.join('/');
     const row = {
       'Sequence Name': seqName,
       'Mutations': shorten.map(
@@ -49,7 +48,7 @@ function buildAbTable({
           name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
         )
       ),
-      'Variant': variant,
+      'Variant': variant ? variant.name : 'NA',
       'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate
     };

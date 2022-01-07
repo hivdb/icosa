@@ -26,11 +26,10 @@ function buildVPTable({
     numSamples,
     medianFold,
     references,
-    variants,
+    variant,
     ...vpData
   } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
-    const variant = variants.join('/');
     const level1 = nestedGet(vpData, 'levels.susceptible');
     const level2 = nestedGet(vpData, 'levels.partial-resistance');
     const level3 = nestedGet(vpData, 'levels.resistant');
@@ -41,7 +40,7 @@ function buildVPTable({
           name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
         )
       ),
-      'Variant': variant,
+      'Variant': variant ? variant.name : 'NA',
       'Vaccine': vaccineName,
       '# Studies': numRefs,
       '# Samples': numSamples,

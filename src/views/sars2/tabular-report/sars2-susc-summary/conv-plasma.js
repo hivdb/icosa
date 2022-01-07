@@ -24,11 +24,10 @@ function buildCPTable({
     numSamples,
     medianFold,
     references,
-    variants,
+    variant,
     ...cpData
   } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
-    const variant = variants.join('/');
     const level1 = nestedGet(cpData, 'levels.susceptible');
     const level2 = nestedGet(cpData, 'levels.partial-resistance');
     const level3 = nestedGet(cpData, 'levels.resistant');
@@ -39,7 +38,7 @@ function buildCPTable({
           name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
         )
       ),
-      'Variant': variant,
+      'Variant': variant ? variant.name : 'NA',
       '# Studies': numRefs,
       '# Samples': numSamples,
       '<3-Fold': (
