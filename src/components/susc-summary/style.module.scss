@@ -76,13 +76,13 @@ button.toggle-display {
   padding: $cell-padding 0;
   -webkit-print-color-adjust: exact;
   &[data-level="2"] {
-    background-color: #fff352;
+    background-color: #7fcbee;
     .iqr, .range {
       color: rgba(87, 87, 87, 0.8);
     }
   }
   &[data-level="3"] {
-    background-color: color(name-cardinal);
+    background-color: #146aa8;
     color: white;
     .iqr, .range {
       color: rgba(255, 255, 255, 0.8);
