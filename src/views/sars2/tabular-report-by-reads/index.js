@@ -38,7 +38,7 @@ export default function TabularReportByReadsContainer({
   });
 
   const [allSeqReadsWithParams, isPending] = useAddParams({
-    params: config ? config.seqReadsDefaultParams : null,
+    defaultParams: config ? config.seqReadsDefaultParams : {},
     allSequenceReads,
     skip: isConfigPending
   });

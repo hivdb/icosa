@@ -67,6 +67,8 @@ function seqReadsSummary({
     'Permanent Link',
     'NA Mixture Threshold',
     'Mut Detection Threshold',
+    'NA Mixture - Actual',
+    'Mut Detection - Actual',
     'Read Depth Threshold by Codon'
   ];
 
@@ -77,6 +79,8 @@ function seqReadsSummary({
       availableGenes: genes,
       maxMixtureRate,
       minPrevalence,
+      mixtureRate,
+      actualMinPrevalence,
       minCodonReads,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
@@ -96,6 +100,10 @@ function seqReadsSummary({
       'Median Read Depth': readDepthStats.median,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
+      'NA Mixture - Actual':
+      `${(mixtureRate * 100).toFixed(3)}%`,
+      'Mut Detection - Actual':
+      `${(actualMinPrevalence * 100).toFixed(1)}%`,
       'Read Depth Threshold by Codon': minCodonReads,
       'Permanent Link (Spike Only)': getPermanentLink(
         seqName,

@@ -15,52 +15,11 @@ function useAllOrigSeqReads(match) {
   return BigData.use(key);
 }
 
-export default function useAllSeqReads({
-  defaultParams
-}) {
-  let {
-    strain,
-    maxMixtureRate,
-    minPrevalence,
-    minCodonReads,
-    minPositionReads
-  } = defaultParams;
+export default function useAllSeqReads({defaultParams}) {
   const {match} = useRouter();
-  let {
-    location: {
-      query: {
-        mixrate: mixRate,
-        cutoff,
-        cdreads,
-        posreads
-      } = {}
-    } = {}
-  } = match;
-  mixRate = parseFloat(mixRate);
-  if (!isNaN(mixRate)) {
-    maxMixtureRate = mixRate;
-  }
-  cutoff = parseFloat(cutoff);
-  if (!isNaN(cutoff)) {
-    minPrevalence = cutoff;
-  }
-  cdreads = parseInt(cdreads, 10);
-  if (!isNaN(cdreads)) {
-    minCodonReads = cdreads;
-  }
-  posreads = parseInt(posreads, 10);
-  if (!isNaN(posreads)) {
-    minPositionReads = posreads;
-  }
   const [allOrigSeqReads, isPending] = useAllOrigSeqReads(match);
   return useAddParams({
-    params: {
-      strain,
-      maxMixtureRate,
-      minPrevalence,
-      minCodonReads,
-      minPositionReads
-    },
+    defaultParams,
     allSequenceReads: allOrigSeqReads,
     skip: isPending
   });
