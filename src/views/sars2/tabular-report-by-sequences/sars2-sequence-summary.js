@@ -62,6 +62,9 @@ function sequenceSummary({
     'Genes',
     'Spike Mutations',
     'Other Mutations',
+    'PANGO Lineage',
+    'PANGO Version',
+    'Spike Variant',
     'Permanent Link (Spike Only)',
     'Permanent Link'
   ];
@@ -70,6 +73,8 @@ function sequenceSummary({
     const {
       inputSequence: {header: seqName},
       availableGenes: genes,
+      pangolin,
+      bestMatchingSubtype,
       alignedGeneSequences: geneSeqs
     } = seqResult;
     let row = {
@@ -85,6 +90,9 @@ function sequenceSummary({
         gene => gene !== 'S',
         geneDisplay
       ),
+      'PANGO Lineage': pangolin.lineage,
+      'PANGO Version': pangolin.version,
+      'Spike Variant': bestMatchingSubtype.display,
       'Permanent Link (Spike Only)': getPermanentLink(
         seqName,
         geneSeqs,

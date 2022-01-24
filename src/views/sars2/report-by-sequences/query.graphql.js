@@ -25,7 +25,7 @@ export default gql`
       referenceCountry
       referenceYear
     }
-    ${pangolinQuery}
+    ${pangolinQuery()}
     availableGenes { name }
     validationResults {
       level

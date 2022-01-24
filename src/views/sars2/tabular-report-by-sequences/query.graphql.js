@@ -2,7 +2,8 @@ import gql from 'graphql-tag';
 import {
   rootLevel,
   seqLevel,
-  geneSeqLevel
+  geneSeqLevel,
+  pangolinQuery
 } from '../common-query.graphql';
 
 export default gql`
@@ -16,6 +17,11 @@ export default gql`
   }
   fragment TabularReportBySequences on SequenceAnalysis {
     inputSequence { header }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    ${pangolinQuery(true)}
     availableGenes { name }
     mixtureRate
     ${seqLevel}

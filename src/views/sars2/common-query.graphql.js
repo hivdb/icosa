@@ -7,8 +7,9 @@ const rootLevel = `
   }
 `;
 
-const pangolinQuery = `
-  pangolin {
+function pangolinQuery(syncFetch = false) {
+  return `
+  pangolin(syncFetch: ${syncFetch}) {
     version
     latestVersion
     loaded
@@ -20,6 +21,7 @@ const pangolinQuery = `
     note
   }
 `;
+}
 
 const seqLevel = `
   mutationComments(cmtVersion: $cmtVersion) {

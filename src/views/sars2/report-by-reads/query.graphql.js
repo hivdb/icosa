@@ -33,7 +33,7 @@ export default gql`
       referenceCountry
       referenceYear
     }
-    ${pangolinQuery}
+    ${pangolinQuery()}
     readDepthStats {
       median: percentile(p: 50)
       p95: percentile(p: 95)

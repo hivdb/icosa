@@ -2,7 +2,8 @@ import gql from 'graphql-tag';
 import {
   rootLevel,
   seqLevel,
-  geneSeqLevel
+  geneSeqLevel,
+  pangolinQuery
 } from '../common-query.graphql';
 
 export default gql`
@@ -17,6 +18,11 @@ export default gql`
   fragment TabularReportBySeqReads on SequenceReadsAnalysis {
     name
     ${seqLevel}
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    ${pangolinQuery(true)}
     readDepthStats {
       median: percentile(p: 50)
     }

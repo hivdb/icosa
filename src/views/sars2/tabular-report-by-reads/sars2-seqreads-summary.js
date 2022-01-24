@@ -63,6 +63,9 @@ function seqReadsSummary({
     'Spike Mutations',
     'Other Mutations',
     'Median Read Depth',
+    'PANGO Lineage',
+    'PANGO Version',
+    'Spike Variant',
     'Permanent Link (Spike Only)',
     'Permanent Link',
     'NA Mixture Threshold',
@@ -82,6 +85,8 @@ function seqReadsSummary({
       mixtureRate,
       actualMinPrevalence,
       minCodonReads,
+      pangolin,
+      bestMatchingSubtype,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
     let row = {
@@ -98,6 +103,9 @@ function seqReadsSummary({
         geneDisplay
       ),
       'Median Read Depth': readDepthStats.median,
+      'PANGO Lineage': pangolin.lineage,
+      'PANGO Version': pangolin.version,
+      'Spike Variant': bestMatchingSubtype.display,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'NA Mixture - Actual':
