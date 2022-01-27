@@ -38,7 +38,7 @@ function mutations({
     const seqName = seqName1 || seqName2;
     const geneSeqs = geneSeqs1 || geneSeqs2;
     for (const geneSeq of geneSeqs) {
-      const gene = geneSeq.name;
+      const gene = geneSeq.gene.name;
       for (let {
         reference,
         AAs,
