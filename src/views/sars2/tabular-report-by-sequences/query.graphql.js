@@ -21,7 +21,7 @@ export default gql`
       display
       referenceAccession
     }
-    ${pangolinQuery(true)}
+    ${pangolinQuery()}
     availableGenes { name }
     mixtureRate
     ${seqLevel}

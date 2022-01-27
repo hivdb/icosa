@@ -14,59 +14,61 @@ function useTabularReports({
   onFinish,
   ...props
 }) {
-  if (loaded) {
-    const files = [];
-    for (const idx of (subOptionIndices || children)) {
-      const processor = subOptionProcessors[idx];
-      for (
-        const {
-          folder,
-          tableName,
-          header,
-          rows,
-          payload,
-          fileExt = '.csv',
-          mimeType = 'text/csv',
-          missing = 'NA'
+  (async () => {
+    if (loaded) {
+      const files = [];
+      for (const idx of (subOptionIndices || children)) {
+        const processor = subOptionProcessors[idx];
+        for (
+          const {
+            folder,
+            tableName,
+            header,
+            rows,
+            payload,
+            fileExt = '.csv',
+            mimeType = 'text/csv',
+            missing = 'NA'
+          }
+          of
+          await processor({
+            allGenes,
+            config,
+            ...props
+          })
+        ) {
+          let data = payload;
+          if (!data) {
+            const csvHeader = header.join(',');
+            const csvRows = rows.map(
+              row => csvStringify(row, {missing, header})
+            );
+            data = (
+              `\ufeff${csvHeader}\n${csvRows.join('\n')}`
+            );
+          }
+          files.push({
+            folder,
+            fileName: `${tableName}${fileExt}`,
+            mimeType,
+            data
+          });
         }
-        of
-        processor({
-          allGenes,
-          config,
-          ...props
-        })
-      ) {
-        let data = payload;
-        if (!data) {
-          const csvHeader = header.join(',');
-          const csvRows = rows.map(
-            row => csvStringify(row, {missing, header})
-          );
-          data = (
-            `\ufeff${csvHeader}\n${csvRows.join('\n')}`
-          );
-        }
-        files.push({
-          folder,
-          fileName: `${tableName}${fileExt}`,
+      }
+      if (files.length === 1) {
+        const [{
+          fileName,
           mimeType,
           data
-        });
+        }] = files;
+        makeDownload(fileName, mimeType, data);
       }
+      else {
+        makeZip(zipName, files);
+      }
+      onFinish && onFinish();
     }
-    if (files.length === 1) {
-      const [{
-        fileName,
-        mimeType,
-        data
-      }] = files;
-      makeDownload(fileName, mimeType, data);
-    }
-    else {
-      makeZip(zipName, files);
-    }
-    onFinish && onFinish();
-  }
+  })();
   return null;
 }
 

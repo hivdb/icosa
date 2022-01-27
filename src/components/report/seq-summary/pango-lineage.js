@@ -26,6 +26,7 @@ const fetchPangolinResult = memoize(
   }
 );
 
+export {fetchPangolinResult};
 
 export function usePangoLineage({
   lineage,

@@ -22,7 +22,7 @@ export default gql`
       display
       referenceAccession
     }
-    ${pangolinQuery(true)}
+    ${pangolinQuery()}
     readDepthStats {
       median: percentile(p: 50)
     }

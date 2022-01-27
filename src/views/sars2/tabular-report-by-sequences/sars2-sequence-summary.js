@@ -1,4 +1,7 @@
 import shortenMutationList from '../../../utils/shorten-mutation-list';
+import {
+  fetchPangolinResult
+} from '../../../components/report/seq-summary/pango-lineage';
 
 
 function joinCols(row, ...cols) {
@@ -50,7 +53,7 @@ function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
 }
 
 
-function sequenceSummary({
+async function sequenceSummary({
   sequenceAnalysis,
   config,
   patternsTo
@@ -73,10 +76,13 @@ function sequenceSummary({
     const {
       inputSequence: {header: seqName},
       availableGenes: genes,
-      pangolin,
       bestMatchingSubtype,
       alignedGeneSequences: geneSeqs
     } = seqResult;
+    let {pangolin} = seqResult;
+    if (!pangolin.loaded) {
+      pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
+    }
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
