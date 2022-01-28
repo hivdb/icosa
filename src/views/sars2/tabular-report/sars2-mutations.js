@@ -13,6 +13,7 @@ function mutations({
     'Sequence Name',
     'Gene',
     'Position',
+    'Codon',
     'RefAA',
     'MutAA',
     'Mutation'
@@ -43,6 +44,7 @@ function mutations({
         reference,
         AAs,
         position,
+        triplet,
         isUnsequenced,
         totalReads,
         allAAReads
@@ -54,6 +56,7 @@ function mutations({
           'Sequence Name': seqName,
           'Gene': gene,
           'Position': position,
+          'Codon': triplet === '' ? '---' : triplet,
           'RefAA': reference
         };
         if (allAAReads) {
