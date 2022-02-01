@@ -5,7 +5,6 @@ import sleep from 'sleep-promise';
 
 import InlineLoader from '../../inline-loader';
 import useSmartAsync from '../../../utils/use-smart-async';
-import Variant from './variant';
 
 
 const fetchPangolinResult = memoize(
@@ -68,13 +67,11 @@ PangoLineage.propTypes = {
 
 
 export default function PangoLineage({
-  bestMatchingSubtype,
-  subtypes,
   ...pangolin
 }) {
   const {data, error, isPending} = usePangoLineage(pangolin);
 
-  let child, displayVariant = false;
+  let child;
   if (error) {
     child = `Error! ${error.message}`;
   }
@@ -83,7 +80,6 @@ export default function PangoLineage({
   }
   else {
     const {lineage, probability, version} = data;
-    displayVariant = true; // lineage === 'None';
     child = `${lineage} (Prob=${
       probability === null ? 'NA' : probability.toFixed(1)
     }; ${version})`;
@@ -91,7 +87,6 @@ export default function PangoLineage({
   return <>
     <dt>PANGO lineage:</dt>
     <dd>{child}</dd>
-    {displayVariant ? <Variant {...{bestMatchingSubtype, subtypes}} /> : null}
   </>;
 
 }

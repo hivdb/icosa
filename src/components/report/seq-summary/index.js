@@ -23,6 +23,7 @@ import MinCodonReadsReal from './min-codon-reads';
 import MinPositionReadsReal from './min-position-reads';
 import MedianReadDepthReal from './median-read-depth';
 import ThresholdNomogramReal from './threshold-nomogram';
+import GenotypeReal from './genotype';
 
 
 const SDRMs = () => null;
@@ -40,6 +41,7 @@ const MinCodonReads = () => null;
 const MinPositionReads = () => null;
 const MedianReadDepth = () => null;
 const ThresholdNomogram = () => null;
+const Genotype = () => null;
 
 
 SeqSummary.propTypes = {
@@ -151,10 +153,15 @@ function SeqSummary(props) {
 
             else if (child.type === PangoLineage) {
               return (
-                <PangoLineageReal
-                 key={key}
-                 {...pangolin}
-                 {...{bestMatchingSubtype, subtypes}} />
+                <PangoLineageReal key={key} {...pangolin} />
+              );
+            }
+
+            else if (child.type === Genotype) {
+              return (
+                <GenotypeReal {...{
+                  key, config, bestMatchingSubtype, subtypes
+                }} />
               );
             }
 
@@ -295,5 +302,6 @@ SeqSummaryWrapper.MinPrevalence = MinPrevalence;
 SeqSummaryWrapper.MinCodonReads = MinCodonReads;
 SeqSummaryWrapper.MinPositionReads = MinPositionReads;
 SeqSummaryWrapper.ThresholdNomogram = ThresholdNomogram;
+SeqSummaryWrapper.Genotype = Genotype;
 
 export default SeqSummaryWrapper;

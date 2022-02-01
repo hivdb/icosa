@@ -90,6 +90,7 @@ function SingleSeqReadsReport({
             <SeqSummary.InlineGeneRange />
             <SeqSummary.MedianReadDepth />
             <SeqSummary.PangoLineage />
+            <SeqSummary.Genotype />
             <SeqSummary.OutbreakInfo />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />

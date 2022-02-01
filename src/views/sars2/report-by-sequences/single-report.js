@@ -73,6 +73,7 @@ function SingleSequenceReport({
             <SeqSummary.InlineGeneRange />
             <SeqSummary.PrettyPairwise />
             <SeqSummary.PangoLineage />
+            <SeqSummary.Genotype />
             <SeqSummary.OutbreakInfo />
           </SeqSummary>
           <ReportSection title="Sequence quality assessment">
