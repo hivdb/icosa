@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Markdown from '../markdown';
 import shortenMutList from '../../utils/shorten-mutation-list';
 import createPersistedReducer from '../../utils/use-persisted-reducer';
+import ConfigContext from '../../utils/config-context';
 import CheckboxInput from '../checkbox-input';
 
 import style from './style.module.scss';
@@ -26,11 +27,13 @@ MutationComment.propTypes = {
 };
 
 function MutationComment({triggeredMutations, comment}) {
+  const [config, loading] = ConfigContext.use();
+  const geneDisplay = loading ? {} : config.geneDisplay;
   const muts = shortenMutList(triggeredMutations).map(({
     gene: {name: geneName},
     text
   }) => (
-    geneName === 'S' ? text : `${geneName}:${text}`
+    geneName === 'S' ? text : `${geneDisplay[geneName] || geneName}:${text}`
   ));
   return <li key={muts.join('+')}>
     <div className={style['triggered-mutations']}>
