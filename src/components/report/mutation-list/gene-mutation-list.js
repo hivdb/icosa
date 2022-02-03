@@ -25,7 +25,7 @@ function GeneMutationList({
         </strong>
         <ul className={style['gene-mutation-list']}>
           {shortMutations.map((mut, idx) => (
-            <Mutation key={idx} {...mut} />
+            <Mutation key={idx} gene={geneName} {...mut} />
           ))}
         </ul>
       </li>

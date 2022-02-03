@@ -1,3 +1,5 @@
+@import "../../../styles/colors";
+
 ul.mutation-list {
   padding-left: 1.5rem;
   line-height: 1.8em;
@@ -33,12 +35,26 @@ ul.mutation-list {
       > li.mutation-item {
         position: relative;
         display: inline-flex;
-        &:not(:first-of-type)::before {
-          content: '·';
-          font-weight: 800;
-          padding-left: .4rem;
-          padding-right: .4rem;
+        > .comma {
+          display: inline-block;
+          position: relative;
+          width: .9rem;
+          &::before {
+            content: '·';
+            text-indent: 0;
+            font-weight: 800;
+            width: .9rem;
+            text-align: center;
+            position: absolute;
+            left: 0;
+          }
+          text-indent: 100%;
+          overflow: hidden;
         }
+        &:last-of-type > .comma {
+          display: none;
+        }
+
         /*&:first-of-type[data-unsequenced="true"],
         &[data-unsequenced="false"] +
         li.mutation-item[data-unsequenced="true"] {
@@ -112,6 +128,50 @@ ul.mutation-list {
       &:not(:first-of-type) {
         margin-top: .1rem;
       }
+    }
+  }
+}
+
+.mutation-popup {
+  &:global(-content) {
+    user-select: none;
+    font-size: .9rem;
+    margin: auto;
+    background: rgb(255, 255, 255);
+    padding: .8rem 1rem;
+    border-radius: .4rem;
+    &[role="tooltip"] {
+      min-width: 10rem;
+      max-width: 40vw;
+      @media only screen and (max-width: 1200px) {
+        max-width: 50vw;
+      }
+      @media only screen and (max-width: 900px) {
+        max-width: 60vw;
+      }
+      border: 1px solid gray;
+    }
+    a {
+      color: color(link-text);
+      &:hover {
+        color: color(link-hover-text);
+        text-decoration: underline;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+  &:global(-arrow) {
+    stroke-width: 2px;
+    stroke: gray;
+    stroke-dasharray: 30px;
+    stroke-dashoffset: -54px;
+  }
+  &:global(-overlay) {
+    background: rgba(0, 0, 0, 0.5);
+    &[data-popup='tooltip'] {
+      background: transparent;
     }
   }
 }
