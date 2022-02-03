@@ -66,7 +66,7 @@ function findComboAntibodies(antibodySuscSummary) {
 
 
 function buildPayload(antibodySuscSummary) {
-  return decideDisplayPriority(antibodySuscSummary)
+  let results = decideDisplayPriority(antibodySuscSummary)
     .map(
       ([{
         variant,
@@ -87,6 +87,16 @@ function buildPayload(antibodySuscSummary) {
       }
     )
     .filter(({displayOrder}) => displayOrder !== null);
+  const drmResults = results
+    .filter(row => (
+      Object.values(row.fold)
+        .some(({cumulativeFold: {median}}) => median >= 3)
+    ));
+  if (drmResults.length > 0) {
+    // don't show non-DRM results if at least one DRM result exists
+    results = drmResults;
+  }
+  return results;
 }
 
 

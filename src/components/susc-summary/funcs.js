@@ -132,5 +132,8 @@ export function decideDisplayPriority(items) {
   }*/
 
   // re-order the 2nd display level by numMiss
-  return orderBy(results, [1, 2]);
+  return orderBy(
+    results,
+    [1, 2, '0.mutations.0.position', '0.mutations.1.position']
+  );
 }
