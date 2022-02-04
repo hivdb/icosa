@@ -11,10 +11,15 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import ConfigContext from '../../utils/config-context';
 
-import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
+import {
+  getRowKey,
+  displayFold,
+  decideDisplayPriority
+} from './funcs';
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
+import MismatchMutations from './mismatch-mutations';
 import useToggleDisplay from './toggle-display';
 import {
   antibodyShape,
@@ -71,10 +76,20 @@ function buildPayload(antibodySuscSummary) {
       ([{
         variant,
         mutations,
+        variantExtraMutations,
+        variantMissingMutations,
         references,
         itemsByAntibody
       }, displayOrder]) => {
-        const row = {mutations, references, variant, displayOrder, fold: {}};
+        const row = {
+          mutations,
+          references,
+          variant,
+          variantExtraMutations,
+          variantMissingMutations,
+          displayOrder,
+          fold: {}
+        };
         for (const {antibodies, ...cumdata} of itemsByAntibody) {
           const abkey = (
             sortBy(antibodies, ['priority'])
@@ -93,8 +108,13 @@ function buildPayload(antibodySuscSummary) {
         .some(({cumulativeFold: {median}}) => median >= 3)
     ));
   if (drmResults.length > 0) {
+    let topResults = [];
+    if (drmResults.every(({displayOrder}) => displayOrder > 0)) {
+      topResults = results
+        .filter(({displayOrder}) => displayOrder === 0);
+    }
     // don't show non-DRM results if at least one DRM result exists
-    results = drmResults;
+    results = [...topResults, ...drmResults];
   }
   return results;
 }
@@ -188,6 +208,7 @@ function AntibodySuscSummaryTable({
        data={displayRows}
        afterTable={button} />
       {loading ? null : <div className={style['susc-summary-footnote']}>
+        <MismatchMutations rows={displayRows} />
         <Markdown escapeHtml={false}>
           {config.messages['mab-footnote']}
         </Markdown>
@@ -215,6 +236,7 @@ function AntibodySuscSummary({
   antibodies,
   antibodySuscSummary: {itemsByVariantOrMutations}
 }) {
+
   itemsByVariantOrMutations = itemsByVariantOrMutations
     .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
   const antibodyColumns = React.useMemo(

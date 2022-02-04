@@ -7,7 +7,11 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import ConfigContext from '../../utils/config-context';
 
-import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
+import {
+  getRowKey,
+  displayFold,
+  decideDisplayPriority
+} from './funcs';
 import {vpSuscSummaryShape} from './prop-types';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';

@@ -50,6 +50,22 @@ const seqLevel = `
         AAs
         text
       }
+      variantExtraMutations {
+        gene { name }
+        reference
+        position
+        isUnsequenced
+        AAs
+        text
+      }
+      variantMissingMutations {
+        gene { name }
+        reference
+        position
+        isUnsequenced
+        AAs
+        text
+      }
       isolateMatchType
       numIsolateOnlyMutations
       numQueryOnlyMutations
@@ -92,6 +108,7 @@ const seqLevel = `
         reference
         position
         isUnsequenced
+        isDRM
         AAs
         text
       }
@@ -124,6 +141,7 @@ const seqLevel = `
         reference
         position
         isUnsequenced
+        isDRM
         AAs
         text
       }

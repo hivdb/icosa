@@ -19,6 +19,7 @@ const mutationShape = PropTypes.shape({
   reference: PropTypes.string.isRequired,
   position: PropTypes.number.isRequired,
   isUnsequenced: PropTypes.bool.isRequired,
+  isDRM: PropTypes.bool.isRequired,
   AAs: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired
 });

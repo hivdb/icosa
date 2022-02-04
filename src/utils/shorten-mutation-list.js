@@ -38,7 +38,9 @@ export default function shortenMutationList(mutations) {
         AAs,
         posStart: position,
         posEnd: position,
-        text: AAs === '-' ? `Δ${position}` : text.replace('-', 'Δ')
+        text: AAs === '-' ? `Δ${position}` : (
+          text.replace('-', 'Δ').replace('Insertion', 'ins')
+        )
       });
     }
     else {

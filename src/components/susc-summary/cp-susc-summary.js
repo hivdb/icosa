@@ -8,7 +8,11 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 import ConfigContext from '../../utils/config-context';
 
 import {cpSuscSummaryShape} from './prop-types';
-import {getRowKey, displayFold, decideDisplayPriority} from './funcs';
+import {
+  getRowKey,
+  displayFold,
+  decideDisplayPriority
+} from './funcs';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
@@ -197,6 +201,7 @@ ConvPlasmaSuscSummary.propTypes = {
 function ConvPlasmaSuscSummary({
   convPlasmaSuscSummary: {itemsByVariantOrMutations}
 }) {
+
   itemsByVariantOrMutations = itemsByVariantOrMutations
     .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
   const payload = buildPayload(itemsByVariantOrMutations);
