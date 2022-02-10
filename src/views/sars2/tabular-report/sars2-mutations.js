@@ -97,7 +97,9 @@ function mutations({
     }
     tables.push({
       folder: 'mutation-list',
-      tableName: 'MutationList_' + seqName.replace(/[<>:"/\\|?*]/g, '_'),
+      tableName:
+        'MutationList_' +
+        seqName.replace(/[<>:"/\\|?*]/g, '_').slice(0, 200),
       header,
       rows
     });

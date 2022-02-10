@@ -36,7 +36,9 @@ function mutationComments({
     }
     tables.push({
       folder: 'mutation-comments',
-      tableName: 'MutComments_' + seqName.replace(/[<>:"/\\|?*]/g, '_'),
+      tableName:
+        'MutComments_' +
+        seqName.replace(/[<>:"/\\|?*]/g, '_').slice(0, 200),
       header,
       rows
     });

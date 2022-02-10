@@ -103,7 +103,9 @@ function cpSuscSummary({
     });
     tables.push({
       folder: 'susc-conv-plasma',
-      tableName: 'CPSuscSummary_' + seqName.replace(/[<>:"/\\|?*]/g, '_'),
+      tableName:
+        'CPSuscSummary_' +
+        seqName.replace(/[<>:"/\\|?*]/g, '_').slice(0, 200),
       header,
       rows
     });
