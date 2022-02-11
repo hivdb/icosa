@@ -111,7 +111,7 @@ async function seqReadsSummary({
       'Median Read Depth': readDepthStats.median,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,
-      'Spike Variant': bestMatchingSubtype.display,
+      'Spike Variant': (bestMatchingSubtype || {}).display || null,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'NA Mixture - Actual':
