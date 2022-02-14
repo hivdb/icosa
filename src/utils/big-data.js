@@ -1,7 +1,7 @@
 import localforage from 'localforage';
 import useSmartAsync from './use-smart-async';
 
-function isBigData(key) {
+export function isBigData(key) {
   return typeof key === 'string' && key.startsWith('@@bigData/');
 }
 

@@ -1,10 +1,13 @@
 import React from 'react';
 import RadioInput from '../../radio-input';
 import CheckboxInput from '../../checkbox-input';
+import SeqSummary from '../../report/seq-summary';
 
 import style from '../style.module.scss';
 
-export default function useOutputOptions({outputOptions: origOutputOptions}) {
+export default function useOutputOptions({
+  outputOptions: origOutputOptions
+}) {
   const outputOptions = React.useMemo(
     () => ({
       __default: {label: 'HTML'},
@@ -53,38 +56,47 @@ export default function useOutputOptions({outputOptions: origOutputOptions}) {
     jsx = (
       <fieldset className={style['output-options']}>
         <legend>Output options</legend>
-        <div>
-          {Object.entries(outputOptions)
-            .sort()
-            .map(([value, {label}], idx) => (
-              <RadioInput
-               key={idx}
-               id={`output-options-${idx}`}
-               name="output-options"
-               value={value}
-               onChange={handleChange}
-               checked={value === outputOption.name}>
-                {label}
-              </RadioInput>
-            ))}
+        <div className={style['divided-options']}>
+          <SeqSummary titleWidth="14.5rem" headless>
+            <SeqSummary.MaxMixtureRate />
+            <SeqSummary.MinPrevalence />
+            <SeqSummary.MinCodonReads />
+          </SeqSummary>
+          <div className={style['seqreads-output-options']}>
+            <div>
+              {Object.entries(outputOptions)
+                .sort()
+                .map(([value, {label}], idx) => (
+                  <RadioInput
+                   key={idx}
+                   id={`output-options-${idx}`}
+                   name="output-options"
+                   value={value}
+                   onChange={handleChange}
+                   checked={value === outputOption.name}>
+                    {label}
+                  </RadioInput>
+                ))}
+            </div>
+            {hasOptionChild ?
+              <div className={style.children}>
+                <label
+                 className={style['input-label']}
+                 htmlFor="output-options-child">Select outputs: </label>
+                {outputOptions[outputOption.name].children
+                  .map((label, idx) => (
+                    <CheckboxInput
+                     id={`output-options-child-${idx}`}
+                     name="output-option-children"
+                     key={idx} value={idx}
+                     onChange={handleChildChange}
+                     checked={outputOption.children.has(idx)}>
+                      {label}
+                    </CheckboxInput>
+                  ))}
+              </div> : null}
+          </div>
         </div>
-        {hasOptionChild ?
-          <div className={style.children}>
-            <label
-             className={style['input-label']}
-             htmlFor="output-options-child">Select outputs: </label>
-            {outputOptions[outputOption.name].children
-              .map((label, idx) => (
-                <CheckboxInput
-                 id={`output-options-child-${idx}`}
-                 name="output-option-children"
-                 key={idx} value={idx}
-                 onChange={handleChildChange}
-                 checked={outputOption.children.has(idx)}>
-                  {label}
-                </CheckboxInput>
-              ))}
-          </div> : null}
       </fieldset>
     );
   }

@@ -46,6 +46,8 @@ const Genotype = () => null;
 
 SeqSummary.propTypes = {
   config: PropTypes.object,
+  headless: PropTypes.bool.isRequired,
+  titleWidth: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   output: PropTypes.string,
@@ -72,6 +74,8 @@ SeqSummary.propTypes = {
 function SeqSummary(props) {
   const {
     config,
+    headless,
+    titleWidth,
     match,
     router,
     output,
@@ -94,29 +98,148 @@ function SeqSummary(props) {
     children
   } = props;
 
-  const geneSeqs = alignedGeneSequences || allGeneSequenceReads;
+  const geneSeqs = alignedGeneSequences || allGeneSequenceReads || [];
 
   const [showSDRMs, setShowSDRMs] = useState(output === 'printable');
   const [showPrettyPairwise, setShowPrettyPairwise] = useState(false);
 
-  const disableSDRMs = availableGenes.length === 0;
-  const disablePrettyPairwise = availableGenes.length === 0;
+  const disableSDRMs = !availableGenes || availableGenes.length === 0;
+  const disablePrettyPairwise = disableSDRMs;
+  const childArray = children instanceof Array ? children : [children];
 
-  return (
-    <section className={style['seq-summary']}>
+  const togglePrettyPairwise = React.useCallback(() => {
+    setShowPrettyPairwise(!showPrettyPairwise);
+  }, [showPrettyPairwise]);
+
+  const toggleSDRMs = React.useCallback(() => {
+    setShowSDRMs(!showSDRMs);
+  }, [showSDRMs]);
+
+  const body = <>
+    <div className={style['desc-list']}>
+      <dl style={{'--title-width': titleWidth}}>
+        {geneSeqs.map((geneSeq, idx) => {
+          return <React.Fragment key={idx}>
+            {childArray.some(child => child.type === MultilineGeneRange) && (
+              <MultilineGeneRangeReal config={config} {...{geneSeq}} />
+            )}
+            {childArray.some(child => child.type === GeneMutations) && (
+              <GeneMutationsReal config={config} {...{geneSeq}} />
+            )}
+          </React.Fragment>;
+        })}
+        {childArray.map((child, key) => {
+          if (child.type === InlineGeneRange) {
+            return <InlineGeneRangeReal {...{key, config, geneSeqs}} />;
+          }
+
+          else if (child.type === Subtype) {
+            return <SubtypeReal {...{key, bestMatchingSubtype, subtypes}} />;
+          }
+
+          else if (child.type === MedianReadDepth) {
+            return <MedianReadDepthReal {...{key, readDepthStats}} />;
+          }
+
+          else if (child.type === PangoLineage) {
+            return (
+              <PangoLineageReal key={key} {...pangolin} />
+            );
+          }
+
+          else if (child.type === Genotype) {
+            return (
+              <GenotypeReal {...{
+                key, config, bestMatchingSubtype, subtypes
+              }} />
+            );
+          }
+
+          else if (child.type === OutbreakInfo) {
+            return (
+              <OutbreakInfoReal
+               key={key}
+               config={config}
+               {...pangolin} />
+            );
+          }
+
+          else if (child.type === MaxMixtureRate) {
+            return (
+              <MaxMixtureRateReal
+               key={key}
+               config={config}
+               {...{maxMixtureRate, mixtureRate}} />
+            );
+          }
+
+          else if (child.type === MinPrevalence) {
+            return (
+              <MinPrevalenceReal
+               key={key}
+               config={config}
+               {...{minPrevalence, actualMinPrevalence}} />
+            );
+          }
+
+          else if (child.type === MinCodonReads) {
+            return (
+              <MinCodonReadsReal
+               key={key}
+               match={match}
+               router={router}
+               config={config}
+               {...{minCodonReads}} />
+            );
+          }
+
+          else if (child.type === MinPositionReads) {
+            return (
+              <MinPositionReadsReal
+               key={key}
+               match={match}
+               router={router}
+               config={config}
+               {...{minPositionReads}} />
+            );
+          }
+
+          else if (showSDRMs && child.type === SDRMs) {
+            return <SDRMList {...{key, geneSeqs}} />;
+          }
+
+          return null;
+        })}
+      </dl>
+    </div>
+    {showPrettyPairwise &&
+      childArray.some(child => child.type === PrettyPairwise) &&
+      <PrettyPairwiseList {...{geneSeqs}} />}
+    {childArray.some(child => child.type === ThresholdNomogram) &&
+      <ThresholdNomogramReal {...{
+        cutoffKeyPoints,
+        maxMixtureRate,
+        minPrevalence,
+        mixtureRate,
+        actualMinPrevalence
+      }} />}
+  </>;
+
+  return <>
+    {headless ? body : <section className={style['seq-summary']}>
       <h2>Sequence summary</h2>
       <div className={parentStyle['buttons-right']}>
-        {children.some(child => child.type === SDRMs) && (
+        {childArray.some(child => child.type === SDRMs) && (
           <SDRMButton {...{disableSDRMs, showSDRMs, toggleSDRMs}} />
         )}
-        {children.some(child => child.type === PrettyPairwise) && (
+        {childArray.some(child => child.type === PrettyPairwise) && (
           <PrettyPairwiseButton {...{
             disablePrettyPairwise,
             showPrettyPairwise,
             togglePrettyPairwise
           }} />
         )}
-        {children.some(child => child.type === DownloadConsensus) && (
+        {childArray.some(child => child.type === DownloadConsensus) && (
           <DownloadConsensusReal {...{
             name,
             assembledConsensus,
@@ -126,141 +249,26 @@ function SeqSummary(props) {
           }} />
         )}
       </div>
-      <div className={style['desc-list']}>
-        <dl>
-          {geneSeqs.map((geneSeq, idx) => {
-            return <React.Fragment key={idx}>
-              {children.some(child => child.type === MultilineGeneRange) && (
-                <MultilineGeneRangeReal config={config} {...{geneSeq}} />
-              )}
-              {children.some(child => child.type === GeneMutations) && (
-                <GeneMutationsReal config={config} {...{geneSeq}} />
-              )}
-            </React.Fragment>;
-          })}
-          {children.map((child, key) => {
-            if (child.type === InlineGeneRange) {
-              return <InlineGeneRangeReal {...{key, config, geneSeqs}} />;
-            }
-
-            else if (child.type === Subtype) {
-              return <SubtypeReal {...{key, bestMatchingSubtype, subtypes}} />;
-            }
-
-            else if (child.type === MedianReadDepth) {
-              return <MedianReadDepthReal {...{key, readDepthStats}} />;
-            }
-
-            else if (child.type === PangoLineage) {
-              return (
-                <PangoLineageReal key={key} {...pangolin} />
-              );
-            }
-
-            else if (child.type === Genotype) {
-              return (
-                <GenotypeReal {...{
-                  key, config, bestMatchingSubtype, subtypes
-                }} />
-              );
-            }
-
-            else if (child.type === OutbreakInfo) {
-              return (
-                <OutbreakInfoReal
-                 key={key}
-                 config={config}
-                 {...pangolin} />
-              );
-            }
-
-            else if (child.type === MaxMixtureRate) {
-              return (
-                <MaxMixtureRateReal
-                 key={key}
-                 match={match}
-                 router={router}
-                 config={config}
-                 {...{maxMixtureRate, mixtureRate}} />
-              );
-            }
-
-            else if (child.type === MinPrevalence) {
-              return (
-                <MinPrevalenceReal
-                 key={key}
-                 match={match}
-                 router={router}
-                 config={config}
-                 {...{minPrevalence, actualMinPrevalence}} />
-              );
-            }
-
-            else if (child.type === MinCodonReads) {
-              return (
-                <MinCodonReadsReal
-                 key={key}
-                 match={match}
-                 router={router}
-                 config={config}
-                 {...{minCodonReads}} />
-              );
-            }
-
-            else if (child.type === MinPositionReads) {
-              return (
-                <MinPositionReadsReal
-                 key={key}
-                 match={match}
-                 router={router}
-                 config={config}
-                 {...{minPositionReads}} />
-              );
-            }
-
-            else if (showSDRMs && child.type === SDRMs) {
-              return <SDRMList {...{key, geneSeqs}} />;
-            }
-
-            return null;
-          })}
-        </dl>
-      </div>
-      {showPrettyPairwise &&
-        children.some(child => child.type === PrettyPairwise) &&
-        <PrettyPairwiseList {...{geneSeqs}} />}
-      {children.some(child => child.type === ThresholdNomogram) &&
-        <ThresholdNomogramReal {...{
-          cutoffKeyPoints,
-          maxMixtureRate,
-          minPrevalence,
-          mixtureRate,
-          actualMinPrevalence
-        }} />}
-    </section>
-  );
-
-  function togglePrettyPairwise() {
-    setShowPrettyPairwise(!showPrettyPairwise);
-  }
-
-  function toggleSDRMs() {
-    setShowSDRMs(!showSDRMs);
-  }
-
+      {body}
+    </section>}
+  </>;
 
 }
 
 SeqSummary.propTypes = {
   config: PropTypes.object.isRequired,
+  headless: PropTypes.bool.isRequired,
   children: PropTypes.arrayOf(
     PropTypes.node.isRequired
   ).isRequired,
+  titleWidth: PropTypes.string.isRequired,
   output: PropTypes.string.isRequired
 };
 
 SeqSummary.defaultProps = {
   output: 'default',
+  headless: false,
+  titleWidth: '18rem',
   children: [
     <SDRMs />,
     <PrettyPairwise />,
@@ -287,21 +295,37 @@ function SeqSummaryWrapper(props) {
   </ConfigContext.Consumer>;
 }
 
-SeqSummaryWrapper.SDRMs = SDRMs;
-SeqSummaryWrapper.DownloadConsensus = DownloadConsensus;
-SeqSummaryWrapper.PrettyPairwise = PrettyPairwise;
-SeqSummaryWrapper.MultilineGeneRange = MultilineGeneRange;
-SeqSummaryWrapper.InlineGeneRange = InlineGeneRange;
-SeqSummaryWrapper.GeneMutations = GeneMutations;
-SeqSummaryWrapper.Subtype = Subtype;
-SeqSummaryWrapper.PangoLineage = PangoLineage;
-SeqSummaryWrapper.OutbreakInfo = OutbreakInfo;
-SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
-SeqSummaryWrapper.MaxMixtureRate = MaxMixtureRate;
-SeqSummaryWrapper.MinPrevalence = MinPrevalence;
-SeqSummaryWrapper.MinCodonReads = MinCodonReads;
-SeqSummaryWrapper.MinPositionReads = MinPositionReads;
-SeqSummaryWrapper.ThresholdNomogram = ThresholdNomogram;
-SeqSummaryWrapper.Genotype = Genotype;
+SeqSummaryWrapper.SDRMs =
+  SeqSummaryWrapper.SDRMs || SDRMs;
+SeqSummaryWrapper.DownloadConsensus =
+  SeqSummaryWrapper.DownloadConsensus || DownloadConsensus;
+SeqSummaryWrapper.PrettyPairwise =
+  SeqSummaryWrapper.PrettyPairwise || PrettyPairwise;
+SeqSummaryWrapper.MultilineGeneRange =
+  SeqSummaryWrapper.MultilineGeneRange || MultilineGeneRange;
+SeqSummaryWrapper.InlineGeneRange =
+  SeqSummaryWrapper.InlineGeneRange || InlineGeneRange;
+SeqSummaryWrapper.GeneMutations =
+  SeqSummaryWrapper.GeneMutations || GeneMutations;
+SeqSummaryWrapper.Subtype =
+  SeqSummaryWrapper.Subtype || Subtype;
+SeqSummaryWrapper.PangoLineage =
+  SeqSummaryWrapper.PangoLineage || PangoLineage;
+SeqSummaryWrapper.OutbreakInfo =
+  SeqSummaryWrapper.OutbreakInfo || OutbreakInfo;
+SeqSummaryWrapper.MedianReadDepth =
+  SeqSummaryWrapper.MedianReadDepth || MedianReadDepth;
+SeqSummaryWrapper.MaxMixtureRate =
+  SeqSummaryWrapper.MaxMixtureRate || MaxMixtureRate;
+SeqSummaryWrapper.MinPrevalence =
+  SeqSummaryWrapper.MinPrevalence || MinPrevalence;
+SeqSummaryWrapper.MinCodonReads =
+  SeqSummaryWrapper.MinCodonReads || MinCodonReads;
+SeqSummaryWrapper.MinPositionReads =
+  SeqSummaryWrapper.MinPositionReads || MinPositionReads;
+SeqSummaryWrapper.ThresholdNomogram =
+  SeqSummaryWrapper.ThresholdNomogram || ThresholdNomogram;
+SeqSummaryWrapper.Genotype =
+  SeqSummaryWrapper.Genotype || Genotype;
 
 export default SeqSummaryWrapper;

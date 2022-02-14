@@ -1,153 +1,153 @@
 @import "../ext";
 @import "../../../styles/tabs";
+@import "../../../styles/mixins";
 @import "../../../styles/colors";
 @import "../../../styles/dropdown";
 @import "../../../styles/functions";
 
 .seq-summary {
   @extend %report-section;
+}
 
-  .desc-list {
-    @include desc-list(18rem, $overflow: visible);
-    max-width: css-max(60%, 1400px);
-    .has-dropdown {
-      @extend %small-dropdown;
+.desc-list {
+  @include desc-list(var(--title-width), $overflow: visible);
+  max-width: css-max(60%, 1400px);
+  .has-dropdown {
+    @extend %small-dropdown;
+    :global .Dropdown-root {
+      width: 8rem;
+      display: inline-block;
+    }
+    // display: inline-block;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+    @media screen and (max-width: 640px) {
+      margin-left: 0;
       :global .Dropdown-root {
-        width: 8rem;
-        display: inline-block;
-      }
-      // display: inline-block;
-      margin-top: 0.2rem;
-      margin-bottom: 0.2rem;
-      @media screen and (max-width: 640px) {
-        margin-left: 0;
-        :global .Dropdown-root {
-          width: 100%;
-        }
-      }
-      .dropdown-after {
-        margin-left: .5rem;
+        width: 100%;
       }
     }
-    dt.warning {
-      font-weight: 600;
-    }
-    dt.warning, dd.warning {
-      background-color: color(validation-severe-warning-bg);
-      color: color(validation-severe-warning-text);
-    }
-    .inline-divider {
-      font-weight: 800;
-      padding-left: .4rem;
-      padding-right: .4rem;
-    }
-    ul.inline-gene-range-list {
-      margin-top: 0;
-      margin-bottom: 0;
-      padding-left: 0;
-      list-style-type: none;
-      display: block;
-      li.inline-gene-range {
-        display: inline-block;
-        white-space: nowrap;
-        /* &.hl { // highlighted
-          > .gene-name {
-            font-weight: 600;
-          }
-        }
-        &:not(.hl) { // not highlighted
-          opacity: .6;
-        } */
-        > .unseq-region {
-          background-color: color(validation-severe-warning-bg);
-          color: color(validation-severe-warning-text);
-        }
-        &:not(:first-of-type)::before {
-          content: '·';
-          font-weight: 800;
-          padding-left: .4rem;
-          padding-right: .4rem;
-        }
-      }
+    .dropdown-after {
+      margin-left: .5rem;
     }
   }
-
-  ul.outbreak-info-list {
+  dt.warning {
+    font-weight: 600;
+  }
+  dt.warning, dd.warning {
+    background-color: color(validation-severe-warning-bg);
+    color: color(validation-severe-warning-text);
+  }
+  .inline-divider {
+    font-weight: 800;
+    padding-left: .4rem;
+    padding-right: .4rem;
+  }
+  ul.inline-gene-range-list {
     margin-top: 0;
     margin-bottom: 0;
     padding-left: 0;
     list-style-type: none;
-    > li {
-    }
-  }
-
-  ul.subtype-details {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 1.5rem;
-    > li.best-match {
-      font-weight: 600;
-    }
-  }
-
-  .pretty-pairwise {
-    clear: both;
-    h3 {
-      font-size: 1rem;
-      margin-right: 1rem;
-      margin-bottom: 0;
+    display: block;
+    li.inline-gene-range {
       display: inline-block;
-    }
-
-    .instruction {
-      font-size: .8rem;
-      color: color(trivia);
-    }
-
-    pre {
-      margin-top: .24rem;
-      margin-bottom: 0;
-      overflow-x: auto;
-      padding: .5rem;
-      background-color: color(panel-bg);
-      > div {
-        &::after {
-          // an old webkit bug: http://stackoverflow.com/a/22240912
-          content: "";
+      white-space: nowrap;
+      /* &.hl { // highlighted
+        > .gene-name {
+          font-weight: 600;
         }
-        > span {
-          display: inline-block;
-          width: 3rem;
-          text-align: center;
-        }
+      }
+      &:not(.hl) { // not highlighted
+        opacity: .6;
+      } */
+      > .unseq-region {
+        background-color: color(validation-severe-warning-bg);
+        color: color(validation-severe-warning-text);
+      }
+      &:not(:first-of-type)::before {
+        content: '·';
+        font-weight: 800;
+        padding-left: .4rem;
+        padding-right: .4rem;
       }
     }
   }
+}
 
-  .threshold-nomogram {
-    $nomogram-width: 55rem;
-    $nomogram-min-left: 45rem;
-    position: relative;
-    height: 1rem;
-    clear: both;
+ul.outbreak-info-list {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style-type: none;
+  > li {
+  }
+}
+
+ul.subtype-details {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+  > li.best-match {
+    font-weight: 600;
+  }
+}
+
+.pretty-pairwise {
+  clear: both;
+  h3 {
+    font-size: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 0;
+    display: inline-block;
+  }
+
+  .instruction {
+    font-size: .8rem;
+    color: color(trivia);
+  }
+
+  pre {
+    margin-top: .24rem;
+    margin-bottom: 0;
+    overflow-x: auto;
+    padding: .5rem;
+    background-color: color(panel-bg);
+    > div {
+      &::after {
+        // an old webkit bug: http://stackoverflow.com/a/22240912
+        content: "";
+      }
+      > span {
+        display: inline-block;
+        width: 3rem;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.threshold-nomogram {
+  $nomogram-width: 55rem;
+  $nomogram-min-left: 45rem;
+  position: relative;
+  height: 1rem;
+  clear: both;
+  > svg {
+    max-width: css-min(#{$nomogram-width}, calc(100% - #{$nomogram-min-left}));
+    position: absolute;
+    right: 0;
+    bottom: -1rem;
+  }
+
+  @media only screen and (max-width: 81rem) {
+    height: auto;
     > svg {
-      max-width: css-min(#{$nomogram-width}, calc(100% - #{$nomogram-min-left}));
-      position: absolute;
-      right: 0;
-      bottom: -1rem;
-    }
-
-    @media only screen and (max-width: 81rem) {
-      height: auto;
-      > svg {
-        position: relative;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        max-width: css-min(#{$nomogram-width}, 100%);
-        left: 0;
-      }
+      position: relative;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      max-width: css-min(#{$nomogram-width}, 100%);
+      left: 0;
     }
   }
-
 }

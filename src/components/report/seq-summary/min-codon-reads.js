@@ -1,15 +1,16 @@
 import React from 'react';
+import {useRouter} from 'found';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
 
 MinCodonReads.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
   config: PropTypes.shape({
+    seqReadsDefaultParams: PropTypes.shape({
+      minCodonReads: PropTypes.number.isRequired
+    }).isRequired,
     seqReadsMinCodonReadsOptions: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.number.isRequired
@@ -20,11 +21,31 @@ MinCodonReads.propTypes = {
 };
 
 function MinCodonReads({
-  match,
-  router,
-  config: {seqReadsMinCodonReadsOptions: options},
+  config: {
+    seqReadsDefaultParams: {
+      minCodonReads: defaultValue
+    },
+    seqReadsMinCodonReadsOptions: options
+  },
   minCodonReads: curValue
 }) {
+  const {match, router} = useRouter();
+  if (curValue === undefined) {
+    curValue = Number.parseFloat(match.location.query.cdreads);
+    if (isNaN(curValue)) {
+      curValue = defaultValue;
+    }
+  }
+
+  const handleChange = React.useCallback(
+    ({value: cdreads}) => {
+      const newLoc = {...match.location};
+      newLoc.query = newLoc.query ? newLoc.query : {};
+      newLoc.query.cdreads = cdreads;
+      router.push(newLoc);
+    },
+    [match.location, router]
+  );
 
   return <>
     <dt className={style['has-dropdown']}>
@@ -39,13 +60,6 @@ function MinCodonReads({
        onChange={handleChange} />
     </dd>
   </>;
-
-  function handleChange({value: cdreads}) {
-    const newLoc = {...match.location};
-    newLoc.query = newLoc.query ? newLoc.query : {};
-    newLoc.query.cdreads = cdreads;
-    router.push(newLoc);
-  }
 
 }
 

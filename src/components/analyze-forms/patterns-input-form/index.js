@@ -51,6 +51,54 @@ function PatternsInputForm({children, to, onSubmit}) {
     setSubmitDisabled
   ] = React.useState(disabled);
 
+  const handleSubmit = React.useCallback(
+    async (e) => {
+      const payload = {
+        patterns: patterns.map(({uuid, name, mutations, ...pattern}) => ({
+          ...pattern,
+          name: (!name || name === uuid) ? mutations.join('+') : name,
+          mutations
+        }))
+      };
+      let validated = true;
+      let state = {};
+      if (onSubmit) {
+        [validated, state] = await onSubmit(e, payload);
+      }
+      if (validated) {
+        state = {...state, ...payload};
+      }
+      return [validated, state, {
+        name: payload.patterns[0].name,
+        mutations: payload.patterns[0].mutations.join(',')
+      }];
+    },
+    [onSubmit, patterns]
+  );
+
+  const handleChange = React.useCallback(
+    ({uuid, name, mutations}, preventSubmit) => {
+      if (uuid) {
+        const patternObj = patterns.find(({uuid: myUUID}) => myUUID === uuid);
+        patternObj.name = name;
+        patternObj.mutations = mutations;
+        setPatterns([...patterns]);
+      }
+      if (preventSubmit) {
+        submitDisabled || setSubmitDisabled(true);
+      }
+      else if (submitDisabled && !disabled) {
+        submitDisabled && setSubmitDisabled(false);
+      }
+    },
+    [disabled, patterns, setPatterns, submitDisabled]
+  );
+
+  const handleReset = React.useCallback(
+    () => setPatterns([newPatternObj()]),
+    [setPatterns]
+  );
+
   return (
     <BaseForm
      allowRetainingInput
@@ -86,44 +134,6 @@ function PatternsInputForm({children, to, onSubmit}) {
       </div>
     </BaseForm>
   );
-
-  async function handleSubmit(e) {
-    const payload = {
-      patterns: patterns.map(({uuid, name, mutations, ...pattern}) => ({
-        ...pattern,
-        name: (!name || name === uuid) ? mutations.join('+') : name,
-        mutations
-      }))
-    };
-    let validated = true;
-    let state = {};
-    if (onSubmit) {
-      [validated, state] = await onSubmit(e, payload);
-    }
-    if (validated) {
-      state = {...state, ...payload};
-    }
-    return [validated, state];
-  }
-
-  function handleChange({uuid, name, mutations}, preventSubmit) {
-    if (uuid) {
-      const patternObj = patterns.find(({uuid: myUUID}) => myUUID === uuid);
-      patternObj.name = name;
-      patternObj.mutations = mutations;
-      setPatterns([...patterns]);
-    }
-    if (preventSubmit) {
-      submitDisabled || setSubmitDisabled(true);
-    }
-    else if (submitDisabled && !disabled) {
-      submitDisabled && setSubmitDisabled(false);
-    }
-  }
-
-  function handleReset() {
-    setPatterns([newPatternObj()]);
-  }
 
 }
 

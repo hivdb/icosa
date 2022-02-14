@@ -1,32 +1,53 @@
 import React from 'react';
+import {useRouter} from 'found';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
 
 MinPrevalence.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
   config: PropTypes.shape({
+    seqReadsDefaultParams: PropTypes.shape({
+      minPrevalence: PropTypes.number.isRequired
+    }).isRequired,
     seqReadsMinPrevalenceOptions: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.number.isRequired
       }).isRequired
     ).isRequired
   }).isRequired,
-  minPrevalence: PropTypes.number.isRequired,
-  actualMinPrevalence: PropTypes.number.isRequired
+  minPrevalence: PropTypes.number,
+  actualMinPrevalence: PropTypes.number
 };
 
 function MinPrevalence({
-  match,
-  router,
-  config: {seqReadsMinPrevalenceOptions: options},
+  config: {
+    seqReadsDefaultParams: {
+      minPrevalence: defaultValue
+    },
+    seqReadsMinPrevalenceOptions: options
+  },
   minPrevalence: curValue,
   actualMinPrevalence: actualValue
 }) {
+  const {match, router} = useRouter();
+  if (curValue === undefined) {
+    curValue = Number.parseFloat(match.location.query.cutoff);
+    if (isNaN(curValue)) {
+      curValue = defaultValue;
+    }
+  }
+
+  const handleChange = React.useCallback(
+    ({value: cutoff}) => {
+      const newLoc = {...match.location};
+      newLoc.query = newLoc.query ? newLoc.query : {};
+      newLoc.query.cutoff = cutoff;
+      router.push(newLoc);
+    },
+    [match.location, router]
+  );
 
   return <>
     <dt className={style['has-dropdown']}>
@@ -39,19 +60,13 @@ function MinPrevalence({
        options={options}
        name="cutoff"
        onChange={handleChange} />
-      <span className={style['dropdown-after']}>
-        (actual: {actualValue === 1. ? '100%' : `≥${(actualValue *
-        100).toPrecision(2)}%`})
-      </span>
+      {isNaN(actualValue) ?
+        null : <span className={style['dropdown-after']}>
+          (actual: {actualValue === 1. ? '100%' : `≥${(actualValue *
+          100).toPrecision(2)}%`})
+        </span>}
     </dd>
   </>;
-
-  function handleChange({value: cutoff}) {
-    const newLoc = {...match.location};
-    newLoc.query = newLoc.query ? newLoc.query : {};
-    newLoc.query.cutoff = cutoff;
-    router.push(newLoc);
-  }
 
 }
 

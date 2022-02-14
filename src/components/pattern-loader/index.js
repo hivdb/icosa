@@ -44,7 +44,7 @@ function usePatterns() {
   } = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
-  let {patterns} = loc.state || {patterns: []};
+  let {patterns = []} = loc.state || {patterns: []};
   let {name, mutations} = loc.query || {};
   if (!isConfigPending && mutations) {
     mutations = mutations

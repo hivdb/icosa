@@ -6,7 +6,9 @@ import FixedLoader from '../fixed-loader';
 
 import ConfigContext from '../../utils/config-context';
 
-import useAllSeqReads from './use-all-seq-reads';
+import useAllSeqReads, {useWhenNoSeqReads} from './use-all-seq-reads';
+
+export {useWhenNoSeqReads};
 
 
 function useCurrentSelected({

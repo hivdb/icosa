@@ -1,4 +1,5 @@
 import React from 'react';
+import {useRouter} from 'found';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
@@ -37,10 +38,10 @@ const SUFFIX_PATTERN = (
 
 function SequenceReadsInputForm(props) {
   const {
-    to,
     onSubmit,
     children,
-    exampleCodonReads
+    exampleCodonReads,
+    to
   } = props;
 
   const {
@@ -48,6 +49,7 @@ function SequenceReadsInputForm(props) {
     outputOptions,
     outputOptionElement
   } = useOutputOptions(props);
+  const {match: {location}} = useRouter();
 
   const [loading, setLoading] = React.useState(false);
   const [config, isConfigPending] = ConfigContext.use();
@@ -91,15 +93,15 @@ function SequenceReadsInputForm(props) {
           );
         }
       }
-      return [validated, state];
+      return [validated, state, location.query];
     },
     [
       onSubmit,
-      outputOption,
-      outputOptions,
+      location.query,
       allSequenceReads,
-      setSubmitting,
-      setOptionResult
+      outputOption.name,
+      outputOption.children,
+      outputOptions
     ]
   );
 
@@ -256,7 +258,7 @@ function SequenceReadsInputForm(props) {
 
 SequenceReadsInputForm.propTypes = {
   children: PropTypes.node,
-  to: PropTypes.string,
+  to: PropTypes.string.isRequired,
   outputOptions: PropTypes.object,
   onSubmit: PropTypes.func,
   exampleCodonReads: PropTypes.arrayOf(

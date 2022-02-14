@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape} from 'found';
+import {routerShape, matchShape} from 'found';
 import useApolloClient from '../apollo-client';
 import useExtendVariables from '../use-extend-variables';
 
 import ConfigContext from '../../../utils/config-context';
-import SeqLoader from '../../../components/sequence-loader';
+import SeqLoader, {
+  useWhenNoSequence
+} from '../../../components/sequence-loader';
 import SeqAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 
@@ -69,17 +71,24 @@ function ReportBySequencesContainer({
 
 
 ReportBySequencesContainerWrapper.propTypes = {
+  router: routerShape.isRequired,
   match: matchShape.isRequired
 };
 
 export default function ReportBySequencesContainerWrapper(props) {
   const {
     location: {
+      pathname,
       query: {
         output = 'default'
       } = {}
     } = {}
   } = props.match;
+
+  useWhenNoSequence(() => props.router.replace({
+    pathname: pathname.replace(/report\/*$/, '')
+  }));
+
   const lazyLoad = output !== 'printable';
 
   return (

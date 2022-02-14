@@ -5,7 +5,9 @@ import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
-import SeqReadsLoader from '../../../components/seqreads-loader';
+import SeqReadsLoader, {
+  useWhenNoSeqReads
+} from '../../../components/seqreads-loader';
 import SeqReadsAnalysisLayout from
   '../../../components/seqreads-analysis-layout';
 
@@ -64,16 +66,23 @@ function ReportByReadsContainer({
 
 
 ReportByReadsContainerWrapper.propTypes = {
+  router: routerShape.isRequired,
   match: matchShape.isRequired
 };
 
 export default function ReportByReadsContainerWrapper(props) {
   const {
     location: {
+      pathname,
       query: {output = 'default'} = {}
     } = {}
   } = props.match;
   const lazyLoad = output !== 'printable';
+
+  useWhenNoSeqReads(() => props.router.replace({
+    pathname: pathname.replace(/report\/*$/, '')
+  }));
+
   return (
     <ConfigContext.Consumer>
       {config => (

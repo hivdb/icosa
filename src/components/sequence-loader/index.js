@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import FixedLoader from '../fixed-loader';
-import BigData from '../../utils/big-data';
+import BigData, {isBigData} from '../../utils/big-data';
 
 
 function useCurrentSelected({
@@ -34,6 +34,23 @@ function useCurrentSelected({
 }
 
 
+export function useWhenNoSequence(callback) {
+  const {
+    match: {
+      location: {
+        state: {
+          sequences: key
+        } = {}
+      } = {}
+    }
+  } = useRouter();
+  if (!isBigData(key)) {
+    callback();
+  }
+
+}
+
+
 function useSequences() {
   const {
     match: {
@@ -44,7 +61,23 @@ function useSequences() {
       } = {}
     }
   } = useRouter();
-  let [sequences, isPending] = BigData.use(key);
+  const {
+    sequences,
+    isPending
+  } = React.useMemo(
+    () => {
+      let sequences = [];
+      let isPending = true;
+      try {
+        [sequences, isPending] = BigData.use(key);
+      }
+      catch (Error) {
+        // skip
+      }
+      return {sequences, isPending};
+    },
+    [key]
+  );
   return React.useMemo(
     () => {
       if (isPending) {

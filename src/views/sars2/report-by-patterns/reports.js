@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {matchShape, routerShape} from 'found';
+import {FaLink} from '@react-icons/all-files/fa/FaLink';
+import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
 import {useReportPaginator} from '../../../components/report';
 import PageBreak from '../../../components/page-break';
@@ -57,6 +59,22 @@ function PatternReports({
   patternAnalysis,
   fetchAnother
 }) {
+  const clickTransition = React.useRef();
+  const onCopy = React.useCallback(
+    () => {
+      navigator.clipboard.writeText(
+        window.location.href
+      );
+      clickTransition.current.dataset.onclick = null;
+      setTimeout(
+        () => {
+          delete clickTransition.current.dataset.onclick;
+        },
+        10000
+      );
+    },
+    []
+  );
 
   const {
     onObserve,
@@ -67,7 +85,16 @@ function PatternReports({
     loaded,
     output,
     currentSelected,
-    fetchAnother
+    fetchAnother,
+    children: <>
+      <useReportPaginator.Button onClick={onCopy}>
+        <span ref={clickTransition} className={style['click-transition']}>
+          <FaLink className={style['default']} />
+          <FaCheck className={style['onclick']} />
+        </span>
+        &nbsp;&nbsp;Copy Permanent Link
+      </useReportPaginator.Button>
+    </>
   });
 
   const pageTitle = getPageTitle(patternAnalysis, output);

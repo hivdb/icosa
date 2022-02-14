@@ -111,6 +111,23 @@ fieldset.output-options {
       display: inline-block;
     }
   }
+  > .divided-options {
+    display: flex;
+    > *:not(:last-child) {
+      padding-right: 1rem;
+      margin-right: 1rem;
+      position: relative;
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: -.5rem;
+        right: 0;
+        bottom: -.5rem;
+        border-right: 1px dashed color(dividing-line-light);
+      }
+    }
+  }
 }
 
 .loading-modal {

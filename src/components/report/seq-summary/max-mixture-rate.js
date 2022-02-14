@@ -1,15 +1,16 @@
 import React from 'react';
+import {useRouter} from 'found';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
 
 MaxMixtureRate.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
   config: PropTypes.shape({
+    seqReadsDefaultParams: PropTypes.shape({
+      maxMixtureRate: PropTypes.number.isRequired
+    }).isRequired,
     seqReadsMaxMixtureRate: PropTypes.array.isRequired
   }),
   maxMixtureRate: PropTypes.number.isRequired,
@@ -18,12 +19,22 @@ MaxMixtureRate.propTypes = {
 
 
 function MaxMixtureRate({
-  match,
-  router,
-  config: {seqReadsMaxMixtureRate: options},
+  config: {
+    seqReadsDefaultParams: {
+      maxMixtureRate: defaultValue
+    },
+    seqReadsMaxMixtureRate: options
+  },
   maxMixtureRate: curValue,
   mixtureRate: actualValue
 }) {
+  const {match, router} = useRouter();
+  if (curValue === undefined) {
+    curValue = Number.parseFloat(match.location.query.mixrate);
+    if (isNaN(curValue)) {
+      curValue = defaultValue;
+    }
+  }
 
   const handleChange = React.useCallback(
     ({value: mixrate}) => {
@@ -46,10 +57,12 @@ function MaxMixtureRate({
        options={options}
        name="cutoff"
        onChange={handleChange} />
-      <span className={style['dropdown-after']}>
-        (actual: {actualValue === 0. ? 0 : (actualValue *
+      {isNaN(actualValue) ?
+        null : <span className={style['dropdown-after']}>
+          (actual: {actualValue === 0. ? 0 : (actualValue *
         100).toPrecision(2)}%)
-      </span>
+        </span>
+      }
     </dd>
   </>;
 

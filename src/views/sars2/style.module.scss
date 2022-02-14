@@ -91,3 +91,20 @@ article.sequence-article, article.seqreads-article, article.pattern-article {
 .no-page-break {
   page-break-inside: avoid;
 }
+
+.click-transition {
+  &[data-onclick] {
+    .default {
+      display: none;
+    }
+    .onclick {
+      display: inline-block;
+    }
+  }
+  .default {
+    display: inline-block;
+  }
+  .onclick {
+    display: none;
+  }
+}

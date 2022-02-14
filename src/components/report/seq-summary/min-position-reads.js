@@ -1,15 +1,16 @@
 import React from 'react';
+import {useRouter} from 'found';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
 
 MinPositionReads.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
   config: PropTypes.shape({
+    seqReadsDefaultParams: PropTypes.shape({
+      minPositionReads: PropTypes.number.isRequired
+    }).isRequired,
     seqReadsMinPositionReadsOptions: PropTypes.arrayOf(
       PropTypes.shape({
         value: PropTypes.number.isRequired
@@ -20,10 +21,32 @@ MinPositionReads.propTypes = {
 };
 
 function MinPositionReads({
-  match, router,
-  config: {seqReadsMinPositionReadsOptions: options},
+  config: {
+    seqReadsDefaultParams: {
+      minPositionReads: defaultValue
+    },
+    seqReadsMinPositionReadsOptions: options
+  },
   minPositionReads: curValue
 }) {
+  const {match, router} = useRouter();
+  if (curValue === undefined) {
+    curValue = Number.parseFloat(match.location.query.posreads);
+    if (isNaN(curValue)) {
+      curValue = defaultValue;
+    }
+  }
+
+  const handleChange = React.useCallback(
+    ({value: posreads}) => {
+      const newLoc = {...match.location};
+      newLoc.query = newLoc.query ? newLoc.query : {};
+      newLoc.query.posreads = posreads;
+      router.push(newLoc);
+    },
+    [match.location, router]
+  );
+
 
   return <>
     <dt className={style['has-dropdown']}>
@@ -38,13 +61,6 @@ function MinPositionReads({
        onChange={handleChange} />
     </dd>
   </>;
-
-  function handleChange({value: cdreads}) {
-    const newLoc = {...match.location};
-    newLoc.query = newLoc.query ? newLoc.query : {};
-    newLoc.query.cdreads = cdreads;
-    router.push(newLoc);
-  }
 
 }
 

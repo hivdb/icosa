@@ -33,6 +33,12 @@ function ReportByPatternsContainer({
   currentSelected
 }) {
 
+  if (patterns.length === 0) {
+    router.replace({
+      pathname: match.location.pathname.replace(/report\/*$/, '')
+    });
+  }
+
   const client = useApolloClient({
     payload: patterns,
     config
