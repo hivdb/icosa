@@ -61,23 +61,15 @@ function useSequences() {
       } = {}
     }
   } = useRouter();
-  const {
-    sequences,
-    isPending
-  } = React.useMemo(
-    () => {
-      let sequences = [];
-      let isPending = true;
-      try {
-        [sequences, isPending] = BigData.use(key);
-      }
-      catch (Error) {
-        // skip
-      }
-      return {sequences, isPending};
-    },
-    [key]
-  );
+  let sequences = [];
+  let isPending = true;
+  try {
+    [sequences, isPending] = BigData.use(key);
+  }
+  catch (Error) {
+    // skip
+  }
+  const constSeqs = sequences;
   return React.useMemo(
     () => {
       if (isPending) {
@@ -86,12 +78,12 @@ function useSequences() {
       else {
         return [
           // eslint-disable-next-line no-unused-vars
-          sequences.map(({size, ...seq}) => seq),
+          constSeqs.map(({size, ...seq}) => seq),
           false
         ];
       }
     },
-    [sequences, isPending]
+    [constSeqs, isPending]
   );
 }
 
