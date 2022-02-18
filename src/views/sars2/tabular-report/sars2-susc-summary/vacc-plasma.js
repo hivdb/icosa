@@ -8,7 +8,7 @@ import shortenMutList from '../../../../utils/shorten-mutation-list';
 
 
 function formatFold(fold) {
-  return fold >= 100 ? '≥100' : `${fold.toFixed(1)}`;
+  return fold >= 1000 ? '≥1000' : `${fold.toFixed(1)}`;
 }
 
 

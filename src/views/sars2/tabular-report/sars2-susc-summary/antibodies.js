@@ -14,7 +14,7 @@ function extractFold(item) {
   const {
     cumulativeFold: {median}
   } = item;
-  return median >= 100 ? '≥100' : `${median.toFixed(1)}`;
+  return median >= 1000 ? '≥1000' : `${median.toFixed(1)}`;
 }
 
 
@@ -23,6 +23,15 @@ function extractCumuCount(item) {
     return null;
   }
   return item.cumulativeCount;
+}
+
+
+function joinMutations(mutations, geneDisplay) {
+  return mutations.map(
+    ({gene: {name}, text}) => (
+      name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
+    )
+  ).join(', ') || 'None';
 }
 
 
@@ -38,19 +47,27 @@ function buildAbTable({
     mutations,
     references,
     variant,
+    variantExtraMutations,
+    variantMissingMutations,
+    displayOrder,
     ...abData
   } of buildPayload(itemsByVariantOrMutations)) {
     const shorten = shortenMutList(mutations);
+    const addMuts =
+      variant ? shortenMutList(variantMissingMutations) : [];
+    const misMuts =
+      variant ? shortenMutList(variantExtraMutations) : [];
     const row = {
       'Sequence Name': seqName,
-      'Mutations': shorten.map(
-        ({gene: {name}, text}) => (
-          name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
-        )
-      ),
+      'Mutations': joinMutations(shorten, geneDisplay),
       'Variant': variant ? variant.name : 'NA',
+      'Additional Mutations':
+        variant ? joinMutations(addMuts, geneDisplay) : 'NA',
+      'Missing Mutations':
+        variant ? joinMutations(misMuts, geneDisplay) : 'NA',
       'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
-      'Version': drdbLastUpdate
+      'Version': drdbLastUpdate,
+      'Top Match': displayOrder === 0 ? 'Yes' : 'No'
     };
     for (const abs of antibodyColumns) {
       const abText = abs
@@ -83,7 +100,10 @@ function abSuscSummary({
   ];
   const commonHeaderEnd = [
     'References',
-    'Version'
+    'Version',
+    'Additional Mutations',
+    'Missing Mutations',
+    'Top Match'
   ];
   const tables = [];
   const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
