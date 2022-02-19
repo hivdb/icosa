@@ -60,7 +60,7 @@ function usePatterns() {
       mutations
     }];
   }
-  return patterns;
+  return [patterns, isConfigPending];
 }
 
 
@@ -69,7 +69,7 @@ function PatternLoader({
   childProps = {},
   lazyLoad
 }) {
-  const patterns = usePatterns();
+  const [patterns, isPending] = usePatterns();
   const currentSelected = useCurrentSelected({
     lazyLoad, patterns
   });
@@ -77,6 +77,7 @@ function PatternLoader({
   return children({
     ...childProps,
     patterns,
+    isPending,
     currentSelected
   });
 }

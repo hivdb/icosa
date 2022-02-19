@@ -19,6 +19,7 @@ ReportByPatternsContainer.propTypes = {
   output: PropTypes.string,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
+  isPending: PropTypes.bool.isRequired,
   patterns: PropTypes.array.isRequired,
   currentSelected: PropTypes.object
 };
@@ -29,11 +30,12 @@ function ReportByPatternsContainer({
   match,
   lazyLoad,
   output,
+  isPending,
   patterns,
   currentSelected
 }) {
 
-  if (patterns.length === 0) {
+  if (!isPending && patterns.length === 0) {
     router.replace({
       pathname: match.location.pathname.replace(/report\/*$/, '')
     });
@@ -83,11 +85,12 @@ export default function ReportByPatternsContainerWrapper(props) {
     <ConfigContext.Consumer>
       {config => (
         <PatternLoader lazyLoad={lazyLoad}>
-          {({patterns, currentSelected}) => (
+          {({patterns, isPending, currentSelected}) => (
             <ReportByPatternsContainer
              {...props}
              output={output}
              lazyLoad={lazyLoad}
+             isPending={isPending}
              patterns={patterns}
              currentSelected={currentSelected}
              config={config} />
