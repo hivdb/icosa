@@ -38,10 +38,10 @@ function renderFold(resultItem) {
   } = resultItem;
   const fold = displayFold(median);
   let level = 1;
-  if (median >= 10) {
+  if (median >= 25) {
     level = 3;
   }
-  else if (median >= 3) {
+  else if (median >= 5) {
     level = 2;
   }
   return <div className={style['cell-fold']} data-level={level}>
@@ -208,6 +208,18 @@ function AntibodySuscSummaryTable({
        data={displayRows}
        afterTable={button} />
       {loading ? null : <div className={style['susc-summary-footnote']}>
+        <p>
+          Susceptibility levels:{' '}
+          <span className={style['level-label']} data-level="1">
+            &lt;5-fold
+          </span>{' '}
+          <span className={style['level-label']} data-level="2">
+            5-to-24-fold
+          </span>{' '}
+          <span className={style['level-label']} data-level="3">
+            ≥25-fold
+          </span>
+        </p>
         <MismatchMutations rows={displayRows} />
         <Markdown escapeHtml={false}>
           {config.messages['mab-footnote']}

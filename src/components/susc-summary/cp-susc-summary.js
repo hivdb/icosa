@@ -166,13 +166,13 @@ function ConvPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
       <p>
         Susceptibility levels:{' '}
         <span className={style['level-label']} data-level="1">
-          &lt;3-fold
+          &lt;5-fold
         </span>{' '}
         <span className={style['level-label']} data-level="2">
-          3-9-fold
+          5-to-24-fold
         </span>{' '}
         <span className={style['level-label']} data-level="3">
-          ≥10-fold
+          ≥25-fold
         </span>{' '}
         <span className={style['level-label']} data-level="na">
           Aggregated data only
