@@ -67,6 +67,7 @@ const seqLevel = `
         text
       }
       isolateMatchType
+      displayOrder
       numIsolateOnlyMutations
       numQueryOnlyMutations
       references {
@@ -113,6 +114,7 @@ const seqLevel = `
         text
       }
       isolateMatchType
+      displayOrder
       numIsolateOnlyMutations
       numQueryOnlyMutations
       references {
@@ -146,6 +148,7 @@ const seqLevel = `
         text
       }
       isolateMatchType
+      displayOrder
       numIsolateOnlyMutations
       numQueryOnlyMutations
       itemsByVaccine {

@@ -13,8 +13,7 @@ import ConfigContext from '../../utils/config-context';
 
 import {
   getRowKey,
-  displayFold,
-  decideDisplayPriority
+  displayFold
 } from './funcs';
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
@@ -71,16 +70,17 @@ function findComboAntibodies(antibodySuscSummary) {
 
 
 function buildPayload(antibodySuscSummary) {
-  let results = decideDisplayPriority(antibodySuscSummary)
+  let results = antibodySuscSummary
     .map(
-      ([{
+      ({
         variant,
         mutations,
         variantExtraMutations,
         variantMissingMutations,
         references,
-        itemsByAntibody
-      }, displayOrder]) => {
+        itemsByAntibody,
+        displayOrder
+      }) => {
         const row = {
           mutations,
           references,

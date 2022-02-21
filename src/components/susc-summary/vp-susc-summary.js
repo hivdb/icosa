@@ -9,8 +9,7 @@ import ConfigContext from '../../utils/config-context';
 
 import {
   getRowKey,
-  displayFold,
-  decideDisplayPriority
+  displayFold
 } from './funcs';
 import {vpSuscSummaryShape} from './prop-types';
 import CellMutations from './cell-mutations';
@@ -27,13 +26,14 @@ const SIRLevels = [
 
 
 function buildPayload(vaccPlasmaSuscSummary) {
-  return decideDisplayPriority(vaccPlasmaSuscSummary)
+  return vaccPlasmaSuscSummary
     .reduce(
-      (acc, [{
+      (acc, {
         variant,
         mutations,
-        itemsByVaccine
-      }, displayOrder]) => [
+        itemsByVaccine,
+        displayOrder
+      }) => [
         ...acc,
         ...itemsByVaccine.map(
           ({

@@ -10,8 +10,7 @@ import ConfigContext from '../../utils/config-context';
 import {cpSuscSummaryShape} from './prop-types';
 import {
   getRowKey,
-  displayFold,
-  decideDisplayPriority
+  displayFold
 } from './funcs';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
@@ -27,16 +26,17 @@ const SIRLevels = [
 
 
 export function buildPayload(convPlasmaSuscSummary) {
-  return decideDisplayPriority(convPlasmaSuscSummary)
+  return convPlasmaSuscSummary
     .map(
-      ([{
+      ({
         variant,
         mutations,
         references,
         cumulativeCount: numSamples,
         cumulativeFold: {median: medianFold},
-        itemsByResistLevel
-      }, displayOrder]) => {
+        itemsByResistLevel,
+        displayOrder
+      }) => {
         const row = {
           variant,
           mutations,
