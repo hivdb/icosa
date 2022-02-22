@@ -13,7 +13,9 @@ $toggle-display-btn-height: 2.5rem;
   }
   @media only screen {
     &:global(__scroll) {
-      padding-bottom: $toggle-display-btn-height;
+      .button-placeholder {
+        height: $toggle-display-btn-height;
+      }
     }
   }
 }

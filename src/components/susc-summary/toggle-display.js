@@ -17,7 +17,7 @@ function ToggleDisplayButton({
   if (num === 0) {
     return null;
   }
-  return (
+  return <>
     <button
      onClick={onToggle}
      className={style['toggle-display']}
@@ -25,7 +25,8 @@ function ToggleDisplayButton({
       Show {num > 1 ? num : 'one'}{' '}
       {expanded ? 'less' : 'more'} result{num > 1 ? 's' : ''}
     </button>
-  );
+    <div className={style['button-placeholder']} />
+  </>;
 }
 
 
