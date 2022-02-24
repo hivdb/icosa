@@ -64,7 +64,7 @@ export default function MismatchMutations({
         extraMutations,
         missingMutations
       }, idx) => <li key={idx}>
-        <strong>{variantName}</strong> (matching <>
+        <strong>{variantName}</strong> (match <>
           <span className={style['match-muts']}>
             {matchingMutations.join(' + ')}
           </span>
