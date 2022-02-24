@@ -68,8 +68,6 @@ const seqLevel = `
       }
       isolateMatchType
       displayOrder
-      numIsolateOnlyMutations
-      numQueryOnlyMutations
       references {
         refName
         DOI
@@ -115,8 +113,6 @@ const seqLevel = `
       }
       isolateMatchType
       displayOrder
-      numIsolateOnlyMutations
-      numQueryOnlyMutations
       references {
         refName
         DOI
@@ -149,8 +145,6 @@ const seqLevel = `
       }
       isolateMatchType
       displayOrder
-      numIsolateOnlyMutations
-      numQueryOnlyMutations
       itemsByVaccine {
         vaccineName
         vaccinePriority
