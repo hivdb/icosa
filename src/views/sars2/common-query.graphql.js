@@ -50,6 +50,14 @@ const seqLevel = `
         AAs
         text
       }
+      variantMatchingMutations {
+        gene { name }
+        reference
+        position
+        isUnsequenced
+        AAs
+        text
+      }
       variantExtraMutations {
         gene { name }
         reference

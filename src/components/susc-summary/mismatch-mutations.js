@@ -13,12 +13,15 @@ MismatchMutations.propTypes = {
       variant: PropTypes.shape({
         name: PropTypes.string.isRequired
       }),
+      variantMatchingMutations: PropTypes.arrayOf(
+        mutationShape.isRequired
+      ),
       variantExtraMutations: PropTypes.arrayOf(
         mutationShape.isRequired
-      ).isRequired,
+      ),
       variantMissingMutations: PropTypes.arrayOf(
         mutationShape.isRequired
-      ).isRequired
+      )
     }).isRequired
   ).isRequired
 };
@@ -31,15 +34,19 @@ export default function MismatchMutations({
     .filter(({variant}) => (variant !== null))
     .map(({
       variant: {name},
+      variantMatchingMutations,
       variantExtraMutations,
       variantMissingMutations
     }) => {
+      const matchingMutations = shortenMutationList(variantMatchingMutations)
+        .map(({text}) => text);
       const extraMutations = shortenMutationList(variantExtraMutations)
         .map(({text}) => text);
       const missingMutations = shortenMutationList(variantMissingMutations)
         .map(({text}) => text);
       return {
         variantName: name,
+        matchingMutations,
         extraMutations,
         missingMutations
       };
@@ -53,14 +60,19 @@ export default function MismatchMutations({
     <ul>
       {variantRows.map(({
         variantName,
+        matchingMutations,
         extraMutations,
         missingMutations
       }, idx) => <li key={idx}>
-        <strong>{variantName}</strong>{': '}
+        <strong>{variantName}</strong> (matching <>
+          <span className={style['match-muts']}>
+            {matchingMutations.join(' + ')}
+          </span>
+        </>){': '}
         {missingMutations.length > 0 ? <>
           {pluralize('additional mutation', missingMutations.length, true)}{' '}
           <span className={style['add-muts']}>
-            {missingMutations.join(', ')}
+            {missingMutations.join(' + ')}
           </span>
         </> : null}
         {extraMutations.length +
@@ -70,7 +82,7 @@ export default function MismatchMutations({
         {extraMutations.length > 0 ? <>
           {pluralize('missing mutation', extraMutations.length, true)}{' '}
           <span className={style['mis-muts']}>
-            {extraMutations.join(', ')}
+            {extraMutations.join(' + ')}
           </span>
         </> : null}.
       </li>)}

@@ -75,6 +75,7 @@ function buildPayload(antibodySuscSummary) {
       ({
         variant,
         mutations,
+        variantMatchingMutations,
         variantExtraMutations,
         variantMissingMutations,
         references,
@@ -85,6 +86,7 @@ function buildPayload(antibodySuscSummary) {
           mutations,
           references,
           variant,
+          variantMatchingMutations,
           variantExtraMutations,
           variantMissingMutations,
           displayOrder,
