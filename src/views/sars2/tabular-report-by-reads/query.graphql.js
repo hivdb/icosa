@@ -34,6 +34,7 @@ export default gql`
     minCodonReads
     minPositionReads
     assembledConsensus
+    assembledUnambiguousConsensus
     allGeneSequenceReads {
       firstAA
       lastAA
