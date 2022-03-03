@@ -24,6 +24,8 @@ export default gql`
     ${pangolinQuery()}
     availableGenes { name }
     mixtureRate
+    mutationCount
+    unusualMutationCount
     ${seqLevel}
     alignedGeneSequences {
       firstAA

@@ -222,6 +222,7 @@ const geneSeqLevel = `
   mutations {
     text
     AAs
+    unusualAAs
     reference
     position
     primaryType

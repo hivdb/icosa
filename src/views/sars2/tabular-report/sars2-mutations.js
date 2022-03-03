@@ -16,7 +16,8 @@ function mutations({
     'Codon',
     'RefAA',
     'MutAA',
-    'Mutation'
+    'Mutation',
+    'Is Unusual'
   ];
   if (sequenceReadsAnalysis) {
     header = [
@@ -43,6 +44,7 @@ function mutations({
       for (let {
         reference,
         AAs,
+        unusualAAs,
         position,
         triplet,
         isUnsequenced,
@@ -52,6 +54,7 @@ function mutations({
         if (isUnsequenced) {
           continue;
         }
+        unusualAAs = Array.from(unusualAAs);
         const row = {
           'Sequence Name': seqName,
           'Gene': gene,
@@ -70,6 +73,7 @@ function mutations({
               ) : (
                 `${gene}:${reference}${position}${aaDisplay}`
               ),
+              'Is Unusual': unusualAAs.includes(aminoAcid) ? 'Yes' : 'No',
               'Count': numReads,
               'Total': totalReads,
               'Percent': percent
@@ -85,6 +89,7 @@ function mutations({
             rows.push({
               ...row,
               'MutAA': aaDisplay,
+              'Is Unusual': unusualAAs.includes(aa) ? 'Yes' : 'No',
               'Mutation': gene === 'S' ? (
                 `${reference}${position}${aaDisplay}`
               ) : (

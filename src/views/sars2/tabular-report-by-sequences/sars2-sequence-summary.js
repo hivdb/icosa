@@ -65,6 +65,8 @@ async function sequenceSummary({
     'Genes',
     'Spike Mutations',
     'Other Mutations',
+    '# Mutations',
+    '# Unusual Mutations',
     'PANGO Lineage',
     'PANGO Version',
     'Spike Variant',
@@ -96,6 +98,8 @@ async function sequenceSummary({
         gene => gene !== 'S',
         geneDisplay
       ),
+      '# Mutations': `${seqResult.mutationCount}`,
+      '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,
       'Spike Variant': bestMatchingSubtype.display,

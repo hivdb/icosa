@@ -33,6 +33,8 @@ export default gql`
     minPrevalence
     minCodonReads
     minPositionReads
+    mutationCount
+    unusualMutationCount
     assembledConsensus
     assembledUnambiguousConsensus
     allGeneSequenceReads {

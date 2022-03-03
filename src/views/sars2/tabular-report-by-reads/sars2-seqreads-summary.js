@@ -65,6 +65,8 @@ async function seqReadsSummary({
     'Genes',
     'Spike Mutations',
     'Other Mutations',
+    '# Mutations',
+    '# Unusual Mutations',
     'Median Read Depth',
     'PANGO Lineage',
     'PANGO Version',
@@ -108,6 +110,8 @@ async function seqReadsSummary({
         gene => gene !== 'S',
         geneDisplay
       ),
+      '# Mutations': `${seqResult.mutationCount}`,
+      '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
       'Median Read Depth': readDepthStats.median,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,
