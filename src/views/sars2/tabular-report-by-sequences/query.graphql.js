@@ -43,6 +43,8 @@ export default gql`
         isUnsequenced
         isAmbiguous
       }
+      mutationCount
+      unusualMutationCount
       frameShifts {
         text
       }

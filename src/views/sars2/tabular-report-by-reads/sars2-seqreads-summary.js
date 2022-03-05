@@ -67,6 +67,8 @@ async function seqReadsSummary({
     'Other Mutations',
     '# Mutations',
     '# Unusual Mutations',
+    '# Spike Mutations',
+    '# Spike Unusual Mutations',
     'Median Read Depth',
     'PANGO Lineage',
     'PANGO Version',
@@ -97,6 +99,7 @@ async function seqReadsSummary({
     if (!pangolin.loaded) {
       pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
     }
+    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}) => gene === 'S');
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
@@ -112,6 +115,12 @@ async function seqReadsSummary({
       ),
       '# Mutations': `${seqResult.mutationCount}`,
       '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
+      '# Spike Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.mutationCount : null
+      }`,
+      '# Spike Unusual Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.unusualMutationCount : null
+      }`,
       'Median Read Depth': readDepthStats.median,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,

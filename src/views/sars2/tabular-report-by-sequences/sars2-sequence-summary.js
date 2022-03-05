@@ -67,6 +67,8 @@ async function sequenceSummary({
     'Other Mutations',
     '# Mutations',
     '# Unusual Mutations',
+    '# Spike Mutations',
+    '# Spike Unusual Mutations',
     'PANGO Lineage',
     'PANGO Version',
     'Spike Variant',
@@ -85,6 +87,7 @@ async function sequenceSummary({
     if (!pangolin.loaded) {
       pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
     }
+    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}) => gene === 'S');
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
@@ -100,6 +103,12 @@ async function sequenceSummary({
       ),
       '# Mutations': `${seqResult.mutationCount}`,
       '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
+      '# Spike Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.mutationCount : null
+      }`,
+      '# Spike Unusual Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.unusualMutationCount : null
+      }`,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,
       'Spike Variant': bestMatchingSubtype.display,
