@@ -5,7 +5,7 @@ import difference from 'lodash/difference';
 
 const FILENAME_DELIMITERS = [' ', '_', '-'];
 const PAIRED_FASTQ_MARKER = ['1', '2'];
-const INVALID_PAIRED_FASTQ_MARKER = /\d1|\d2|1\d|2\d/;
+const INVALID_PAIRED_FASTQ_MARKER = /[1-9]0*[12]|[^0]00+[12]|[12]\d/;
 
 
 function getShortLen(text1, text2) {
