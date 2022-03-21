@@ -160,6 +160,12 @@ export default class ColumnDef {
    *                                function is not provided.
    * @param {bool} multiCells     - Flag to enable/disable rowspan merging of
    *                                neighboring cells with the same value.
+   * @param {string} rowSpanKey   - Key for rowspan merging of neighboring
+   *                                cells. Default to the value of param `name`.
+   * @param {string} rowSpanKeyGetter - Key getter function for rowspan merging
+   *                                    of neighboring cells. This function
+   *                                    accept a row object as input parameter.
+   *                                    It overrides rowSpanKey when specified.
    * @param {object} headCellStyle - Inline style for head cell
    * @param {object} bodyCellStyle - Inline style for body cell
    * @param {number} bodyCellColSpan - Raw value of colspan for body cell
@@ -179,6 +185,8 @@ export default class ColumnDef {
     textAlign = 'center',
     none = '?',
     multiCells = false,
+    rowSpanKey,
+    rowSpanKeyGetter,
     headCellStyle = {},
     bodyCellStyle = {},
     bodyCellColSpan = 1
@@ -194,6 +202,8 @@ export default class ColumnDef {
     this.sortable = Boolean(sortable);
     this.textAlign = textAlign;
     this.multiCells = multiCells;
+    this.rowSpanKey = rowSpanKey;
+    this.rowSpanKeyGetter = rowSpanKeyGetter;
     this.headCellStyle = headCellStyle;
     this.bodyCellStyle = bodyCellStyle;
     this.bodyCellColSpan = bodyCellColSpan;
