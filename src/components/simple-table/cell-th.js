@@ -69,7 +69,8 @@ function SimpleTableCellTh({
         sortedData = sort(sortedData, name);
       }
       else { // descending
-        sortedData = sortedData.reverse();
+        // make a copy of sortedData.reverse() to update the reference
+        sortedData = [...sortedData.reverse()];
       }
 
       onSort && onSort({
