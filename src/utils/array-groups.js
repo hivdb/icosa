@@ -9,6 +9,9 @@ export function* consecutiveGroupsBy(array, predicate) {
         left = right;
         i ++;
       }
+      else {
+        break;
+      }
     }
     yield group;
   }
