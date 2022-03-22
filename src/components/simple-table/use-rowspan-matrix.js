@@ -2,17 +2,17 @@ import React from 'react';
 import nestGet from 'lodash/get';
 
 
-function countGroups(rows, name) {
+function countGroups(rows, rowSpanKeyGetter) {
   let numGroups = 0;
   let prevRow;
   let prevName;
   for (const row of rows) {
     let curName;
-    if (prevRow && prevRow[name] === row[name]) {
+    if (prevRow && rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)) {
       curName = prevName;
     }
     else {
-      curName = row[name];
+      curName = rowSpanKeyGetter(row);
       numGroups ++;
     }
     prevRow = row;
@@ -94,18 +94,21 @@ export default function useRowSpanMatrix({
           rowSpanKey,
           rowSpanKeyGetter,
           multiCells
-        }, idx) => ({
-          name,
-          rowSpanKey,
-          rowSpanKeyGetter: rowSpanKeyGetter ? rowSpanKeyGetter : (
+        }, idx) => {
+          rowSpanKeyGetter = rowSpanKeyGetter ? rowSpanKeyGetter : (
             rowSpanKey ?
               row => nestGet(row, rowSpanKey) :
               row => nestGet(row, name)
-          ),
-          multiCells,
-          numGroups: countGroups(data, name),
-          idx
-        }))
+          );
+          return {
+            name,
+            rowSpanKey,
+            rowSpanKeyGetter,
+            multiCells,
+            numGroups: countGroups(data, rowSpanKeyGetter),
+            idx
+          };
+        })
         .sort(({numGroups: a}, {numGroups: b}) => a - b);
 
       if (rowSpanColumns.length === columnDefs.length) {
