@@ -88,7 +88,6 @@ export default function useRowSpanMatrix({
         );
 
       const rowSpanColumns = columnDefs
-        .filter(({multiCells}) => !multiCells)
         .map(({
           name,
           rowSpanKey,
@@ -109,6 +108,7 @@ export default function useRowSpanMatrix({
             idx
           };
         })
+        .filter(({multiCells}) => !multiCells)
         .sort(({numGroups: a}, {numGroups: b}) => a - b);
 
       if (rowSpanColumns.length === columnDefs.length) {
