@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import React from 'react';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import Children from 'react-children-utilities';
@@ -24,6 +25,7 @@ HeadingTag.propTypes = {
   id: PropTypes.string,
   level: PropTypes.oneOf([1, 2, 3, 4, 5, 6]).isRequired,
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
   disableAnchor: PropTypes.bool.isRequired
 };
 
@@ -31,7 +33,14 @@ HeadingTag.defaultProps = {
   disableAnchor: false
 };
 
-export function HeadingTag({id, level, children, disableAnchor, ...props}) {
+export function HeadingTag({
+  id,
+  level,
+  className,
+  children,
+  disableAnchor,
+  ...props
+}) {
 
   const elemRef = React.useRef();
 
@@ -44,10 +53,12 @@ export function HeadingTag({id, level, children, disableAnchor, ...props}) {
     () => {
       if (anchor !== '' && window.location.hash.replace(/^#/, '') === anchor) {
         setTimeout(() => {
-          const top = (
-            elemRef.current.getBoundingClientRect().top + window.pageYOffset
-          );
-          window.scrollTo(0, top);
+          if (elemRef.current) {
+            const top = (
+              elemRef.current.getBoundingClientRect().top + window.pageYOffset
+            );
+            window.scrollTo(0, top);
+          }
         });
       }
     },
@@ -59,7 +70,7 @@ export function HeadingTag({id, level, children, disableAnchor, ...props}) {
     <Tag
      {...props}
      ref={elemRef}
-     className={style['heading-tag']}
+     className={classNames(className, style['heading-tag'])}
      id={anchor}>
       {disableAnchor ? null :
       <a
