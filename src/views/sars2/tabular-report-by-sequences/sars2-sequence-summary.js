@@ -111,7 +111,7 @@ async function sequenceSummary({
       }`,
       'PANGO Lineage': pangolin.lineage,
       'PANGO Version': pangolin.version,
-      'Spike Variant': bestMatchingSubtype.display,
+      'Spike Variant': (bestMatchingSubtype || {}).display || null,
       'Permanent Link (Spike Only)': getPermanentLink(
         seqName,
         geneSeqs,
