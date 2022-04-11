@@ -1,53 +1,76 @@
 import gql from 'graphql-tag';
 import {
   rootLevel,
-  seqLevel,
+  seqLevelMutComments,
+  seqLevelSuscSummary,
   geneSeqLevel,
   pangolinQuery
 } from '../common-query.graphql';
 
-export default gql`
-  fragment TabularReportBySequences_Root on Root {
-    ${rootLevel}
-    allGenes: genes {
-      name
-      refSequence
-      length
-    }
+
+export function getExtraParams(subOptions) {
+  const fetchMutComments = subOptions.includes('Mutation comments');
+  const extraParams = ['$drdbVersion: String!'];
+  if (fetchMutComments) {
+    extraParams.push('$cmtVersion: String!');
   }
-  fragment TabularReportBySequences on SequenceAnalysis {
-    inputSequence { header }
-    bestMatchingSubtype {
-      display
-      referenceAccession
-    }
-    ${pangolinQuery()}
-    availableGenes { name }
-    mixtureRate
-    mutationCount
-    unusualMutationCount
-    ${seqLevel}
-    alignedGeneSequences {
-      firstAA
-      lastAA
-      ${geneSeqLevel}
-      gene { name }
-      mutations {
-        text
-        position
-        displayAAs
-        primaryType
-        isInsertion
-        isDeletion
-        hasStop
-        isUnsequenced
-        isAmbiguous
+  return extraParams.join(', ');
+}
+
+
+export default function getQuery(subOptions) {
+  const fetchMutComments = subOptions.includes('Mutation comments');
+  const fetchSuscSummary = subOptions.includes('Susceptibility summary');
+  return gql`
+    fragment TabularReportBySequences_Root on Root {
+      ${rootLevel}
+      allGenes: genes {
+        name
+        refSequence
+        length
       }
+    }
+    fragment TabularReportBySequences on SequenceAnalysis {
+      inputSequence { header }
+      bestMatchingSubtype {
+        display
+        referenceAccession
+      }
+      ${pangolinQuery()}
+      availableGenes { name }
+      mixtureRate
       mutationCount
       unusualMutationCount
-      frameShifts {
-        text
+      ${fetchMutComments ? seqLevelMutComments : ''}
+      ${fetchSuscSummary ? seqLevelSuscSummary : ''}
+      alignedGeneSequences {
+        firstAA
+        lastAA
+        ${geneSeqLevel}
+        unsequencedRegions {
+          size
+          regions {
+            posStart posEnd
+          }
+        }
+        gene { name }
+        mutations {
+          text
+          position
+          displayAAs
+          primaryType
+          isInsertion
+          isDeletion
+          hasStop
+          isUnsequenced
+          isAmbiguous
+        }
+        mutationCount
+        unusualMutationCount
+        frameShifts {
+          text
+        }
       }
     }
-  }
-`;
+  `;
+}

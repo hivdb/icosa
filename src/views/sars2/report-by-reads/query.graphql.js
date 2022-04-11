@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
 import {
   rootLevel,
-  seqLevel,
+  seqLevelMutComments,
+  seqLevelSuscSummary,
   pangolinQuery,
   geneSeqLevel
 } from '../common-query.graphql';
@@ -42,7 +43,8 @@ export default gql`
       level
       message
     }
-    ${seqLevel}
+    ${seqLevelMutComments}
+    ${seqLevelSuscSummary}
     availableGenes { name }
     mixtureRate
     maxMixtureRate

@@ -8,10 +8,11 @@ import SequenceAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 
-import query from './query.graphql';
+import getQuery, {getExtraParams} from './query.graphql';
 import SeqTabularReports from './reports';
+import {subOptions} from './sub-options';
 
-export {subOptions} from './sub-options';
+export {subOptions};
 
 
 TabularReportBySequencesContainer.propTypes = {
@@ -44,18 +45,23 @@ export default function TabularReportBySequencesContainer({
     match
   });
 
+  const curSubOptions = React.useMemo(
+    () => subOptions.filter((_, idx) => subOptionIndices.includes(idx)),
+    [subOptionIndices]
+  );
+
   if (isConfigPending) {
     return null;
   }
 
   return <SequenceAnalysisLayout
-   query={query}
+   query={getQuery(curSubOptions)}
    client={client}
    sequences={sequences}
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

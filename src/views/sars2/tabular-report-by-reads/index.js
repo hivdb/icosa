@@ -9,13 +9,15 @@ import SeqReadsAnalysisLayout from
 import useExtendVariables from '../use-extend-variables';
 import useAddParams from '../../../components/seqreads-loader/use-add-params';
 
-import query from './query.graphql';
+import getQuery, {getExtraParams} from './query.graphql';
 import SeqTabularReports from './reports';
 
-export {subOptions} from './sub-options';
+import {subOptions} from './sub-options';
+
+export {subOptions};
 
 TabularReportByReadsContainer.propTypes = {
-  children: PropTypes.object, // new interface used by seqreads-report
+  children: PropTypes.object, // Set of ids, new interface by seqreads-report
   allSequenceReads: PropTypes.array.isRequired,
   onFinish: PropTypes.func.isRequired,
   patternsTo: PropTypes.string.isRequired
@@ -49,18 +51,23 @@ export default function TabularReportByReadsContainer({
     payload: allSeqReadsWithParams
   });
 
+  const curSubOptions = React.useMemo(
+    () => subOptions.filter((_, idx) => children.has(idx)),
+    [children]
+  );
+
   if (isConfigPending || isPending) {
     return null;
   }
 
   return <SeqReadsAnalysisLayout
-   query={query}
+   query={getQuery(curSubOptions)}
    client={client}
    allSequenceReads={allSeqReadsWithParams}
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

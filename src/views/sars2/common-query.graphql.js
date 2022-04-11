@@ -23,7 +23,7 @@ function pangolinQuery(syncFetch = false) {
 `;
 }
 
-const seqLevel = `
+const seqLevelMutComments = `
   mutationComments(cmtVersion: $cmtVersion) {
     triggeredMutations {
       gene { name }
@@ -36,6 +36,9 @@ const seqLevel = `
     version
     comment
   }
+`;
+
+const seqLevelSuscSummary = `
   antibodySuscSummary(drdbVersion: $drdbVersion) {
     itemsByVariantOrMutations {
       variant {
@@ -242,4 +245,10 @@ const geneSeqLevel = `
   }
 `;
 
-export {rootLevel, seqLevel, geneSeqLevel, pangolinQuery};
+export {
+  rootLevel,
+  seqLevelMutComments,
+  seqLevelSuscSummary,
+  geneSeqLevel,
+  pangolinQuery
+};
