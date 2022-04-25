@@ -99,6 +99,9 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
   const resultPositions = [];
   for (const geneSeq of allGeneSeqs) {
     const {gene: {name: geneName}, mutations} = geneSeq;
+    if (!(geneName in geneDefs)) {
+      continue;
+    }
     const {
       displayGene, range,
       readingFrame

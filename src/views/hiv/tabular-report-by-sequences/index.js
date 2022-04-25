@@ -1,22 +1,33 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
-import ConfigContext from '../../../components/report/config-context';
-import SequenceAnalysisLayout from 
+import ConfigContext from '../../../utils/config-context';
+import SequenceAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 
-import query from './query.graphql';
+import getQuery, {getExtraParams} from './query.graphql';
 import SeqTabularReports from './reports';
+import {subOptions} from './sub-options';
 
-export {subOptions} from './sub-options';
+export {subOptions};
+
+
+TabularReportBySequencesContainer.propTypes = {
+  subOptionIndices: PropTypes.arrayOf( // old interface used by seq-report
+    PropTypes.number.isRequired
+  ),
+  sequences: PropTypes.array.isRequired,
+  onFinish: PropTypes.func.isRequired,
+  patternsTo: PropTypes.string.isRequired
+};
 
 
 export default function TabularReportBySequencesContainer({
   subOptionIndices,
   sequences,
-  algorithm,
   onFinish,
   patternsTo
 }) {
@@ -34,17 +45,23 @@ export default function TabularReportBySequencesContainer({
     match
   });
 
+  const curSubOptions = React.useMemo(
+    () => subOptions.filter((_, idx) => subOptionIndices.includes(idx)),
+    [subOptionIndices]
+  );
+
   if (isConfigPending) {
     return null;
   }
 
   return <SequenceAnalysisLayout
-   query={query}
+   query={getQuery(curSubOptions)}
    client={client}
    sequences={sequences}
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
+   extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

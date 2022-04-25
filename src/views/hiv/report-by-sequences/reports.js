@@ -31,12 +31,19 @@ function getPageTitle(sequenceAnalysis, output) {
   return pageTitle;
 }
 
+SequenceReports.propTypes = {
+  output: PropTypes.string.isRequired,
+  match: matchShape.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  sequences: PropTypes.array.isRequired,
+  currentSelected: PropTypes.object,
+  sequenceAnalysis: PropTypes.array.isRequired,
+  fetchAnother: PropTypes.func.isRequired
+};
 
 function SequenceReports({
   output,
-  genes,
   match,
-  router,
   loaded,
   sequences,
   currentSelected,
@@ -91,21 +98,7 @@ function SequenceReports({
       ))}
     </main>
   </>;
-  
+
 }
-
-SequenceReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
-SequenceReports.defaultProps = {
-  genes: []
-};
 
 export default SequenceReports;

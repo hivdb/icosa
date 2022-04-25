@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape} from 'found';
 
 import {
   ReportHeader,
@@ -15,9 +14,17 @@ import {
 import style from '../style.module.scss';
 
 
+SingleSequenceReport.propTypes = {
+  header: PropTypes.string,
+  currentSelected: PropTypes.object,
+  sequenceResult: PropTypes.object,
+  output: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func
+};
+
 function SingleSequenceReport({
-  match,
-  router,
   sequenceResult,
   output,
   header,
@@ -64,17 +71,8 @@ function SingleSequenceReport({
       </RefContextWrapper>
     </article>
   );
-  
-}
 
-SingleSequenceReport.propTypes = {
-  currentSelected: PropTypes.object,
-  match: matchShape.isRequired,
-  sequenceResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired
-};
+}
 
 export default React.memo(
   SingleSequenceReport,

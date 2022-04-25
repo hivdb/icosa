@@ -1,23 +1,32 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
-import ConfigContext from '../../../components/report/config-context';
-import SeqReadsAnalysisLayout from 
+import ConfigContext from '../../../utils/config-context';
+import SeqReadsAnalysisLayout from
   '../../../components/seqreads-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 import useAddParams from '../../../components/seqreads-loader/use-add-params';
 
-import query from './query.graphql';
+import getQuery, {getExtraParams} from './query.graphql';
 import SeqTabularReports from './reports';
 
-export {subOptions} from './sub-options';
+import {subOptions} from './sub-options';
+
+export {subOptions};
+
+TabularReportByReadsContainer.propTypes = {
+  children: PropTypes.object, // Set of ids, new interface by seqreads-report
+  allSequenceReads: PropTypes.array.isRequired,
+  onFinish: PropTypes.func.isRequired,
+  patternsTo: PropTypes.string.isRequired
+};
 
 
 export default function TabularReportByReadsContainer({
   children,
   allSequenceReads,
-  algorithm,
   onFinish,
   patternsTo
 }) {
@@ -31,7 +40,7 @@ export default function TabularReportByReadsContainer({
   });
 
   const [allSeqReadsWithParams, isPending] = useAddParams({
-    params: config ? config.seqReadsDefaultParams : null,
+    defaultParams: config ? config.seqReadsDefaultParams : {},
     allSequenceReads,
     skip: isConfigPending
   });
@@ -42,17 +51,23 @@ export default function TabularReportByReadsContainer({
     payload: allSeqReadsWithParams
   });
 
+  const curSubOptions = React.useMemo(
+    () => subOptions.filter((_, idx) => children.has(idx)),
+    [children]
+  );
+
   if (isConfigPending || isPending) {
     return null;
   }
 
   return <SeqReadsAnalysisLayout
-   query={query}
+   query={getQuery(curSubOptions)}
    client={client}
    allSequenceReads={allSeqReadsWithParams}
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
+   extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 
 import {
   // DRInterpretation, DRMutationScores,
@@ -27,9 +26,17 @@ function useCoverages({allReads}) {
 }
 
 
+SingleSeqReadsReport.propTypes = {
+  inputSequenceReads: PropTypes.object.isRequired,
+  sequenceReadsResult: PropTypes.object,
+  output: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func.isRequired
+};
+
 function SingleSeqReadsReport({
-  match,
-  router,
   inputSequenceReads,
   sequenceReadsResult,
   output,
@@ -87,16 +94,6 @@ function SingleSeqReadsReport({
   );
 
 }
-
-SingleSeqReadsReport.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  inputSequenceReads: PropTypes.object.isRequired,
-  sequenceReadsResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired
-};
 
 
 export default React.memo(
