@@ -67,6 +67,9 @@ SeqSummary.propTypes = {
   mixtureRate: PropTypes.number,
   actualMinPrevalence: PropTypes.number,
   minPositionReads: PropTypes.number,
+  includeGenes: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
   children: PropTypes.node
 };
 
@@ -95,6 +98,7 @@ function SeqSummary(props) {
     mixtureRate,
     actualMinPrevalence,
     minPositionReads,
+    includeGenes,
     children
   } = props;
 
@@ -130,7 +134,9 @@ function SeqSummary(props) {
         })}
         {childArray.map((child, key) => {
           if (child.type === InlineGeneRange) {
-            return <InlineGeneRangeReal {...{key, config, geneSeqs}} />;
+            return (
+              <InlineGeneRangeReal {...{key, config, geneSeqs, includeGenes}} />
+            );
           }
 
           else if (child.type === Subtype) {

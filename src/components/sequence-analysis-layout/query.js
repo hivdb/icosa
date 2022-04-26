@@ -77,6 +77,7 @@ export default function SequenceAnalysisQuery({
     loaded,
     error,
     data,
+    extVariables,
     progressObj,
     fetchAnother
   } = useCumuQuery({
@@ -119,7 +120,8 @@ export default function SequenceAnalysisQuery({
       currentVersion,
       currentProgramVersion,
       sequenceAnalysis,
-      ...dataMisc
+      ...dataMisc,
+      extVariables
     });
   }
 

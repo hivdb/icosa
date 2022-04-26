@@ -11,7 +11,8 @@ export {calcOffsetLimit, calcInitOffsetLimit};
 export default function useCumuQuery(props) {
   const {
     query,
-    client
+    client,
+    mainInputName
   } = props;
 
   const {
@@ -73,10 +74,14 @@ export default function useCumuQuery(props) {
     ...props
   });
 
+  const extVariables = {...variables};
+  delete extVariables[mainInputName];
+
   if (error) {
     return {
       loaded: false,
       error,
+      extVariables,
       data,
       progressObj,
       fetchAnother
@@ -92,6 +97,7 @@ export default function useCumuQuery(props) {
     return {
       loaded,
       error: null,
+      extVariables,
       data: mergedData,
       cursor,
       progressObj,

@@ -7,9 +7,6 @@ import style from './style.module.scss';
 
 InlineGeneRange.propTypes = {
   config: PropTypes.shape({
-    allGenes: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
     geneDisplay: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -32,11 +29,14 @@ InlineGeneRange.propTypes = {
         )
       }).isRequired
     }).isRequired
+  ).isRequired,
+  includeGenes: PropTypes.arrayOf(
+    PropTypes.string.isRequired
   ).isRequired
 };
 
-function InlineGeneRange({config, geneSeqs}) {
-  const {allGenes, geneDisplay, highlightGenes} = config;
+function InlineGeneRange({config, geneSeqs, includeGenes}) {
+  const {geneDisplay, highlightGenes} = config;
   return <>
     {geneSeqs.length > 0 ? <>
       <dt>
@@ -70,15 +70,15 @@ function InlineGeneRange({config, geneSeqs}) {
         </ul>
       </dd>
     </> : null}
-    {geneSeqs.length < allGenes.length && <>
+    {geneSeqs.length < includeGenes.length && <>
       <dt className={style.warning}>
         Following gene
-        {allGenes.length - geneSeqs.length > 1 ? 's are ' : ' is '}
+        {includeGenes.length - geneSeqs.length > 1 ? 's are ' : ' is '}
         missing:
       </dt>
       <dd className={style.warning}>
         <ul className={style['inline-gene-range-list']}>
-          {allGenes
+          {includeGenes
             .filter(curGene => !geneSeqs.some(
               ({gene}) => gene.name === curGene
             ))

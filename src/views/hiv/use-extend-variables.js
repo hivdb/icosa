@@ -11,6 +11,7 @@ export default function useExtendVariables({
         }
       } = match;
       vars.algorithm = algorithm;
+      vars.includeGenes = ['CA', 'PR', 'RT', 'IN'];
       return vars;
     },
     [match]

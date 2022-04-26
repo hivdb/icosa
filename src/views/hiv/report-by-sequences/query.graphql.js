@@ -13,12 +13,24 @@ export default gql`
     inputSequence { header }
     strain { name display }
     availableGenes { name }
-    validationResults {
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes: subtypesV2(first: 10) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
+    validationResults(includeGenes: $includeGenes) {
       level
       message
     }
     ${seqLevel}
-    alignedGeneSequences {
+    alignedGeneSequences(includeGenes: $includeGenes) {
       firstAA
       lastAA
       ${geneSeqLevel}

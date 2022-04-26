@@ -5,7 +5,7 @@ const rootLevel = `
 `;
 
 const seqLevel = `
-  drugResistance {
+  drugResistance(includeGenes: $includeGenes) {
     algorithm {
       text
       family

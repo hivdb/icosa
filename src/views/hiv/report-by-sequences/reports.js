@@ -38,7 +38,12 @@ SequenceReports.propTypes = {
   sequences: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
+  fetchAnother: PropTypes.func.isRequired,
+  extVariables: PropTypes.shape({
+    includeGenes: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired
 };
 
 function SequenceReports({
@@ -48,7 +53,8 @@ function SequenceReports({
   sequences,
   currentSelected,
   sequenceAnalysis,
-  fetchAnother
+  fetchAnother,
+  extVariables: {includeGenes}
 }) {
 
   const {
@@ -84,6 +90,7 @@ function SequenceReports({
         <React.Fragment key={idx}>
           <SingleSequenceReport
            key={idx}
+           includeGenes={includeGenes}
            currentSelected={currentSelected}
            sequenceResult={seqResultLookup[header]}
            onObserve={onObserve}

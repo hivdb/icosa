@@ -56,6 +56,7 @@ function ReportBySequencesContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
+   extraParams="$includeGenes: [EnumGene]!"
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReports

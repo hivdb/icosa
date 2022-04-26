@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
+import Link from '../../link';
 import ExtLink from '../../link/external';
 
 import style from './style.module.scss';
@@ -51,10 +52,15 @@ export default function Genotype(props) {
   if (!genotypeText) {
     return null;
   }
+  const titleLink = config.messages['seqsummary-header-genotype-link'];
+  const titleText = config.messages['seqsummary-header-genotype'] || 'Genotype';
 
   return [
     <dt key={0}>
-      {config.messages['seqsummary-header-genotype'] || 'Genotype'}:
+      {titleLink ?
+        <Link to={titleLink} linkStyle="help">{titleText}</Link> :
+        titleText
+      }:
     </dt>,
     <dd key={1}>
       <a

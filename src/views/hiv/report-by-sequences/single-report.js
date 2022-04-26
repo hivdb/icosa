@@ -17,6 +17,9 @@ import style from '../style.module.scss';
 SingleSequenceReport.propTypes = {
   header: PropTypes.string,
   currentSelected: PropTypes.object,
+  includeGenes: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
   sequenceResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
@@ -25,6 +28,7 @@ SingleSequenceReport.propTypes = {
 };
 
 function SingleSequenceReport({
+  includeGenes,
   sequenceResult,
   output,
   header,
@@ -50,8 +54,9 @@ function SingleSequenceReport({
          onObserve={onObserve}
          onDisconnect={onDisconnect} />
         {sequenceResult ? <>
-          <SeqSummary {...sequenceResult} {...{output, strain}}>
-            <SeqSummary.InlineGeneRange />
+          <SeqSummary {...sequenceResult} {...{output, strain, includeGenes}}>
+            <SeqSummary.MultilineGeneRange />
+            <SeqSummary.Genotype />
             <SeqSummary.PrettyPairwise />
           </SeqSummary>
           <ReportSection title="Sequence quality assessment">
