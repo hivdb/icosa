@@ -1,0 +1,12 @@
+.dr-mutation-scores-table-header {
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: italic;
+  &[data-with-table] {
+    position: absolute;
+  }
+}
+
+.dr-mutation-scores-table {
+  min-width: 30rem;
+}
