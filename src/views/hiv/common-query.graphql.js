@@ -13,7 +13,7 @@ const seqLevel = `
       publishDate
     }
     gene {
-       name,
+       name
        drugClasses { name fullName }
     }
     levels: drugScores {
@@ -23,7 +23,14 @@ const seqLevel = `
     }
     mutationsByTypes {
       mutationType
-      mutations { text isUnsequenced }
+      mutations {
+        text
+        AAs
+        reference
+        position
+        isUnusual
+        isUnsequenced
+      }
     }
     commentsByTypes {
       commentType

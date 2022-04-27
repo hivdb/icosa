@@ -7,8 +7,9 @@ import {
   SeqSummary,
   MutationViewer as MutViewer,
   ReportSection,
-  MutationList as MutList,
-  RefContextWrapper
+  RefContextWrapper,
+  DRInterpretation,
+  DRMutationScores
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -39,8 +40,16 @@ function SingleSequenceReport({
 
   const {
     alignedGeneSequences,
-    strain: {name: strain} = {}
+    strain: {name: strain} = {},
+    validationResults,
+    drugResistance
   } = sequenceResult || {};
+
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
+
+  const disabledDrugs = ['NFV'];
 
   return (
     <article
@@ -67,11 +76,13 @@ function SingleSequenceReport({
             }} />
             <ValidationReport {...sequenceResult} {...{output, strain}} />
           </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...sequenceResult} {...{output, strain}} />
-          </ReportSection>
+          {isCritical ? null :
+            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+              <DRInterpretation
+               {...{geneDR, output, disabledDrugs, strain}} />
+              <DRMutationScores
+               {...{geneDR, output, disabledDrugs, strain}} />
+            </React.Fragment>)}
         </> : null}
       </RefContextWrapper>
     </article>

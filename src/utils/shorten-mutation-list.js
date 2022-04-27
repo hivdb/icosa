@@ -9,6 +9,7 @@ export default function shortenMutationList(mutations) {
       if (process.env.NODE_ENV !== 'production') {
         for (const field of [
           'AAs',
+          'text',
           'reference',
           'position',
           'isUnsequenced'

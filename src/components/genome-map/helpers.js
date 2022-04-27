@@ -1,5 +1,7 @@
 import sortBy from 'lodash/sortBy';
 
+const VERTICAL_SPACING = 5;
+const HORIZONTAL_SPACING = 22;
 
 export function removeOverlaps(posGroup, scaleX) {
   const [xStart, xEnd] = scaleX.range();
@@ -8,8 +10,8 @@ export function removeOverlaps(posGroup, scaleX) {
 
   let {positions} = posGroup;
   positions = sortBy(positions, ['pos']);
-  const hGap = 24;
-  const vGap = 10;
+  const hGap = HORIZONTAL_SPACING;
+  const vGap = VERTICAL_SPACING;
   let prevX;
   let maxOffsetY = 0;
 

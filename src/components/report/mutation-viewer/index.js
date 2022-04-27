@@ -98,7 +98,7 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
   }, {});
   const resultPositions = [];
   for (const geneSeq of allGeneSeqs) {
-    const {gene: {name: geneName}, mutations} = geneSeq;
+    const {gene: {name: geneName}, mutations, frameShifts} = geneSeq;
     if (!(geneName in geneDefs)) {
       continue;
     }
@@ -112,6 +112,8 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
     for (const {
       position,
       text,
+      isDRM,
+      isUnusual,
       isUnsequenced
     } of shortMutations) {
       if (isUnsequenced) {
@@ -122,10 +124,31 @@ function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
         gene: displayGene,
         name: highlight ? text : `${displayGene}:${text}`,
         pos: absNAPos,
-        ...(highlight ? null : {
+        ...(highlight ? {
+          strokeWidth: isDRM ? 4 : (isUnusual ? 2 : 1),
+          fontWeight: isDRM ? 600 : 400,
+          stroke: isUnusual ? '#e13333' : (isDRM ? '#1b8ecc' : '#000000'),
+          color: isUnusual ? '#e13333' : (isDRM ? '#1b8ecc' : '#000000')
+        } : {
           stroke: '#e0e0e0',
           color: '#a0a0a0'
         })
+      });
+    }
+
+    for (const {
+      position,
+      text
+    } of frameShifts) {
+      const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
+      resultPositions.push({
+        gene: displayGene,
+        name: highlight ? text : `${displayGene}:${text}`,
+        pos: absNAPos,
+        strokeWidth: 2,
+        fontWeight: 400,
+        stroke: '#e13333',
+        color: '#e13333'
       });
     }
   }

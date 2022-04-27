@@ -1,0 +1,93 @@
+@import "../ext";
+@import "../../../styles/tabs";
+@import "../../../styles/colors";
+@import "../../../styles/dropdown";
+
+
+.dr-report-mutation-by-types {
+  @include desc-list(18rem);
+
+  span[data-is-unusual="true"] {
+    position: relative;
+    color: white;
+    &::before {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 0;
+      bottom: 0;
+      left: -1px;
+      right: -1px;
+      z-index: -1;
+      background-color: color(warning-text);
+    }
+  }
+}
+
+.dr-levels {
+  overflow: hidden;
+
+  table.dr-level {
+    float: left;
+    margin-left: -1rem;
+    @media only screen and (min-width: 640px) {
+      margin-right: 15%;
+    };
+    border-collapse: collapse;
+    line-height: 1.5;
+    border-spacing: 0;
+    caption {
+      font-weight: 700;
+      border-bottom: 1px solid color(dividing-line);
+      margin: 1rem auto .5rem
+    }
+    tr {
+      &:hover {
+        background-color: color(table-row-hover-bg);
+      }
+    }
+    th {
+      box-sizing: content-box;
+      padding: 0 0 0 1rem;
+      width: 18rem;
+      text-align: left;
+    }
+    td {
+      box-sizing: content-box;
+      padding: 0 1rem 0 0;
+    }
+  }
+}
+
+.unusual-mut-popup {
+  &:global(-content) {
+    margin: auto;
+    background-color: color(name-pampas);
+    padding: 1rem;
+    border-radius: .4rem;
+    &[role="tooltip"] {
+      min-width: 10rem;
+      max-width: 40vw;
+      @media only screen and (max-width: 1200px) {
+        max-width: 50vw;
+      }
+      @media only screen and (max-width: 900px) {
+        max-width: 60vw;
+      }
+      border: 1px solid gray;
+    }
+  }
+  &:global(-arrow) {
+    color: color(name-pampas);
+    stroke-width: 2px;
+    stroke: gray;
+    stroke-dasharray: 30px;
+    stroke-dashoffset: -54px;
+  }
+  &:global(-overlay) {
+    background: rgba(0, 0, 0, 0.5);
+    &[data-popup='tooltip'] {
+      background: transparent;
+    }
+  }
+}
