@@ -124,7 +124,7 @@ function useReportPaginator({
   });
 
   const onPaginatorSelect = React.useCallback(
-    name => scrollTo(name, resetPaginatorScrollOffset),
+    name => scrollTo(name, resetPaginatorScrollOffset, false, true),
     [
       scrollTo,
       resetPaginatorScrollOffset

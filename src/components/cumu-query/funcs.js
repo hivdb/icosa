@@ -21,6 +21,7 @@ export function calcOffsetLimit({
     limit = size;
     offset = 0;
   }
+  limit = Math.min(limit, size - offset);
 
   return {loadFirstIndex, offset, limit};
 }

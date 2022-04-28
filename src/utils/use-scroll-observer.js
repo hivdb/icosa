@@ -115,10 +115,15 @@ export default function useScrollObserver({
   );
 
   const scrollTo = React.useCallback(
-    async (name, callback = () => null, avoidLoading = false) => {
+    async (
+      name,
+      callback = () => null,
+      avoidLoading = false,
+      forceScroll = false
+    ) => {
       const node = current.observingNodes[name];
       if (node) {
-        if (inView(node)) {
+        if (!forceScroll && inView(node)) {
           callback();
           return;
         }

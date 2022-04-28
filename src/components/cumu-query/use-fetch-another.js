@@ -44,27 +44,28 @@ export default function useFetchAnother({
         router.replace(loc);
       }
       let shouldWaitLoaded = false;
-      let rangeStart = Math.max(
-        curIdx - Math.ceil((quickLoadLimit - 1) / 2),
-        0
-      );
-      let rangeEnd = Math.max(
-        curIdx + Math.ceil((quickLoadLimit - 1) / 2),
-        inputObjs.length
-      );
-      for (let offset = rangeStart; offset < rangeEnd; offset ++) {
-        const name = nestGet(inputObjs[offset], inputUniqKeyName);
+      const {
+        offset,
+        limit,
+        loadFirstIndex
+      } = calcOffsetLimit({
+        size: inputObjs.length,
+        offset: curIdx,
+        lazyLoad,
+        quickLoadLimit
+      });
+      for (let idx = offset; idx < offset + limit; idx ++) {
+        const name = nestGet(inputObjs[idx], inputUniqKeyName);
         if (!isCached(name)) {
           shouldWaitLoaded = true;
           break;
         }
       }
-      setCursor(calcOffsetLimit({
-        size: inputObjs.length,
-        offset: rangeStart,
-        lazyLoad,
-        quickLoadLimit: rangeEnd - rangeStart
-      }));
+      setCursor({
+        offset,
+        limit,
+        loadFirstIndex
+      });
       const promise = new Promise(resolve => {
         pendingResolve.current = resolve;
       });

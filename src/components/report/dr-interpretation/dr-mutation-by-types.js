@@ -40,6 +40,7 @@ export default function DRMutationByTypes({gene, mutationsByTypes}) {
             if (mut.isUnusual) {
               mutElem = (
                 <Popup
+                 key={`popup-${idx}`}
                  on="hover"
                  position={[
                    'bottom center',

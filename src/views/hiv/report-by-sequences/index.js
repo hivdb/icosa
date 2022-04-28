@@ -52,7 +52,7 @@ function ReportBySequencesContainer({
   return <SeqAnalysisLayout
    query={query}
    client={client}
-   quickLoadLimit={4}
+   quickLoadLimit={5}
    sequences={sequences}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}

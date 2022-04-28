@@ -22,7 +22,10 @@ const positionShape = PropTypes.shape({
   stroke: PropTypes.string,
   strokeWidth: PropTypes.number,
   color: PropTypes.string,
-  fontWeight: PropTypes.string,
+  fontWeight: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired
+  ]),
   arrows: PropTypes.arrayOf(PropTypes.string.isRequired)
 });
 
