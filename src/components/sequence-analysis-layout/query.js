@@ -35,6 +35,7 @@ function getQuery(fragment, extraParams) {
 
 SequenceAnalysisQuery.propTypes = {
   lazyLoad: PropTypes.bool.isRequired,
+  quickLoadLimit: PropTypes.number.isRequired,
   renderPartialResults: PropTypes.bool.isRequired,
   currentSelected: PropTypes.object,
   query: PropTypes.object.isRequired,
@@ -52,6 +53,7 @@ SequenceAnalysisQuery.propTypes = {
 
 export default function SequenceAnalysisQuery({
   lazyLoad,
+  quickLoadLimit,
   renderPartialResults,
   currentSelected,
   query: queryFragment,
@@ -83,6 +85,7 @@ export default function SequenceAnalysisQuery({
   } = useCumuQuery({
     query: getQuery(queryFragment, extraParams),
     lazyLoad,
+    quickLoadLimit,
     inputObjs: sequences,
     initOffset,
     initLimit,

@@ -46,50 +46,10 @@ export default function useScrollObserver({
   );
 
   const observerCallback = React.useCallback(
-    async (/* entries */) => {
+    async (/*entries*/) => {
       if (!current.loaded || disabled || current.preventObserver) {
         return;
       }
-      /*for (const entry of entries) {
-        const name = entry.target.dataset.scrollObserveName;
-        const index = parseInt(entry.target.dataset.scrollObserveIndex);
-        const viewportHeight = window.innerHeight;
-        const curRatio = Math.max(
-          entry.intersectionRatio,
-          entry.intersectionRect.height / viewportHeight
-        );
-        const isIntersecting = entry.isIntersecting;
-        const prevRatio = current.prevRatioMap[name] || 0;
-
-        if (
-          isIntersecting &&
-          curRatio > prevRatio &&
-          curRatio > 0.5
-        ) {
-          // enter
-          current.candidateMap[index] = [name, entry.target];
-        }
-        else if (
-          curRatio < prevRatio &&
-          curRatio < 0.5
-        ) {
-          // leave
-          delete current.candidateMap[index];
-        }
-        current.prevRatioMap[name] = curRatio;
-      }
-      const candidates = Object.entries(current.candidateMap);
-      if (candidates.length > 0) {
-        candidates.sort(([a], [b]) => a - b);
-        const [[, [targetName, target]]] = candidates;
-        if (targetName !== current.name) {
-          await asyncLoadNewItem(
-            targetName, /* updateCurrentSelected = / true
-          );
-          target.dataset.scrollObserveLoaded = "yes";
-          anyLoaded = true;
-        }
-      }*/
 
       let anyLoaded = false;
       let firstFlag = true;
@@ -111,6 +71,7 @@ export default function useScrollObserver({
             node.dataset.scrollObserveLoaded = "yes";
             anyLoaded = true;
           }
+          break;
         }
       }
       anyLoaded && afterLoadNewItem();
@@ -122,7 +83,7 @@ export default function useScrollObserver({
     () => {
       const options = {
         root: document,
-        rootMargin: '-50px 0px -30% 0px',
+        rootMargin: '-50px 0px -10px 0px',
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
       };
       if (current.observer) {
@@ -161,13 +122,18 @@ export default function useScrollObserver({
         }
 
         preventScrollObserver();
+        let {top} = node.getBoundingClientRect();
+        top += window.pageYOffset - 150;
+
+        noSmoothScrollTo(top);
+
         if (!avoidLoading) {
           await asyncLoadNewItem(name, /* updateCurrentSelected = */ true);
           node.dataset.scrollObserveLoaded = "yes";
           afterLoadNewItem();
         }
 
-        let {top} = node.getBoundingClientRect();
+        top = node.getBoundingClientRect().top;
         top += window.pageYOffset - 150;
 
         noSmoothScrollTo(top);

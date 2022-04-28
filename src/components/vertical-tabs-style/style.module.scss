@@ -1,0 +1,73 @@
+@import '../../styles/colors';
+
+.vertical-tabs {
+  --tab-width: 5rem;
+  --bg-color: #{color(panel-highlight-bg)};
+  --border-color: #{color(panel-highlight-border)};
+  --selected-border-color: #{color(type-main)};
+  --ribbon-width: .5rem;
+  --border-width: 1px;
+  @media (min-resolution: 2dppx) {
+    --border-width: .5px;
+  }
+  display: grid;
+  grid-template-columns: var(--tab-width) auto;
+
+  > ul[role="tablist"] {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    border-right: var(--border-width) solid var(--selected-border-color);
+    > li[role="tab"] {
+      display: block;
+      position: relative;
+      padding: 1rem .5rem 1rem 1rem;
+      cursor: pointer;
+      overflow: hidden;
+      &::before {
+        content: '';
+        position: absolute;
+        display:block;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      &[aria-selected="true"] {
+        background-color: white;
+        margin-right: calc(0px - var(--border-width));
+        &::before {
+          border-width: var(--border-width) 0 var(--border-width) var(--ribbon-width);
+          border-style: solid;
+          border-color: var(--selected-border-color) transparent var(--selected-border-color) var(--selected-border-color);
+        }
+        & + li[aria-selected="false"]::before {
+          border-top: none;
+        }
+      }
+      &[aria-selected="false"] {
+        margin-left: var(--ribbon-width);
+        background-color: var(--bg-color);
+        transition: filter 250ms ease-in-out;
+        &:not(:first-child)::before {
+          border-top: var(--border-width) solid var(--border-color);
+        }
+        &:hover {
+          filter: brightness(92%);
+        }
+        border-bottom-color: var(--border-color);
+      }
+    }
+  }
+
+  > div[role="tabpanel"] {
+    padding: 1rem;
+    background-color: white;
+    border-width: var(--border-width) var(--border-width) var(--border-width) 0;
+    border-style: solid;
+    border-color: var(--selected-border-color);
+    &:not(:global(.react-tabs__tab-panel--selected)) {
+      display: none;
+    }
+  }
+}

@@ -45,6 +45,15 @@
       }
     }
   }
+
+  > div {
+    position: relative;
+    > .header-annotation:first-child {
+      position: absolute;
+      right: 0;
+      margin-top: -2.8rem;
+    }
+  }
 }
 
 .dr-mutation-scores {
@@ -582,12 +591,6 @@ section.alg-comparison {
 .footnote {
    font-size: 0.8rem;
    line-height: 1.5;
-}
-
-.header-annotation {
-  position: absolute;
-  right: 0;
-  margin-top: -2.8rem;
 }
 
 .collapsable-container {

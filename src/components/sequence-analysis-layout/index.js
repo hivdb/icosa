@@ -19,6 +19,7 @@ SequenceAnalysisContainer.propTypes = {
   onExtendVariables: PropTypes.func.isRequired,
   lazyLoad: PropTypes.bool.isRequired,
   renderPartialResults: PropTypes.bool.isRequired,
+  quickLoadLimit: PropTypes.number.isRequired,
   children: PropTypes.func.isRequired
 };
 
@@ -27,6 +28,7 @@ SequenceAnalysisContainer.defaultProps = {
   progressText: (progress, total) => (
     `Running sequence analysis... (${progress}/${total})`
   ),
+  quickLoadLimit: 2,
   onExtendVariables: vars => vars
 };
 
@@ -48,6 +50,7 @@ function SequenceAnalysisContainer(props) {
     progressText,
     onExtendVariables,
     lazyLoad,
+    quickLoadLimit,
     renderPartialResults,
     children
   } = props;
@@ -56,6 +59,7 @@ function SequenceAnalysisContainer(props) {
     <SeqAnalysisQuery
      query={query}
      lazyLoad={lazyLoad}
+     quickLoadLimit={quickLoadLimit}
      renderPartialResults={renderPartialResults}
      currentSelected={currentSelected}
      showProgressBar={!renderPartialResults}
@@ -67,7 +71,8 @@ function SequenceAnalysisContainer(props) {
      {...calcInitOffsetLimit({
        size: sequences.length,
        curIndex: currentSelected.index,
-       lazyLoad
+       lazyLoad,
+       quickLoadLimit
      })}>
       {children}
     </SeqAnalysisQuery>

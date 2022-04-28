@@ -1,5 +1,29 @@
 @import "../../../styles/dropdown";
 
+.sierra-genome-map-tabs {
+  --tab-width: 10rem !important;
+  li[role="tab"][data-hide="true"] {
+    display: none !important;
+  }
+  div[role="tabpanel"][data-hide="true"] {
+    display: none !important;
+  }
+}
+
+.genome-map-expanded {
+  display: grid;
+  &[data-hide="true"] {
+    display: none;
+  }
+}
+
+.genome-map-view-checkbox {
+  font-size: .8rem;
+  @media print {
+    display: none;
+  }
+}
+
 .sierra-genome-map {
 
   > [class*="svg-container"] {

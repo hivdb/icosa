@@ -76,14 +76,14 @@ function SingleSequenceReport({
             <SeqSummary.Genotype />
             <SeqSummary.OutbreakInfo />
           </SeqSummary>
-          <ReportSection title="Sequence quality assessment">
-            <MutViewer {...{
-              allGeneSeqs: alignedGeneSequences,
-              output,
-              strain
-            }} />
+          <MutViewer {...{
+            title: 'Sequence quality assessment',
+            allGeneSeqs: alignedGeneSequences,
+            output,
+            strain
+          }}>
             <ValidationReport {...sequenceResult} {...{output, strain}} />
-          </ReportSection>
+          </MutViewer>
           <ReportSection
            className={style['no-page-break']}
            title="Mutation list">

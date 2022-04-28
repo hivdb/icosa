@@ -37,7 +37,7 @@ export default function useCursorAndVariables({
         const loadFirstObj = inputObjs[loadFirstIndex];
         if (!loadFirstObj) {
           throw new Error(
-            `InputObjs index out of bound: loadFirstObj=${loadFirstObj}`
+            `InputObjs index out of bound: loadFirstIndex=${loadFirstIndex}`
           );
         }
         if (!isCached(nestGet(loadFirstObj, inputUniqKeyName))) {

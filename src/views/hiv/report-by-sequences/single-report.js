@@ -6,7 +6,6 @@ import {
   ValidationReport,
   SeqSummary,
   MutationViewer as MutViewer,
-  ReportSection,
   RefContextWrapper,
   DRInterpretation,
   DRMutationScores
@@ -68,14 +67,15 @@ function SingleSequenceReport({
             <SeqSummary.Genotype />
             <SeqSummary.PrettyPairwise />
           </SeqSummary>
-          <ReportSection title="Sequence quality assessment">
-            <MutViewer {...{
-              allGeneSeqs: alignedGeneSequences,
-              output,
-              strain
-            }} />
+          <MutViewer {...{
+            title: 'Sequence quality assessment',
+            viewCheckboxLabel: 'Collapse genes',
+            allGeneSeqs: alignedGeneSequences,
+            output,
+            strain
+          }}>
             <ValidationReport {...sequenceResult} {...{output, strain}} />
-          </ReportSection>
+          </MutViewer>
           {isCritical ? null :
             drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
               <DRInterpretation

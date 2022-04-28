@@ -1,6 +1,6 @@
 @import "../../styles";
 
-$chkbox-size: 18px;
+$chkbox-size: 1.28em;
 $chkbox-border-width: 1px;
 
 $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27.5% 40%);
@@ -28,7 +28,9 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
   label {
     position: relative;
     display: inline-block;
-    margin-right: 2rem;
+    &:not(:last-child) {
+      margin-right: 2em;
+    }
     cursor: pointer;
     &::before, &::after {
       box-sizing: border-box;
@@ -38,8 +40,8 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
     }
     &::before {
       content: "\a0";  // use &nbsp; to enable line-height
-      margin-right: .4rem;
-      line-height: #{$chkbox-size - 2 * $chkbox-border-width};
+      margin-right: .4em;
+      line-height: calc(#{$chkbox-size} - 2 * #{$chkbox-border-width});
       background-color: color(chkbox-off-bg);
       border: $chkbox-border-width solid color(chkbox-border);
     }
@@ -48,7 +50,7 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
       top: 0;
       content: "✓";
       opacity: 0;
-      font-size: 1rem;
+      font-size: 1em;
       text-align: center;
       position: absolute;
       clip-path: $tick-polygon;

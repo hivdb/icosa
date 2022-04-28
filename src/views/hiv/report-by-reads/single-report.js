@@ -74,15 +74,14 @@ function SingleSeqReadsReport({
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />
           </SeqSummary>
-          <ReportSection title="Sequence quality assessment">
-            <MutViewer {...{
-              coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
-              allGeneSeqs: allGeneSequenceReads,
-              coverages,
-              output,
-              strain
-            }} />
-          </ReportSection>
+          <MutViewer {...{
+            title: 'Sequence quality assessment',
+            coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
+            allGeneSeqs: allGeneSequenceReads,
+            coverages,
+            output,
+            strain
+          }} />
           <ReportSection
            className={style['no-page-break']}
            title="Mutation list">

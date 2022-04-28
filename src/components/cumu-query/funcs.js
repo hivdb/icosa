@@ -1,11 +1,12 @@
-const QUICKLOAD_LIMIT = 2;
+const DEFAULT_QUICKLOAD_LIMIT = 2;
 
+export {DEFAULT_QUICKLOAD_LIMIT};
 
 export function calcOffsetLimit({
   size,
   offset,
   lazyLoad,
-  quickLoadLimit = QUICKLOAD_LIMIT
+  quickLoadLimit = DEFAULT_QUICKLOAD_LIMIT
 }) {
   let limit;
   const loadFirstIndex = offset;
@@ -28,7 +29,8 @@ export function calcOffsetLimit({
 export function calcInitOffsetLimit({
   size,
   curIndex,
-  lazyLoad
+  lazyLoad,
+  quickLoadLimit = DEFAULT_QUICKLOAD_LIMIT
 }) {
   if (curIndex === null || curIndex === undefined) {
     let initOffset = 0, initLimit = 0;
@@ -41,7 +43,8 @@ export function calcInitOffsetLimit({
     const {offset, limit} = calcOffsetLimit({
       size,
       offset: curIndex,
-      lazyLoad
+      lazyLoad,
+      quickLoadLimit
     });
     return {
       initOffset: offset,

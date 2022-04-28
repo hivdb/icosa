@@ -1,190 +1,39 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 
+import {H3} from '../../heading-tags';
+import CheckboxInput from '../../checkbox-input';
 import GenomeMap from '../../genome-map';
-import GMRegion from '../../genome-map/region';
-import shortenMutationList from '../../../utils/shorten-mutation-list';
+import verticalTabsStyle from '../../vertical-tabs-style';
 import ConfigContext from '../../../utils/config-context';
-import PresetSelection from './preset-selection';
+import createPersistedReducer from '../../../utils/use-persisted-reducer';
 
+import ReportSection from '../report-section';
+
+import {
+  getUnsequencedRegions,
+  getGenomeMapPositions,
+  getCoverages
+} from './funcs';
+import parentStyle from '../style.module.scss';
 import style from './style.module.scss';
 
-
-function convertAAPosToAbsNAPos(aaPos, naPosStart, readingFrame) {
-  let absNAPos = naPosStart - 3 + aaPos * 3;
-  if (readingFrame && readingFrame.length > 0) {
-    for (const [breakpoint, offset] of readingFrame) {
-      if (absNAPos > breakpoint) {
-        absNAPos += offset;
-      }
-    }
-  }
-  return absNAPos;
-}
-
-
-function calcUnseqRegionOffsetY(knownRegions, posStart, posEnd) {
-  const regionSize = posEnd - posStart;
-  const maxAllowedOverlap = regionSize / 10;
-  let offsetY = GMRegion.defaultProps.offsetY;
-  for (const {
-    shapeType,
-    posStart: krPosStart,
-    posEnd: krPosEnd,
-    offsetY: krOffsetY = GMRegion.defaultProps.offsetY
-  } of knownRegions) {
-    if (shapeType !== 'rect') {
-      // only need to avoid rect shapes
-      continue;
-    }
-    if (
-      posEnd < krPosStart + maxAllowedOverlap ||
-      posStart > krPosEnd - maxAllowedOverlap
-    ) {
-      // not overlapped
-      continue;
-    }
-    offsetY = Math.max(offsetY, krOffsetY);
-  }
-  // minus 10 to have some overlap with rect regions
-  return offsetY - 10;
-}
-
-
-function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
-  const regions = [];
-  const commonProps = {
-    label: null,
-    fill: '#ff1100',
-    shapeType: 'wavy',
-    wavyRepeats: 5
-  };
-  for (const geneDef of geneDefs) {
-    const {gene, range, readingFrame} = geneDef;
-    const geneSeq = allGeneSeqs.find(({gene: {name}}) => name === gene);
-    if (typeof geneSeq === 'undefined') {
-      const [posStart, posEnd] = range;
-      regions.push({
-        ...commonProps,
-        name: `unseq-gene-${gene}`,
-        posStart,
-        posEnd,
-        offsetY: calcUnseqRegionOffsetY(knownRegions, posStart, posEnd)
-      });
-    }
-    else {
-      const {unsequencedRegions = {regions: []}} = geneSeq;
-      for (let {posStart, posEnd} of unsequencedRegions.regions) {
-        posStart = convertAAPosToAbsNAPos(posStart, range[0], readingFrame);
-        posEnd = convertAAPosToAbsNAPos(posEnd, range[0], readingFrame);
-        regions.push({
-          ...commonProps,
-          name: `unseq-region-${gene}-${posStart}-${posEnd}`,
-          posStart,
-          posEnd,
-          offsetY: calcUnseqRegionOffsetY(knownRegions, posStart, posEnd)
-        });
-      }
-    }
-  }
-  return regions;
-}
-
-
-function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
-  geneDefs = geneDefs.reduce((acc, geneDef) => {
-    acc[geneDef.gene] = geneDef;
-    return acc;
-  }, {});
-  const resultPositions = [];
-  for (const geneSeq of allGeneSeqs) {
-    const {gene: {name: geneName}, mutations, frameShifts} = geneSeq;
-    if (!(geneName in geneDefs)) {
-      continue;
-    }
-    const {
-      displayGene, range,
-      readingFrame
-    } = geneDefs[geneName];
-    const highlight = highlightGenes.includes(geneName);
-    const shortMutations = shortenMutationList(mutations);
-
-    for (const {
-      position,
-      text,
-      isDRM,
-      isUnusual,
-      isUnsequenced
-    } of shortMutations) {
-      if (isUnsequenced) {
-        continue;
-      }
-      const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
-      resultPositions.push({
-        gene: displayGene,
-        name: highlight ? text : `${displayGene}:${text}`,
-        pos: absNAPos,
-        ...(highlight ? {
-          strokeWidth: isDRM ? 4 : (isUnusual ? 2 : 1),
-          fontWeight: isDRM ? 600 : 400,
-          stroke: isUnusual ? '#e13333' : (isDRM ? '#1b8ecc' : '#000000'),
-          color: isUnusual ? '#e13333' : (isDRM ? '#1b8ecc' : '#000000')
-        } : {
-          stroke: '#e0e0e0',
-          color: '#a0a0a0'
-        })
-      });
-    }
-
-    for (const {
-      position,
-      text
-    } of frameShifts) {
-      const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
-      resultPositions.push({
-        gene: displayGene,
-        name: highlight ? text : `${displayGene}:${text}`,
-        pos: absNAPos,
-        strokeWidth: 2,
-        fontWeight: 400,
-        stroke: '#e13333',
-        color: '#e13333'
-      });
-    }
-  }
-  return resultPositions;
-}
-
-
-function getCoverages(coverages, geneDefs, coverageUpperLimit) {
-  if (!coverages) {
-    return;
-  }
-  const posStart = Math.min(...geneDefs.map(({range}) => range[0]));
-  const posEnd = Math.max(...geneDefs.map(({range}) => range[1]));
-  geneDefs = geneDefs.reduce((acc, geneDef) => {
-    acc[geneDef.gene] = geneDef;
-    return acc;
-  }, {});
-  const results = [];
-  for (const {gene, position, coverage} of coverages) {
-    const {range, readingFrame} = geneDefs[gene];
-    const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
-    results.push({position: absNAPos, coverage});
-  }
-  return {
-    height: 50,
-    posStart,
-    posEnd,
-    coverageUpperLimit,
-    coverages: results.sort((a, b) => a.position - b.position)
-  };
-}
+const useViewReducer = createPersistedReducer(
+  '--sierra-report-genome-map-view-opt'
+);
 
 
 MutationViewer.propTypes = {
+  title: PropTypes.string.isRequired,
+  output: PropTypes.string,
+  children: PropTypes.node,
+  defaultView: PropTypes.oneOf(['collapse', 'expansion']).isRequired,
+  viewCheckboxLabel: PropTypes.string.isRequired,
   noUnseqRegions: PropTypes.bool.isRequired,
   regionPresets: PropTypes.object.isRequired,
+  defaultPresetIndex: PropTypes.number.isRequired,
   allGeneSeqs: PropTypes.arrayOf(
     PropTypes.shape({
       gene: PropTypes.shape({
@@ -212,74 +61,152 @@ MutationViewer.propTypes = {
 
 
 MutationViewer.defaultProps = {
-  noUnseqRegions: false
+  title: 'Mutation map',
+  noUnseqRegions: false,
+  defaultView: 'collapse',
+  viewCheckboxLabel: 'Collapse mutation maps',
+  defaultPresetIndex: 0
 };
 
 
 function MutationViewer({
+  title,
+  children,
+  defaultView,
+  viewCheckboxLabel,
+  output,
   noUnseqRegions,
+  defaultPresetIndex,
   regionPresets,
   allGeneSeqs,
   coverages,
   coverageUpperLimit
 }) {
   const {presets, genes} = regionPresets;
-  const [preset, setPreset] = useState(presets[0]);
-  const {
-    name: curName,
-    highlightGenes,
-    preset: {minHeight, regions, ...otherPreset}
-  } = preset;
-  const presetOptions = presets.map(({name, label}) => ({
-    value: name, label
-  }));
-  const payload = {
-    name: curName,
-    label: '',
-    ...otherPreset,
-    regions: [
-      ...regions,
-      ...(
-        noUnseqRegions ? [] :
-          getUnsequencedRegions(allGeneSeqs, genes, regions)
-      )
-    ],
-    height: minHeight,
-    positionGroups: [{
-      name: 'NA',
-      label: '',
-      positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
-    }],
-    coverages: getCoverages(coverages, genes, coverageUpperLimit)
-  };
-  return (
-    <GenomeMap
-     key={curName}
-     preset={payload}
-     className={style['sierra-genome-map']}
-     extraButtons={
-       <PresetSelection
-        value={curName}
-        options={presetOptions}
-        onChange={handleChange} />
-     } />
+  const [selectedIndex, setSelectedIndex] = useState(defaultPresetIndex);
+  const [view, toggleView] = useViewReducer(
+    v => v === 'expansion' ? 'collapse' : 'expansion',
+    defaultView
   );
 
-  function handleChange(value) {
-    const preset = presets.find(({name}) => name === value);
-    setPreset(preset);
-  }
+  const payloads = React.useMemo(
+    () => presets.map(({
+      name: curName,
+      highlightGenes,
+      preset: {minHeight, regions, ...otherPreset}
+    }) => {
+      const unseqRegions = (
+        noUnseqRegions ? [] :
+          getUnsequencedRegions(allGeneSeqs, genes, regions)
+      );
+      const presetPosStart = Math.min(...regions.map(({posStart}) => posStart));
+      const presetPosEnd = Math.max(...regions.map(({posEnd}) => posEnd));
+      const unseqPosCount = unseqRegions.reduce(
+        (acc, {posStart, posEnd}) => (
+          (posStart <= presetPosEnd && posEnd >= presetPosStart) ? (
+            acc + 1 +
+            Math.min(posEnd, presetPosEnd) -
+            Math.max(posStart, presetPosStart)
+          ) : acc
+        ),
+        0
+      );
+      return {
+        name: curName,
+        label: '',
+        hasCoverage: unseqPosCount < 1 + presetPosEnd - presetPosStart,
+        ...otherPreset,
+        regions: [
+          ...regions,
+          ...unseqRegions
+        ],
+        height: minHeight,
+        positionGroups: [{
+          name: 'NA',
+          label: '',
+          positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
+        }],
+        coverages: getCoverages(coverages, genes, coverageUpperLimit)
+      };
+    }),
+    [allGeneSeqs, coverageUpperLimit, coverages, genes, noUnseqRegions, presets]
+  );
+
+  const showAll = React.useMemo(
+    () => payloads.every(({hasCoverage}) => !hasCoverage),
+    [payloads]
+  );
+
+  React.useEffect(
+    () => {
+      if (!showAll && !payloads[selectedIndex].hasCoverage) {
+        setSelectedIndex(payloads.findIndex(({hasCoverage}) => hasCoverage));
+      }
+    },
+    [showAll, payloads, selectedIndex]
+  );
+
+  return <ReportSection title={title}>
+    <div className={parentStyle['header-annotation']}>
+      {output === 'printable' ? null :
+      <CheckboxInput
+       id="genome-map-view"
+       name="genome-map-view"
+       className={style['genome-map-view-checkbox']}
+       value="collapse"
+       onChange={toggleView}
+       checked={view === 'collapse'}>
+        {viewCheckboxLabel}
+      </CheckboxInput>}
+    </div>
+    {output !== 'printable' && view === 'collapse' ?
+      <Tabs
+       className={classNames(
+         style['sierra-genome-map-tabs'],
+         verticalTabsStyle['vertical-tabs']
+       )}
+       onSelect={setSelectedIndex}
+       selectedIndex={selectedIndex}>
+        <TabList>
+          {presets.map(({name, label}, idx) => (
+            <Tab
+             data-hide={!showAll && !payloads[idx].hasCoverage}
+             key={`tab-${name}`}>{label} ({name})</Tab>
+          ))}
+        </TabList>
+        {payloads.map(payload => (
+          <TabPanel
+           data-hide={!showAll && !payload.hasCoverage}
+           key={`tabpanel-${payload.name}`}>
+            <GenomeMap
+             key={`genome-map-${payload.name}`}
+             preset={payload}
+             className={style['sierra-genome-map']} />
+          </TabPanel>
+        ))}
+      </Tabs> :
+      presets.map(({name, label}, idx) => (
+        <section
+         key={`section=${name}`}
+         data-hide={!showAll && !payloads[idx].hasCoverage}
+         class={style['genome-map-expanded']}>
+          <H3 disableAnchor>{label} ({name})</H3>
+          <GenomeMap
+           key={`genome-map-${name}`}
+           preset={payloads[idx]}
+           className={style['sierra-genome-map']} />
+        </section>
+      ))}
+    {children}
+  </ReportSection>;
 }
-
-
-const MemoMutationViewer = React.memo(MutationViewer);
 
 
 export default function MutationViewerLoader(props) {
 
   return <ConfigContext.Consumer>
     {({regionPresets}) => (
-      <MemoMutationViewer {...props} regionPresets={regionPresets} />
+      <MutationViewer {...props} regionPresets={regionPresets} />
     )}
   </ConfigContext.Consumer>;
 }

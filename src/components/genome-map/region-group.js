@@ -17,6 +17,7 @@ import PositionGroup from './position-group';
 import CoverageLayer from './coverage-layer';
 import {removeOverlaps} from './helpers';
 
+const POS_GROUP_MIN_HEIGHT = 75;
 
 /* function ExpandSubregion({
   posStart,
@@ -217,7 +218,7 @@ export default class RegionGroup extends React.Component {
         posGroupAddOffsetY += (
           posGroup.addOffsetY +
           longestPosLabelLen * 5 +
-          105
+          POS_GROUP_MIN_HEIGHT
         );
         return jsx;
       })}

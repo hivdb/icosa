@@ -47,12 +47,11 @@ function SinglePatternReport({
        onDisconnect={onDisconnect} />
       {patternResult ? <>
         <RefContextWrapper>
-          <ReportSection title="Sequence quality assessment">
-            <MutViewer
-             noUnseqRegions
-             allGeneSeqs={allGeneMutations}
-             output={output} />
-          </ReportSection>
+          <MutViewer
+           title="Mutation map"
+           noUnseqRegions
+           allGeneSeqs={allGeneMutations}
+           output={output} />
           <ReportSection
            className={style['no-page-break']}
            title="Mutation list">
