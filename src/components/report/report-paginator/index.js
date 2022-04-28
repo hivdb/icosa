@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import Dropdown from 'semantic-ui-react/dist/commonjs/modules/Dropdown';
 
 import useScrollObserver from '../../../utils/use-scroll-observer';
+import dropdownStyle from '../../semantic-ui-dropdown-style';
 
 import Button from './button';
 import style from './style.module.scss';
@@ -99,6 +100,7 @@ function ReportPaginator({
       </Paginator>*/}
       <Dropdown
        search direction="right"
+       className={dropdownStyle.dropdown}
        placeholder="Select a sequence"
        options={options}
        onChange={handleChange}
