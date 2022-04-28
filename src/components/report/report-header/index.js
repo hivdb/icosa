@@ -44,7 +44,7 @@ function ReportHeader({
       const payload = {
         name,
         index,
-        node: headerNode
+        node: headerNode.parentElement
       };
       onObserve(payload);
       return () => onDisconnect(payload);

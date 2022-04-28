@@ -3,7 +3,7 @@ import React from 'react';
 
 function inView(node) {
   let {top, bottom} = node.getBoundingClientRect();
-  return top >= 0 && bottom <= window.innerHeight;
+  return bottom >= 0 && top <= window.innerHeight;
 }
 
 
@@ -58,7 +58,9 @@ export default function useScrollObserver({
         parseInt(a.dataset.scrollObserveIndex) -
         parseInt(b.dataset.scrollObserveIndex)
       )); */
-      for (const [name, node] of observingNodes) {
+
+      for (let idx = observingNodes.length - 1; idx > -1; idx --) {
+        const [name, node] = observingNodes[idx];
         if (inView(node)) {
           if (firstFlag && name !== current.name) {
             await asyncLoadNewItem(name, /* updateCurrentSelected = */ true);
