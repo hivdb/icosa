@@ -7,6 +7,11 @@
 
 .seq-summary {
   @extend %report-section;
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
 }
 
 .desc-list {

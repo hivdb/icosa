@@ -1,5 +1,8 @@
 import React from 'react';
+import orderBy from 'lodash/orderBy';
 
+const DOWN = 'asc';
+const UP = 'desc';
 
 function inView(node) {
   let {top, bottom} = node.getBoundingClientRect();
@@ -23,82 +26,114 @@ export default function useScrollObserver({
   afterLoadNewItem
 }) {
 
-  const {current} = React.useRef({
-    observingNodes: {}
+  const self = React.useRef({
+    observingNodes: {},
+    previousYs: {},
+    previousRatios: {}
   });
-  current.name = currentSelected.name;
-  current.loaded = loaded;
+  self.current.name = currentSelected.name;
+  self.current.loaded = loaded;
 
   const preventScrollObserver = React.useCallback(
     () => {
-      current.preventObserver = true;
+      self.current.preventObserver = true;
     },
-    [current]
+    []
   );
 
   const resetScrollObserver = React.useCallback(
     () => {
-      current.preventObserver = false;
-      current.prevRatioMap = {};
-      current.candidateMap = {};
+      self.current.preventObserver = false;
+      self.current.prevRatioMap = {};
+      self.current.candidateMap = {};
     },
-    [current]
+    []
+  );
+
+  const getNodeAndDirection = React.useCallback(
+    ({
+      boundingClientRect: {y: currentY},
+      intersectionRatio: currentRatio,
+      isIntersecting,
+      target: {
+        dataset: {
+          scrollObserveIndex: index,
+          scrollObserveName: name
+        }
+      }
+    }) => {
+      // see https://stackoverflow.com/a/51976805
+      const previousY = self.current.previousYs[name] || 0;
+      const previousRatio = self.current.previousRatios[name] || 0;
+      let direction = null;
+      if (currentRatio > previousRatio && isIntersecting) {
+        if (currentY < previousY) {
+          direction = DOWN;
+        }
+        else if (currentY > previousY) {
+          direction = UP;
+        }
+      }
+      self.current.previousYs[name] = currentY;
+      self.current.previousRatios[name] = currentRatio;
+      return {
+        node: self.current.observingNodes[name],
+        direction,
+        name,
+        index
+      };
+    },
+    []
   );
 
   const observerCallback = React.useCallback(
-    async (/*entries*/) => {
-      if (!current.loaded || disabled || current.preventObserver) {
+    async entries => {
+      if (
+        disabled ||
+        !self.current.loaded ||
+        self.current.preventObserver
+      ) {
         return;
       }
 
-      let anyLoaded = false;
-      let firstFlag = true;
-      const observingNodes = Object.entries(current.observingNodes);
-      /* observingNodes.sort(([,a], [,b]) => (
-        parseInt(a.dataset.scrollObserveIndex) -
-        parseInt(b.dataset.scrollObserveIndex)
-      )); */
-
-      for (let idx = observingNodes.length - 1; idx > -1; idx --) {
-        const [name, node] = observingNodes[idx];
-        if (inView(node)) {
-          if (firstFlag && name !== current.name) {
-            await asyncLoadNewItem(name, /* updateCurrentSelected = */ true);
-            node.dataset.scrollObserveLoaded = "yes";
-            firstFlag = false;
-            anyLoaded = true;
-          }
-          else if (node.dataset.scrollObserveLoaded !== "yes") {
-            await asyncLoadNewItem(name, /* updateCurrentSelected = */ false);
-            node.dataset.scrollObserveLoaded = "yes";
-            anyLoaded = true;
-          }
-          break;
-        }
+      let observedNodes = entries
+        .map(getNodeAndDirection)
+        .filter(({direction}) => !!direction);
+      const {direction} = (observedNodes[0] || {});
+      if (!direction) {
+        return;
       }
-      anyLoaded && afterLoadNewItem();
+      observedNodes = orderBy(observedNodes, ['index'], [direction]);
+
+      for (const {node, name} of observedNodes) {
+        await asyncLoadNewItem(name, /* updateCurrentSelected = */true);
+        node.dataset.scrollObserveLoaded = 'yes';
+        break;
+      }
+      afterLoadNewItem();
     },
-    [asyncLoadNewItem, afterLoadNewItem, current, disabled]
+    [getNodeAndDirection, asyncLoadNewItem, afterLoadNewItem, disabled]
   );
 
   const registerScrollObserver = React.useCallback(
     () => {
       const options = {
         root: document,
-        rootMargin: '-50px 0px -10px 0px',
+        rootMargin: '-50% 0px -25% 0px',
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
       };
-      if (current.observer) {
-        current.observer.disconnect();
+      if (self.current.observer) {
+        self.current.observer.disconnect();
       }
-      current.observer = new IntersectionObserver(observerCallback, options);
-      for (const node of Object.values(current.observingNodes)) {
+      self.current.observer =
+        new IntersectionObserver(observerCallback, options);
+      for (const node of Object.values(self.current.observingNodes)) {
         // re-register all known nodes
-        current.observer.observe(node);
+        self.current.observer.observe(node);
       }
       resetScrollObserver();
     },
-    [current, observerCallback, resetScrollObserver]
+    [observerCallback, resetScrollObserver]
   );
 
   React.useEffect(
@@ -121,7 +156,7 @@ export default function useScrollObserver({
       avoidLoading = false,
       forceScroll = false
     ) => {
-      const node = current.observingNodes[name];
+      const node = self.current.observingNodes[name];
       if (node) {
         if (!forceScroll && inView(node)) {
           callback();
@@ -148,7 +183,6 @@ export default function useScrollObserver({
       }
     },
     [
-      current,
       preventScrollObserver,
       resetScrollObserver,
       asyncLoadNewItem,
@@ -160,20 +194,20 @@ export default function useScrollObserver({
     ({name, index, node}) => {
       node.dataset.scrollObserveName = name;
       node.dataset.scrollObserveIndex = index;
-      current.observingNodes[name] = node;
-      if (current.observer) {
-        current.observer.observe(node);
+      self.current.observingNodes[name] = node;
+      if (self.current.observer) {
+        self.current.observer.observe(node);
       }
     },
-    [current]
+    []
   );
 
   const onDisconnect = React.useCallback(
     ({node}) => {
       const name = node.dataset.scrollObserveName;
-      delete current.observingNodes[name];
+      delete self.current.observingNodes[name];
     },
-    [current]
+    []
   );
 
   // only run once on componentDidMount
@@ -181,7 +215,7 @@ export default function useScrollObserver({
     () => {
       if (!disabled) {
         scrollTo(
-          current.name,
+          self.current.name,
           () => null,
           /* avoidLoading = */ true
         );

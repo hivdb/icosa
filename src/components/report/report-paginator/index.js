@@ -43,25 +43,6 @@ function ReportPaginator({
     );
   }, [handleWindowScroll]);
 
-  /*const children = React.useMemo(() => {
-    return inputObjs
-      .map((inputObj, idx) => (
-        <Paginator.Item
-         key={idx}
-         name={getUniqKey(inputObj)}
-         href={`?name=${getUniqKey(inputObj)}`}
-         onClick={(e) => handleClick(e, getUniqKey(inputObj))}>
-          {getUniqKey(inputObj)}
-        </Paginator.Item>
-      ));
-
-    function handleClick(e, name) {
-      e && e.preventDefault();
-      onSelect && onSelect(name);
-    }
-  }, [onSelect, inputObjs]);*/
-
-
   const handleChange = React.useCallback(
     (event, {value}) => onSelect(value),
     [onSelect]
@@ -72,8 +53,7 @@ function ReportPaginator({
       (inputObj, idx) => ({
         key: getUniqKey(inputObj),
         text: `${idx + 1}. ${getUniqKey(inputObj)}`,
-        value: getUniqKey(inputObj),
-        inputObj
+        value: getUniqKey(inputObj)
       })
     ),
     [inputObjs]
