@@ -330,6 +330,9 @@ table.simple-table {
 }
 
 .download-options {
+  @media print {
+    display: none;
+  }
   top: -2.5rem;
   right: 0;
   position: absolute;

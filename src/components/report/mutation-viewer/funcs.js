@@ -131,7 +131,7 @@ export function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
     for (const {
       position,
       text
-    } of frameShifts) {
+    } of frameShifts || []) {
       const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
       resultPositions.push({
         gene: displayGene,

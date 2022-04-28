@@ -24,7 +24,7 @@ MutationsTagsInput.propTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-function MutationsTagsInput({
+export default function MutationsTagsInput({
   config, mutations, onChange, parentClassName
 }) {
 
@@ -101,5 +101,3 @@ function MutationsTagsInput({
     );
   }
 }
-
-export default MutationsTagsInput;

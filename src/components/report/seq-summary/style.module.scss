@@ -65,10 +65,6 @@
       &:not(.hl) { // not highlighted
         opacity: .6;
       } */
-      > .unseq-region {
-        background-color: color(validation-severe-warning-bg);
-        color: color(validation-severe-warning-text);
-      }
       &:not(:first-of-type)::before {
         content: '·';
         font-weight: 800;
@@ -77,6 +73,11 @@
       }
     }
   }
+}
+
+.unseq-region {
+  background-color: color(validation-severe-warning-bg);
+  color: color(validation-severe-warning-text);
 }
 
 ul.outbreak-info-list {

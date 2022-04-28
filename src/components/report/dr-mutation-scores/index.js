@@ -109,7 +109,7 @@ function DRClassMutScores({drugClass, scores, disabledDrugs}) {
        disableAnchor
        data-with-table
        className={style['dr-mutation-scores-table-header']}>
-        Drug resistance mutation scores of {drugClass.name}
+        Drug resistance mutation scores of {drugClass.name}:
       </H3>
       <SimpleTable
        compact

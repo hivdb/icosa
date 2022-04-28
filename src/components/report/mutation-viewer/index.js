@@ -99,6 +99,11 @@ function MutationViewer({
         noUnseqRegions ? [] :
           getUnsequencedRegions(allGeneSeqs, genes, regions)
       );
+      const positions = getGenomeMapPositions(
+        allGeneSeqs,
+        genes,
+        highlightGenes
+      );
       const presetPosStart = Math.min(...regions.map(({posStart}) => posStart));
       const presetPosEnd = Math.max(...regions.map(({posEnd}) => posEnd));
       const unseqPosCount = unseqRegions.reduce(
@@ -114,7 +119,11 @@ function MutationViewer({
       return {
         name: curName,
         label: '',
-        hasCoverage: unseqPosCount < 1 + presetPosEnd - presetPosStart,
+        hasCoverage: noUnseqRegions ?
+          positions.some(({pos}) => (
+            pos >= presetPosStart && pos <= presetPosEnd
+          )) :
+          unseqPosCount < 1 + presetPosEnd - presetPosStart,
         ...otherPreset,
         regions: [
           ...regions,
@@ -124,7 +133,7 @@ function MutationViewer({
         positionGroups: [{
           name: 'NA',
           label: '',
-          positions: getGenomeMapPositions(allGeneSeqs, genes, highlightGenes)
+          positions
         }],
         coverages: getCoverages(coverages, genes, coverageUpperLimit)
       };

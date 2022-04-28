@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  MutationViewer as MutViewer,
   ReportHeader,
-  ReportSection,
-  MutationList as MutList,
-  RefContextWrapper
+  ValidationReport,
+  MutationViewer as MutViewer,
+  DRInterpretation,
+  DRMutationScores
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -31,8 +31,17 @@ function SinglePatternReport({
   onDisconnect
 }) {
   const {
-    allGeneMutations
+    strain: {name: strain} = {},
+    allGeneMutations,
+    validationResults,
+    drugResistance
   } = patternResult || {};
+
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
+
+  const disabledDrugs = ['NFV'];
 
   return (
     <article
@@ -46,18 +55,21 @@ function SinglePatternReport({
        onObserve={onObserve}
        onDisconnect={onDisconnect} />
       {patternResult ? <>
-        <RefContextWrapper>
-          <MutViewer
-           title="Mutation map"
-           noUnseqRegions
-           allGeneSeqs={allGeneMutations}
-           output={output} />
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...patternResult} {...{output}} />
-          </ReportSection>
-        </RefContextWrapper>
+        <MutViewer
+         title="Mutation quality assessment"
+         viewCheckboxLabel="Collapse genes"
+         noUnseqRegions
+         allGeneSeqs={allGeneMutations}
+         output={output}>
+          <ValidationReport {...patternResult} {...{output, strain}} />
+        </MutViewer>
+        {isCritical ? null :
+          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            <DRInterpretation
+             {...{geneDR, output, disabledDrugs, strain}} />
+            <DRMutationScores
+             {...{geneDR, output, disabledDrugs, strain}} />
+          </React.Fragment>)}
       </> : null}
     </article>
   );

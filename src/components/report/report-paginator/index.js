@@ -78,13 +78,15 @@ function ReportPaginator({
        currentSelected={currentSelected.name}>
         {children}
       </Paginator>*/}
-      <Dropdown
-       search direction="left"
-       className={dropdownStyle.dropdown}
-       placeholder="Select a sequence"
-       options={options}
-       onChange={handleChange}
-       value={currentSelected.name} />
+      <div className={style['dropdown-container']}>
+        <Dropdown
+         search direction="left"
+         className={dropdownStyle.dropdown}
+         placeholder="Select a sequence"
+         options={options}
+         onChange={handleChange}
+         value={currentSelected.name} />
+      </div>
     </div>
   );
 

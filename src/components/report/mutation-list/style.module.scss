@@ -134,6 +134,9 @@ ul.mutation-list {
 
 .mutation-popup {
   &:global(-content) {
+    @media only print {
+      display: none;
+    }
     user-select: none;
     font-size: .9rem;
     margin: auto;

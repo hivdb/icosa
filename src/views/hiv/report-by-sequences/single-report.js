@@ -6,7 +6,6 @@ import {
   ValidationReport,
   SeqSummary,
   MutationViewer as MutViewer,
-  RefContextWrapper,
   DRInterpretation,
   DRMutationScores
 } from '../../../components/report';
@@ -54,37 +53,35 @@ function SingleSequenceReport({
     <article
      data-loaded={!!sequenceResult}
      className={style['sequence-article']}>
-      <RefContextWrapper>
-        <ReportHeader
-         output={output}
-         name={header}
-         index={index}
-         onObserve={onObserve}
-         onDisconnect={onDisconnect} />
-        {sequenceResult ? <>
-          <SeqSummary {...sequenceResult} {...{output, strain, includeGenes}}>
-            <SeqSummary.MultilineGeneRange />
-            <SeqSummary.Genotype />
-            <SeqSummary.PrettyPairwise />
-          </SeqSummary>
-          <MutViewer {...{
-            title: 'Sequence quality assessment',
-            viewCheckboxLabel: 'Collapse genes',
-            allGeneSeqs: alignedGeneSequences,
-            output,
-            strain
-          }}>
-            <ValidationReport {...sequenceResult} {...{output, strain}} />
-          </MutViewer>
-          {isCritical ? null :
-            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
-              <DRInterpretation
-               {...{geneDR, output, disabledDrugs, strain}} />
-              <DRMutationScores
-               {...{geneDR, output, disabledDrugs, strain}} />
-            </React.Fragment>)}
-        </> : null}
-      </RefContextWrapper>
+      <ReportHeader
+       output={output}
+       name={header}
+       index={index}
+       onObserve={onObserve}
+       onDisconnect={onDisconnect} />
+      {sequenceResult ? <>
+        <SeqSummary {...sequenceResult} {...{output, strain, includeGenes}}>
+          <SeqSummary.MultilineGeneRange />
+          <SeqSummary.Genotype />
+          <SeqSummary.PrettyPairwise />
+        </SeqSummary>
+        <MutViewer {...{
+          title: 'Sequence quality assessment',
+          viewCheckboxLabel: 'Collapse genes',
+          allGeneSeqs: alignedGeneSequences,
+          output,
+          strain
+        }}>
+          <ValidationReport {...sequenceResult} {...{output, strain}} />
+        </MutViewer>
+        {isCritical ? null :
+          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            <DRInterpretation
+             {...{geneDR, output, disabledDrugs, strain}} />
+            <DRMutationScores
+             {...{geneDR, output, disabledDrugs, strain}} />
+          </React.Fragment>)}
+      </> : null}
     </article>
   );
 

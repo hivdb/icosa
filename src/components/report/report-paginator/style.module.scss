@@ -58,10 +58,20 @@
     }
   }
 
-  :global .ui.search.dropdown {
+  .dropdown-container {
     float: right;
-    margin-right: 2rem;
-    background-color: white;
+    position: relative;
+    max-width: 38.8%;
+    @media only screen and (max-width: 1000px) {
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    :global .ui.search.dropdown {
+      margin-top: 0.96rem;
+      margin-bottom: 0.96rem;
+      background-color: white;
+    }
   }
 
   &::after {

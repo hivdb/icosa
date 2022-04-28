@@ -49,25 +49,37 @@
     margin-top: .5rem;
     margin-bottom: 1rem;
     border: 1px solid color(type-main);
-    height: 2.85rem;
+    height: 3.022rem;
     box-sizing: border-box;
-    line-height: 2rem;
+    line-height: 2.2rem;
     padding: calc(calc(.85rem - 2px) / 2) 1rem;
     position: relative;
     font-size: 1.2rem;
     > .dropdown.icon {
       position: absolute;
       top: calc(calc(.85rem - 2px) / 2);
-      line-height: 2rem;
+      line-height: 2.2rem;
       right: 1rem;
     }
     .menu > .item {
       box-sizing: border-box;
       font-size: 1.1rem;
+      max-width: 800px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      @media only screen and (max-width: 1000px) {
+        max-width: 70vw;
+      }
+      @media only screen and (max-width: 800px) {
+        max-width: 85vw;
+      }
     }
     > .text {
       overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       max-height: 2rem;
+      max-width: calc(100% - 1rem);
     }
   }
 }

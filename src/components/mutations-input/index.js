@@ -13,7 +13,25 @@ import useMutationPrefills from './mutation-prefills';
 import style from './style.module.scss';
 
 
-function MutationsInput({
+MutationsInput.propTypes = {
+  config: PropTypes.shape({
+    geneReferences: PropTypes.object.isRequired,
+    geneDisplay: PropTypes.object.isRequired
+  }),
+  className: PropTypes.string,
+  mutations: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
+  onChange: PropTypes.func.isRequired,
+  isActive: PropTypes.bool.isRequired
+};
+
+MutationsInput.defaultProps = {
+  isActive: true,
+  mutations: []
+};
+
+export default function MutationsInput({
   config,
   mutations,
   className,
@@ -103,24 +121,3 @@ function MutationsInput({
   } */
 
 }
-
-
-MutationsInput.propTypes = {
-  config: PropTypes.shape({
-    geneReferences: PropTypes.object.isRequired,
-    geneDisplay: PropTypes.object.isRequired
-  }),
-  className: PropTypes.string,
-  mutations: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired,
-  isActive: PropTypes.bool.isRequired
-};
-
-MutationsInput.defaultProps = {
-  isActive: true,
-  mutations: []
-};
-
-export default MutationsInput;

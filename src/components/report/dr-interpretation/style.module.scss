@@ -61,6 +61,9 @@
 
 .unusual-mut-popup {
   &:global(-content) {
+    @media only print {
+      display: none;
+    }
     margin: auto;
     background-color: color(name-pampas);
     padding: 1rem;
