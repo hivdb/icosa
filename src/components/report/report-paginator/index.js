@@ -99,7 +99,7 @@ function ReportPaginator({
         {children}
       </Paginator>*/}
       <Dropdown
-       search direction="right"
+       search direction="left"
        className={dropdownStyle.dropdown}
        placeholder="Select a sequence"
        options={options}

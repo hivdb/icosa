@@ -57,4 +57,16 @@
       }
     }
   }
+
+  :global .ui.search.dropdown {
+    float: right;
+    margin-right: 2rem;
+    background-color: white;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
 }
