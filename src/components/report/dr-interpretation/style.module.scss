@@ -9,6 +9,7 @@
 
   span[data-is-unusual="true"] {
     position: relative;
+    white-space: nowrap;
     color: white;
     &::before {
       content: '';
