@@ -68,7 +68,7 @@ export function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
       const {unsequencedRegions = {regions: []}} = geneSeq;
       for (let {posStart, posEnd} of unsequencedRegions.regions) {
         posStart = convertAAPosToAbsNAPos(posStart, range[0], readingFrame);
-        posEnd = convertAAPosToAbsNAPos(posEnd, range[0], readingFrame);
+        posEnd = convertAAPosToAbsNAPos(posEnd, range[0], readingFrame) + 2;
         regions.push({
           ...commonProps,
           name: `unseq-region-${gene}-${posStart}-${posEnd}`,
