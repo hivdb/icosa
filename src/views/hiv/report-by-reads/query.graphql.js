@@ -18,12 +18,24 @@ export default gql`
       median: percentile(p: 50)
       p95: percentile(p: 95)
     }
-    validationResults {
+    availableGenes { name }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes(first: 10) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
+    validationResults(includeGenes: $includeGenes) {
       level
       message
     }
     ${seqLevel}
-    availableGenes { name }
     mixtureRate
     maxMixtureRate
     actualMinPrevalence
@@ -31,7 +43,7 @@ export default gql`
     minCodonReads
     minPositionReads
     assembledConsensus
-    allGeneSequenceReads {
+    allGeneSequenceReads(includeGenes: $includeGenes) {
       firstAA
       lastAA
       ${geneSeqLevel}

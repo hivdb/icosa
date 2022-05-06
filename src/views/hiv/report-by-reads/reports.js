@@ -36,26 +36,30 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 
 SeqReadsReports.propTypes = {
   output: PropTypes.string.isRequired,
-  genes: PropTypes.array.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,
   allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceReadsAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
+  fetchAnother: PropTypes.func.isRequired,
+  extVariables: PropTypes.shape({
+    includeGenes: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired
 };
 
 function SeqReadsReports({
   output,
-  genes,
   match,
   router,
   loaded,
   allSequenceReads,
   currentSelected,
   sequenceReadsAnalysis,
-  fetchAnother
+  fetchAnother,
+  extVariables: {includeGenes}
 }) {
 
   const numSeqs = allSequenceReads.length;
@@ -106,6 +110,7 @@ function SeqReadsReports({
         <React.Fragment key={idx}>
           <SingleSeqReadsReport
            key={idx}
+           includeGenes={includeGenes}
            inputSequenceReads={inputSeqReads}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
            onObserve={onObserve}
@@ -114,8 +119,7 @@ function SeqReadsReports({
            name={inputSeqReads.name}
            index={idx}
            match={match}
-           router={router}
-           genes={genes} />
+           router={router} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

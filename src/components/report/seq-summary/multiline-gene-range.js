@@ -38,7 +38,7 @@ function MultilineGeneRange({
   }
 }) {
   return <>
-    <dt>Sequence includes {geneDisplay[gene.name] || gene.name} gene:</dt>
+    <dt>Sequence includes {geneDisplay[gene.name] || gene.name}:</dt>
     <dd>
       codons {firstAA} - {lastAA}
       {size > 0 ? <span className={style['unseq-region']}>

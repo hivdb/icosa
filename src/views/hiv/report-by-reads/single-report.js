@@ -27,6 +27,9 @@ function useCoverages({allReads}) {
 
 
 SingleSeqReadsReport.propTypes = {
+  includeGenes: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired,
   inputSequenceReads: PropTypes.object.isRequired,
   sequenceReadsResult: PropTypes.object,
   output: PropTypes.string.isRequired,
@@ -37,6 +40,7 @@ SingleSeqReadsReport.propTypes = {
 };
 
 function SingleSeqReadsReport({
+  includeGenes,
   inputSequenceReads,
   sequenceReadsResult,
   output,
@@ -66,10 +70,13 @@ function SingleSeqReadsReport({
        onDisconnect={onDisconnect} />
       {sequenceReadsResult ? <>
         <RefContextWrapper>
-          <SeqSummary {...sequenceReadsResult} output={output}>
+          <SeqSummary
+           {...sequenceReadsResult}
+           {...{output, strain, includeGenes}}>
             <SeqSummary.DownloadConsensus />
-            <SeqSummary.InlineGeneRange />
+            <SeqSummary.MultilineGeneRange />
             <SeqSummary.MedianReadDepth />
+            <SeqSummary.Genotype />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
             <SeqSummary.MinCodonReads />

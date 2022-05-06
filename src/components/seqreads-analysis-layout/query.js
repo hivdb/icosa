@@ -97,6 +97,7 @@ export default function SeqReadsAnalysisQuery({
     loaded,
     error,
     data,
+    extVariables,
     progressObj,
     fetchAnother
   } = useCumuQuery({
@@ -140,7 +141,8 @@ export default function SeqReadsAnalysisQuery({
       currentVersion,
       currentProgramVersion,
       sequenceReadsAnalysis,
-      ...dataMisc
+      ...dataMisc,
+      extVariables
     });
   }
 

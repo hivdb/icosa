@@ -50,6 +50,7 @@ function ReportByReadsContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
+   extraParams="$includeGenes: [EnumGene]!"
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReadsReports
