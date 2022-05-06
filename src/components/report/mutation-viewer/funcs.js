@@ -160,6 +160,9 @@ export function getCoverages(coverages, geneDefs, coverageUpperLimit) {
   }, {});
   const results = [];
   for (const {gene, position, coverage} of coverages) {
+    if (!(gene in geneDefs)) {
+      continue;
+    }
     const {range, readingFrame} = geneDefs[gene];
     const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
     results.push({position: absNAPos, coverage});
