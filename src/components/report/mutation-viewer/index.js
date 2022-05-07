@@ -95,17 +95,25 @@ function MutationViewer({
       highlightGenes,
       preset: {minHeight, regions, ...otherPreset}
     }) => {
-      const unseqRegions = (
-        noUnseqRegions ? [] :
-          getUnsequencedRegions(allGeneSeqs, genes, regions)
-      );
-      const positions = getGenomeMapPositions(
-        allGeneSeqs,
-        genes,
-        highlightGenes
-      );
       const presetPosStart = Math.min(...regions.map(({posStart}) => posStart));
       const presetPosEnd = Math.max(...regions.map(({posEnd}) => posEnd));
+      const unseqRegions = (
+        noUnseqRegions ? [] :
+          getUnsequencedRegions({
+            allGeneSeqs,
+            geneDefs: genes,
+            knownRegions: regions,
+            minPos: presetPosStart,
+            maxPos: presetPosEnd
+          })
+      );
+      const positions = getGenomeMapPositions({
+        allGeneSeqs,
+        geneDefs: genes,
+        highlightGenes,
+        minPos: presetPosStart,
+        maxPos: presetPosEnd
+      });
       const unseqPosCount = unseqRegions.reduce(
         (acc, {posStart, posEnd}) => (
           (posStart <= presetPosEnd && posEnd >= presetPosStart) ? (

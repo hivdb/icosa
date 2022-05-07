@@ -43,7 +43,13 @@ function calcUnseqRegionOffsetY(knownRegions, posStart, posEnd) {
 }
 
 
-export function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
+export function getUnsequencedRegions({
+  allGeneSeqs,
+  geneDefs,
+  knownRegions,
+  minPos,
+  maxPos
+}) {
   const regions = [];
   const commonProps = {
     label: null,
@@ -55,7 +61,12 @@ export function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
     const {gene, range, readingFrame} = geneDef;
     const geneSeq = allGeneSeqs.find(({gene: {name}}) => name === gene);
     if (typeof geneSeq === 'undefined') {
-      const [posStart, posEnd] = range;
+      let [posStart, posEnd] = range;
+      posStart = Math.max(posStart, minPos);
+      posEnd = Math.min(posEnd, maxPos);
+      if (posStart > posEnd) {
+        continue;
+      }
       regions.push({
         ...commonProps,
         name: `unseq-gene-${gene}`,
@@ -69,6 +80,11 @@ export function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
       for (let {posStart, posEnd} of unsequencedRegions.regions) {
         posStart = convertAAPosToAbsNAPos(posStart, range[0], readingFrame);
         posEnd = convertAAPosToAbsNAPos(posEnd, range[0], readingFrame) + 2;
+        posStart = Math.max(posStart, minPos);
+        posEnd = Math.min(posEnd, maxPos);
+        if (posStart > posEnd) {
+          continue;
+        }
         regions.push({
           ...commonProps,
           name: `unseq-region-${gene}-${posStart}-${posEnd}`,
@@ -83,7 +99,13 @@ export function getUnsequencedRegions(allGeneSeqs, geneDefs, knownRegions) {
 }
 
 
-export function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
+export function getGenomeMapPositions({
+  allGeneSeqs,
+  geneDefs,
+  highlightGenes,
+  minPos,
+  maxPos
+}) {
   geneDefs = geneDefs.reduce((acc, geneDef) => {
     acc[geneDef.gene] = geneDef;
     return acc;
@@ -112,6 +134,9 @@ export function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
         continue;
       }
       const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
+      if (absNAPos < minPos || absNAPos > maxPos) {
+        continue;
+      }
       resultPositions.push({
         gene: displayGene,
         name: highlight ? text : `${displayGene}:${text}`,
@@ -133,6 +158,9 @@ export function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
       text
     } of frameShifts || []) {
       const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
+      if (absNAPos < minPos || absNAPos > maxPos) {
+        continue;
+      }
       resultPositions.push({
         gene: displayGene,
         name: highlight ? text : `${displayGene}:${text}`,
