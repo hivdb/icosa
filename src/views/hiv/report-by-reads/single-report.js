@@ -5,10 +5,10 @@ import {
   // DRInterpretation, DRMutationScores,
   SeqSummary, // MutationStats,
   MutationViewer as MutViewer,
+  ValidationReport,
   ReportHeader,
-  ReportSection,
-  MutationList as MutList,
-  RefContextWrapper
+  DRInterpretation,
+  DRMutationScores
 } from '../../../components/report';
 
 import style from '../style.module.scss';
@@ -53,10 +53,17 @@ function SingleSeqReadsReport({
   const {
     strain: {display: strain} = {},
     readDepthStats: {p95: coverageUpperLimit} = {},
+    validationResults,
+    drugResistance,
     allGeneSequenceReads
   } = sequenceReadsResult || {};
 
   const coverages = useCoverages(inputSequenceReads);
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
+
+  const disabledDrugs = ['NFV'];
 
   return (
     <article
@@ -69,32 +76,35 @@ function SingleSeqReadsReport({
        onObserve={onObserve}
        onDisconnect={onDisconnect} />
       {sequenceReadsResult ? <>
-        <RefContextWrapper>
-          <SeqSummary
-           {...sequenceReadsResult}
-           {...{output, strain, includeGenes}}>
-            <SeqSummary.DownloadConsensus />
-            <SeqSummary.MultilineGeneRange />
-            <SeqSummary.MedianReadDepth />
-            <SeqSummary.Genotype />
-            <SeqSummary.MaxMixtureRate />
-            <SeqSummary.MinPrevalence />
-            <SeqSummary.MinCodonReads />
-          </SeqSummary>
-          <MutViewer {...{
-            title: 'Sequence quality assessment',
-            coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
-            allGeneSeqs: allGeneSequenceReads,
-            coverages,
-            output,
-            strain
-          }} />
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...sequenceReadsResult} {...{output, strain}} />
-          </ReportSection>
-        </RefContextWrapper>
+        <SeqSummary
+         {...sequenceReadsResult}
+         {...{output, strain, includeGenes}}>
+          <SeqSummary.DownloadConsensus />
+          <SeqSummary.MultilineGeneRange />
+          <SeqSummary.MedianReadDepth />
+          <SeqSummary.Genotype />
+          <SeqSummary.MaxMixtureRate />
+          <SeqSummary.MinPrevalence />
+          <SeqSummary.MinCodonReads />
+          <SeqSummary.ThresholdNomogram />
+        </SeqSummary>
+        <MutViewer {...{
+          title: 'Sequence quality assessment',
+          coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
+          allGeneSeqs: allGeneSequenceReads,
+          coverages,
+          output,
+          strain
+        }}>
+          <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
+        </MutViewer>
+        {isCritical ? null :
+          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            <DRInterpretation
+             {...{geneDR, output, disabledDrugs, strain}} />
+            <DRMutationScores
+             {...{geneDR, output, disabledDrugs, strain}} />
+          </React.Fragment>)}
       </> : null}
     </article>
   );

@@ -23,6 +23,12 @@ export default gql`
       display
       referenceAccession
     }
+    cutoffKeyPoints {
+      mixtureRate
+      minPrevalence
+      isAboveMixtureRateThreshold
+      isBelowMinPrevalenceThreshold
+    }
     subtypes(first: 10) {
       displayWithoutDistance
       subtype { displayName }
