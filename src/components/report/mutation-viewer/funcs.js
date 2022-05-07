@@ -148,12 +148,24 @@ export function getGenomeMapPositions(allGeneSeqs, geneDefs, highlightGenes) {
 }
 
 
-export function getCoverages(coverages, geneDefs, coverageUpperLimit) {
+export function getCoverages({
+  coverages,
+  geneDefs,
+  minPos,
+  maxPos,
+  coverageUpperLimit
+}) {
   if (!coverages) {
     return;
   }
-  const posStart = Math.min(...geneDefs.map(({range}) => range[0]));
-  const posEnd = Math.max(...geneDefs.map(({range}) => range[1]));
+  const posStart = Math.max(
+    minPos,
+    Math.min(...geneDefs.map(({range}) => range[0]))
+  );
+  const posEnd = Math.min(
+    maxPos,
+    Math.max(...geneDefs.map(({range}) => range[1]))
+  );
   geneDefs = geneDefs.reduce((acc, geneDef) => {
     acc[geneDef.gene] = geneDef;
     return acc;

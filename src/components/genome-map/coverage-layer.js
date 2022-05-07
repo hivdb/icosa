@@ -9,20 +9,21 @@ function getMaxCov(coverages) {
 }
 
 
-function calcPath(coverages, scaleX, scaleY, posStart, posEnd) {
-  coverages = coverages.reduce(
-    (acc, {position, coverage}) => {
-      acc[position] = coverage;
-      return acc;
-    },
-    []
-  );
-  let prevX = scaleX(posStart);
+function calcPath(coverages, scaleX, scaleY, minPos, maxPos) {
+  coverages = coverages
+    .reduce(
+      (acc, {position, coverage}) => {
+        acc[position] = coverage;
+        return acc;
+      },
+      []
+    );
+  let prevX = scaleX(minPos);
   let prevY = scaleY(0);
   const pathData = [
     'm', prevX, prevY
   ];
-  for (let pos = posStart; pos <= posEnd; pos ++) {
+  for (let pos = minPos; pos <= maxPos; pos ++) {
     const cov = coverages[pos] || 0;
     const curX = scaleX(pos);
     const curY = scaleY(cov);
@@ -136,6 +137,9 @@ export default function CoverageLayer({
   if (coverageUpperLimit) {
     maxCov = Math.min(coverageUpperLimit, maxCov);
   }
+  let [minPos, maxPos] = scaleX.domain();
+  minPos = Math.max(minPos, posStart);
+  maxPos = Math.min(maxPos, posEnd);
   const scaleY = scaleLinear()
     .domain([0, maxCov])
     .range([height + tickFontSize, tickFontSize]);
@@ -143,10 +147,10 @@ export default function CoverageLayer({
     <CovAxis
      tickWidth={tickWidth}
      tickFontSize={tickFontSize}
-     x={scaleX(posStart) - tickWidth - 20}
+     x={scaleX(minPos) - tickWidth - 20}
      scaleY={scaleY} />
     <path
      fill={fill}
-     d={calcPath(coverages, scaleX, scaleY, posStart, posEnd)} />
+     d={calcPath(coverages, scaleX, scaleY, minPos, maxPos)} />
   </svg>;
 }

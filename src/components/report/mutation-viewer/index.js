@@ -135,7 +135,13 @@ function MutationViewer({
           label: '',
           positions
         }],
-        coverages: getCoverages(coverages, genes, coverageUpperLimit)
+        coverages: getCoverages({
+          coverages,
+          geneDefs: genes,
+          minPos: presetPosStart,
+          maxPos: presetPosEnd,
+          coverageUpperLimit
+        })
       };
     }),
     [allGeneSeqs, coverageUpperLimit, coverages, genes, noUnseqRegions, presets]

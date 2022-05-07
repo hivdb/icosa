@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import sortBy from 'lodash/sortBy';
 
 import isEqual from 'lodash/isEqual';
 
@@ -52,7 +53,10 @@ function scaleMultipleLinears(domains, range) {
   const width = xEnd - xStart;
   const totalRatio = domains.reduce((acc, {scaleRatio}) => scaleRatio + acc, 0);
   let xOffset = xStart;
-  for (const {posStart, posEnd, scaleRatio} of domains) {
+  for (
+    const {posStart, posEnd, scaleRatio} of
+    sortBy(domains, ['posStart', 'posEnd'])
+  ) {
     const ratio = scaleRatio / totalRatio;
     const partWidth = Math.floor(width * ratio);
     scales.push(
@@ -72,9 +76,13 @@ function scaleMultipleLinears(domains, range) {
   ];
 
   const ret = pos => {
-    for (const scale of scales) {
+    const lastIdx = scales.length - 1;
+    for (const [idx, scale] of scales.entries()) {
       const [left, right] = scale.domain();
-      if (pos >= left && pos <= right) {
+      if (
+        (idx === 0 || pos >= left) &&
+        (idx === lastIdx || pos <= right)
+      ) {
         return scale(pos);
       }
     }
@@ -193,7 +201,10 @@ export default class RegionGroup extends React.Component {
        positionAxis={positionAxis} />}
       {positionGroups.map(posGroup => {
         posGroup = removeOverlaps(posGroup, scaleX);
-        for (const {turns} of posGroup.positions) {
+        for (const {pos, turns} of posGroup.positions) {
+          if (pos < posStart || pos > posEnd) {
+            continue;
+          }
           for (const [x] of turns) {
             if (x < minX) {
               minX = x;
