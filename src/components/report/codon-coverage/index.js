@@ -12,7 +12,7 @@ export default class CodonReadsCoverage extends React.Component {
   static propTypes = {
     genes: genesPropType,
     internalJsonCodonReadsCoverage: PropTypes.string.isRequired
-  }
+  };
 
   render() {
     const {
@@ -35,12 +35,12 @@ export default class CodonReadsCoverage extends React.Component {
         Codon read coverage
       </h2>
       <div className={style['graph-container']}>
-        <CodonCoverageGraph 
+        <CodonCoverageGraph
          containerWidth={width}
          genes={availableGenes}
          {...{
            codonReadsCoverage,
-           minPositionReads,
+           minPositionReads
          }} />
       </div>
     </section>;

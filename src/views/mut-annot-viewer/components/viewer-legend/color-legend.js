@@ -217,7 +217,7 @@ export default class ColorLegend extends React.Component {
     ).isRequired,
     circleInBoxAnnotDef: annotShape,
     citations: PropTypes.objectOf(citationShape.isRequired).isRequired
-  }
+  };
 
   static getDerivedStateFromProps(props) {
     return {

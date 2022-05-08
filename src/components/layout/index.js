@@ -10,11 +10,11 @@ class LayoutInner extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     children: PropTypes.node.isRequired
-  }
+  };
 
   static childContextTypes = {
     setContainerWidth: PropTypes.func
-  }
+  };
 
   getChildContext() {
     return {
@@ -31,7 +31,7 @@ class LayoutInner extends React.Component {
     if (width !== this.state.containerWidth) {
       this.setState({containerWidth: width});
     }
-  }
+  };
 
   render() {
     let {className, children} = this.props;
@@ -60,7 +60,7 @@ export default class Layout extends React.Component {
 
   static propTypes = {
     children: PropTypes.node
-  }
+  };
 
   render() {
     const {children, ...props} = this.props;

@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { Group } from '@vx/group';
-import { stack as d3stack } from 'd3-shape';
+import {Group} from '@vx/group';
+import {stack as d3stack} from 'd3-shape';
 // import stackOrder from '../util/stackOrder';
 // import stackOffset from '../util/stackOffset';
 // import objHasMethod from '../util/objHasMethod';
-import { Bar } from '@vx/shape';
+import {Bar} from '@vx/shape';
 
 BarStack.propTypes = {
   data: PropTypes.array.isRequired,
@@ -56,7 +56,7 @@ export default function BarStack({
       index: i,
       key,
       bars: barStack.map((bar, j) => {
-        const barHeight = yScale(y0(bar)) - yScale(y1(bar)) -0.5;
+        const barHeight = yScale(y0(bar)) - yScale(y1(bar)) - 0.5;
         const barY = yScale(y1(bar));
         const barX = xScale(x(bar.data));
 
@@ -68,7 +68,7 @@ export default function BarStack({
           width: barWidth,
           x: barX,
           y: barY,
-          color: color(x(bar.data), key),
+          color: color(x(bar.data), key)
         };
       })
     };

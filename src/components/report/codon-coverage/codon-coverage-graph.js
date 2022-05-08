@@ -15,13 +15,13 @@ import {genesPropType, codonReadsCoveragePropType} from './prop-types';
 import style from './style.module.scss';
 
 const colors = {
-  stroke: '#ffffff',  // white,
-  fill: '#24b298',  // jungleGreen,
-  fillTrimmed: '#bbbbbb',  // silver
-  dashedDividingLine: '#1c1b1c'  // thunder
+  stroke: '#ffffff', // white,
+  fill: '#24b298', // jungleGreen,
+  fillTrimmed: '#bbbbbb', // silver
+  dashedDividingLine: '#1c1b1c' // thunder
 };
 
-const margin = { top: 10, right: 0, bottom: 40, left: 40 };
+const margin = {top: 10, right: 0, bottom: 40, left: 40};
 const height = 420;
 
 function ticks(start, end, tick) {
@@ -29,7 +29,7 @@ function ticks(start, end, tick) {
   step = parseInt((step + 3) / 5, 10) * 5;
   let r = [];
   const istart = parseInt(start / 5, 10) * 5;
-  for (let i=istart; i < end - 7; i += step) {
+  for (let i = istart; i < end - 7; i += step) {
     if (i > start) {
       r.push(i);
     }
@@ -45,11 +45,11 @@ class CodonCoverageGraph extends React.Component {
     codonReadsCoverage: codonReadsCoveragePropType,
     containerWidth: PropTypes.number.isRequired,
     minPositionReads: PropTypes.number.isRequired
-  }
+  };
 
   static defaultProps = {
     output: 'default'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -64,11 +64,10 @@ class CodonCoverageGraph extends React.Component {
     } = this.props;
 
     let yMax = 0;
-    codonReadsCoverage = codonReadsCoverage.reduce(
-      (acc, {gene: {name: gene}, position, ...value}) => {
-        acc[`${gene}:${position}`] = value;
-        return acc;
-      }, {});
+    codonReadsCoverage = codonReadsCoverage.reduce((acc, {gene: {name: gene}, position, ...value}) => {
+      acc[`${gene}:${position}`] = value;
+      return acc;
+    }, {});
 
     const barData = [];
     let geneOffset = 0;
@@ -91,8 +90,10 @@ class CodonCoverageGraph extends React.Component {
           yMax = totalReads;
         }
         barData.push({
-          x: geneOffset + pos, y: totalReads,
-          position: genePos, totalReads,
+          x: geneOffset + pos,
+          y: totalReads,
+          position: genePos,
+          totalReads,
           fill: isTrimmed ? colors.fillTrimmed : colors.fill
         });
       }
@@ -105,17 +106,16 @@ class CodonCoverageGraph extends React.Component {
     const lenAA = geneOffset + 1;
     const scale = containerWidth / (lenAA + 40);
 
-    const width = Math.max(
-      Math.sqrt(2 * (containerWidth-margin.left-margin.right) * scale * lenAA
-              - Math.pow(scale * lenAA, 2)), 400);
+    const width = Math.max(Math.sqrt(2 * (containerWidth - margin.left - margin.right) * scale * lenAA -
+              Math.pow(scale * lenAA, 2)), 400);
 
     xAxisTickValues.push(geneOffset);
-    
+
     let yAxisTickValues = ticks(0, yMax, parseInt(height / 20, 10));
     yAxisTickValues.push(0);
 
     // console.log(barData);
-    return{
+    return {
       data: barData,
       firstPos: 1,
       lastPos: geneOffset,
@@ -157,16 +157,16 @@ class CodonCoverageGraph extends React.Component {
 
     const width = containerWidth;
     const yMax = height - margin.top - margin.bottom;
-      
+
     const xfunc = d => d.x;
     const yfunc = d => d.y;
 
     const xScale = scaleLinear({
       range: [firstPos, graphProps.width],
-      domain: [firstPos, lastPos],
+      domain: [firstPos, lastPos]
     });
     const xScaleBandDomain = [];
-    for (let i=firstPos; i <= lastPos; i++) {
+    for (let i = firstPos; i <= lastPos; i++) {
       xScaleBandDomain.push(i);
     }
     const xScaleband = scaleBand({
@@ -176,14 +176,14 @@ class CodonCoverageGraph extends React.Component {
     });
     const yScale = scaleLinear({
       range: [yMax, 0],
-      domain: [0, graphProps.yMax],
+      domain: [0, graphProps.yMax]
     });
-      
-      
+
+
     const compose = (scale, accessor) => (data) => scale(accessor(data));
     const xPoint = compose(xScale, xfunc);
     const yPoint = compose(yScale, yfunc);
-    
+
     const barWidth = xScaleband.bandwidth();
     const yCutoff = yScale(minPositionReads);
 
@@ -207,7 +207,7 @@ class CodonCoverageGraph extends React.Component {
            dy: '0.3em',
            textAnchor: 'end',
            fontSize: 9,
-           fill: 'black',
+           fill: 'black'
          })}
         />
       </svg>
@@ -263,7 +263,7 @@ class CodonCoverageGraph extends React.Component {
                />
               );
             })}
-            {genePosRanges.map(([,value], idx) => {
+            {genePosRanges.map(([, value], idx) => {
               if (value === 1) {
                 return null;
               }

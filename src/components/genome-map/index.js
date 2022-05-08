@@ -18,7 +18,7 @@ export default class GenomeMap extends React.Component {
     className: PropTypes.string,
     extraButtons: PropTypes.node,
     preset: presetShape.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -40,7 +40,7 @@ export default class GenomeMap extends React.Component {
     if (this._mounted && height > this.state.height) {
       this.setState({height, width, paddingLeft, paddingRight});
     }
-  }
+  };
 
   render() {
     const {

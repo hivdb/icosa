@@ -11,6 +11,9 @@
     .react-tabs [role=tab] {
       position: relative;
       font-weight: 500;
+      &:focus::after {
+        display: none;
+      }
     }
     .react-tabs [role=tab][aria-selected=true] {
       border-color: color(dividing-line);

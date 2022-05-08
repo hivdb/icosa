@@ -12,7 +12,7 @@ export default class AnnotsLayer extends React.Component {
       annotName: PropTypes.string
     }).isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   shouldComponentUpdate(nextProps) {
     return (

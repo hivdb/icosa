@@ -24,11 +24,11 @@ class PresetSelection extends React.Component {
       PropTypes.string.isRequired,
       PropTypes.func.isRequired
     ]).isRequired
-  }
+  };
 
   static defaultProps = {
     as: 'section'
-  }
+  };
 
   get splittedPathName() {
     let {match: {location: {pathname}}} = this.props;
@@ -58,7 +58,7 @@ class PresetSelection extends React.Component {
       pathname = split.join('/');
     }
     this.props.router.push(`${pathname}/${value}/`);
-  }
+  };
 
   render() {
     const {current} = this;

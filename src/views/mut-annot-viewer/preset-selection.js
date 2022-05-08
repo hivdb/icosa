@@ -17,12 +17,12 @@ export default class PresetSelection extends React.Component {
         label: PropTypes.node.isRequired
       })
     ).isRequired
-  }
+  };
 
   handleChange = ({value}) => {
     const {match: {location}} = this.props;
     this.props.router.push(`${location.pathname}${value}/`);
-  }
+  };
 
   render() {
     const {options} = this.props;

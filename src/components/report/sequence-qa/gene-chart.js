@@ -90,7 +90,7 @@ class GeneChart extends React.Component {
     tooltipData: PropTypes.number,
     tooltipTop: PropTypes.number.isRequired,
     tooltipLeft: PropTypes.number.isRequired
-  }
+  };
 
   __hash__() {
     return 'SequenceQAGeneChart';
@@ -200,7 +200,7 @@ class GeneChart extends React.Component {
         map.set(pos, mut);
         return map;
       }, new Map());
-  })
+  });
 
   getFrameShiftByPos = memoize((frameShifts) => {
     return frameShifts
@@ -209,7 +209,7 @@ class GeneChart extends React.Component {
         map.set(pos, sft);
         return map;
       }, new Map());
-  })
+  });
 
   findAtPos(pos) {
     const {mutations, frameShifts} = this.props;
@@ -253,12 +253,12 @@ class GeneChart extends React.Component {
       );
     }
     return <div>{problems}</div>;
-  }
+  };
 
   showTooltipIf = (yValue) => {
     // only shows DR and Problem
     return yValue > qaGroupAttributes.Other.y;
-  }
+  };
 
   render() {
     const {

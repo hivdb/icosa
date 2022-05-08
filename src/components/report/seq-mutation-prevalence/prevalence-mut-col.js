@@ -11,11 +11,11 @@ export default class PrevalenceMutCol extends React.Component {
   static propTypes = {
     data: PropTypes.string.isRequired,
     rowData: PropTypes.object.isRequired
-  }
+  };
 
   static contextTypes = {
     expandedRows: PropTypes.object.isRequired
-  }
+  };
 
   render() {
     let {data, rowData} = this.props;

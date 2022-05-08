@@ -14,11 +14,11 @@ export default class PrevalenceData extends React.Component {
     data: PropTypes.string.isRequired,
     rowData: PropTypes.object.isRequired,
     metadata: PropTypes.object.isRequired
-  }
+  };
 
   static contextTypes = {
     gene: PropTypes.string.isRequired
-  }
+  };
 
   renderPercentage(pcnt) {
     if (pcnt >= 1) {
@@ -34,7 +34,7 @@ export default class PrevalenceData extends React.Component {
 
   handleLinkClick = (e) => {
     e.stopPropagation();
-  }
+  };
 
   render() {
     let subtype, rx;

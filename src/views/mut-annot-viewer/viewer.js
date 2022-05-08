@@ -42,7 +42,7 @@ class MutAnnotViewerInner extends React.Component {
     refSeq: PropTypes.string.isRequired,
     refDataLoader: PropTypes.func,
     annotationData: PropTypes.object.isRequired
-  }
+  };
 
   getDefaultState() {
     const {region} = this.props;
@@ -110,7 +110,7 @@ class MutAnnotViewerInner extends React.Component {
       evt.preventDefault();
       evt.returnValue = true;
     }
-  }
+  };
 
   get commentLookup() {
     const {comments: {data}} = this.state;
@@ -124,11 +124,11 @@ class MutAnnotViewerInner extends React.Component {
 
   handlePositionsSelect = (selectedPositions) => {
     this.setState({selectedPositions});
-  }
+  };
 
   handleCurAnnotNameLookupChange = (curAnnotNameLookup) => {
     this.setState({curAnnotNameLookup});
-  }
+  };
 
   handleSeqViewerSizeChange = (seqViewerSize) => {
     this.setState({seqViewerSize});
@@ -240,7 +240,7 @@ export default class MutAnnotViewer extends React.Component {
     refDataLoader: PropTypes.func,
     match: matchShape.isRequired,
     router: routerShape.isRequired
-  }
+  };
 
   static getDerivedStateFromProps(props, state) {
     const {

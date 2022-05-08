@@ -20,7 +20,7 @@ export default class ViewerFooter extends React.Component {
     selectedPositions: PropTypes.arrayOf(
       PropTypes.number.isRequired
     ).isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -68,7 +68,7 @@ export default class ViewerFooter extends React.Component {
       document.body.style.overflow = this.defaultBodyOverflow;
     }
     this.setState({expanded: !expanded});
-  }
+  };
 
   render() {
     const {commentMdText, hasSelectedComments} = this;

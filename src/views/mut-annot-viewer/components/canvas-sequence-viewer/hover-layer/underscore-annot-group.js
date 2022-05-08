@@ -10,7 +10,7 @@ export default class UnderscoreAnnotGroup extends React.Component {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);

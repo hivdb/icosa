@@ -34,7 +34,7 @@ export default class MutationStats extends React.Component {
     validationResults: PropTypes.object,
     router: routerShape.isRequired,
     match: matchShape.isRequired
-  }
+  };
 
   render() {
     const {

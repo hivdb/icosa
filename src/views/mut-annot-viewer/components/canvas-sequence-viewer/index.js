@@ -42,7 +42,7 @@ export default class CanvasSequenceViewer extends React.Component {
     ).isRequired,
     noBlurSelector: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -60,7 +60,7 @@ export default class CanvasSequenceViewer extends React.Component {
 
   onWindowResize = debounce(() => {
     this.forceUpdate();
-  }, 200)
+  }, 200);
 
   get config() {
     const {

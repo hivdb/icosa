@@ -28,7 +28,7 @@ export default class Button extends React.Component {
     to: PropTypes.string,
     type: PropTypes.string,
     children: PropTypes.node.isRequired
-  }
+  };
 
   static defaultProps = {
     btnStyle: 'default',
@@ -36,7 +36,7 @@ export default class Button extends React.Component {
     disabled: false,
     className: '',
     type: 'button'
-  }
+  };
 
   render() {
     const {

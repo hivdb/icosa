@@ -9,7 +9,7 @@ export default class PositionGroup extends React.Component {
     isAnchor: PropTypes.bool.isRequired,
     position: PropTypes.number.isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   shouldComponentUpdate(nextProps) {
     const {isAnchor, position, config} = this.props;

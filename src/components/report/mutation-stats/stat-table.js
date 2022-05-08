@@ -12,7 +12,7 @@ export default class MutationStats extends React.Component {
     match: matchShape.isRequired,
     currentCutoff: PropTypes.number.isRequired,
     numPositions: PropTypes.number.isRequired
-  }
+  };
 
   get mutationStats() {
     const rows = [];
@@ -48,7 +48,7 @@ export default class MutationStats extends React.Component {
     newLoc.query = newLoc.query ? newLoc.query : {};
     newLoc.query.cutoff = parseFloat(event.currentTarget.dataset.cutoff);
     this.props.router.push(newLoc);
-  }
+  };
 
   render() {
     const {mutationStats} = this;

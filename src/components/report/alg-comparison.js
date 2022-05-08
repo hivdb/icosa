@@ -12,7 +12,7 @@ export default class AlgComparison extends React.Component {
 
   static propTypes = {
     algorithmComparison: PropTypes.array.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -21,7 +21,7 @@ export default class AlgComparison extends React.Component {
 
   switchTab = (tabIndex) => {
     this.setState({tabIndex});
-  }
+  };
 
   render() {
     const {algorithmComparison} = this.props;

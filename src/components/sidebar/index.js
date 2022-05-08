@@ -31,7 +31,7 @@ class ItemLink extends React.Component {
 
   static propTypes = {
     children: PropTypes.node.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -69,7 +69,7 @@ export class SidebarItem extends React.Component {
     onClick: PropTypes.func,
     href: PropTypes.string,
     children: PropTypes.node.isRequired
-  }
+  };
 
   render() {
     return null;
@@ -84,7 +84,7 @@ export default class Sidebar extends React.Component {
     title: PropTypes.node.isRequired,
     currentSelected: PropTypes.string,
     children: PropTypes.node.isRequired
-  }
+  };
 
   render() {
     let {currentSelected, title, children} = this.props;

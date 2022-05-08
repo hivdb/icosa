@@ -10,7 +10,7 @@ export default class BasicTOC extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string
-  }
+  };
 
   render() {
     const {children, className} = this.props;
@@ -31,7 +31,7 @@ export class AutoTOC extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string
-  }
+  };
 
   constructor() {
     super(...arguments);

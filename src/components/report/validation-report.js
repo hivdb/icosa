@@ -24,7 +24,7 @@ export default class ValidationReport extends React.Component {
   static propTypes = {
     validationResults: PropTypes.array.isRequired,
     placeholder: PropTypes.string
-  }
+  };
 
   render() {
     let {validationResults, placeholder} = this.props;

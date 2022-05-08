@@ -13,10 +13,10 @@ import style from './style.module.scss';
 const margin = {top: 50, right: 0, bottom: 10, left: 80};
 
 const colors = {
-  usualSites: '#bbbbbb',  // dustygray
-  unusualSites: '#e13333',  // cinnabar
-  pcntUnusualSites: '#e13333',  // cinnabar
-  ratio: '#f5cc00'  //supernova
+  usualSites: '#bbbbbb', // dustygray
+  unusualSites: '#e13333', // cinnabar
+  pcntUnusualSites: '#e13333', // cinnabar
+  ratio: '#f5cc00' //supernova
 };
 
 function getPercent(d) {
@@ -32,7 +32,7 @@ function getRatioDesc(d) {
   let r = 1.0 * d.unusualSites / d.usualSites;
   if (isNaN(r)) { r = 0; }
   const rDesc = `${(r * 100).toFixed(0)}%`;
-  
+
   if (r <= 0.5) {
     return rDesc;
   }
@@ -52,13 +52,14 @@ class SequenceReadsHistogram extends React.Component {
     unusualSites: SitesType.isRequired,
     unusualApobecSites: SitesType.isRequired,
     numPositions: PropTypes.number.isRequired
-  }
+  };
 
   get chartData() {
     const result = {};
     const {
       usualSites, drmSites, unusualSites,
-      unusualApobecSites, numPositions} = this.props;
+      unusualApobecSites, numPositions
+    } = this.props;
     let index = 0;
     for (const {count, ...s} of usualSites) {
       const percent = getPercent(s);
@@ -134,9 +135,11 @@ class SequenceReadsHistogram extends React.Component {
            id="rectGapPattern"
            x="0" y="0" width="4" height="4"
            patternUnits="userSpaceOnUse">
-            <line x1="-1" y1="4" x2="4" y2="-1"
+            <line
+             x1="-1" y1="4" x2="4" y2="-1"
              fill="transparent" stroke="white" strokeWidth="1" />
-            <line x1="5" y1="2" x2="2" y2="5"
+            <line
+             x1="5" y1="2" x2="2" y2="5"
              fill="transparent" stroke="white" strokeWidth="1" />
           </pattern>
         </defs>
@@ -152,14 +155,16 @@ class SequenceReadsHistogram extends React.Component {
             let gap = null;
             if (y < gapY) {
               gap = (
-                <rect key={`gap-${idx}`}
+                <rect
+                 key={`gap-${idx}`}
                  x={x} y={y}
                  width={barWidth} height={gapY - y + halfGapH * 1}
                  fill="url(#rectGapPattern)" />
               );
             }
             return (
-              <Group key={idx}
+              <Group
+               key={idx}
                onMouseMove={event => {
                  showTooltip({
                    tooltipData: group,

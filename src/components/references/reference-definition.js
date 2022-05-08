@@ -16,7 +16,7 @@ export default class RefDefinition extends React.Component {
     medlineId: PropTypes.string,
     url: PropTypes.string,
     children: PropTypes.node
-  }
+  };
 
   render() {
     let {name, identifier, ...ref} = this.props;

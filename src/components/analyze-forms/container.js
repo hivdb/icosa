@@ -10,7 +10,7 @@ export default class AnalyzeFormsContainer extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     children: PropTypes.node
-  }
+  };
 
   render() {
     const {className, children} = this.props;

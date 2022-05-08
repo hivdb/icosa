@@ -10,11 +10,11 @@ export default class SeqReadsAnalysisQAChart extends React.Component {
   static propTypes = {
     allGeneSequenceReads: PropTypes.array.isRequired,
     output: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     output: 'default'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -23,7 +23,7 @@ export default class SeqReadsAnalysisQAChart extends React.Component {
 
   handleResize = ({width}) => {
     this.setState({width});
-  }
+  };
 
   render() {
     const {allGeneSequenceReads, output} = this.props;

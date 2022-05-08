@@ -54,11 +54,11 @@ export default class SeqViewerStage extends React.Component {
     noBlurSelector: PropTypes.string.isRequired,
     footerHeight: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
   static defaultProps = {
     footerHeight: 8 * 14
-  }
+  };
 
   /* static getDerivedStateFromProps(props, state) {
     const {selectedPositions} = props;
@@ -117,7 +117,7 @@ export default class SeqViewerStage extends React.Component {
         top: pageYOffset + posItemBottom - viewportHeight
       });
     }
-  }
+  };
 
   getPositionFromMouseEvent(event) {
     const {offsetX, offsetY} = event;
@@ -214,7 +214,7 @@ export default class SeqViewerStage extends React.Component {
     });
     this.setSelection([posEnd]);
     this.containerRef.current.focus();
-  }
+  };
 
   handleGlobalKeyUp = (evt) => {
     const {key} = evt;
@@ -239,7 +239,7 @@ export default class SeqViewerStage extends React.Component {
       default:
         // pass
     }
-  }
+  };
 
   handleKeyDown = (evt) => {
     const {key, shiftKey: rangeSel} = evt;
@@ -296,7 +296,7 @@ export default class SeqViewerStage extends React.Component {
     }
     this.setState(nextState);
     this.handleKeySelection(rangeSel, nextState);
-  }
+  };
 
   handleKeySelection = debounce((rangeSel, nextState) => {
     const {anchorPos, activePos: posEnd} = nextState;
@@ -316,7 +316,7 @@ export default class SeqViewerStage extends React.Component {
       this.setState({prevSelecteds: selecteds});
       this.setSelection(selecteds);
     }
-  }, 50)
+  }, 50);
 
   handleMouseDown = ({evt}) => {
     const {multiSel, rangeSel} = getKeyCmd(evt);
@@ -357,7 +357,7 @@ export default class SeqViewerStage extends React.Component {
       );
     }
     this.setSelection(selecteds);
-  }
+  };
 
   handleMouseMove = ({evt}) => {
     // set hovering position
@@ -400,7 +400,7 @@ export default class SeqViewerStage extends React.Component {
       );
     }
     this.setSelection(selecteds);
-  }
+  };
 
   handleMouseUp = ({evt}) => {
     const {multiSel, rangeSel} = getKeyCmd(evt);
@@ -437,7 +437,7 @@ export default class SeqViewerStage extends React.Component {
       );
     }
     this.setSelection(selecteds);
-  }
+  };
 
   handleGlobalMouseDown = evt => {
     const {noBlurSelector} = this.props;
@@ -457,7 +457,7 @@ export default class SeqViewerStage extends React.Component {
         this.setSelection([]);
       }
     }
-  }
+  };
 
   render() {
     const {

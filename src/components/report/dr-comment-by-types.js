@@ -39,11 +39,11 @@ export default class DRCommentByTypes extends React.Component {
     disabledDrugs: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired
-  }
+  };
 
   static defaultProps = {
     disabledDrugs: []
-  }
+  };
 
   render() {
     let {gene, commentsByTypes, disabledDrugs} = this.props;

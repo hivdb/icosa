@@ -21,13 +21,13 @@ export default class DownloadSVG extends React.Component {
     fileName: PropTypes.string,
     css: PropTypes.oneOf(['internal', 'inline', 'none']).isRequired,
     children: PropTypes.node.isRequired
-  }
+  };
 
   static defaultProps = {
     name: 'download-svg',
     css: 'inline',
     children: 'Download SVG'
-  }
+  };
 
   handleClick = async e => {
     e && e.preventDefault();
@@ -48,7 +48,7 @@ export default class DownloadSVG extends React.Component {
       makeDownload(fileName, 'image/svg+xml', source);
       setTimeout(() => document.body.removeChild(container));
     }
-  }
+  };
 
   render() {
     // eslint-disable-next-line no-unused-vars

@@ -34,7 +34,7 @@ export default class SeqReadsQA extends React.Component {
       }).isRequired
     ).isRequired,
     output: PropTypes.string
-  }
+  };
 
   render() {
     const {output, name, allGeneSequenceReads} = this.props;

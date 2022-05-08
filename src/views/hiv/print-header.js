@@ -38,5 +38,5 @@ export default function PrintHeader({curAnalysis}) {
       <p>Generated at {now.toLocaleString()}</p>
     </IntroHeader>
   </Intro>;
-  
+
 }

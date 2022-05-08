@@ -51,7 +51,7 @@ export default class CodfishGraph extends React.Component {
 
   static propTypes = {
     extCodfish: PropTypes.array.isRequired
-  }
+  };
 
   get bars() {
     const {extCodfish} = this.props;

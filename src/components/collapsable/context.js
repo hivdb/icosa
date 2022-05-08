@@ -35,14 +35,14 @@ export class CollapsableContextValue {
       return;
     }
     this.#collapsableAnchors[anchor] = true;
-  }
+  };
 
   #isAnchorCollapsable = (anchor) => {
     if (anchor === null) {
       return false;
     }
     return anchor in this.#collapsableAnchors;
-  }
+  };
 
   getClosestCollapsableAnchor = curHash => {
     if (!curHash) {
@@ -81,7 +81,7 @@ export class CollapsableContextValue {
       anchor: null,
       shouldCollapseOther: false
     };
-  }
+  };
 
 }
 

@@ -9,7 +9,7 @@ export default class AutofitGraph extends React.Component {
     children: PropTypes.node.isRequired,
     onResize: PropTypes.func.isRequired,
     output: PropTypes.string.isRequired
-  }
+  };
 
   get isPrint() {
     return this.props.output === 'printable';

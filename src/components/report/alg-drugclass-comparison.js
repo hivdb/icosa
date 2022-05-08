@@ -15,7 +15,7 @@ export default class AlgDrugClassComparison extends React.Component {
 
   static propTypes = {
     drugScores: PropTypes.array.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -55,7 +55,7 @@ export default class AlgDrugClassComparison extends React.Component {
       }, 0);
     }
     this.setState({containerExpanded});
-  }
+  };
 
   groupDrugScores(drugScores) {
     return Array.from(

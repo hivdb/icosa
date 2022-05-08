@@ -13,7 +13,7 @@ export default class PosItemLayer extends React.Component {
     sequence: PropTypes.string.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   shouldComponentUpdate({config: nextConfig}) {
     const {config: curConfig} = this.props;

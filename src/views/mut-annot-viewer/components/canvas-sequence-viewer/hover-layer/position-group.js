@@ -8,7 +8,7 @@ export default class PositionGroup extends React.Component {
   static propTypes = {
     position: PropTypes.number.isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);

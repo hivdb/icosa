@@ -1,5 +1,5 @@
 // See default color definition in styles/default-colors.scss
 
 @function color($name) {
-  @return #{"var(--sierra-color-"}$name#{")"};
+  @return #{"var(--sierra-color-"}#{$name}#{")"};
 }

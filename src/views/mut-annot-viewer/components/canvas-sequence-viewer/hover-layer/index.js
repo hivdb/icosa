@@ -21,7 +21,7 @@ export default class HoverLayer extends React.Component {
     anchorPos: PropTypes.number,
     config: PropTypes.object.isRequired,
     positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);

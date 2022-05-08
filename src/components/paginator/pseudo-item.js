@@ -9,7 +9,7 @@ export default class PseudoItem extends React.Component {
     onClick: PropTypes.func,
     href: PropTypes.string,
     children: PropTypes.node.isRequired */
-  }
+  };
 
   render() {
     return null;

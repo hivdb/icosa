@@ -10,11 +10,11 @@ export default class SequenceAnalysisQAChart extends React.Component {
   static propTypes = {
     alignedGeneSequences: PropTypes.array.isRequired,
     output: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     output: 'default'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -23,7 +23,7 @@ export default class SequenceAnalysisQAChart extends React.Component {
 
   handleResize = ({width}) => {
     this.setState({width});
-  }
+  };
 
   render() {
     const {alignedGeneSequences, output} = this.props;

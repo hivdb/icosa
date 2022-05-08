@@ -65,7 +65,7 @@ export default class SeqMutationPrevalence extends React.Component {
     mutationPrevalenceSubtypes: PropTypes.array.isRequired,
     mutationPrevalences: PropTypes.array.isRequired,
     drugResistance: PropTypes.array.isRequired
-  }
+  };
 
   render() {
     let {

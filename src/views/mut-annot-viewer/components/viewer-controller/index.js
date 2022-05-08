@@ -37,7 +37,7 @@ export default class ViewerController extends React.Component {
     onSeqFragmentChange: PropTypes.func.isRequired,
     onSeqViewerSizeChange: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
-  }
+  };
 
   get className() {
     const {className} = this.props;

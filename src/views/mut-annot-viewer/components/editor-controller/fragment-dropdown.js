@@ -17,7 +17,7 @@ export default class FragmentDropdown extends React.Component {
       PropTypes.number.isRequired
     ).isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
   get options() {
     const {fragmentOptions} = this.props;
@@ -41,7 +41,7 @@ export default class FragmentDropdown extends React.Component {
   handleChange = ({value}) => {
     const {onChange} = this.props;
     onChange(value);
-  }
+  };
 
   render() {
     const {options, curValue} = this;

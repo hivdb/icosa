@@ -34,7 +34,7 @@ const config = {
       Other: 'Other'
     }
   },
-  maxProteinSize: 560,  // RT protein
+  maxProteinSize: 560, // RT protein
   seqReadsCodonCovBgColors: {
     RdRP: '#f0f0f0',
     S: '#ffffff'

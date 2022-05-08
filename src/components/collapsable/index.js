@@ -14,11 +14,11 @@ export default class Collapsable extends React.Component {
       PropTypes.oneOf(['h2', 'h3', 'h4', 'h5', 'h6']).isRequired
     ).isRequired,
     children: PropTypes.node
-  }
+  };
 
   static defaultProps = {
     levels: ['h3']
-  }
+  };
 
   static Section = Section;
 

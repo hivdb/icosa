@@ -16,11 +16,11 @@ export default class PresetSelection extends React.Component {
     ).isRequired,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.string.isRequired
-  }
+  };
 
   handleChange = ({value}) => {
     this.props.onChange(value);
-  }
+  };
 
   render() {
     const {value: current, options} = this.props;

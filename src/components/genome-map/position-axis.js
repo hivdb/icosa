@@ -67,7 +67,7 @@ export default class PositionAxis extends React.Component {
     offsetY: PropTypes.number.isRequired,
     scaleX: PropTypes.func.isRequired,
     positionAxis: positionAxisShape
-  }
+  };
 
   static defaultProps = {
     tickFontSize: 12,
@@ -77,7 +77,7 @@ export default class PositionAxis extends React.Component {
       tickCount: 15,
       roundToNearest: 100
     }
-  }
+  };
 
   get axisPathData() {
     let {

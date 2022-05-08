@@ -19,11 +19,11 @@ export default class FileInput extends React.Component {
     btnSize: PropTypes.string,
     onChange: PropTypes.func,
     btnStyle: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     btnStyle: 'info'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -36,7 +36,7 @@ export default class FileInput extends React.Component {
       value: e.currentTarget.value.split(/(\\|\/)/g).pop()
     });
     if (this.props.onChange) this.props.onChange(e.currentTarget.files);
-  }
+  };
 
   render() {
     let {

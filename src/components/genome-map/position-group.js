@@ -16,7 +16,7 @@ export default class PositionGroup extends React.Component {
     scaleX: PropTypes.func.isRequired,
     positionGroup: positionGroupShape.isRequired,
     regions: regionsShape.isRequired
-  }
+  };
 
   get labelText() {
     let {name, label} = this.props.positionGroup;

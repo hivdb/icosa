@@ -32,11 +32,11 @@ export default class AnnotCategory extends React.Component {
       annotShape.isRequired
     ).isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
   static defaultProps = {
     curAnnotNames: []
-  }
+  };
 
   static getDerivedStateFromProps(props, state = {}) {
     const {
@@ -105,7 +105,7 @@ export default class AnnotCategory extends React.Component {
     else {
       onChange([value]);
     }
-  }
+  };
 
   handleRemove = evt => {
     evt.preventDefault();
@@ -120,17 +120,17 @@ export default class AnnotCategory extends React.Component {
     if (curAnnotNames.length > newAnnotNames.length) {
       onChange(newAnnotNames);
     }
-  }
+  };
 
   handleSelectAll = evt => {
     evt.preventDefault();
     this.props.onChange(this.options.map(({value}) => value));
-  }
+  };
 
   handleRemoveAll = evt => {
     evt.preventDefault();
     this.props.onChange([]);
-  }
+  };
 
   render() {
     const {

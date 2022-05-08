@@ -36,7 +36,7 @@ function SierraForms({
     location: {query = {}}
   },
   router,
-  pathPrefix,
+  pathPrefix
 }) {
 
   const basePath = getBasePath(match.location);
@@ -74,7 +74,7 @@ function SierraForms({
      patternsTo={patternsTo}
      sequencesTo={sequencesTo}
      enableReads readsTo={readsTo}
-     exampleFasta={loadExampleFasta(config.sequenceExamples, config)} 
+     exampleFasta={loadExampleFasta(config.sequenceExamples, config)}
      exampleCodonReads={loadExampleCodonReads(config.seqReadsExamples, config)}
      sequencesOutputOptions={{
        __printable: {
@@ -118,7 +118,7 @@ SierraForms.propTypes = {
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   curAnalysis: PropTypes.string.isRequired,
-  pathPrefix: PropTypes.string.isRequired,
+  pathPrefix: PropTypes.string.isRequired
 };
 
 export default function SierraFormsWithConfig(props) {

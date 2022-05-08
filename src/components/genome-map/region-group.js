@@ -128,12 +128,12 @@ export default class RegionGroup extends React.Component {
     }),
     moveSVGBorder: PropTypes.func.isRequired,
     positions: PropTypes.array
-  }
+  };
 
   static defaultProps = {
     hidePositionAxis: false,
     positions: []
-  }
+  };
 
   static getScaleX = (props, state) => {
     const {
@@ -151,11 +151,11 @@ export default class RegionGroup extends React.Component {
       return {domains, rangeX, scaleX};
     }
     return null;
-  }
+  };
 
   static getDerivedStateFromProps = (props, state = {}) => {
     return this.getScaleX(props, state);
-  }
+  };
 
   constructor() {
     super(...arguments);

@@ -45,7 +45,7 @@ export default class EditorController extends React.Component {
     onSeqViewerSizeChange: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
-  }
+  };
 
   get className() {
     const {className} = this.props;
@@ -145,7 +145,7 @@ export default class EditorController extends React.Component {
          circleInBoxAnnotDef={this.circleInBoxAnnotDef}
          aminoAcidsCats={
            annotCategories
-           .filter(({annotStyle}) => annotStyle === 'aminoAcids')
+             .filter(({annotStyle}) => annotStyle === 'aminoAcids')
          }
          positionLookup={positionLookup} />
       </div>

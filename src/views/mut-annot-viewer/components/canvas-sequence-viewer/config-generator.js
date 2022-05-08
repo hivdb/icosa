@@ -337,7 +337,7 @@ export default class ConfigGenerator {
     endCoord.y += endOffsetY;
     coordPairs.push({startCoord, endCoord});
     return coordPairs;
-  }
+  };
 
   posAA2Coord = (pos, aaOffsetIndex) => {
     const {
@@ -364,7 +364,7 @@ export default class ConfigGenerator {
         aaOffsetIndex * aaOuterSize
       )
     };
-  }
+  };
 
   pos2Coord = (pos) => {
     const [posStart, posEnd] = this.seqFragment;
@@ -382,7 +382,7 @@ export default class ConfigGenerator {
     const x = colNumber0 * (hMargin + boxSize) + hMargin;
     let y = offsetYPerRow[rowNumber0];
     return {x, y};
-  }
+  };
 
   coord2UnderscoreAnnot = (x, y) => {
     const {
@@ -407,7 +407,7 @@ export default class ConfigGenerator {
       };
     }
     return {};
-  }
+  };
 
   coord2Pos = (x, y) => {
     const {
@@ -455,7 +455,7 @@ export default class ConfigGenerator {
       return posEnd;
     }
     return pos;
-  }
+  };
 
   getAnnotPosLookup(annotStyle) {
     let lookup;
@@ -495,12 +495,12 @@ export default class ConfigGenerator {
       globalIdxOffset += aas.length;
     }
     return aaDefs;
-  }
+  };
 
   isPositionAnnotated = (pos, annotStyle) => {
     const lookup = this.getAnnotPosLookup(annotStyle);
     return pos in lookup;
-  }
+  };
 
   getColorIndex = (pos, annotStyle) => {
     const lookup = this.getAnnotPosLookup(annotStyle);
@@ -509,7 +509,7 @@ export default class ConfigGenerator {
       const [, colorIdx] = posDef;
       return colorIdx % COLORS.length;
     }
-  }
+  };
 
   getUnderscoreAnnotColorIndex = (annotName) => {
     const {underscoreAnnotColorIndexOffset, underscoreAnnotNames} = this;
@@ -518,7 +518,7 @@ export default class ConfigGenerator {
       underscoreAnnotColorIndexOffset
     );
     return colorIdx % COLORS.length;
-  }
+  };
 
   getStrokeColor = (pos, hovering, annotStyle) => {
     if (hovering) {
@@ -531,7 +531,7 @@ export default class ConfigGenerator {
       }
       return this.strokeDefaultColor;
     }
-  }
+  };
 
   getRefAAColor = (pos) => {
     if (
@@ -541,7 +541,7 @@ export default class ConfigGenerator {
       return this.refAALightColor;
     }
     return this.refAADarkColor;
-  }
+  };
 
   getBgColor = (pos, hovering, annotStyle) => {
     if (hovering) {
@@ -560,12 +560,12 @@ export default class ConfigGenerator {
       }
       return this.backgroundDefaultColor;
     }
-  }
+  };
 
   getUnderscoreAnnotColor = (annotName) => {
     const colorIdx = this.getUnderscoreAnnotColorIndex(annotName);
     return COLORS[colorIdx].med;
-  }
+  };
 
   updateLegendContext = ({onUpdate}) => {
     const {aminoAcidsOverrideColors} = this;
@@ -599,6 +599,6 @@ export default class ConfigGenerator {
           return acc;
         }, {})
     });
-  }
+  };
 
 }

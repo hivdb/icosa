@@ -82,14 +82,14 @@ class SeqReadsSummary extends React.Component {
         iqr25: PropTypes.number.isRequired,
         median: PropTypes.number.isRequired,
         iqr75: PropTypes.number.isRequired
-      }),
+      })
     }),
     output: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     output: 'default'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -107,23 +107,23 @@ class SeqReadsSummary extends React.Component {
     newLoc.query = newLoc.query ? newLoc.query : {};
     newLoc.query.cutoff = cutoff;
     this.props.router.push(newLoc);
-  }
+  };
 
   handleMinPositionReadsChange = ({value}) => {
     const newLoc = {query: {}, ...this.props.match.location};
     newLoc.query.rd = value;
     this.props.router.push(newLoc);
-  }
+  };
 
   toggleSDRMs = () => {
     const showSDRMs = !this.state.showSDRMs;
     this.setState({showSDRMs});
-  }
+  };
 
   toggleCodonCov = () => {
     const showCodonCov = !this.state.showCodonCov;
     this.setState({showCodonCov});
-  }
+  };
 
   // get myCutoffOptions() {
   //   const {
@@ -138,7 +138,7 @@ class SeqReadsSummary extends React.Component {
   //   const myCutoffOptions = [];
   //   let prevValue = 0;
   //   for (const option of CUTOFF_OPTIONS) {
-  //     for (const lim of addLimits) { 
+  //     for (const lim of addLimits) {
   //       if (Math.abs(lim - option.value) < 1e-5) {
   //         continue;
   //       }
@@ -163,7 +163,7 @@ class SeqReadsSummary extends React.Component {
         subtypes, minPrevalence,
         allGeneSequenceReads,
         internalJsonCodonReadsCoverage,
-        minPositionReads,/* cutoffSuggestionLooserLimit,
+        minPositionReads, /* cutoffSuggestionLooserLimit,
         cutoffSuggestionStricterLimit,*/
         availableGenes,
         readDepthStats: {median}
@@ -215,12 +215,10 @@ class SeqReadsSummary extends React.Component {
         </div>
         <div className={style['desc-list']}>
           <dl>
-            {allGeneSequenceReads.map((
-              {
-                gene: {name: geneName}, numPositions,
-                firstAA, lastAA, mutations
-              }, idx
-            ) => {
+            {allGeneSequenceReads.map(({
+              gene: {name: geneName}, numPositions,
+              firstAA, lastAA, mutations
+            }, idx) => {
               const gene = config.geneDisplay[geneName];
               const rows = [
                 <dt key={`dt-gene-${idx}`}>
@@ -241,7 +239,8 @@ class SeqReadsSummary extends React.Component {
                   <dd key={`dd-mut-${idx}`}>
                     {mutations
                       .filter(({isUnsequenced}) => !isUnsequenced)
-                      .map(({text}) => text).join(', ') || 'None'
+                      .map(({text}) => text)
+                      .join(', ') || 'None'
                     }
                   </dd>
                 );
@@ -284,7 +283,7 @@ class SeqReadsSummary extends React.Component {
             </dd>
             {/*<dt>Algorithm Cutoffs:</dt>
             <dd>
-              {(100 * cutoffSuggestionLooserLimit).toFixed(2)}% - 
+              {(100 * cutoffSuggestionLooserLimit).toFixed(2)}% -
               {(100 * cutoffSuggestionStricterLimit).toFixed(2)}%
             </dd>*/}
           </dl>
@@ -292,8 +291,8 @@ class SeqReadsSummary extends React.Component {
       </section>
       {showCodonCov ?
         <CodonReadsCoverage
-         {...{genes, internalJsonCodonReadsCoverage, minPositionReads}} />
-        : null}
+         {...{genes, internalJsonCodonReadsCoverage, minPositionReads}} /> :
+        null}
     </>;
   }
 }

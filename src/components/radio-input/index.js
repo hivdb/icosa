@@ -15,12 +15,12 @@ export default class RadioInput extends React.Component {
     checked: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
     style: PropTypes.object.isRequired
-  }
+  };
 
   static defaultProps = {
     style: {},
     disabled: false
-  }
+  };
 
   render() {
     const {

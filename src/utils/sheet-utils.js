@@ -1,4 +1,7 @@
-import XLSX from 'xlsx';
+import {
+  write as xlsxWrite,
+  utils as xlsxUtils
+} from 'xlsx';
 import escapeRegExp from 'lodash/escapeRegExp';
 
 export function dumpCSV(rows, delimiter = ',', utf8bom = false) {
@@ -29,8 +32,8 @@ export function dumpExcelSimple(
   sheetName = 'Sheet1',
   config = {}
 ) {
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = xlsxUtils.book_new();
+  const ws = xlsxUtils.aoa_to_sheet(rows);
   for (const key in ws) {
     if (key.startsWith('!')) {
       continue;
@@ -41,14 +44,14 @@ export function dumpExcelSimple(
   for (const [key, value] of Object.entries(config)) {
     ws[key] = value;
   }
-  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  xlsxUtils.book_append_sheet(wb, ws, sheetName);
   const wopts = {
     bookType: 'xlsx',
     bookSST: true,
     type: 'array',
     cellStyles: true
   };
-  const wbout = XLSX.write(wb, wopts);
+  const wbout = xlsxWrite(wb, wopts);
   return new Blob(
     [wbout],
     {tyle: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}

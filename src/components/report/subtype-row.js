@@ -30,7 +30,7 @@ export default class SubtypeRow extends React.Component {
         referenceYear: PropTypes.number.isRequired
       }).isRequired
     ).isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -43,12 +43,13 @@ export default class SubtypeRow extends React.Component {
     e && e.preventDefault();
     const showSubtypeDetails = !this.state.showSubtypeDetails;
     this.setState({showSubtypeDetails});
-  }
+  };
 
   render() {
     const {
       bestMatchingSubtype,
-      subtypes} = this.props;
+      subtypes
+    } = this.props;
     const subtypeText = bestMatchingSubtype ?
       bestMatchingSubtype.display : null;
     const bestMatchingVnum = bestMatchingSubtype ?
@@ -82,27 +83,30 @@ export default class SubtypeRow extends React.Component {
         {showSubtypeDetails ?
           <ul className={style['subtype-details']}>
             {subtypes.map(
-              ({displayWithoutDistance: displaySubtype,
+              ({
+                displayWithoutDistance: displaySubtype,
                 subtype: {displayName: subtype},
                 distancePcnt: distPcnt,
                 referenceAccession: vnum,
                 referenceCountry: country,
-                referenceYear: year}, idx) => (
-                  <li key={idx} className={
+                referenceYear: year
+              }, idx) => (
+                <li
+                 key={idx} className={
                   vnum === bestMatchingVnum ?
                     style['best-match'] : null
                 }>
-                    <ExtLink
-                     title="Open corresponding Genbank page"
-                     href={`${NUCCORE_PREFIX}${vnum}`}>
-                      {vnum}
-                    </ExtLink>:{' '}
-                    {country} ({year});{' '}
-                    {displaySubtype} (
-                    {displaySubtype !== subtype ? `${subtype}, ` : null}
-                    {distPcnt})
-                    {vnum === bestMatchingVnum ? '; best match' : null}
-                  </li>
+                  <ExtLink
+                   title="Open corresponding Genbank page"
+                   href={`${NUCCORE_PREFIX}${vnum}`}>
+                    {vnum}
+                  </ExtLink>:{' '}
+                  {country} ({year});{' '}
+                  {displaySubtype} (
+                  {displaySubtype !== subtype ? `${subtype}, ` : null}
+                  {distPcnt})
+                  {vnum === bestMatchingVnum ? '; best match' : null}
+                </li>
               )
             )}
           </ul> : null}

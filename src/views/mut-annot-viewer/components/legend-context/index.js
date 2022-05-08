@@ -24,7 +24,7 @@ export default class LegendContext extends React.Component {
     if (JSON.stringify(state) !== JSON.stringify(this.state)) {
       this.setState(state);
     }
-  }
+  };
 
   render() {
     return <Context.Provider value={{

@@ -32,7 +32,7 @@ export default class Legend extends React.Component {
       PropTypes.number.isRequired
     ).isRequired,
     sequence: PropTypes.string.isRequired */
-  }
+  };
 
   get className() {
     const {className} = this.props;

@@ -34,7 +34,7 @@ export default class GenomeViewerLoader extends React.Component {
 
   static propTypes = {
     presetLoader: PropTypes.func.isRequired
-  }
+  };
 
   static getDerivedStateFromProps(props, state) {
     const {

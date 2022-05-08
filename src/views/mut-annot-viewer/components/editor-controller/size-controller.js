@@ -14,11 +14,11 @@ export default class SizeController extends React.Component {
     allowEditing: PropTypes.bool.isRequired,
     size: seqViewerSizeType.isRequired,
     onChange: PropTypes.func.isRequired
-  }
+  };
 
   handleChange = ({currentTarget: {value}}) => {
     this.props.onChange(value);
-  }
+  };
 
   render() {
     const {

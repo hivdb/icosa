@@ -18,12 +18,12 @@ export default class GeneMutationPrevalence extends React.Component {
     columns: PropTypes.array.isRequired,
     mutationComments: PropTypes.object.isRequired,
     columnMetadata: PropTypes.array.isRequired
-  }
+  };
 
   static childContextTypes = {
     expandedRows: PropTypes.object,
     gene: PropTypes.string
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -52,7 +52,7 @@ export default class GeneMutationPrevalence extends React.Component {
       }
       row.props.toggleChildren();
     }
-  }
+  };
 
   render() {
     const {

@@ -84,22 +84,14 @@ function seqReadsSummary({
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations(
-        geneSeqs, gene => gene === 'S', geneDisplay
-      ),
-      'Other Mutations': getMutations(
-        geneSeqs, gene => gene !== 'S', geneDisplay
-      ),
+      'Spike Mutations': getMutations(geneSeqs, gene => gene === 'S', geneDisplay),
+      'Other Mutations': getMutations(geneSeqs, gene => gene !== 'S', geneDisplay),
       'Median Read Depth': readDepthStats.median,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'Read Depth Threshold by Codon': minCodonReads,
-      'Permanent Link (Spike Only)': getPermanentLink(
-        seqName, geneSeqs, patternsTo, gene => gene === 'S'
-      ),
-      'Permanent Link': getPermanentLink(
-        seqName, geneSeqs, patternsTo, () => true
-      )
+      'Permanent Link (Spike Only)': getPermanentLink(seqName, geneSeqs, patternsTo, gene => gene === 'S'),
+      'Permanent Link': getPermanentLink(seqName, geneSeqs, patternsTo, () => true)
     };
     joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);
     rows.push(row);

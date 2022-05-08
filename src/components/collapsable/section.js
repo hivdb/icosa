@@ -24,7 +24,7 @@ class SectionInner extends React.Component {
     alwaysCollapsable: PropTypes.bool.isRequired,
     registerCollapsableAnchor: PropTypes.func.isRequired,
     getClosestCollapsableAnchor: PropTypes.func.isRequired
-  }
+  };
 
   static defaultProps = {
     registerCollapsableAnchor: () => null,
@@ -33,7 +33,7 @@ class SectionInner extends React.Component {
       anchor: null,
       shouldCollapseOther: false
     })
-  }
+  };
 
   static getCurAnchor = (props) => {
     let {
@@ -45,7 +45,7 @@ class SectionInner extends React.Component {
       curHash = location.hash.replace(/^#/, '');
     }
     return getClosestCollapsableAnchor(curHash);
-  }
+  };
 
   static getDefaultState = (props, state = {}) => {
     let {
@@ -74,7 +74,7 @@ class SectionInner extends React.Component {
       myAnchor: anchor,
       curAnchor
     };
-  }
+  };
 
   static getDerivedStateFromProps = (props, state) => {
     /*
@@ -108,7 +108,7 @@ class SectionInner extends React.Component {
       return this.getDefaultState(props, state);
     }
     return null;
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -146,13 +146,13 @@ class SectionInner extends React.Component {
       isJustToggled: true
     };
     this.setState(newState);
-  }
+  };
 
   onLoad = () => {
     setTimeout(() => (
       this._isMounted && this.forceUpdate()
     ));
-  }
+  };
 
   componentDidMount() {
     this._isMounted = true;

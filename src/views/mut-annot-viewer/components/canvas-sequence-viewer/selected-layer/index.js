@@ -12,7 +12,7 @@ export default class SelectedLayer extends React.Component {
       PropTypes.number.isRequired
     ).isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   render() {
     const {

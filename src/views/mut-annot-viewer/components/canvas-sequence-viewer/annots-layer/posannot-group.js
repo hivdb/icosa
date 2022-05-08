@@ -10,7 +10,7 @@ export default class PosAnnotGroup extends React.Component {
       annotName: PropTypes.string
     }).isRequired,
     config: PropTypes.object.isRequired
-  }
+  };
 
   render() {
     const {

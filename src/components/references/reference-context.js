@@ -36,12 +36,12 @@ class ReferenceObject {
     if (!this.#onUpdates.includes(cb)) {
       this.#onUpdates.push(cb);
     }
-  }
+  };
 
   setLoaded = () => {
     this.loaded = true;
     this._resolveLoadingPromise();
-  }
+  };
 
   ensureLoaded = (callback, placeholder) => (
     <PromiseComponent
@@ -49,7 +49,7 @@ class ReferenceObject {
      then={() => callback(this)}>
       {placeholder}
     </PromiseComponent>
-  )
+  );
 
   setReference = (name, reference, incr) => {
     let isNew = true;
@@ -79,18 +79,18 @@ class ReferenceObject {
       itemId: `${refNumber}_${nameKey}`,
       linkId: `${refNumber}_${nameKey}_${refLinkNumber}`
     };
-  }
+  };
 
   hasAnyReference = (includeInlines = false) => {
     if (includeInlines) {
       return !!Object.keys(this.#references).length;
     }
     return this.getAllReferences().some(({linkIds}) => linkIds.length > 0);
-  }
+  };
 
   getReference = (name) => {
     return this.#references[name.toLocaleLowerCase()];
-  }
+  };
 
   getAllReferences = () => {
     return this.#refNames.map((nameKey, rn0) => {
@@ -107,12 +107,12 @@ class ReferenceObject {
         linkIds
       };
     });
-  }
+  };
 
   getLinkedReferences = () => {
     return this.getAllReferences()
       .filter(({linkIds}) => linkIds.length > 0);
-  }
+  };
 }
 
 

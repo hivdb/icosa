@@ -97,11 +97,11 @@ class ExtCodfishDownload extends React.Component {
     name: PropTypes.string.isRequired,
     extCodfish: PropTypes.array.isRequired,
     onFinish: PropTypes.func.isRequired
-  }
+  };
 
   static defaultProps = {
     onFinish: () => null
-  }
+  };
 
   render() {
     const {name, extCodfish} = this.props;
@@ -139,15 +139,15 @@ export default class ExtCodfish extends React.Component {
 
   handleDownload = () => {
     this.setState({downloading: true});
-  }
+  };
 
   handleDownloadFinish = () => {
     this.setState({downloading: false});
-  }
+  };
 
   toggle = () => {
     this.setState({showChart: !this.state.showChart});
-  }
+  };
 
   render() {
     const {downloading, showChart} = this.state;

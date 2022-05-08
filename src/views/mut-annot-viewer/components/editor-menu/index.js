@@ -33,11 +33,11 @@ export default class EditorMenu extends React.Component {
     onToggleAllowEditing: PropTypes.func.isRequired,
     allowEditing: PropTypes.bool.isRequired,
     className: PropTypes.string
-  }
+  };
 
   handleRevertAll = () => {
     this.props.onRevertAll();
-  }
+  };
 
   handleSaveToLocal = () => {
     const {
@@ -45,8 +45,13 @@ export default class EditorMenu extends React.Component {
       annotations, positions, citations
     } = this.props;
     let data = JSON.stringify({
-      version, gene, taxonomy, annotCategories,
-      annotations, citations, positions
+      version,
+      gene,
+      taxonomy,
+      annotCategories,
+      annotations,
+      citations,
+      positions
     }, null, '  ');
     data = data.replace(/[\u007F-\uFFFF]/g, (chr) => (
       "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4)
@@ -54,12 +59,13 @@ export default class EditorMenu extends React.Component {
     makeDownload(
       `mutation-annotations_${gene}.json`,
       'application/json',
-      data);
-  }
+      data
+    );
+  };
 
   handleToggleAllowEditing = ({currentTarget: {checked}}) => {
     this.props.onToggleAllowEditing(checked);
-  }
+  };
 
   render() {
     const {className, allowEditing, changed} = this.props;

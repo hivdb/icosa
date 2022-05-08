@@ -276,7 +276,7 @@ label.input-label {
         display: inline-block;
         box-sizing: content-box;
         line-height: var(--result-item-height);
-        height: calc(var(--result-item-height);
+        height: var(--result-item-height);
         margin-top: var(--result-desc-v-padding);
         margin-bottom: calc(var(--result-desc-v-padding) + var(--progress-bar-height) / 2);
         overflow: hidden;

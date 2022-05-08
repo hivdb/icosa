@@ -8,7 +8,7 @@ export default class ScrollBar extends React.Component {
 
   static propTypes = {
     onScroll: PropTypes.func.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -38,14 +38,14 @@ export default class ScrollBar extends React.Component {
     const xOffset = evt.clientX - xStart;
     const stepOffset = Math.ceil(xOffset / this.getStepWidth());
     this.props.onScroll(stepOffset);
-  }
+  };
 
   handleDragStart = evt => {
     this.xStart = evt.clientX;
     this.prevClientX = evt.clientX;
     this.stepOffset = 0;
     evt.dataTransfer.setDragImage(this.dragShadowRef.current, 0, 0);
-  }
+  };
 
   handleDrag = evt => {
     const {xStart} = this;
@@ -70,7 +70,7 @@ export default class ScrollBar extends React.Component {
         this.stepOffset = stepOffset;
       }
     }
-  }
+  };
 
   render() {
     return (

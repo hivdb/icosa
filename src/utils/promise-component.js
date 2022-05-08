@@ -17,13 +17,13 @@ export default class PromiseComponent extends React.Component {
     error: PropTypes.func.isRequired,
     component: PropTypes.func,
     children: PropTypes.node.isRequired
-  }
+  };
 
   static defaultProps = {
     children: <Loader loaded={false} />,
     then: value => value,
     error: value => value
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -66,7 +66,7 @@ export default class PromiseComponent extends React.Component {
     else {
       return this.getStateFromResult(promise, then, component, promise);
     }
-  }
+  };
 
   async _loadAsyncData(promise, then, error, component) {
     let result, callback;
@@ -113,16 +113,16 @@ class AsyncComponent extends React.Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
     duration: PropTypes.number.isRequired
-  }
+  };
 
   static defaultProps = {
     duration: 0
-  }
+  };
 
   thenRender = () => {
     const {children} = this.props;
     return children();
-  }
+  };
 
   render() {
     const {duration} = this.props;

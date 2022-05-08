@@ -13,7 +13,7 @@ export default class SmoothProgressBar extends React.Component {
     progress: PropTypes.number.isRequired,
     nextProgress: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired
-  }
+  };
 
   constructor() {
     super(...arguments);

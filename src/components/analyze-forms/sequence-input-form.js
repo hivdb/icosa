@@ -34,11 +34,11 @@ export default class SequenceInputForm extends React.Component {
       renderer: PropTypes.func
     }).isRequired).isRequired,
     onSubmit: PropTypes.func
-  }
+  };
 
   static defaultProps = {
     childrenPlacement: 'top'
-  }
+  };
 
   constructor() {
     super(...arguments);
@@ -60,12 +60,12 @@ export default class SequenceInputForm extends React.Component {
   headerChange = (evt) => {
     let header = evt.target.value;
     this.setState({header});
-  }
+  };
 
   sequenceChange = (e) => {
     let sequence = e.target.value;
     this.setState({sequence});
-  }
+  };
 
   handleReset = () => {
     this.setState({
@@ -73,7 +73,7 @@ export default class SequenceInputForm extends React.Component {
       sequence: '',
       showExamples: false
     });
-  }
+  };
 
   handleSubmit = async (e) => {
     const {outputOption} = this.state;
@@ -114,7 +114,7 @@ export default class SequenceInputForm extends React.Component {
       }
     }
     return [validated, state, query];
-  }
+  };
 
   handleUpload = (filelist) => {
     const file = filelist[0];
@@ -126,7 +126,7 @@ export default class SequenceInputForm extends React.Component {
     this.setState({fileName, fileSize});*/
     readFile(file)
       .then(sequence => this.setState({sequence}));
-  }
+  };
 
   get outputOptions() {
     const {outputOptions} = this.props;
@@ -143,7 +143,7 @@ export default class SequenceInputForm extends React.Component {
     const outputSubOptions =
       target.subOptions ? new Set(target.defaultSubOptions) : null;
     this.setState({outputOption, outputSubOptions});
-  }
+  };
 
   handleOOChildChange = (e) => {
     let {outputSubOptions} = this.state;
@@ -156,7 +156,7 @@ export default class SequenceInputForm extends React.Component {
     }
     outputSubOptions = new Set(outputSubOptions);
     this.setState({outputSubOptions});
-  }
+  };
 
   async loadExample(url) {
     const resp = await fetch(url);
@@ -174,13 +174,13 @@ export default class SequenceInputForm extends React.Component {
     else {
       this.setState({showExamples: true});
     }
-  }
+  };
 
   handleLoadExample = async (e) => {
     e && e.preventDefault();
     const url = e.currentTarget.dataset.href;
     await this.loadExample(url);
-  }
+  };
 
   render() {
     const {outputOptions} = this;

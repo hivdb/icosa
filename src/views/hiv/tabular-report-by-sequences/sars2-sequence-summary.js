@@ -76,18 +76,10 @@ function sequenceSummary({
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations(
-        geneSeqs, gene => gene === 'S', geneDisplay
-      ),
-      'Other Mutations': getMutations(
-        geneSeqs, gene => gene !== 'S', geneDisplay
-      ),
-      'Permanent Link (Spike Only)': getPermanentLink(
-        seqName, geneSeqs, patternsTo, gene => gene === 'S'
-      ),
-      'Permanent Link': getPermanentLink(
-        seqName, geneSeqs, patternsTo, () => true
-      )
+      'Spike Mutations': getMutations(geneSeqs, gene => gene === 'S', geneDisplay),
+      'Other Mutations': getMutations(geneSeqs, gene => gene !== 'S', geneDisplay),
+      'Permanent Link (Spike Only)': getPermanentLink(seqName, geneSeqs, patternsTo, gene => gene === 'S'),
+      'Permanent Link': getPermanentLink(seqName, geneSeqs, patternsTo, () => true)
     };
     joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);
     rows.push(row);

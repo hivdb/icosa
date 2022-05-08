@@ -5,11 +5,11 @@ $total: var(--total);
 $scroll-offset: var(--scroll-offset);
 $hover-offset: var(--hover-offset);
 
-$item-outer-size: #{$item-size} * 2;
+$item-outer-size: #{$item-size} #{'*'} 2;
 $hover-opacity: .9;
-$client-width: var(--display-nums) * #{$item-outer-size};
-$scrollbar-step-width: #{$client-width} / #{$total};
-$scrollbar-offset: #{$scrollbar-step-width} * #{$scroll-offset};
+$client-width: var(--display-nums) #{'*'} #{$item-outer-size};
+$scrollbar-step-width: #{$client-width} #{'/'} #{$total};
+$scrollbar-offset: #{$scrollbar-step-width} #{'*'} #{$scroll-offset};
 $scrollbar-width: css-max(
   3em,
   calc(
@@ -17,19 +17,19 @@ $scrollbar-width: css-max(
     #{$display-nums}
   )
 );
-$desc-width: #{$item-size} * 9;
+$desc-width: #{$item-size} #{'*'} 9;
 $desc-margin-left-main: css-min(
-  css-calc(
+  calc(
     #{$item-size} - #{$desc-width} / 2 +
     #{$item-outer-size} *
     #{$offset}
   ),
-  css-calc(
+  calc(
     100% -
     #{$desc-width}
   )
 );
-$desc-margin-left: css-calc(
+$desc-margin-left: calc(
   #{$item-size} *
   #{$hover-offset} #{"+"}
   css-max(
