@@ -1,18 +1,5 @@
-@import "../../styles";
+@import "extension";
 
 a.link {
-  color: color(link-text);
-  &:hover {
-    color: color(link-hover-text);
-    text-decoration: underline;
-  }
-  &.help-link {
-    text-decoration-line: underline;
-    text-decoration-style: dotted;
-    cursor: help;
-  }
-  @media print {
-    color: black;
-    text-decoration: underline;
-  }
+  @extend %link;
 }
