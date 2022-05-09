@@ -23,13 +23,14 @@ import style from '../style.module.scss';
 
 import useOutputOptions from './use-output-options';
 
-const SUPPORT_FORMATS =
-  "application/x-gzip, " +
-  "text/csv, " +
-  "text/tab-separated-values, " +
-  "text/plain, " +
-  ".csv, .tsv, .txt, .codfreq, .codfish, .aavf" +
-  ".csv.gz, .tsv.gz, .txt.gz, .codfreq.gz, .codfish.gz, .aavf.gz";
+const SUPPORT_FORMATS = {
+  "application/gzip": [".codfreq.gz"],
+  "text/csv": [".csv"],
+  "text/tab-separated-values": [".tsv", ".txt"],
+  "text/plain": [
+    ".codfreq", ".codfish", ".aavf"
+  ]
+};
 
 const SUFFIX_PATTERN = (
   /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
@@ -213,6 +214,7 @@ function SequenceReadsInputForm(props) {
         </span>
       </div>
       <Dropzone
+       useFsAccessApi={false}
        accept={SUPPORT_FORMATS}
        onDrop={(acceptedFiles) => handleUpload(acceptedFiles)}>
         {({getRootProps, getInputProps, isDragActive}) => (

@@ -1,5 +1,10 @@
+@import "../../../components/link/extension";
 @import "~flexbox-grid-mixins";
 @import "../../../styles";
+
+.analyze-form-desc a {
+  @extend %link;
+}
 
 .algorithm-options {
   @extend %fieldset-highlight;
@@ -47,7 +52,7 @@ fieldset p.first-para {
     @include grid($flex-wrap: wrap, $gutter: 14px);
 
     > div {
-      @include grid-col($col: 1, $grid-columns: 2, $gutter: 14px, $condensed: true);
+      @include grid-col($col: 1, $grid-columns: 2, $gutter: 14px, $condense: true);
       display: flex;
       // smallCellWidth="1" mediumCellWidth="1" cellWidth="1/2"
     }

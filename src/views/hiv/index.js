@@ -75,6 +75,11 @@ export default function HIV1Routes({
     <Redirect to={({location: {pathname}}) => (
       `${pathname}${pathname.endsWith('/') ? '' : '/'}by-patterns/`
     )} />
+    <Redirect
+     from="by-mutations/"
+     to={({location: {pathname}}) => (
+       pathname.replace(/by-mutations\/?$/, 'by-patterns/')
+     )} />
   </Route>;
 
   function wrapper({children}) {

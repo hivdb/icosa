@@ -12,8 +12,10 @@ import {identifyPairs} from './fastq-pairs';
 import PreviewFiles from './preview-files';
 import style from './style.module.scss';
 
-const SUPPORT_FORMATS = ".fastq, .gz";
-
+const SUPPORT_FORMATS = {
+  'chemical/seq-na-fastq': ['.fastq'],
+  'application/gzip': ['.fastq.gz']
+};
 
 NGSForm.propTypes = {
   className: PropTypes.string,
@@ -97,6 +99,7 @@ export default function NGSForm({className, onSubmit}) {
      onSubmit={handleSubmit}
      onReset={handleReset}>
       <Dropzone
+       useFsAccessApi={false}
        accept={SUPPORT_FORMATS}
        onDrop={(acceptedFiles) => handleUpload(acceptedFiles)}>
         {({getRootProps, getInputProps, isDragActive}) => <>

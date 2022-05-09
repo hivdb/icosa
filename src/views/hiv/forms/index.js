@@ -16,6 +16,8 @@ import ReadsTabularReports, {
   subOptions as readsSubOptions
 } from '../tabular-report-by-reads';
 
+import style from './style.module.scss';
+
 
 function loadExampleCodonReads(examples, config) {
   return examples.map(url => getFullLink(url, config));
@@ -28,15 +30,31 @@ function loadExampleFasta(examples, config) {
   }));
 }
 
+SierraForms.propTypes = {
+  config: PropTypes.shape({
+    messages: PropTypes.objectOf(
+      PropTypes.string.isRequired
+    ).isRequired,
+    sequenceExamples: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired
+      }).isRequired
+    ).isRequired,
+    seqReadsExamples: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired,
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  curAnalysis: PropTypes.string.isRequired
+};
+
 function SierraForms({
   config,
   curAnalysis,
   match,
-  match: {
-    location: {query = {}}
-  },
-  router,
-  pathPrefix
+  router
 }) {
 
   const basePath = getBasePath(match.location);
@@ -56,10 +74,13 @@ function SierraForms({
         <h1>{title}</h1>
       </IntroHeader>
     </Intro>
-    <Markdown escapeHtml={false}>
-      {config.messages[`${curAnalysis}-form-desc`] ||
-        `&lt;${curAnalysis}-form-desc&gt;`}
-    </Markdown>
+    <div className={style['analyze-form-desc']}>
+      <Markdown
+       escapeHtml={false}>
+        {config.messages[`${curAnalysis}-form-desc`] ||
+          `&lt;${curAnalysis}-form-desc&gt;`}
+      </Markdown>
+    </div>
     <AnalyzeForms
      basePath={basePath}
      match={match}
@@ -113,13 +134,6 @@ function SierraForms({
     />
   </>;
 }
-
-SierraForms.propTypes = {
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  curAnalysis: PropTypes.string.isRequired,
-  pathPrefix: PropTypes.string.isRequired
-};
 
 export default function SierraFormsWithConfig(props) {
   return <ConfigContext.Consumer>
