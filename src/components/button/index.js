@@ -3,6 +3,7 @@ import React from 'react';
 import makeClassNames from 'classnames';
 
 import Link from '../link';
+import ExtLink from '../link/external';
 
 import style from './style.module.scss';
 
@@ -59,7 +60,12 @@ export default class Button extends React.Component {
     props.className = makeClassNames(...classNames);
     let btnComponent = 'button';
     if (href || to) {
-      btnComponent = Link;
+      if (to) {
+        btnComponent = Link;
+      }
+      else {
+        btnComponent = ExtLink;
+      }
       props.noDefaultStyle = true;
       delete props.type;
     }

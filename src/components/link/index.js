@@ -11,19 +11,30 @@ Link.propTypes = {
     PropTypes.string.isRequired,
     PropTypes.object.isRequired
   ]),
+  noDefaultStyle: PropTypes.bool.isRequired,
   children: PropTypes.node,
   className: PropTypes.string,
   linkStyle: PropTypes.oneOf(['help'])
 };
 
-export default function Link({children, linkStyle, className, ...props}) {
+Link.defaultProps = {
+  noDefaultStyle: false
+};
+
+export default function Link({
+  children,
+  linkStyle,
+  className,
+  noDefaultStyle,
+  ...props
+}) {
 
   const openInNewWindow = React.useCallback(
     e => {
       e && e.preventDefault();
       window.open(
         props.to,
-        '_hivdb-help-window',
+        '_sierra-help-window',
         'width=960,height=700,resizable,scrollbars=yes,' +
         'menubar=no,toolbar=no,personalbar=no,status=no'
       );
@@ -32,9 +43,12 @@ export default function Link({children, linkStyle, className, ...props}) {
   );
 
   if (linkStyle) {
-    className = classNames(style[`${linkStyle}-link`], className);
+    className = classNames(
+      noDefaultStyle ? null : style[`${linkStyle}-link`],
+      className
+    );
   }
-  className = classNames(style.link, className);
+  className = classNames(noDefaultStyle ? null : style.link, className);
   return (
     <FoundLink
      {...props}
