@@ -1,6 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import style from './style.module.scss';
+
+
+const ClassNameContext = React.createContext(null);
 
 
 IntroHeader.propTypes = {
@@ -17,15 +22,22 @@ IntroHeaderSupplement.propTypes = {
 };
 
 export function IntroHeaderSupplement({children}) {
-  return <div className={style.supplement}>{children}</div>;
+  const parentClassName = React.useContext(ClassNameContext);
+  const className = classNames(
+    style.supplement,
+    parentClassName ? `${parentClassName}-supplement` : null
+  );
+
+  return <div className={className}>{children}</div>;
 }
 
 
 Intro.propTypes = {
+  className: PropTypes.string,
   children: PropTypes.node.isRequired
 };
 
-export default function Intro({children}) {
+export default function Intro({className, children}) {
   let header = null;
   let body = [];
   if (!(children instanceof Array)) {
@@ -40,8 +52,8 @@ export default function Intro({children}) {
     }
   }
 
-  return (
-    <div className={style.intro}>
+  return <ClassNameContext.Provider value={className}>
+    <div className={classNames(className, style.intro)}>
       {header}
       {body.length > 0 ?
         <section>
@@ -49,5 +61,5 @@ export default function Intro({children}) {
         </section> :
         null}
     </div>
-  );
+  </ClassNameContext.Provider>;
 }
