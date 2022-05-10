@@ -1,6 +1,8 @@
 @import "../../styles";
 
 .intro {
+  font-size: 1rem;
+  line-height: 1.5;
   header {
     position: relative;
     border-bottom: 3px solid color(dividing-line-light);
@@ -9,8 +11,9 @@
     &> h1 {
       color: color(intro-title);
       font-weight: 700;
+      margin-top: .6rem;
       margin-bottom: .1rem;
-      font-size: 2rem;
+      font-size: 2.2rem;
     }
 
     &> p {
@@ -22,7 +25,7 @@
   }
 
   .supplement {
-    font-size: .8rem;
+    font-size: 1rem;
     line-height: 1.5rem;
     position: absolute;
     right: 0;
@@ -31,10 +34,6 @@
     & > div {
       text-align: right;
     }
-  }
-
-  p {
-    line-height: 1.5;
   }
 }
 
