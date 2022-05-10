@@ -11,6 +11,7 @@ Link.propTypes = {
     PropTypes.string.isRequired,
     PropTypes.object.isRequired
   ]),
+  href: PropTypes.string,
   noDefaultStyle: PropTypes.bool.isRequired,
   children: PropTypes.node,
   className: PropTypes.string,
@@ -22,6 +23,7 @@ Link.defaultProps = {
 };
 
 export default function Link({
+  to,
   children,
   linkStyle,
   className,
@@ -49,12 +51,14 @@ export default function Link({
     );
   }
   className = classNames(noDefaultStyle ? null : style.link, className);
-  return (
-    <FoundLink
-     {...props}
-     className={className}
-     onClick={linkStyle === 'help' ? openInNewWindow : undefined}>
-      {children}
-    </FoundLink>
+  const component = to ? FoundLink : 'a';
+  return React.createElement(
+    component,
+    {
+      ...props,
+      className,
+      onClick: linkStyle === 'help' ? openInNewWindow : undefined
+    },
+    children
   );
 }
