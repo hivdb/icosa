@@ -56,6 +56,7 @@ export default function Link({
     component,
     {
       ...props,
+      to,
       className,
       onClick: linkStyle === 'help' ? openInNewWindow : undefined
     },
