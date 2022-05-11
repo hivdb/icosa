@@ -19,76 +19,26 @@
   $min-sidebar-width: 5rem;
   $sidebar-dividing-line-gutter: 0.5rem;
   $gutter: 1rem;
-
-  $cutoff0: rem2px(2 * $sidebar-width + $full-container-width);
-  $cutoff0minus1px: $cutoff0 - 1px;
-  $cutoff1: rem2px(2 * $min-sidebar-width + 2 * $gutter + $full-container-width);
-  $cutoff1minus1px: $cutoff1 - 1px;
-  $cutoff2: rem2px($full-container-width);
-  $cutoff2minus1px: $cutoff2 - 1px;
+  $margin-left:  - $sidebar-width - $gutter;
 
   position: absolute;
   z-index: 500;
 
-  @include responsive($min-width: $cutoff1) {
-    width: $sidebar-width;
-    margin-left: - $sidebar-width - $gutter;
-    transition: width .2s;
+  width: $sidebar-width;
+  margin-left: $margin-left;
+  transition: margin-left 250ms ease-in-out;
 
-    nav.sidebar-general {
-      .sidebar-title {
-        width: $sidebar-width - $sidebar-dividing-line-gutter * 2;
-      }
-      ul {
-        width: $sidebar-width;
-      }
-    }
+  &:hover {
+    margin-left: max(calc((var(--sidebar-container-width) - 100vw) / 2), $margin-left);
   }
 
-  @include responsive($min-width: $cutoff1, $max-width: $cutoff0minus1px) {
-    margin-left: calc((#{$full-container-width - $gutter * 2} - 100vw) / 2);
-    &:not(:hover) {
-      width: calc((100vw - #{$full-container-width}) / 2);
-      nav.sidebar-general {
-        .sidebar-title {
-          width: calc((100vw - #{$full-container-width + $sidebar-dividing-line-gutter * 4}) / 2);
-        }
-        ul {
-          width: calc((100vw - #{$full-container-width}) / 2);
-        }
-      }
+  nav.sidebar-general {
+    .sidebar-title {
+      width: $sidebar-width - $sidebar-dividing-line-gutter * 2;
     }
-  }
-
-  @include responsive($max-width: $cutoff1minus1px) {
-    &:not(:hover) {
-      margin-left: - $full-container-gutter - $sidebar-width + $sidebar-dividing-line-gutter;
-
-      // reverse colors
-      nav.sidebar-general {
-        background-color: color(tiny-sidebar-bg);
-      }
+    ul {
+      width: $sidebar-width;
     }
-
-    nav.sidebar-general {
-      transition: background-color .4s;
-      .sidebar-title {
-        width: $sidebar-width - $sidebar-dividing-line-gutter * 2;
-      }
-      ul {
-        width: $sidebar-width;
-      }
-    }
-
-    transition: margin-left .4s;
-  }
-
-  @include responsive($min-width: $cutoff2, $max-width: $cutoff1minus1px) {
-    margin-left: calc((#{$full-container-width - 2 * $full-container-gutter} - 100vw) / 2);
-  }
-
-  @include responsive($max-width: $cutoff2minus1px) {
-    margin-left: - $full-container-gutter;
   }
 
   nav.sidebar-general {
