@@ -30,6 +30,7 @@ function SimpleTableCellTd({
       );
       const isEmpty = typeof jsx === 'string' && jsx.length === 0;
       return <td
+       data-colname={name}
        className={classNames(
          enableRowSpan && rowSpan === 0 ?
            style.hide : null,

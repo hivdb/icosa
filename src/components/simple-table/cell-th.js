@@ -97,6 +97,7 @@ function SimpleTableCellTh({
          ),
          onClick: handleSort
        } : {})}
+       data-colname={name}
        data-column
        data-sortable={sortable}
        style={headCellStyle}>
