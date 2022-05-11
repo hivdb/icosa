@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from '../link';
 
 import style from './style.module.scss';
 
@@ -27,100 +28,82 @@ function isPositionStickySupported() {
 }
 
 
-class ItemLink extends React.Component {
+ItemLink.propTypes = {
+  href: PropTypes.string,
+  to: PropTypes.string,
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  children: PropTypes.node.isRequired
+};
 
-  static propTypes = {
-    children: PropTypes.node.isRequired
-  };
+function ItemLink({
+  href,
+  to,
+  className,
+  onClick,
+  children
+}) {
+  let title = children;
 
-  constructor() {
-    super(...arguments);
-    this.state = {
-      addStyle: {}/*,
-      keyframe: null,
-      animeSec: 2*/
-    };
-    this._transitions = [];
-  }
-
-  render() {
-    const {href, children, className, onClick} = this.props;
-    const {addStyle/*, keyframe, animeSec*/} = this.state;
-    let title = children;
-
-    return (
-      <a
-       className={className}
-       href={href}
-       onClick={onClick}
-       style={addStyle}>
-        <span title={title}>
-          {children}
-        </span>
-      </a>
-    );
-  }
+  return (
+    <Link
+     noDefaultStyle
+     className={className}
+     to={to}
+     href={href}
+     onClick={onClick}>
+      <span title={title}>
+        {children}
+      </span>
+    </Link>
+  );
 }
 
-export class SidebarItem extends React.Component {
+export function SidebarItem() { return null; }
 
-  static propTypes = {
-    name: PropTypes.string.isRequired,
-    onClick: PropTypes.func,
-    href: PropTypes.string,
-    children: PropTypes.node.isRequired
-  };
+Sidebar.propTypes = {
+  title: PropTypes.node.isRequired,
+  currentSelected: PropTypes.string,
+  children: PropTypes.node.isRequired
+};
 
-  render() {
-    return null;
+export default function Sidebar({
+  title,
+  currentSelected,
+  children
+}) {
+
+  if (!(children instanceof Array)) {
+    children = [children];
   }
 
-}
-
-
-export default class Sidebar extends React.Component {
-
-  static propTypes = {
-    title: PropTypes.node.isRequired,
-    currentSelected: PropTypes.string,
-    children: PropTypes.node.isRequired
-  };
-
-  render() {
-    let {currentSelected, title, children} = this.props;
-    if (!(children instanceof Array)) {
-      children = [children];
-    }
-
-    return <div className={
-      isPositionStickySupported() ?
-        style['sidebar-sticky-container'] :
-        style['sidebar-fixed-container']
-    }>
-      <div className={style['sidebar-container']}>
-        <nav className={style['sidebar-general']}>
-          <div className={style['sidebar-title']}>{title}</div>
-          <ul>
-            {children
-              .map((item, idx) => (
-                <li key={idx}>
-                  <ItemLink
-                   key={idx}
-                   className={
-                      item.props.name === currentSelected ?
-                        style.current : null
-                    }
-                   to={item.props.to}
-                   href={item.props.href}
-                   onClick={item.props.onClick}>
-                    {item.props.children}
-                  </ItemLink>
-                </li>
-              ))}
-          </ul>
-        </nav>
-      </div>
-    </div>;
-  }
-
+  return <div className={
+    isPositionStickySupported() ?
+      style['sidebar-sticky-container'] :
+      style['sidebar-fixed-container']
+  }>
+    <div className={style['sidebar-container']}>
+      <nav className={style['sidebar-general']}>
+        <div className={style['sidebar-title']}>{title}</div>
+        <ul>
+          {children
+            .map((item, idx) => (
+              <li key={idx}>
+                <ItemLink
+                 key={idx}
+                 className={
+                    item.props.name === currentSelected ?
+                      style.current : null
+                  }
+                 to={item.props.to}
+                 href={item.props.href}
+                 onClick={item.props.onClick}>
+                  {item.props.children}
+                </ItemLink>
+              </li>
+            ))}
+        </ul>
+      </nav>
+    </div>
+  </div>;
 }
