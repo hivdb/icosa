@@ -13,13 +13,13 @@ SequenceAnalysisContainer.propTypes = {
   currentSelected: PropTypes.shape({
     index: PropTypes.number,
     name: PropTypes.string
-  }),
+  }).isRequired,
   client: PropTypes.any.isRequired,
-  progressText: PropTypes.func.isRequired,
-  onExtendVariables: PropTypes.func.isRequired,
+  progressText: PropTypes.func,
+  onExtendVariables: PropTypes.func,
   lazyLoad: PropTypes.bool.isRequired,
-  renderPartialResults: PropTypes.bool.isRequired,
-  quickLoadLimit: PropTypes.number.isRequired,
+  renderPartialResults: PropTypes.bool,
+  quickLoadLimit: PropTypes.number,
   children: PropTypes.func.isRequired
 };
 

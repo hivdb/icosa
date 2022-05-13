@@ -12,6 +12,7 @@ Link.propTypes = {
     PropTypes.object.isRequired
   ]),
   href: PropTypes.string,
+  onClick: PropTypes.func,
   noDefaultStyle: PropTypes.bool.isRequired,
   children: PropTypes.node,
   className: PropTypes.string,
@@ -28,6 +29,7 @@ export default function Link({
   linkStyle,
   className,
   noDefaultStyle,
+  onClick,
   ...props
 }) {
 
@@ -35,13 +37,14 @@ export default function Link({
     e => {
       e && e.preventDefault();
       window.open(
-        props.to,
+        to,
         '_sierra-help-window',
         'width=960,height=700,resizable,scrollbars=yes,' +
         'menubar=no,toolbar=no,personalbar=no,status=no'
       );
+      onClick && onClick(e);
     },
-    [props.to]
+    [to, onClick]
   );
 
   if (linkStyle) {
@@ -58,7 +61,7 @@ export default function Link({
       ...props,
       to,
       className,
-      onClick: linkStyle === 'help' ? openInNewWindow : undefined
+      onClick: linkStyle === 'help' ? openInNewWindow : onClick
     },
     children
   );
