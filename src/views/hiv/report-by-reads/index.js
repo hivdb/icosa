@@ -54,6 +54,7 @@ function ReportByReadsContainer({
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReadsReports
+       config={config}
        output={output}
        match={match}
        router={router}

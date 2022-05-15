@@ -32,6 +32,10 @@ const SUPPORT_FORMATS = {
   ]
 };
 
+const SUPPORT_FORMATS_TEXT = Object.entries(SUPPORT_FORMATS)
+  .reduce((acc, [key, val]) => [...acc, key, ...val], [])
+  .join(',');
+
 const SUFFIX_PATTERN = (
   /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
 );
@@ -203,7 +207,7 @@ function SequenceReadsInputForm(props) {
          onChange={handleUpload}
          name="reads-file"
          multiple
-         accept={SUPPORT_FORMATS} />
+         accept={SUPPORT_FORMATS_TEXT} />
         <span className={style['file-options']}>
           {exampleCodonReads && exampleCodonReads.length ?
             <Link

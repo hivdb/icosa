@@ -60,6 +60,7 @@ function ReportByPatternsContainer({
    onExtendVariables={onExtendVariables}>
     {props => (
       <PatternReports
+       config={config}
        output={output}
        match={match}
        router={router}

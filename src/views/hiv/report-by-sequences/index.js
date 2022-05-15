@@ -61,6 +61,7 @@ function ReportBySequencesContainer({
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReports
+       config={config}
        output={output}
        match={match}
        {...props} />

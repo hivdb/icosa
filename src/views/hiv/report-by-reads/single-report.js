@@ -11,6 +11,7 @@ import {
   DRMutationScores
 } from '../../../components/report';
 
+import useDisabledDrugs from '../use-disabled-drugs';
 import style from '../style.module.scss';
 
 
@@ -35,6 +36,11 @@ SingleSeqReadsReport.propTypes = {
   output: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
+  config: PropTypes.shape({
+    displayMutationScores: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired,
   onObserve: PropTypes.func.isRequired,
   onDisconnect: PropTypes.func.isRequired
 };
@@ -43,6 +49,7 @@ function SingleSeqReadsReport({
   includeGenes,
   inputSequenceReads,
   sequenceReadsResult,
+  config: {displayMutationScores},
   output,
   name,
   index,
@@ -63,7 +70,7 @@ function SingleSeqReadsReport({
     ({level}) => level === 'CRITICAL'
   );
 
-  const disabledDrugs = ['NFV'];
+  const disabledDrugs = useDisabledDrugs();
 
   return (
     <article
@@ -102,8 +109,9 @@ function SingleSeqReadsReport({
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
              {...{geneDR, output, disabledDrugs, strain}} />
-            <DRMutationScores
-             {...{geneDR, output, disabledDrugs, strain}} />
+            {displayMutationScores.includes(geneDR.gene.name) ?
+              <DRMutationScores
+               {...{geneDR, output, disabledDrugs, strain}} /> : null}
           </React.Fragment>)}
       </> : null}
     </article>

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import {makeZip, makeDownload} from '../../../utils/download';
 import {csvStringify} from '../../../utils/csv';
 
@@ -70,29 +69,5 @@ function useTabularReports({
   return null;
 }
 
-
-useTabularReports.propTypes = {
-  allGenes: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      refSequence: PropTypes.string.isRequired,
-      length: PropTypes.number.isRequired
-    })
-  ),
-  loaded: PropTypes.bool.isRequired,
-  subOptionIndices: PropTypes.arrayOf( // old interface used by seq-report
-    PropTypes.number.isRequired
-  ),
-  children: PropTypes.object, // new interface used by seqreads-report
-  currentVersion: PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    publishDate: PropTypes.string.isRequired
-  }),
-  currentProgramVersion: PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    publishDate: PropTypes.string.isRequired
-  }),
-  onFinish: PropTypes.func.isRequired
-};
 
 export default useTabularReports;

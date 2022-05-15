@@ -32,6 +32,7 @@ function getPageTitle(sequenceAnalysis, output) {
 }
 
 SequenceReports.propTypes = {
+  config: PropTypes.object.isRequired,
   output: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   loaded: PropTypes.bool.isRequired,
@@ -47,6 +48,7 @@ SequenceReports.propTypes = {
 };
 
 function SequenceReports({
+  config,
   output,
   match,
   loaded,
@@ -95,6 +97,7 @@ function SequenceReports({
            sequenceResult={seqResultLookup[header]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
+           config={config}
            output={output}
            header={header}
            index={idx}

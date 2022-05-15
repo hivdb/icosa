@@ -16,12 +16,21 @@ export default function Home() {
         </ul>
       </li>
       <li>
-        HIV-1 Analysis Program
+        HIV-1 Pol Analysis Program
         <ul>
           <li><Link to="/hiv/by-patterns/">By mutations</Link></li>
           <li><Link to="/hiv/by-sequences/">By sequence</Link></li>
           <li><Link to="/hiv/by-reads/">By NGS reads</Link></li>
           <li><Link to="/hiv/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
+        HIV-1 CA Analysis Program
+        <ul>
+          <li><Link to="/hivca/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hivca/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hivca/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/hivca/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
         </ul>
       </li>
       <li>

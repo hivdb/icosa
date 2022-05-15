@@ -17,7 +17,7 @@ MinCodonReads.propTypes = {
       }).isRequired
     ).isRequired
   }).isRequired,
-  minCodonReads: PropTypes.number.isRequired
+  minCodonReads: PropTypes.number
 };
 
 function MinCodonReads({
@@ -30,7 +30,7 @@ function MinCodonReads({
   minCodonReads: curValue
 }) {
   const {match, router} = useRouter();
-  if (curValue === undefined) {
+  if (isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.cdreads);
     if (isNaN(curValue)) {
       curValue = defaultValue;

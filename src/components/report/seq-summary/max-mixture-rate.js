@@ -13,8 +13,8 @@ MaxMixtureRate.propTypes = {
     }).isRequired,
     seqReadsMaxMixtureRate: PropTypes.array.isRequired
   }),
-  maxMixtureRate: PropTypes.number.isRequired,
-  mixtureRate: PropTypes.number.isRequired
+  maxMixtureRate: PropTypes.number,
+  mixtureRate: PropTypes.number
 };
 
 
@@ -29,7 +29,7 @@ function MaxMixtureRate({
   mixtureRate: actualValue
 }) {
   const {match, router} = useRouter();
-  if (curValue === undefined) {
+  if (isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.mixrate);
     if (isNaN(curValue)) {
       curValue = defaultValue;

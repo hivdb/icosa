@@ -1,7 +1,7 @@
 const config = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
-    'pages/sierra-hiv.json'
+    'pages/sierra-hivpol.json'
   ),
   graphqlURI: (
     window.__NODE_ENV === 'production' ?

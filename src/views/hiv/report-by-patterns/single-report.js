@@ -9,6 +9,7 @@ import {
   DRMutationScores
 } from '../../../components/report';
 
+import useDisabledDrugs from '../use-disabled-drugs';
 import style from '../style.module.scss';
 
 
@@ -18,12 +19,18 @@ SinglePatternReport.propTypes = {
   patternResult: PropTypes.object,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
+  config: PropTypes.shape({
+    displayMutationScores: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired
+  }).isRequired,
   onObserve: PropTypes.func.isRequired,
   onDisconnect: PropTypes.func
 };
 
 function SinglePatternReport({
   patternResult,
+  config: {displayMutationScores},
   output,
   name,
   index,
@@ -41,7 +48,7 @@ function SinglePatternReport({
     ({level}) => level === 'CRITICAL'
   );
 
-  const disabledDrugs = ['NFV'];
+  const disabledDrugs = useDisabledDrugs();
 
   return (
     <article
@@ -67,8 +74,9 @@ function SinglePatternReport({
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
              {...{geneDR, output, disabledDrugs, strain}} />
-            <DRMutationScores
-             {...{geneDR, output, disabledDrugs, strain}} />
+            {displayMutationScores.includes(geneDR.gene.name) ?
+              <DRMutationScores
+               {...{geneDR, output, disabledDrugs, strain}} /> : null}
           </React.Fragment>)}
       </> : null}
     </article>

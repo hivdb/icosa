@@ -33,6 +33,7 @@ function getPageTitle(patternAnalysis, output) {
 
 
 PatternReports.propTypes = {
+  config: PropTypes.object.isRequired,
   output: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
@@ -44,6 +45,7 @@ PatternReports.propTypes = {
 };
 
 function PatternReports({
+  config,
   output,
   match,
   router,
@@ -112,6 +114,7 @@ function PatternReports({
         <React.Fragment key={idx}>
           <SinglePatternReport
            key={idx}
+           config={config}
            inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}

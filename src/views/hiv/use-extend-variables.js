@@ -1,8 +1,10 @@
 import React from 'react';
 
 export default function useExtendVariables({
-  match
+  match,
+  config
 }) {
+  const {allGenes} = config;
   return React.useCallback(
     vars => {
       const {
@@ -11,9 +13,9 @@ export default function useExtendVariables({
         }
       } = match;
       vars.algorithm = algorithm;
-      vars.includeGenes = ['CA', 'PR', 'RT', 'IN'];
+      vars.includeGenes = allGenes;
       return vars;
     },
-    [match]
+    [match, allGenes]
   );
 }

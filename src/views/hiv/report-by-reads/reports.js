@@ -35,6 +35,7 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 
 
 SeqReadsReports.propTypes = {
+  config: PropTypes.object.isRequired,
   output: PropTypes.string.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
@@ -51,6 +52,7 @@ SeqReadsReports.propTypes = {
 };
 
 function SeqReadsReports({
+  config,
   output,
   match,
   router,
@@ -115,6 +117,7 @@ function SeqReadsReports({
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
+           config={config}
            output={output}
            name={inputSeqReads.name}
            index={idx}
