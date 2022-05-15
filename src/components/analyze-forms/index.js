@@ -10,28 +10,25 @@ import SequenceReadsInputForm from './sequence-reads-input-form';
 import NGS2CodFreqForm from './ngs2codfreq-form';
 
 
-const tabNames = [
-  'by-patterns',
-  'by-sequences',
-  'by-reads'
-];
-
-const tabIndice = tabNames
-  .reduce((obj, tabName, idx) => {
-    obj[tabName] = idx;
-    return obj;
-  }, {});
-
-
-export function getCurrentTab(location) {
-  const tabName = location.pathname.replace(/\/$/, '').split(/\//);
-  return tabName[tabName.length - 1];
+function useCurrentTab(location) {
+  return React.useMemo(
+    () => {
+      const tabName = location.pathname.replace(/\/$/, '').split(/\//);
+      return tabName[tabName.length - 1];
+    },
+    [location.pathname]
+  );
 }
 
 
-export function getBasePath(location) {
-  const tabName = location.pathname.replace(/\/$/, '').split(/\//);
-  return tabName.slice(0, tabName.length - 1).join('/');
+export function useBasePath(location) {
+  return React.useMemo(
+    () => {
+      const tabName = location.pathname.replace(/\/$/, '').split(/\//);
+      return tabName.slice(0, tabName.length - 1).join('/');
+    },
+    [location.pathname]
+  );
 }
 
 
@@ -39,6 +36,9 @@ AnalyzeForms.propTypes = {
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   onSubmit: PropTypes.func,
+  enableTabs: PropTypes.arrayOf(
+    PropTypes.oneOf(['patterns', 'sequences', 'reads']).isRequired
+  ),
   //onTabSwitch: React.PropTypes.func,
   basePath: PropTypes.string.isRequired,
   patternsTo: PropTypes.string.isRequired,
@@ -48,16 +48,17 @@ AnalyzeForms.propTypes = {
   hideReads: PropTypes.bool.isRequired,
   sequencesOutputOptions: PropTypes.object,
   seqReadsOutputOptions: PropTypes.object,
+  ngsRunners: PropTypes.object,
   ngs2codfreqSide: PropTypes.node,
   children: PropTypes.node
 };
 
 AnalyzeForms.defaultProps = {
-  enableReads: false,
-  hideReads: false
+  enableTabs: ['patterns', 'sequences', 'reads']
 };
 
 export default function AnalyzeForms({
+  router,
   match,
   basePath,
   onSubmit,
@@ -67,20 +68,76 @@ export default function AnalyzeForms({
   readsTo,
   sequencesOutputOptions,
   seqReadsOutputOptions,
-  enableReads,
-  hideReads,
+  enableTabs,
   ngsRunners,
   ngs2codfreqSide,
   ...otherProps
 }) {
+  const tabNames = React.useMemo(
+    () => enableTabs.map(tab => `by-${tab}`),
+    [enableTabs]
+  );
+  const tabTitles = React.useMemo(
+    () => enableTabs.map(tab => ({
+      patterns: 'Input mutations',
+      sequences: 'Input sequences',
+      reads: 'Input sequence reads'
+    }[tab])),
+    [enableTabs]
+  );
 
-  const tabName = getCurrentTab(match.location);
-  const tabIndex = tabIndice[tabName] || 0;
+  const tabName = useCurrentTab(match.location);
+  const tabIndex = tabNames.indexOf(tabName);
 
-  const commonProps = {...otherProps, onSubmit, children};
-  const isCurTabSeqReads = tabIndex === 2;
-  const hideTabOthers = enableReads && hideReads && isCurTabSeqReads;
-  const hideTabReads = !enableReads && !hideReads;
+  const tabForms = React.useMemo(
+    () => enableTabs.map(tab => {
+      const commonProps = {...otherProps, onSubmit, children};
+      switch (tab) {
+        case 'patterns':
+          return (
+            <PatternsInputForm
+             to={patternsTo}
+             {...commonProps} />
+          );
+        case 'sequences':
+          return (
+            <SequenceInputForm
+             to={sequencesTo}
+             outputOptions={sequencesOutputOptions}
+             {...commonProps} />
+          );
+        case 'reads':
+          return (
+            <SequenceReadsInputForm
+             to={readsTo}
+             outputOptions={seqReadsOutputOptions}
+             {...commonProps} />
+          );
+        default:
+          return null;
+      }
+    }),
+    [
+      children,
+      enableTabs,
+      onSubmit,
+      otherProps,
+      patternsTo,
+      readsTo,
+      seqReadsOutputOptions,
+      sequencesOutputOptions,
+      sequencesTo
+    ]
+  );
+
+  React.useEffect(
+    () => {
+      if (tabName !== 'ngs2codfreq' && tabIndex < 0) {
+        router.replace(`${basePath}/`);
+      }
+    },
+    [basePath, router, tabName, tabIndex]
+  );
 
   return <>
     <FormsContainer>
@@ -90,39 +147,17 @@ export default function AnalyzeForms({
          onSelect={() => null}
          selectedIndex={tabIndex}>
           <TabList>
-            <Tab style={hideTabOthers ? {display: 'none'} : null}>
-              <Link to={`${basePath}/by-patterns/`}>
-                Input mutations
-              </Link>
-            </Tab>
-            <Tab style={hideTabOthers ? {display: 'none'} : null}>
-              <Link to={`${basePath}/by-sequences/`}>
-                Input sequences
-              </Link>
-            </Tab>
-            <Tab style={hideTabReads ? {display: 'none'} : null}>
-              <Link to={`${basePath}/by-reads/`}>
-                Input sequence reads
-              </Link>
-            </Tab>
+            {tabNames.map((tabName, idx) => (
+              <Tab key={tabName}>
+                <Link to={`${basePath}/${tabName}/`}>
+                  {tabTitles[idx]}
+                </Link>
+              </Tab>
+            ))}
           </TabList>
-          <TabPanel>
-            <PatternsInputForm
-             to={patternsTo}
-             {...commonProps} />
-          </TabPanel>
-          <TabPanel>
-            <SequenceInputForm
-             to={sequencesTo}
-             outputOptions={sequencesOutputOptions}
-             {...commonProps} />
-          </TabPanel>
-          <TabPanel>
-            <SequenceReadsInputForm
-             to={readsTo}
-             outputOptions={seqReadsOutputOptions}
-             {...commonProps} />
-          </TabPanel>
+          {tabForms.map((tabForm, idx) => (
+            <TabPanel key={idx}>{tabForm}</TabPanel>
+          ))}
         </Tabs>}
       {tabName === 'by-reads' || tabName === 'ngs2codfreq' ?
         <NGS2CodFreqForm

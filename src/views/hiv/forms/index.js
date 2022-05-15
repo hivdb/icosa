@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
-import AnalyzeForms, {getBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
@@ -40,6 +40,9 @@ function loadExampleFasta(examples, config) {
 SierraForms.propTypes = {
   config: PropTypes.shape({
     // species: PropTypes.string.isRequired,
+    formEnableTabs: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
     drugDisplayNames: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -78,7 +81,7 @@ function SierraForms({
   match,
   router
 }) {
-  const basePath = getBasePath(match.location);
+  const basePath = useBasePath(match.location);
   const title = (
     config.messages[`${curAnalysis}-form-title`] ||
     `<${curAnalysis}-form-title>`
@@ -89,6 +92,7 @@ function SierraForms({
 
   const {
     // species,
+    formEnableTabs,
     drugDisplayOptions,
     drugDisplayNames
   } = config;
@@ -185,6 +189,7 @@ function SierraForms({
       </fieldset> : null*/}
     <AnalyzeForms
      basePath={basePath}
+     enableTabs={formEnableTabs}
      onSubmit={handleSubmit}
      match={match}
      router={router}

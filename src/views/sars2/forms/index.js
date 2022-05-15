@@ -6,7 +6,7 @@ import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
 
-import AnalyzeForms, {getBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
@@ -44,7 +44,7 @@ function SierraForms({
   router
 }) {
 
-  const basePath = getBasePath(match.location);
+  const basePath = useBasePath(match.location);
   const title = (
     config.messages[`${curAnalysis}-form-title`] ||
     `<${curAnalysis}-form-title>`

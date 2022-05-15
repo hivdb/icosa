@@ -32,6 +32,7 @@ const routes = (
         config: {refDataLoader: DebugRefDataLoader}
       })}
       {HIV1Routes({
+        defaultForm: 'by-sequences/',
         pathPrefix: 'hivca/',
         config: {
           configFromURL: (

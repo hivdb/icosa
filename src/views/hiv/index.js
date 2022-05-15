@@ -20,6 +20,7 @@ const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
 HIV1Routes.propTypes = {
   pathPrefix: PropTypes.string,
+  defaultForm: PropTypes.string,
   config: PropTypes.object,
   formProps: PropTypes.object,
   colors: PropTypes.object,
@@ -28,6 +29,7 @@ HIV1Routes.propTypes = {
 
 export default function HIV1Routes({
   pathPrefix = "hiv/",
+  defaultForm = "by-patterns/",
   config = {},
   formProps,
   colors,
@@ -73,7 +75,7 @@ export default function HIV1Routes({
         curAnalysis="ngs2codfreq" />
      )} />
     <Redirect to={({location: {pathname}}) => (
-      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-patterns/`
+      `${pathname}${pathname.endsWith('/') ? '' : '/'}${defaultForm}`
     )} />
     <Redirect
      from="by-mutations/"
