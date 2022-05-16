@@ -39,6 +39,7 @@ PatternReports.propTypes = {
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,
   patterns: PropTypes.array.isRequired,
+  mutationPrevalenceSubtypes: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   patternAnalysis: PropTypes.array.isRequired,
   fetchAnother: PropTypes.func.isRequired
@@ -51,6 +52,7 @@ function PatternReports({
   router,
   loaded,
   patterns,
+  mutationPrevalenceSubtypes,
   currentSelected,
   patternAnalysis,
   fetchAnother
@@ -118,6 +120,7 @@ function PatternReports({
            inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
+           subtypeStats={mutationPrevalenceSubtypes}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}

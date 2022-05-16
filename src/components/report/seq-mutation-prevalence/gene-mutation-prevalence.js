@@ -1,85 +1,161 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Griddle from 'griddle-react';
+import SimpleTable, {ColumnDef} from '../../simple-table';
 import '../../../styles/griddle-table.scss';
 
+import ReportSection from '../report-section';
 import DRCommentByTypes from '../dr-comment-by-types';
 
-import style from '../style.module.scss';
+import {subtypeDisplayNames, geneToDrugClass} from './common';
+import PrevalenceData from './prevalence-data';
+import PrevalenceMutCol from './prevalence-mut-col';
+import style from './style.module.scss';
 
-import {geneToDrugClass} from './common';
 
+function useColumnDefs(subtypeStats, gene) {
+  return React.useMemo(
+    () => {
 
-export default class GeneMutationPrevalence extends React.Component {
+      let colDefs = [
+        new ColumnDef({
+          name: 'mutation',
+          render: (mut, row) => <PrevalenceMutCol mutation={mut} row={row} />,
+          sortable: false
+        }),
+        new ColumnDef({
+          name: 'triplet',
+          label: 'Codon',
+          sortable: false,
+          none: ''
+        })
+      ];
 
-  static propTypes = {
-    gene: PropTypes.string.isRequired,
-    rows: PropTypes.array.isRequired,
-    columns: PropTypes.array.isRequired,
-    mutationComments: PropTypes.object.isRequired,
-    columnMetadata: PropTypes.array.isRequired
-  };
-
-  static childContextTypes = {
-    expandedRows: PropTypes.object,
-    gene: PropTypes.string
-  };
-
-  constructor() {
-    super(...arguments);
-    this.expandedRows = new Set();
-  }
-
-  getChildContext() {
-    const {expandedRows} = this;
-    const {gene} = this.props;
-    return {expandedRows, gene};
-  }
-
-  handleRowClick = (row) => {
-    // This handler override the default Griddle onRowClick handler
-    // to record the expansion status of each row for further use
-    // (toggle icon)
-    if (row.props.hasChildren) {
-      let {expandedRows} = this;
-      if (row.props.showChildren === false) {
-        // the next value will be true
-        expandedRows.add(row.props.data.__index__);
+      for (const type of ['Naive', 'Treated']) {
+        colDefs = colDefs.concat(subtypeStats.map(
+          ({name, stats}) => {
+            let colDef;
+            for (const stat of stats) {
+              if (stat.gene.name !== gene) {
+                continue;
+              }
+              const total = stat[`total${type}`];
+              const display = subtypeDisplayNames[name] || name;
+              colDef = new ColumnDef({
+                name: `${type.toLowerCase()}${name}`,
+                label: (
+                  <span>
+                    {display}<br />
+                    <small>N={total}</small>
+                  </span>
+                ),
+                render: (percents, row) => (
+                  <PrevalenceData
+                   gene={gene}
+                   subtype={name}
+                   rxType={type.toLowerCase()}
+                   percents={percents}
+                   row={row} />
+                ),
+                sortable: false
+              });
+            }
+            return colDef;
+          }
+        ));
       }
-      else {
-        // the next value will be false
-        expandedRows.delete(row.props.data.__index__);
+      return colDefs;
+    },
+    [subtypeStats, gene]
+  );
+}
+
+
+GeneMutationPrevalence.propTypes = {
+  gene: PropTypes.string.isRequired,
+  subtypeStats: PropTypes.array.isRequired,
+  mutationComments: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired
+};
+
+export default function GeneMutationPrevalence({
+  gene,
+  subtypeStats,
+  mutationComments,
+  data
+}) {
+  const [displayData, setDisplayData] = React.useState(data);
+
+  const colDefs = useColumnDefs(subtypeStats, gene);
+
+  // static childContextTypes = {
+  //   expandedRows: PropTypes.object,
+  //   gene: PropTypes.string
+  // };
+
+  // constructor() {
+  //   super(...arguments);
+  //   this.expandedRows = new Set();
+  // }
+
+  // getChildContext() {
+  //   const {expandedRows} = this;
+  //   const {gene} = this.props;
+  //   return {expandedRows, gene};
+  // }
+
+  const handleRowClick = React.useCallback(
+    (curRow) => {
+      const {rowId, children, showChildren} = curRow;
+      if (children) {
+        let newDisplayData;
+        if (showChildren) {
+          // collapse expanded children
+          newDisplayData = displayData.filter(
+            ({parentRowId}) => parentRowId !== rowId
+          );
+        }
+        else {
+          // expand children
+          newDisplayData = displayData.reduce(
+            (acc, row) => {
+              acc.push(row);
+              if (row.rowId === rowId) {
+                for (const childRow of row.children) {
+                  acc.push(childRow);
+                }
+              }
+              return acc;
+            },
+            []
+          );
+        }
+        curRow.showChildren = !showChildren;
+        setDisplayData(newDisplayData);
       }
-      row.props.toggleChildren();
-    }
-  };
+    },
+    [displayData]
+  );
 
-  render() {
-    const {
-      gene, rows, columns,
-      mutationComments, columnMetadata
-    } = this.props;
-    const drugClass = geneToDrugClass[gene];
+  const drugClass = geneToDrugClass[gene];
 
-    return (
-      <section
-       className={style['gene-mutation-prevalence']}
-       data-drug-class={drugClass}>
-        <h2>
-          Mutation percentage according to subtype
-          and {drugClass} treatment
-        </h2>
-        <Griddle
-         columns={columns}
-         onRowClick={this.handleRowClick}
-         columnMetadata={columnMetadata}
-         useGriddleStyles={false}
-         enableSort={false}
-         showPager={false}
-         resultsPerPage={1000}
-         results={rows} />
-        <DRCommentByTypes {...mutationComments} />
-      </section>
-    );
-  }
+  return (
+    <ReportSection
+     title={<>
+       Mutation percentage according to subtype
+       and {drugClass} treatment
+     </>}
+     className={style['gene-mutation-prevalence']}
+     data-drug-class={drugClass}>
+      <h2>
+      </h2>
+      <SimpleTable
+       disableCopy
+       className={style['gene-mutation-prevalence-table']}
+       columnDefs={colDefs}
+       data={displayData}
+       onRowClick={handleRowClick} />
+      <DRCommentByTypes
+       {...mutationComments} />
+    </ReportSection>
+  );
 }

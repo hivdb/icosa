@@ -2,9 +2,47 @@ const rootLevel = `
   currentVersion {
     display
   }
+
+  # TODO: hivseq only
+  mutationPrevalenceSubtypes {
+    name
+    stats(includeGenes: $includeGenes) {
+      gene {name}
+      totalNaive
+      totalTreated
+    }
+  }
 `;
 
 const seqLevel = `
+
+  # TODO: hivseq only
+  mutationPrevalences(includeGenes: $includeGenes) {
+    boundMutation {
+      gene {name}
+      text
+      position
+      reference
+      triplet
+    }
+    matched {
+      AA
+      subtypes {
+        subtype {name}
+        percentageNaive
+        percentageTreated
+      }
+    }
+    others {
+      AA
+      subtypes {
+        subtype {name}
+        percentageNaive
+        percentageTreated
+      }
+    }
+  }
+
   drugResistance(includeGenes: $includeGenes) {
     algorithm {
       text

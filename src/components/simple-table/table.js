@@ -12,8 +12,32 @@ import CellTh from './cell-th';
 import CellTd from './cell-td';
 
 
-function SimpleTableTable({
+SimpleTableTable.propTypes = {
+  color: PropTypes.string,
+  className: PropTypes.string,
+  columnDefs: PropTypes.arrayOf(
+    columnDefShape.isRequired
+  ).isRequired,
+  getRowKey: PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.object.isRequired
+  ).isRequired,
+  tableStyle: PropTypes.object.isRequired,
+  enableRowSpan: PropTypes.bool.isRequired,
+  onBeforeSort: PropTypes.func,
+  onSort: PropTypes.func,
+  onRowClick: PropTypes.func
+};
+
+SimpleTableTable.defaultProps = {
+  tableStyle: {},
+  getRowKey: () => null,
+  enableRowSpan: true
+};
+
+export default function SimpleTableTable({
   data,
+  onRowClick,
   onBeforeSort,
   onSort,
   columnDefs,
@@ -78,6 +102,7 @@ function SimpleTableTable({
             {sortState.sortedData.map((row, idx) => (
               <tr
                key={getRowKey(row) || idx}
+               onClick={onRowClick ? e => onRowClick(row, idx, e) : undefined}
                data-payload={JSON.stringify(row)}>
                 {columnDefs.map((columnDef, jdx) => (
                   <CellTd
@@ -96,6 +121,7 @@ function SimpleTableTable({
     },
     [
       data,
+      onRowClick,
       onBeforeSort,
       handleSort,
       sortState,
@@ -110,27 +136,3 @@ function SimpleTableTable({
   );
 
 }
-
-SimpleTableTable.propTypes = {
-  color: PropTypes.string,
-  className: PropTypes.string,
-  columnDefs: PropTypes.arrayOf(
-    columnDefShape.isRequired
-  ).isRequired,
-  getRowKey: PropTypes.func.isRequired,
-  data: PropTypes.arrayOf(
-    PropTypes.object.isRequired
-  ).isRequired,
-  tableStyle: PropTypes.object.isRequired,
-  enableRowSpan: PropTypes.bool.isRequired,
-  onBeforeSort: PropTypes.func,
-  onSort: PropTypes.func
-};
-
-SimpleTableTable.defaultProps = {
-  tableStyle: {},
-  getRowKey: () => null,
-  enableRowSpan: true
-};
-
-export default SimpleTableTable;

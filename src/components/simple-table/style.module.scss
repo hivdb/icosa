@@ -4,16 +4,18 @@
 $header-bgcolor: #f9fafb;
 $header-bgcolor-hover: #f3f3f3;
 $bgcolor-hover: rgba(0, 0, 0, .05);
+$outline-color: #969696;
 $border-color: rgba(34, 36, 38, .15);
 $mobile-bgcolor: rgba(0, 0, 0, .1);
-$dark-bgcolor: #767676;
-$border-radius: 0.3rem;
+$dark-bgcolor: #1c1b1c;
+$dark-bgcolor-hover: #3c3b3c;
+$border-radius: 0;
 $padding-h: .7rem;
 $padding-v: .7rem;
 
 .simple-table-scroll {
   --desktop-max-height: 80vh;
-  border: 1px solid $border-color;
+  border: 1px solid $outline-color;
   background: #fff;
   box-shadow: none;
   border-radius: $border-radius;
@@ -330,6 +332,8 @@ table.simple-table {
 }
 
 .download-options {
+  $button-radius: 0;
+
   @media print {
     display: none;
   }
@@ -369,22 +373,22 @@ table.simple-table {
         background-color: #cdcecf;
       }
       &:first-child {
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+        border-top-left-radius: $button-radius;
+        border-bottom-left-radius: $button-radius;
       }
       &.btn-more-option {
         color: #fff;
         font-size: 1.2rem;
         background-color: $dark-bgcolor;
         &:focus, &:hover {
-          background-color: #838383;
+          background-color: $dark-bgcolor-hover;
         }
         padding: $padding-v $padding-v;
         > svg {
           line-height: $line-height;
         }
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
+        border-top-right-radius: $button-radius;
+        border-bottom-right-radius: $button-radius;
       }
     }
   }
@@ -396,7 +400,7 @@ table.simple-table {
     width: 9rem;
     background-color: $menu-bgcolor;
     font-size: .8rem;
-    border-radius: 4px;
+    border-radius: $button-radius;
     > a {
       display: block;
       position: relative;

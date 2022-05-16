@@ -42,6 +42,16 @@ const routes = (
           refDataLoader: DebugRefDataLoader
         }
       })}
+      {HIV1Routes({
+        pathPrefix: 'hivseq/',
+        config: {
+          configFromURL: (
+            'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
+            'pages/sierra-hivseq.json'
+          ),
+          refDataLoader: DebugRefDataLoader
+        }
+      })}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}
       {GenomeViewerRoutes(config.genomeViewer)}
     </Route>

@@ -41,13 +41,16 @@ function toTableRow(mutation, triplet, subtypesForAAs, allSubtypes) {
 
 function mutationPrevalencesToTableData(prevalences, allSubtypes) {
   const rowsByGenes = {};
-  for (const {
+  for (const [rowId, {
     boundMutation: {
-      gene, position, consensus,
-      text, triplet
+      gene,
+      position,
+      reference,
+      text,
+      triplet
     },
     matched, others
-  } of prevalences) {
+  }] of prevalences.entries()) {
     const row = toTableRow(text, triplet, matched, allSubtypes);
     const children = [];
     for (
@@ -55,14 +58,19 @@ function mutationPrevalencesToTableData(prevalences, allSubtypes) {
       [...others].sort(({AA: a1}, {AA: a2}) => a1 > a2)
     ) {
       const child = toTableRow(
-        `${consensus}${position}${AA}`,
+        `${reference}${position}${AA}`,
         '',
         [{AA, subtypes}],
         allSubtypes
       );
-      children.push(child);
+      children.push({
+        ...child,
+        parentRowId: rowId
+      });
     }
+    row.rowId = rowId;
     row.children = children;
+    row.showChildren = false;
     rowsByGenes[gene.name] = rowsByGenes[gene.name] || [];
     rowsByGenes[gene.name].push(row);
   }

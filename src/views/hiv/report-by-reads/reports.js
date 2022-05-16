@@ -43,6 +43,7 @@ SeqReadsReports.propTypes = {
   allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceReadsAnalysis: PropTypes.array.isRequired,
+  mutationPrevalenceSubtypes: PropTypes.array.isRequired,
   fetchAnother: PropTypes.func.isRequired,
   extVariables: PropTypes.shape({
     includeGenes: PropTypes.arrayOf(
@@ -58,6 +59,7 @@ function SeqReadsReports({
   router,
   loaded,
   allSequenceReads,
+  mutationPrevalenceSubtypes,
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother,
@@ -115,6 +117,7 @@ function SeqReadsReports({
            includeGenes={includeGenes}
            inputSequenceReads={inputSeqReads}
            sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
+           subtypeStats={mutationPrevalenceSubtypes}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            config={config}

@@ -31,83 +31,83 @@ function highlight(key, comment, highlightText) {
 }
 
 
-export default class DRCommentByTypes extends React.Component {
+DRCommentByTypes.propTypes = {
+  gene: PropTypes.object.isRequired,
+  commentsByTypes: PropTypes.array.isRequired,
+  disabledDrugs: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired
+};
 
-  static propTypes = {
-    gene: PropTypes.object.isRequired,
-    commentsByTypes: PropTypes.array.isRequired,
-    disabledDrugs: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  };
+DRCommentByTypes.defaultProps = {
+  disabledDrugs: []
+};
 
-  static defaultProps = {
-    disabledDrugs: []
-  };
-
-  render() {
-    let {gene, commentsByTypes, disabledDrugs} = this.props;
-    if (commentsByTypes.every(({comments}) => comments.length === 0)) {
-      return null;
-    }
-    const displayTPV = disabledDrugs.indexOf('TPV') === -1;
-
-    return (
-      <ConfigContext.Consumer>
-        {({mutationTypesByGenes}) => (
-          <div className={style['dr-report-comment-by-types']}>
-            <div className={style.title}>
-              {gene.name} comments
-            </div>
-            <dl>
-              {commentsByTypes
-                .filter(({comments}) => (
-                  !(comments.length === 0 ||
-                 (displayTPV && comments.every(
-                   ({name}) => name.startsWith('DRVHighAndTPV')
-                 )
-                 ))
-                ))
-                .map(({commentType, comments}, idx) => [
-                  <dt key={`label-${idx}`}>
-                    {mutationTypesByGenes[gene.name][commentType]}
-                  </dt>,
-                  <dd key={`list-${idx}`}>
-                    <ul>
-                      {(() => {
-                        let commentsByText = {};
-                        for (const cmt of comments) {
-                          if (
-                            displayTPV &&
-                            cmt.name.startsWith('DRVHighAndTPV')
-                          ) {
-                            continue;
-                          }
-                          if (!commentsByText[cmt.text]) {
-                            commentsByText[cmt.text] = [];
-                          }
-                          commentsByText[cmt.text].push(cmt);
-                        }
-                        commentsByText = Object.values(commentsByText);
-                        return commentsByText.map((cmts, idx) => (
-                          <li key={idx}>
-                            {highlight(
-                              idx,
-                              cmts[0].text,
-                              cmts.reduce((l, cmt) => (
-                                l.concat(cmt.highlightText)
-                              ), [])
-                            )}
-                          </li>
-                        ));
-                      })()}
-                    </ul>
-                  </dd>
-                ])}
-            </dl>
-          </div>
-        )}
-      </ConfigContext.Consumer>
-    );
+export default function DRCommentByTypes({
+  gene,
+  commentsByTypes,
+  disabledDrugs
+}) {
+  if (commentsByTypes.every(({comments}) => comments.length === 0)) {
+    return null;
   }
+  const displayTPV = disabledDrugs.indexOf('TPV') === -1;
+
+  return (
+    <ConfigContext.Consumer>
+      {({mutationTypesByGenes}) => (
+        <div className={style['dr-report-comment-by-types']}>
+          <div className={style.title}>
+            {gene.name} comments
+          </div>
+          <dl>
+            {commentsByTypes
+              .filter(({comments}) => (
+                !(comments.length === 0 ||
+               (displayTPV && comments.every(
+                 ({name}) => name.startsWith('DRVHighAndTPV')
+               )
+               ))
+              ))
+              .map(({commentType, comments}, idx) => [
+                <dt key={`label-${idx}`}>
+                  {mutationTypesByGenes[gene.name][commentType]}
+                </dt>,
+                <dd key={`list-${idx}`}>
+                  <ul>
+                    {(() => {
+                      let commentsByText = {};
+                      for (const cmt of comments) {
+                        if (
+                          displayTPV &&
+                          cmt.name.startsWith('DRVHighAndTPV')
+                        ) {
+                          continue;
+                        }
+                        if (!commentsByText[cmt.text]) {
+                          commentsByText[cmt.text] = [];
+                        }
+                        commentsByText[cmt.text].push(cmt);
+                      }
+                      commentsByText = Object.values(commentsByText);
+                      return commentsByText.map((cmts, idx) => (
+                        <li key={idx}>
+                          {highlight(
+                            idx,
+                            cmts[0].text,
+                            cmts.reduce((l, cmt) => (
+                              l.concat(cmt.highlightText)
+                            ), [])
+                          )}
+                        </li>
+                      ));
+                    })()}
+                  </ul>
+                </dd>
+              ])}
+          </dl>
+        </div>
+      )}
+    </ConfigContext.Consumer>
+  );
 }

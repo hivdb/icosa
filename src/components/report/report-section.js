@@ -31,10 +31,12 @@ export default function ReportSection({
   toggleDisplay,
   title,
   titleAnnotation,
-  children
+  children,
+  ...props
 }) {
   return (
     <section
+     {...props}
      className={classNames(
        style['report-section'],
        className

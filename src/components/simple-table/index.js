@@ -11,7 +11,37 @@ import {columnDefShape} from './prop-types';
 export {ColumnDef};
 
 
-function SimpleTable({
+SimpleTable.propTypes = {
+  compact: PropTypes.bool.isRequired,
+  lastCompact: PropTypes.bool.isRequired,
+  color: PropTypes.string,
+  data: PropTypes.arrayOf(
+    PropTypes.object.isRequired
+  ).isRequired,
+  cacheKey: PropTypes.string,
+  columnDefs: PropTypes.arrayOf(
+    columnDefShape.isRequired
+  ).isRequired,
+  sheetName: PropTypes.string.isRequired,
+  onRowClick: PropTypes.func,
+  getRowKey: PropTypes.func.isRequired,
+  className: PropTypes.string,
+  tableScrollStyle: PropTypes.object.isRequired,
+  tableStyle: PropTypes.object.isRequired,
+  afterTable: PropTypes.node,
+  disableCopy: PropTypes.bool.isRequired
+};
+
+SimpleTable.defaultProps = {
+  compact: false,
+  disableCopy: false,
+  sheetName: 'Sheet1',
+  tableScrollStyle: {},
+  tableStyle: {},
+  getRowKey: () => null
+};
+
+export default function SimpleTable({
   compact,
   lastCompact,
   color,
@@ -19,6 +49,7 @@ function SimpleTable({
   cacheKey,
   columnDefs,
   sheetName,
+  onRowClick,
   getRowKey,
   className,
   tableScrollStyle,
@@ -108,6 +139,7 @@ function SimpleTable({
         <SimpleTableTable
          data={data}
          key={cacheKey}
+         onRowClick={onRowClick}
          onBeforeSort={onBeforeSort}
          onSort={onSort}
          columnDefs={columnDefs}
@@ -124,33 +156,3 @@ function SimpleTable({
   </>;
 
 }
-SimpleTable.propTypes = {
-  compact: PropTypes.bool.isRequired,
-  lastCompact: PropTypes.bool.isRequired,
-  color: PropTypes.string,
-  data: PropTypes.arrayOf(
-    PropTypes.object.isRequired
-  ).isRequired,
-  cacheKey: PropTypes.string,
-  columnDefs: PropTypes.arrayOf(
-    columnDefShape.isRequired
-  ).isRequired,
-  sheetName: PropTypes.string.isRequired,
-  getRowKey: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  tableScrollStyle: PropTypes.object.isRequired,
-  tableStyle: PropTypes.object.isRequired,
-  afterTable: PropTypes.node,
-  disableCopy: PropTypes.bool.isRequired
-};
-
-SimpleTable.defaultProps = {
-  compact: false,
-  disableCopy: false,
-  sheetName: 'Sheet1',
-  tableScrollStyle: {},
-  tableStyle: {},
-  getRowKey: () => null
-};
-
-export default SimpleTable;

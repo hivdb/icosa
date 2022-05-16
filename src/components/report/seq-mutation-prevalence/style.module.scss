@@ -1,0 +1,145 @@
+@import "../../../styles/colors";
+
+.gene-mutation-prevalence {
+
+  .expand-btn {
+    width: 1em;
+    height: 1.5em;
+    vertical-align: top;
+    margin-right: .5rem;
+  }
+
+  .mixture-mut {
+    display: inline-block;
+  }
+}
+
+.gene-mutation-prevalence {
+
+  %dividing-bar {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: -1px;
+    left: 0;
+    margin-left: -.3rem;
+    width: .6rem;
+    height: calc(100% + 2px);
+    background-color: color(body-bg);
+    border-left: 1px solid color(dividing-line);
+    border-right: 1px solid color(dividing-line);
+    z-index: 1;
+  }
+
+  %group-title {
+    position: absolute;
+    left: 0;
+    top: -1.5rem;
+    z-index: 1;
+  }
+
+  .gene-mutation-prevalence-table {
+    &:global(__container) {
+      padding-top: 1rem;
+    }
+
+    &:global(__scroll) {
+      border-radius: 0;
+      border: 1px solid color(dividing-line);
+      overflow: visible;
+      max-height: max-content;
+    }
+
+    thead > tr > th::after {
+      width: 800%;
+      @extend %group-title;
+    }
+
+    thead > tr > th, tbody > tr > td {
+      padding: .3rem .7rem;
+      position: relative;
+      &[data-colname="treatedA"]::before {
+        @extend%dividing-bar;
+      }
+    }
+
+    td[data-colname="mutation"] {
+      white-space: pre;
+      *[class*="cell-value"] {
+        font-family: monospace;
+        text-indent: 1.4rem;
+        svg {
+          margin-top: 1px;
+          vertical-align: top;
+          position: absolute;
+          margin-left: -1.4rem;
+        }
+        span {
+          display: inline-block;
+        }
+      }
+    }
+
+  }
+
+  tbody > tr {
+    white-space: pre;
+  }
+
+  td {
+    padding-left: .8rem;
+    padding-right: .8rem;
+
+    &.prevalence-data {
+      width: auto;
+      position: relative;
+      box-sizing: border-box;
+      padding-left: .5rem;
+      padding-right: .5rem;
+
+      &:hover::after {
+        content: "";
+        position: absolute;
+        background-color: color(table-row-hover-bg);
+        left: 0;
+        top: -5000px;
+        height: 10000px;
+        width: 100%;
+        z-index: 0;
+      }
+    }
+
+  }
+
+  tbody > tr.child-row td:first-child {
+    text-indent: 1.4rem; // .9 + .5 rem from expand-btn
+  } 
+  
+
+  &[data-drug-class="PI"] .gene-mutation-prevalence-table {
+    th[data-colname="naiveA"]::after {
+      content: "PI Naive Persons";
+    }
+    th[data-colname="treatedA"]::after {
+      content: "PI Treated Persons";
+    }
+  }
+
+  &[data-drug-class="RTI"] .gene-mutation-prevalence-table {
+    th[data-colname="naiveA"]::after {
+      content: "RTI Naive Persons";
+    }
+    th[data-colname="treatedA"]::after {
+      content: "RTI Treated Persons";
+    }
+  }
+
+  &[data-drug-class="INSTI"] .gene-mutation-prevalence-table {
+    th[data-colname="naiveA"]::after {
+      content: "INSTI Naive Persons";
+    }
+    th[data-colname="treatedA"]::after {
+      content: "INSTI Treated Persons";
+    }
+  }
+}

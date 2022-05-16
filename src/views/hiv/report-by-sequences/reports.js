@@ -39,6 +39,7 @@ SequenceReports.propTypes = {
   sequences: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceAnalysis: PropTypes.array.isRequired,
+  mutationPrevalenceSubtypes: PropTypes.array.isRequired,
   fetchAnother: PropTypes.func.isRequired,
   extVariables: PropTypes.shape({
     includeGenes: PropTypes.arrayOf(
@@ -55,6 +56,7 @@ function SequenceReports({
   sequences,
   currentSelected,
   sequenceAnalysis,
+  mutationPrevalenceSubtypes,
   fetchAnother,
   extVariables: {includeGenes}
 }) {
@@ -95,6 +97,7 @@ function SequenceReports({
            includeGenes={includeGenes}
            currentSelected={currentSelected}
            sequenceResult={seqResultLookup[header]}
+           subtypeStats={mutationPrevalenceSubtypes}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            config={config}

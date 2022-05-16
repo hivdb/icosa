@@ -8,7 +8,8 @@ import {
   ValidationReport,
   ReportHeader,
   DRInterpretation,
-  DRMutationScores
+  DRMutationScores,
+  SeqMutationPrevalence
 } from '../../../components/report';
 
 import useDisabledDrugs from '../use-disabled-drugs';
@@ -33,13 +34,16 @@ SingleSeqReadsReport.propTypes = {
   ).isRequired,
   inputSequenceReads: PropTypes.object.isRequired,
   sequenceReadsResult: PropTypes.object,
+  subtypeStats: PropTypes.array.isRequired,
   output: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
+    displayDRInterpretation: PropTypes.bool,
+    displayMutationPrevalence: PropTypes.bool,
     displayMutationScores: PropTypes.arrayOf(
       PropTypes.string.isRequired
-    ).isRequired
+    )
   }).isRequired,
   onObserve: PropTypes.func.isRequired,
   onDisconnect: PropTypes.func.isRequired
@@ -49,7 +53,12 @@ function SingleSeqReadsReport({
   includeGenes,
   inputSequenceReads,
   sequenceReadsResult,
-  config: {displayMutationScores},
+  subtypeStats,
+  config: {
+    displayDRInterpretation = true,
+    displayMutationPrevalence = false,
+    displayMutationScores = []
+  },
   output,
   name,
   index,
@@ -105,7 +114,7 @@ function SingleSeqReadsReport({
         }}>
           <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
         </MutViewer>
-        {isCritical ? null :
+        {isCritical || !displayDRInterpretation ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
              {...{geneDR, output, disabledDrugs, strain}} />
@@ -113,6 +122,10 @@ function SingleSeqReadsReport({
               <DRMutationScores
                {...{geneDR, output, disabledDrugs, strain}} /> : null}
           </React.Fragment>)}
+        {!displayMutationPrevalence ? null :
+        <SeqMutationPrevalence
+         subtypeStats={subtypeStats}
+         {...sequenceReadsResult} />}
       </> : null}
     </article>
   );
