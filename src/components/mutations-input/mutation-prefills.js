@@ -4,6 +4,22 @@ import PropTypes from 'prop-types';
 import style from './style.module.scss';
 
 
+const optionShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  mutations: PropTypes.arrayOf(
+    PropTypes.string.isRequired
+  ).isRequired
+});
+
+MutationPrefills.propTypes = {
+  labelMessage: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(
+    optionShape.isRequired
+  ),
+  onSelect: PropTypes.func.isRequired,
+  value: optionShape
+};
+
 function MutationPrefills({labelMessage, options = [], value, onSelect}) {
 
   const handleSelect = React.useCallback(
@@ -41,25 +57,18 @@ function MutationPrefills({labelMessage, options = [], value, onSelect}) {
 }
 
 
-const optionShape = PropTypes.shape({
-  name: PropTypes.string.isRequired,
-  mutations: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired
-});
-
-
-MutationPrefills.propTypes = {
-  labelMessage: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(
-    optionShape.isRequired
-  ),
-  onSelect: PropTypes.func.isRequired,
-  value: optionShape
-};
-
-export default function useMutationPrefills(onChange, config) {
+export default function useMutationPrefills({onChange, config}) {
   const {messages, mutationPrefills} = config;
+
+  const handlePrefillSelect = React.useCallback(
+    option => {
+      onChange({
+        ...(option || {name: null, mutations: []})
+      }, false);
+    },
+    [onChange]
+  );
+
   const options = [
     {name: '(clear)', mutations: [], className: style['clear-prefill']},
     ...(mutationPrefills || [])
@@ -70,14 +79,14 @@ export default function useMutationPrefills(onChange, config) {
     option => {
       if (option.name === '(clear)') {
         setValue(null);
-        onChange(null);
+        handlePrefillSelect(null);
       }
       else {
         setValue(option);
-        onChange(option);
+        handlePrefillSelect(option);
       }
     },
-    [setValue, onChange]
+    [setValue, handlePrefillSelect]
   );
 
   if (!mutationPrefills) {

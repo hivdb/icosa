@@ -53,21 +53,37 @@ export function mutationCompare(mut1, mut2) {
   return diff;
 }
 
-export function sanitizeMutations(mutations, config, removeErrors = false) {
+export function sanitizeMutations(mutations, {
+  defaultGene,
+  geneSynonyms,
+  geneReferences,
+  messages,
+  removeErrors = false
+}) {
   const posIndices = {};
   let merged = [];
   for (const mut of mutations) {
     let {
       canonGene, gene, ref, pos,
       aas, text, errors
-    } = parseAndValidateMutation(mut, config);
+    } = parseAndValidateMutation(mut, {
+      defaultGene,
+      geneSynonyms,
+      geneReferences,
+      messages
+    });
     if (canonGene && pos && aas) {
       const poskey = `${canonGene}${pos}`;
       const idx = poskey in posIndices ? posIndices[poskey] : merged.length;
       if (merged[idx]) {
         const newMut = parseAndValidateMutation(
           `${gene}:${ref}${pos}${merged[idx].aas}${aas}`,
-          config
+          {
+            defaultGene,
+            geneSynonyms,
+            geneReferences,
+            messages
+          }
         );
         text = newMut.text;
         errors = newMut.errors;
@@ -88,16 +104,29 @@ export function sanitizeMutations(mutations, config, removeErrors = false) {
   ];
 }
 
-export function parseAndValidateMutation(mut, config) {
+
+function getMessage(key, messages) {
+  if (key in messages) {
+    return messages[key];
+  }
+  return `<${key}>`;
+}
+
+
+export function parseAndValidateMutation(mut, {
+  defaultGene,
+  geneSynonyms,
+  geneReferences,
+  messages = {}
+}) {
   const errors = [];
-  const {mutationDefaultGene, geneSynonyms, geneReferences} = config;
-  let [pos, aas,, gene] = parseMutation(mut, mutationDefaultGene);
+  let [pos, aas,, gene] = parseMutation(mut, defaultGene);
   if (pos === null || aas === null || gene === null) {
-    errors.push(
-      "Not a valid mutation. A mutation must contain gene, " +
-      "position and at least one mutated amino acid. For examples, " +
-      "S:E484K (ref amino acid 'E' is optional), nsp6:S106del, nsp6:34ins."
-    );
+    errors.push(getMessage('mut-input-error-invalid-mutation', messages));
+    //   "invalid mutation. A mutation must format as Gene:RefPosAA. " +
+    //   "For examples, PR:L10F, RT:M184V for HIV-1, or " +
+    //   "S:E484K, RdRP:P323L for SARS-CoV-2."
+    // );
     return {
       text: mut,
       errors
@@ -116,7 +145,10 @@ export function parseAndValidateMutation(mut, config) {
       )
     );
     if (!tryMatchGene) {
-      errors.push("invalid gene");
+      errors.push(
+        getMessage('mut-input-error-invalid-gene', messages)
+          .replace('$$GENE$$', gene)
+      );
       return {
         text: mut,
         errors
@@ -126,7 +158,10 @@ export function parseAndValidateMutation(mut, config) {
   }
 
   if (pos < 1) {
-    errors.push("a position {'<'} 1 was entered");
+    errors.push(
+      getMessage('mut-input-error-pos-is-zero', messages)
+    );
+    //"a position {'<'} 1 was entered");
   }
   const refSeq = (
     geneReferences[gene] ||
@@ -134,7 +169,8 @@ export function parseAndValidateMutation(mut, config) {
   );
   if (pos > refSeq.length) {
     errors.push(
-      `a position > gene reference size (${refSeq.length}) was entered`
+      getMessage('mut-input-error-pos-out-of-bounds', messages)
+        .replace('$$MAX_POS$$', refSeq.length)
     );
     return {
       text: mut,
@@ -173,7 +209,7 @@ export function parseAndValidateMutation(mut, config) {
     pos,
     aas,
     indel,
-    text: `${gene}:${ref}${pos}${aas}`,
+    text: `${gene}:${ref || ''}${pos}${aas}`,
     errors
   };
 }

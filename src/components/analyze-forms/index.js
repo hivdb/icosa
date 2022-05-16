@@ -44,11 +44,9 @@ AnalyzeForms.propTypes = {
   patternsTo: PropTypes.string.isRequired,
   sequencesTo: PropTypes.string.isRequired,
   readsTo: PropTypes.string,
-  enableReads: PropTypes.bool.isRequired,
-  hideReads: PropTypes.bool.isRequired,
   sequencesOutputOptions: PropTypes.object,
   seqReadsOutputOptions: PropTypes.object,
-  ngsRunners: PropTypes.object,
+  ngsRunners: PropTypes.array,
   ngs2codfreqSide: PropTypes.node,
   children: PropTypes.node
 };

@@ -3,20 +3,29 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 
+import {sanitizeMutations} from '../../utils/mutation';
+
 import {
+  parseMutation,
   parseAndValidateMutation
 } from '../../utils/mutation';
 
+import useMutationsErrors from './mutations-errors';
 import style from './style.module.scss';
 
 
 MutationsTagsInput.propTypes = {
   config: PropTypes.shape({
+    mutationDefaultGene: PropTypes.string,
+    geneSynonyms: PropTypes.objectOf(
+      PropTypes.string.isRequired
+    ),
     geneReferences: PropTypes.object.isRequired,
     messages: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired
   }),
+  geneOnly: PropTypes.string,
   mutations: PropTypes.arrayOf(
     PropTypes.string.isRequired
   ).isRequired,
@@ -25,11 +34,21 @@ MutationsTagsInput.propTypes = {
 };
 
 export default function MutationsTagsInput({
-  config, mutations, onChange, parentClassName
+  config,
+  geneOnly,
+  mutations,
+  onChange,
+  parentClassName
 }) {
+  const {
+    mutationDefaultGene,
+    geneSynonyms,
+    geneReferences,
+    messages
+  } = config;
 
   const placeholder = (
-    config.messages['pattern-analysis-input-placeholder'] ||
+    messages['pattern-analysis-input-placeholder'] ||
     '<pattern-analysis-input-placeholder>'
   );
 
@@ -37,13 +56,104 @@ export default function MutationsTagsInput({
     parentClassName ? `${parentClassName}-tagsinput` : null
   );
 
-  return <div className={style['mutations-tagsinput-container']}>
-    <label>
-      {
-        config.messages['pattern-analysis-input-label'] ||
-        '<pattern-analysis-input-label>'
+  const [filteredMutations, otherMutations] = React.useMemo(
+    () => {
+      if (!geneOnly) {
+        return [mutations, []];
       }
-    </label>
+      const mutObjs = mutations.map(parseMutation);
+      return [
+        mutations.filter((_, idx) => mutObjs[idx][3] === geneOnly),
+        mutations.filter((_, idx) => mutObjs[idx][3] !== geneOnly)
+      ];
+    },
+    [geneOnly, mutations]
+  );
+
+  const handlePreventSubmit = React.useCallback(
+    () => onChange({mutations}, true),
+    [onChange, mutations]
+  );
+
+  const handleChange = React.useCallback(
+    filteredMutations => {
+      let resultMutations;
+      if (geneOnly) {
+        resultMutations = [
+          ...filteredMutations.map(
+            mut => mut.includes(':') ? mut : `${geneOnly}:${mut}`
+          ),
+          ...otherMutations
+        ];
+      }
+      else {
+        resultMutations = filteredMutations;
+      }
+      const [sanitized, allErrors] = sanitizeMutations(resultMutations, {
+        defaultGene: mutationDefaultGene,
+        geneSynonyms,
+        geneReferences
+      });
+      onChange({
+        mutations: sanitized
+      }, allErrors.length > 0);
+    },
+    [
+      geneOnly,
+      geneReferences,
+      geneSynonyms,
+      mutationDefaultGene,
+      onChange,
+      otherMutations
+    ]
+  );
+
+  const renderMutTag = React.useCallback(
+    ({tag, key, onRemove, classNameRemove, className}) => {
+      let {text, errors} = parseAndValidateMutation(tag, {
+        defaultGene: geneOnly || mutationDefaultGene,
+        geneSynonyms,
+        geneReferences
+      });
+      if (geneOnly) {
+        text = text.split(':', 2);
+        text = text[text.length - 1];
+      }
+
+      return (
+        <span
+         key={key}
+         className={className}
+         data-error={errors.length > 0}>
+          {text}
+          <a
+           href="#remove-mutation"
+           className={classNameRemove}
+           onClick={(e) => {e.preventDefault(); onRemove(key);}}>
+            {' x'}
+          </a>
+        </span>
+      );
+    },
+    [geneOnly, mutationDefaultGene, geneSynonyms, geneReferences]
+  );
+
+  const labelText = messages['pattern-analysis-input-label'];
+
+  const errorsElement = useMutationsErrors({
+    geneOnly,
+    defaultGene: mutationDefaultGene,
+    geneSynonyms,
+    geneReferences,
+    messages,
+    mutations: filteredMutations,
+    parentClassName,
+    onChange: handleChange,
+    onPreventSubmit: handlePreventSubmit
+  });
+
+  return <div className={style['mutations-tagsinput-container']}>
+    {labelText ? <label>{labelText}</label> : null}
     <TagsInput
      key="tagsInput"
      tabIndex="0"
@@ -51,7 +161,7 @@ export default function MutationsTagsInput({
      addOnBlur
      addOnPaste
      pasteSplit={data => data.split(/[\s,;+.]+/g)}
-     value={mutations}
+     value={filteredMutations}
      renderTag={renderMutTag}
      inputProps={{
        placeholder,
@@ -79,25 +189,7 @@ export default function MutationsTagsInput({
          className ? `${className}-tag` : null
        )
      }}
-     onChange={onChange} />
+     onChange={handleChange} />
+    {errorsElement}
   </div>;
-
-  function renderMutTag({tag, key, onRemove, classNameRemove, className}) {
-    const {text, errors} = parseAndValidateMutation(tag, config);
-
-    return (
-      <span
-       key={key}
-       className={className}
-       data-error={errors.length > 0}>
-        {text}
-        <a
-         href="#remove-mutation"
-         className={classNameRemove}
-         onClick={(e) => {e.preventDefault(); onRemove(key);}}>
-          {' x'}
-        </a>
-      </span>
-    );
-  }
 }

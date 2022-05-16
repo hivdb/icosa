@@ -2,11 +2,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import {sanitizeMutations} from '../../utils/mutation';
+
 import style from './style.module.scss';
 import linkStyle from '../link/style.module.scss';
 
 
-function MutationsErrors({allErrors, onAutoClean, parentClassName}) {
+MutationsErrors.propTypes = {
+  geneOnly: PropTypes.string,
+  allErrors: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string.isRequired,
+      errors: PropTypes.arrayOf(
+        PropTypes.string.isRequired
+      ).isRequired
+    }).isRequired
+  ).isRequired,
+  parentClassName: PropTypes.string,
+  onAutoClean: PropTypes.func.isRequired
+};
+
+function MutationsErrors({geneOnly, allErrors, onAutoClean, parentClassName}) {
 
   const className = (
     parentClassName ? `${parentClassName}-errors` : null
@@ -44,7 +60,7 @@ function MutationsErrors({allErrors, onAutoClean, parentClassName}) {
                style['mutations-tagsinput-tag'],
                parentClassName ? `${parentClassName}-tagsinput-tag` : null
              )}>
-              {text}
+              {geneOnly ? text.replace(/^[^:]+:/, '') : text}
             </span>:
             <ul>
               {errors.map((err, idx) => (
@@ -58,17 +74,57 @@ function MutationsErrors({allErrors, onAutoClean, parentClassName}) {
   );
 }
 
-MutationsErrors.propTypes = {
-  allErrors: PropTypes.arrayOf(
-    PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      errors: PropTypes.arrayOf(
-        PropTypes.string.isRequired
-      ).isRequired
-    }).isRequired
-  ).isRequired,
-  parentClassName: PropTypes.string,
-  onAutoClean: PropTypes.func.isRequired
-};
 
-export default MutationsErrors;
+export default function useMutationErrors({
+  geneOnly,
+  defaultGene,
+  geneSynonyms,
+  geneReferences,
+  messages,
+  parentClassName,
+  mutations,
+  onChange,
+  onPreventSubmit
+}) {
+
+  const [, allErrors] = React.useMemo(
+    () => sanitizeMutations(mutations, {
+      defaultGene: geneOnly || defaultGene,
+      geneSynonyms,
+      geneReferences,
+      messages
+    }),
+    [defaultGene, geneOnly, geneReferences, geneSynonyms, messages, mutations]
+  );
+
+  React.useEffect(
+    () => {
+      if (allErrors.length > 0) {
+        onPreventSubmit();
+      }
+    },
+    [/* eslint-disable-line react-hooks/exhaustive-deps */]
+  );
+
+  const handleRemoveAllErrors = React.useCallback(
+    e => {
+      e.preventDefault();
+      const [sanitized] = sanitizeMutations(mutations, {
+        defaultGene: geneOnly || defaultGene,
+        geneSynonyms,
+        geneReferences,
+        removeErrors: true
+      });
+      onChange(sanitized);
+    },
+    [defaultGene, geneOnly, geneReferences, geneSynonyms, mutations, onChange]
+  );
+
+  return (
+    <MutationsErrors
+     geneOnly={geneOnly}
+     allErrors={allErrors}
+     parentClassName={parentClassName}
+     onAutoClean={handleRemoveAllErrors} />
+  );
+}

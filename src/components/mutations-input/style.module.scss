@@ -4,7 +4,7 @@
 @import "../../styles/functions";
 
 
-.mutation-suggest-options {
+.mutation-main-input-with-columns {
   @extend %general-dropdown;
 }
 
@@ -134,6 +134,7 @@
 
   .mutations-errors {
     $line-height: 1.2em;
+    margin-bottom: 2rem;
     &[data-display="false"] {
       max-height: 0;
       min-height: 0;
@@ -155,37 +156,43 @@
     }
   }
 
-  .mutation-suggest-options {
+  .mutation-main-input-with-columns {
     margin-top: 1rem;
-    column-count: auto;
-    column-width: 25rem;
-    column-gap: 3rem;
-
-    h2.desc {
-      @extend %title-bar-alter;
-      font-size: .9rem;
-      margin: 0 0 .5rem;
-    }
-
-    > section {
+    display: flex;
+    gap: 1rem;
+    
+    > section.gene-mutation-input {
+      flex: 1;
       margin-bottom: 1.5rem;
       break-inside: avoid;
-    }
 
-    ul {
-      margin-left: 0;
-      margin-top: .5rem;
-      margin-bottom: 0;
-      padding-left: 0;
-      list-style-type: none;
-      > li {
-        text-align: left;
+      h2.desc {
+        @extend %title-bar-alter;
         font-size: .9rem;
-        margin: .24rem .9rem;
-        display: inline-block;
-        > label {
-          margin-left: .6rem;
-          display: block;
+        margin: 0 0 .5rem;
+      }
+
+      > ul.gene-mutation-suggest-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 6.5rem);
+        grid-gap: 0;
+        justify-content: space-between;
+        margin-left: 0;
+        margin-top: .5rem;
+        margin-bottom: 0;
+        padding-left: 0;
+        list-style-type: none;
+
+        > li {
+          white-space: nowrap;
+          text-align: left;
+          font-size: .9rem;
+          margin: .24rem .9rem;
+          display: inline-block;
+          > label {
+            margin-left: .6rem;
+            display: block;
+          }
         }
       }
     }
