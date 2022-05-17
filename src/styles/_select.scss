@@ -18,6 +18,21 @@
     background-color: color(dropdown-menu-bg);
   }
 
+  :global .#{$class-name-prefix}__option {
+    $line-height: 1.5em;
+    $vertical-spacing: .2em;
+    $line-clamp: 2;
+    padding-top: $vertical-spacing;
+    padding-bottom: $vertical-spacing;
+    line-height: $line-height;
+    max-height: $line-height * $line-clamp + $vertical-spacing * 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $line-clamp;
+  }
+
   :global .#{$class-name-prefix}__option--is-selected {
     background-color: color(dropdown-opt-selected-bg);
     color: color(dropdown-opt-selected);

@@ -8,8 +8,6 @@ import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
-import Link from '../../../components/link';
-import CheckboxInput from '../../../components/checkbox-input';
 /* import AlgVerSelect, {
   getLatestVersion
 } from '../../components/algver-select'; */
@@ -21,7 +19,8 @@ import ReadsTabularReports, {
   subOptions as readsSubOptions
 } from '../tabular-report-by-reads';
 
-import {useDrugDisplayOptions} from './hooks';
+import useDrugDisplayOptions from './drug-display-options';
+import useAlgorithmSelector from './algorithm-selector';
 
 import style from './style.module.scss';
 
@@ -43,20 +42,6 @@ SierraForms.propTypes = {
     formEnableTabs: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired,
-    drugDisplayNames: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    drugDisplayOptions: PropTypes.arrayOf(
-      PropTypes.shape({
-        drugClass: PropTypes.string.isRequired,
-        drugs: PropTypes.arrayOf(
-          PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            disabled: PropTypes.bool.isRequired
-          }).isRequired
-        ).isRequired
-      }).isRequired
-    ),
     messages: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -92,28 +77,32 @@ function SierraForms({
 
   const {
     // species,
-    formEnableTabs,
-    drugDisplayOptions,
-    drugDisplayNames
+    formEnableTabs
   } = config;
-  const {
-    uncheckedDrugs,
-    handleDrugOptionChange,
-    handleSelectAllDrugs,
-    handleRemoveAddonDrugs
-  } = useDrugDisplayOptions(config);
+
+  const [
+    drugDisplayOptionsNode,
+    getDrugSubmitState
+  ] = useDrugDisplayOptions(config);
+
+  const [
+    algorithmSelectorNode,
+    getAlgSubmitState
+  ] = useAlgorithmSelector(config);
+
   // const [algorithm, setAlgorithm] = React.useState(
   //   getLatestVersion('HIVDB', species)
   // );
   // const showAlgOpt = true;
 
   const handleSubmit = React.useCallback(
-    () => {
+    async () => {
       return [true, {
-        disabledDrugs: Array.from(uncheckedDrugs)
+        ...await getDrugSubmitState(),
+        ...await getAlgSubmitState()
       }];
     },
-    [uncheckedDrugs]
+    [getDrugSubmitState, getAlgSubmitState]
   );
 
   setTitle(title);
@@ -131,46 +120,8 @@ function SierraForms({
           `&lt;${curAnalysis}-form-desc&gt;`}
       </Markdown>
     </div>
-    {drugDisplayOptions ?
-      <fieldset className={style['drug-display-options']}>
-        <legend>
-          {config.messages['drug-display-options-title']}
-        </legend>
-        <p className={style['first-para']}>
-          <Markdown inline>
-            {config.messages['drug-display-options-desc']}
-          </Markdown> (
-          <Link
-           href="#select-all"
-           onClick={handleSelectAllDrugs}>
-            {config.messages['drug-display-options-select-all']}
-          </Link>,{' '}
-          <Link
-           href="#revert"
-           onClick={handleRemoveAddonDrugs}>
-            {config.messages['drug-display-options-reset']}
-          </Link>)
-        </p>
-        <div className={style['all-options']}>
-          {drugDisplayOptions.map(({drugClass, drugs}) => <div key={drugClass}>
-            <div className={style['label-drug-class']}>{drugClass}:</div>
-            <div className={style['checkboxes']}>
-              {drugs.map(({name, disabled}) => (
-                <CheckboxInput
-                 key={name} name="drugs"
-                 id={`drug-display-option-${name}`}
-                 className={style['drug-display-option-checkbox']}
-                 onChange={handleDrugOptionChange}
-                 value={name}
-                 disabled={disabled}
-                 checked={!uncheckedDrugs.has(name)}>
-                  {drugDisplayNames[name] || name}
-                </CheckboxInput>
-              ))}
-            </div>
-          </div>)}
-        </div>
-      </fieldset> : null}
+    {drugDisplayOptionsNode}
+    {algorithmSelectorNode}
     {/*showAlgOpt ?
       <fieldset className={style['algorithm-options']}>
         <legend>

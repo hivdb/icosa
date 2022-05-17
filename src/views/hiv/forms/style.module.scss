@@ -12,12 +12,40 @@
   > legend {
     @extend %legend-highlight;
   }
+
+  span.selected-alg {
+    font-family: monospace;
+    display: inline-block;
+    background-color: color(selected-alg-bg);
+    border: 1px solid color(selected-alg-border);
+    border-radius: 4px;
+    padding: .2rem .4rem;
+    margin: .2rem 1rem .2rem 0;
+    white-space: nowrap;
+  
+    > a.remove-btn {
+      cursor: pointer;
+      user-select: none;
+      color: color(selected-alg-remove);
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: .25rem;
+      &:hover {
+        color: color(selected-alg-remove-hover);
+      }
+    }
+  }
+
 }
 
 fieldset p.first-para {
   @extend %first-para;
 }
 
+span.with-trailing-space {
+  margin-right: 1rem;
+}
 
 .drug-display-options {
   @extend %fieldset-highlight;

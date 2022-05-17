@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Dropdown from 'semantic-ui-react/dist/commonjs/modules/Dropdown';
+import Select from '../../select';
 
 import useScrollObserver from '../../../utils/use-scroll-observer';
-import dropdownStyle from '../../semantic-ui-dropdown-style';
 
 import Button from './button';
 import style from './style.module.scss';
@@ -44,15 +43,15 @@ function ReportPaginator({
   }, [handleWindowScroll]);
 
   const handleChange = React.useCallback(
-    (event, {value}) => onSelect(value),
+    ({value}) => onSelect(value),
     [onSelect]
   );
 
   const options = React.useMemo(
     () => inputObjs.map(
       (inputObj, idx) => ({
-        key: getUniqKey(inputObj),
-        text: `${idx + 1}. ${getUniqKey(inputObj)}`,
+        // key: getUniqKey(inputObj),
+        label: `${idx + 1}. ${getUniqKey(inputObj)}`,
         value: getUniqKey(inputObj)
       })
     ),
@@ -79,13 +78,13 @@ function ReportPaginator({
         {children}
       </Paginator>*/}
       <div className={style['dropdown-container']}>
-        <Dropdown
-         search direction="left"
-         className={dropdownStyle.dropdown}
-         placeholder="Select a sequence"
+        <Select
          options={options}
+         className={style['report-paginator-select']}
+         classNamePrefix="report-paginator-select"
+         placeholder="Select a sequence"
          onChange={handleChange}
-         value={currentSelected.name} />
+         value={options[currentSelected.index]} />
       </div>
     </div>
   );
