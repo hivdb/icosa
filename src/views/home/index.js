@@ -42,6 +42,15 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        HIValg Analysis Program
+        <ul>
+          <li><Link to="/hivalg/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hivalg/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hivalg/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/hivalg/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
         <Link to="/mut-annot-viewer/">Mutation Annotation Viewer</Link>
         <ul>
           <li><Link to="/mut-annot-viewer/SARS2S/">SARS2 S</Link></li>

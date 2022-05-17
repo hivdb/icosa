@@ -9,7 +9,8 @@ import {
   ReportHeader,
   DRInterpretation,
   DRMutationScores,
-  SeqMutationPrevalence
+  SeqMutationPrevalence,
+  AlgComparison
 } from '../../../components/report';
 
 import useDisabledDrugs from '../use-disabled-drugs';
@@ -34,13 +35,14 @@ SingleSeqReadsReport.propTypes = {
   ).isRequired,
   inputSequenceReads: PropTypes.object.isRequired,
   sequenceReadsResult: PropTypes.object,
-  subtypeStats: PropTypes.array.isRequired,
+  subtypeStats: PropTypes.array,
   output: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
     displayDRInterpretation: PropTypes.bool,
     displayMutationPrevalence: PropTypes.bool,
+    displayAlgComparison: PropTypes.bool,
     displayMutationScores: PropTypes.arrayOf(
       PropTypes.string.isRequired
     )
@@ -57,6 +59,7 @@ function SingleSeqReadsReport({
   config: {
     displayDRInterpretation = true,
     displayMutationPrevalence = false,
+    displayAlgComparison = false,
     displayMutationScores = []
   },
   output,
@@ -126,6 +129,8 @@ function SingleSeqReadsReport({
         <SeqMutationPrevalence
          subtypeStats={subtypeStats}
          {...sequenceReadsResult} />}
+        {!displayAlgComparison ? null :
+        <AlgComparison {...sequenceReadsResult} />}
       </> : null}
     </article>
   );

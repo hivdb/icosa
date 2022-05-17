@@ -136,8 +136,9 @@ ul.subtype-details {
   $nomogram-width: 55rem;
   $nomogram-min-left: 45rem;
   position: relative;
-  height: 1rem;
+  height: 2rem;
   clear: both;
+  z-index: -1;
   > svg {
     max-width: css-min(#{$nomogram-width}, calc(100% - #{$nomogram-min-left}));
     position: absolute;

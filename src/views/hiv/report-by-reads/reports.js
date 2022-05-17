@@ -43,7 +43,7 @@ SeqReadsReports.propTypes = {
   allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.object,
   sequenceReadsAnalysis: PropTypes.array.isRequired,
-  mutationPrevalenceSubtypes: PropTypes.array.isRequired,
+  mutationPrevalenceSubtypes: PropTypes.array,
   fetchAnother: PropTypes.func.isRequired,
   extVariables: PropTypes.shape({
     includeGenes: PropTypes.arrayOf(

@@ -43,6 +43,21 @@ const seqLevel = `
     }
   }
 
+  # TODO: hivalg only
+  algorithmComparison(
+    algorithms: $algorithms,
+    customAlgorithms: $customAlgorithms
+  ) {
+    drugClass { name }
+    drugScores {
+      drug { name displayAbbr }
+      algorithm
+      SIR
+      interpretation
+      explanation
+    }
+  }
+
   drugResistance(includeGenes: $includeGenes) {
     algorithm {
       text

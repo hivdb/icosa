@@ -44,12 +44,12 @@ function ReportBySequencesContainer({
     payload: sequences,
     config
   });
-  const onExtendVariables = useExtendVariables({
+  const [onExtendVariables, isVarsPending] = useExtendVariables({
     config,
     match
   });
 
-  return <SeqAnalysisLayout
+  return isVarsPending ? null : <SeqAnalysisLayout
    query={query}
    client={client}
    quickLoadLimit={5}
@@ -57,7 +57,11 @@ function ReportBySequencesContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$includeGenes: [EnumGene]!"
+   extraParams={`
+     $includeGenes: [EnumGene!]!,
+     $algorithms: [ASIAlgorithm!],
+     $customAlgorithms: [CustomASIAlgorithm!]
+   `}
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReports

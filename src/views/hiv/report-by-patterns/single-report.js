@@ -7,7 +7,8 @@ import {
   MutationViewer as MutViewer,
   DRInterpretation,
   DRMutationScores,
-  SeqMutationPrevalence
+  SeqMutationPrevalence,
+  AlgComparison
 } from '../../../components/report';
 
 import useDisabledDrugs from '../use-disabled-drugs';
@@ -18,12 +19,13 @@ SinglePatternReport.propTypes = {
   name: PropTypes.string,
   currentSelected: PropTypes.object,
   patternResult: PropTypes.object,
-  subtypeStats: PropTypes.array.isRequired,
+  subtypeStats: PropTypes.array,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
     displayDRInterpretation: PropTypes.bool,
     displayMutationPrevalence: PropTypes.bool,
+    displayAlgComparison: PropTypes.bool,
     displayMutationScores: PropTypes.arrayOf(
       PropTypes.string.isRequired
     )
@@ -38,6 +40,7 @@ function SinglePatternReport({
   config: {
     displayDRInterpretation = true,
     displayMutationPrevalence = false,
+    displayAlgComparison = false,
     displayMutationScores = []
   },
   output,
@@ -91,6 +94,8 @@ function SinglePatternReport({
         <SeqMutationPrevalence
          subtypeStats={subtypeStats}
          {...patternResult} />}
+        {!displayAlgComparison ? null :
+        <AlgComparison {...patternResult} />}
       </> : null}
     </article>
   );

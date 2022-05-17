@@ -8,7 +8,8 @@ import {
   MutationViewer as MutViewer,
   DRInterpretation,
   DRMutationScores,
-  SeqMutationPrevalence
+  SeqMutationPrevalence,
+  AlgComparison
 } from '../../../components/report';
 
 import useDisabledDrugs from '../use-disabled-drugs';
@@ -22,12 +23,13 @@ SingleSequenceReport.propTypes = {
     PropTypes.string.isRequired
   ).isRequired,
   sequenceResult: PropTypes.object,
-  subtypeStats: PropTypes.array.isRequired,
+  subtypeStats: PropTypes.array,
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
     displayDRInterpretation: PropTypes.bool,
     displayMutationPrevalence: PropTypes.bool,
+    displayAlgComparison: PropTypes.bool,
     displayMutationScores: PropTypes.arrayOf(
       PropTypes.string.isRequired
     )
@@ -43,6 +45,7 @@ function SingleSequenceReport({
   config: {
     displayDRInterpretation = true,
     displayMutationPrevalence = false,
+    displayAlgComparison = false,
     displayMutationScores = []
   },
   output,
@@ -102,6 +105,8 @@ function SingleSequenceReport({
         <SeqMutationPrevalence
          subtypeStats={subtypeStats}
          {...sequenceResult} />}
+        {!displayAlgComparison ? null :
+        <AlgComparison {...sequenceResult} />}
       </> : null}
     </article>
   );

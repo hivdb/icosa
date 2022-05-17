@@ -119,7 +119,7 @@ export default function MinPrevalenceAxis({
      fontSize={constants.axisTitleFontSize}
      fill="#000"
      textAnchor="middle">
-      Mutation detection threshold
+      Mut detection threshold
     </text>
   </g>;
 }

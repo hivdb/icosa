@@ -45,18 +45,22 @@ function ReportByPatternsContainer({
     payload: patterns,
     config
   });
-  const onExtendVariables = useExtendVariables({
+  const [onExtendVariables, isVarsPending] = useExtendVariables({
     config,
     match
   });
-  return <PatternAnalysisLayout
+  return isVarsPending ? null : <PatternAnalysisLayout
    query={query}
    client={client}
    patterns={patterns}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$includeGenes: [EnumGene]!"
+   extraParams={`
+     $includeGenes: [EnumGene!]!,
+     $algorithms: [ASIAlgorithm!],
+     $customAlgorithms: [CustomASIAlgorithm!]
+   `}
    onExtendVariables={onExtendVariables}>
     {props => (
       <PatternReports

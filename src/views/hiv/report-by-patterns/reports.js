@@ -39,7 +39,7 @@ PatternReports.propTypes = {
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,
   patterns: PropTypes.array.isRequired,
-  mutationPrevalenceSubtypes: PropTypes.array.isRequired,
+  mutationPrevalenceSubtypes: PropTypes.array,
   currentSelected: PropTypes.object,
   patternAnalysis: PropTypes.array.isRequired,
   fetchAnother: PropTypes.func.isRequired

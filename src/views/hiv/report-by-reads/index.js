@@ -38,19 +38,23 @@ function ReportByReadsContainer({
     payload: allSequenceReads,
     config
   });
-  const onExtendVariables = useExtendVariables({
+  const [onExtendVariables, isVarsPending] = useExtendVariables({
     config,
     match
   });
 
-  return <SeqReadsAnalysisLayout
+  return isVarsPending ? null : <SeqReadsAnalysisLayout
    query={query}
    client={client}
    allSequenceReads={allSequenceReads}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams="$includeGenes: [EnumGene]!"
+   extraParams={`
+     $includeGenes: [EnumGene!]!,
+     $algorithms: [ASIAlgorithm!],
+     $customAlgorithms: [CustomASIAlgorithm!]
+   `}
    onExtendVariables={onExtendVariables}>
     {props => (
       <SeqReadsReports
