@@ -76,6 +76,13 @@
       display: inline-block;
       font-size: 1.2rem;
       @include select('report-paginator-select');
+      :global .report-paginator-select__control {
+        border-color: color(type-main);
+      }
+      :global .report-paginator-select__value-container {
+        padding-top: .4rem;
+        padding-bottom: .4rem;
+      }
     }
   }
 

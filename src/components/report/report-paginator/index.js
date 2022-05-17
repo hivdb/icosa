@@ -81,6 +81,7 @@ function ReportPaginator({
         <Select
          options={options}
          className={style['report-paginator-select']}
+         name="sequence-select"
          classNamePrefix="report-paginator-select"
          placeholder="Select a sequence"
          onChange={handleChange}
