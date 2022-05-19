@@ -7,6 +7,9 @@ import style from './style.module.scss';
 
 InlineGeneRange.propTypes = {
   config: PropTypes.shape({
+    allGenes: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
     geneDisplay: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -32,10 +35,13 @@ InlineGeneRange.propTypes = {
   ).isRequired,
   includeGenes: PropTypes.arrayOf(
     PropTypes.string.isRequired
-  ).isRequired
+  )
 };
 
 function InlineGeneRange({config, geneSeqs, includeGenes}) {
+  if (!includeGenes) {
+    includeGenes = config.allGenes;
+  }
   const {geneDisplay, highlightGenes} = config;
   return <>
     {geneSeqs.length > 0 ? <>
