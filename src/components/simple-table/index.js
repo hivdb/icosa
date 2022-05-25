@@ -127,7 +127,9 @@ export default function SimpleTable({
      data-sorting={sorting}
      data-compact={compact}
      data-last-compact={lastCompact}
-     data-no-header-overlapping={noHeaderOverlapping}
+     data-no-header-overlapping={
+      noHeaderOverlapping === false ? undefined : ''
+     }
      style={{
        '--mobile-label-width': mobileLabelWidth
      }}

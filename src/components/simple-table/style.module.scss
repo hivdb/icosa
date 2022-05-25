@@ -294,6 +294,14 @@ table.simple-table {
   &[data-sorting="true"] .loader-container {
     display: block;
   }
+  &[data-no-header-overlapping] {
+    &[data-nocopy="true"] {
+      margin-top: 1rem;
+    }
+    &[data-nocopy="false"] {
+      margin-top: 3rem;
+    }
+  }
   &[data-compact="true"] {
     width: auto;
     float: left;
@@ -441,25 +449,16 @@ h2:global(.ui.dividing.header) + .simple-table-container {
   &[data-compact="false"] .download-options {
     top: -3.5rem;
   }
-  &[data-compact="false"][data-no-header-overlapping="true"] {
-    top: 3.5rem;
-  }
 }
 
 h2[class*="heading-tag"] + .simple-table-container {
   &[data-compact="false"] .download-options {
     top: -5rem;
   }
-  &[data-compact="false"][data-no-header-overlapping="true"] {
-    top: 5rem;
-  }
 }
 
 h3:global(.ui.header) + .simple-table-container {
   &[data-compact="false"] .download-options {
     top: -3rem;
-  }
-  &[data-compact="false"][data-no-header-overlapping="true"] {
-    top: 3rem;
   }
 }
