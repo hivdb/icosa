@@ -49,7 +49,7 @@ function MinCodonReads({
 
   return <>
     <dt className={style['has-dropdown']}>
-      Minimum codon occurrence:
+      Mutation occurrence threshold:
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown

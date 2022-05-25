@@ -62,12 +62,23 @@
 
   > div[role="tabpanel"] {
     padding: 1rem;
-    background-color: white;
+    position: relative;
     border-width: var(--border-width) var(--border-width) var(--border-width) 0;
     border-style: solid;
     border-color: var(--selected-border-color);
     &:not(:global(.react-tabs__tab-panel--selected)) {
       display: none;
+    }
+    &&::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: white;
+      z-index: -1000;
     }
   }
 }
