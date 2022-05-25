@@ -19,8 +19,10 @@ $padding-v: .7rem;
   background: #fff;
   box-shadow: none;
   border-radius: $border-radius;
-  @media only screen and (min-width: 768px) {
+  @media only screen {
     overflow: auto;
+  }
+  @media only screen and (min-width: 768px) {
     max-height: var(--desktop-max-height);
   }
 
@@ -41,9 +43,9 @@ table.simple-table {
   border-collapse: separate;
   border-spacing: 0;
 
-  .cell-label {
+  /* .cell-label {
     display: none;
-  }
+  } */
 
   &[data-color="red"] {
     border-top: .2em solid #db2828;
@@ -196,7 +198,7 @@ table.simple-table {
     }
   }
 
-  @media only screen and (max-width: 767px) {
+  /*@media only screen and (max-width: 767px) {
     > thead {
       display: none;
     }
@@ -268,13 +270,14 @@ table.simple-table {
     .cell-value {
       width: 70%;
     }
-  }
+  } */
 }
 
 .simple-table-container {
   position: relative;
   margin-top: 1rem;
   margin-bottom: 1rem;
+  max-width: 100%;
   &::after {
     z-index: -1;
     content: "";

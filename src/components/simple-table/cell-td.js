@@ -18,8 +18,12 @@ function SimpleTableCellTd({
   return React.useMemo(
     () => {
       const {
-        name, render, renderConfig, bodyCellColSpan,
-        textAlign, label, bodyCellStyle
+        name,
+        render,
+        renderConfig,
+        bodyCellColSpan,
+        textAlign,
+        bodyCellStyle
       } = columnDef;
 
       const jsx = render(
@@ -40,8 +44,8 @@ function SimpleTableCellTd({
        style={bodyCellStyle}
        colSpan={bodyCellColSpan > 1 ? bodyCellColSpan : null}
        rowSpan={enableRowSpan && rowSpan > 1 ? rowSpan : null}>
-        <span
-         className={style['cell-label']}>{label}</span>
+        {/*<span
+         className={style['cell-label']}>{label}</span>*/}
         <span className={style['cell-value']}>{jsx}</span>
       </td>;
     },
