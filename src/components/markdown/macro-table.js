@@ -212,6 +212,7 @@ Table.propTypes = {
   data: PropTypes.array,
   compact: PropTypes.bool,
   lastCompact: PropTypes.bool,
+  noHeaderOverlapping: PropTypes.bool,
   references: PropTypes.array,
   mdProps: PropTypes.shape({
     renderers: PropTypes.object
@@ -228,6 +229,7 @@ export function Table({
   data,
   compact,
   lastCompact,
+  noHeaderOverlapping,
   references,
   mdProps: {renderers, ...mdProps},
   cmsPrefix,
@@ -246,6 +248,7 @@ export function Table({
      key={cacheKey}
      compact={compact}
      lastCompact={lastCompact}
+     noHeaderOverlapping={noHeaderOverlapping}
      cacheKey={cacheKey}
      tableScrollStyle={tableScrollStyle}
      tableStyle={tableStyle}
@@ -258,9 +261,9 @@ export function Table({
   </>;
 }
 
-
 export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
-  return ({tableName, compact, lastCompact}) => {
+  // eslint-disable-next-line react/prop-types
+  return ({tableName, compact, lastCompact, noHeaderOverlapping}) => {
     compact = compact !== undefined;
     lastCompact = lastCompact !== undefined;
     if (tableName in tables) {
@@ -269,6 +272,7 @@ export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
          key={tableName}
          compact={compact}
          lastCompact={lastCompact}
+         noHeaderOverlapping={noHeaderOverlapping}
          cacheKey={tableName}
          mdProps={mdProps}
          cmsPrefix={cmsPrefix}
