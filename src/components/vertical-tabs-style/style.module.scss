@@ -69,7 +69,7 @@
     &:not(:global(.react-tabs__tab-panel--selected)) {
       display: none;
     }
-    &&::before {
+    &::before {
       content: '';
       display: block;
       position: absolute;
