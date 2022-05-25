@@ -169,7 +169,15 @@ function MutationViewer({
     [showAll, payloads, selectedIndex]
   );
 
-  const [tabsExpanded, togglerNode] = useToggleTabs();
+  const [tabsExpanded, togglerNode, resetExpansion] = useToggleTabs();
+
+  const handleSelect = React.useCallback(
+    idx => {
+      resetExpansion();
+      setSelectedIndex(idx);
+    },
+    [resetExpansion, setSelectedIndex]
+  );
 
   return <ReportSection title={title}>
     <div className={parentStyle['header-annotation']}>
@@ -191,7 +199,7 @@ function MutationViewer({
          style['sierra-genome-map-tabs'],
          verticalTabsStyle['vertical-tabs']
        )}
-       onSelect={setSelectedIndex}
+       onSelect={handleSelect}
        selectedIndex={selectedIndex}>
         <TabList>
           {presets.map(({name, label}, idx) => (

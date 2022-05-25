@@ -34,16 +34,20 @@ export function useToggleTabs(hideIfNarrowerThan = 900) {
   const defaultExpansion = window.innerWidth >= hideIfNarrowerThan;
   const [expansion, setExpansion] = React.useState(defaultExpansion);
 
-  React.useEffect(
+  const resetExpansion = React.useCallback(
     () => {
-      const resize = () => {
-        const newExp = window.innerWidth >= hideIfNarrowerThan;
-        setExpansion(newExp);
-      };
-      window.addEventListener('resize', resize);
-      return () => window.removeEventListener('resize', resize);
+      const newExp = window.innerWidth >= hideIfNarrowerThan;
+      setExpansion(newExp);
     },
     [hideIfNarrowerThan]
+  );
+
+  React.useEffect(
+    () => {
+      window.addEventListener('resize', resetExpansion);
+      return () => window.removeEventListener('resize', resetExpansion);
+    },
+    [resetExpansion]
   );
 
   const onToggle = React.useCallback(
@@ -53,7 +57,8 @@ export function useToggleTabs(hideIfNarrowerThan = 900) {
 
   return [
     expansion,
-    <ToggleTabs {...{expansion, onToggle}} />
+    <ToggleTabs {...{expansion, onToggle}} />,
+    resetExpansion
   ];
 
 }
