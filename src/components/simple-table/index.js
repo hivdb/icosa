@@ -14,6 +14,7 @@ export {ColumnDef};
 SimpleTable.propTypes = {
   compact: PropTypes.bool.isRequired,
   lastCompact: PropTypes.bool.isRequired,
+  noHeaderOverlapping: PropTypes.bool.isRequired,
   color: PropTypes.string,
   data: PropTypes.arrayOf(
     PropTypes.object.isRequired
@@ -34,6 +35,8 @@ SimpleTable.propTypes = {
 
 SimpleTable.defaultProps = {
   compact: false,
+  lastCompact: false,
+  noHeaderOverlapping: false,
   disableCopy: false,
   sheetName: 'Sheet1',
   tableScrollStyle: {},
@@ -44,6 +47,7 @@ SimpleTable.defaultProps = {
 export default function SimpleTable({
   compact,
   lastCompact,
+  noHeaderOverlapping,
   color,
   data,
   cacheKey,
@@ -123,6 +127,7 @@ export default function SimpleTable({
      data-sorting={sorting}
      data-compact={compact}
      data-last-compact={lastCompact}
+     data-no-header-overlapping={noHeaderOverlapping}
      style={{
        '--mobile-label-width': mobileLabelWidth
      }}
