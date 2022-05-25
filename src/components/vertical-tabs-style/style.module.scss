@@ -7,11 +7,50 @@
   --selected-border-color: #{color(type-main)};
   --ribbon-width: .5rem;
   --border-width: 1px;
+  --toggler-width: 2.5rem;
   @media (min-resolution: 2dppx) {
     --border-width: .5px;
   }
   display: grid;
   grid-template-columns: var(--tab-width) auto;
+
+  &[data-tabs-expanded="false"] {
+    grid-template-columns: auto;
+    > ul[role="tablist"] {
+      display: none;
+    }
+    > div[role="tabpanel"] {
+      border-left-width: var(--border-width);
+    }
+    > div.toggle-tabs {
+      left: calc(0px - var(--toggler-width) / 2);
+    }
+  }
+
+  @media only screen and (max-width: 900px) {
+    &[data-tabs-expanded="true"] {
+      grid-template-columns: auto;
+      > ul[role="tablist"] {
+        > li[role="tab"][aria-selected="true"]{
+          margin-right: 0;
+          &::before {
+            border-right-width: 0;
+          }
+        }
+        > li[role="tab"][aria-selected="false"]{
+          border-bottom: var(--border-width) solid var(--selected-border-color);
+          border-left: var(--border-width) solid var(--selected-border-color);
+        }
+      }
+      > div[role="tabpanel"] {
+        display: none;
+      }
+      > div.toggle-tabs {
+        left:unset;
+        right: calc(0px - var(--toggler-width) / 2);
+      }
+    }
+  }
 
   > ul[role="tablist"] {
     margin: 0;
@@ -24,10 +63,12 @@
       padding: 1rem .5rem 1rem 1rem;
       cursor: pointer;
       overflow: hidden;
+      margin-top: 0;
+      margin-bottom: 0;
       &::before {
         content: '';
         position: absolute;
-        display:block;
+        display: block;
         top: 0;
         right: 0;
         bottom: 0;
@@ -60,9 +101,37 @@
     }
   }
 
+  > div.toggle-tabs {
+    position: absolute;
+    left: calc(var(--tab-width) - var(--toggler-width) / 2);
+    top: 0;
+    bottom: 0;
+    > button {
+      position: sticky;
+      top: 38.8vh;
+      background-color: white;
+      border: none;
+      margin: min(5vw, 225%) 0 min(5vw, 225%);
+      padding: 0;
+      color: var(--selected-border-color);
+      font-size: var(--toggler-width);
+      width: var(--toggler-width);
+      height: var(--toggler-width);
+      line-height: var(--toggler-width);
+      border-radius: var(--toggler-width);
+      border: var(--border-width) solid var(--selected-border-color);
+      z-index: 10;
+      > svg {
+        display: block;
+        cursor: pointer;
+      }
+    }
+  }
+
   > div[role="tabpanel"] {
     padding: 1rem;
     position: relative;
+    overflow: hidden;
     border-width: var(--border-width) var(--border-width) var(--border-width) 0;
     border-style: solid;
     border-color: var(--selected-border-color);

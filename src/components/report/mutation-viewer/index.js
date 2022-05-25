@@ -6,7 +6,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import {H3} from '../../heading-tags';
 import CheckboxInput from '../../checkbox-input';
 import GenomeMap from '../../genome-map';
-import verticalTabsStyle from '../../vertical-tabs-style';
+import verticalTabsStyle, {useToggleTabs} from '../../vertical-tabs-style';
 import ConfigContext from '../../../utils/config-context';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
 
@@ -169,6 +169,8 @@ function MutationViewer({
     [showAll, payloads, selectedIndex]
   );
 
+  const [tabsExpanded, togglerNode] = useToggleTabs();
+
   return <ReportSection title={title}>
     <div className={parentStyle['header-annotation']}>
       {output === 'printable' ? null :
@@ -184,6 +186,7 @@ function MutationViewer({
     </div>
     {output !== 'printable' && view === 'collapse' ?
       <Tabs
+       data-tabs-expanded={tabsExpanded}
        className={classNames(
          style['sierra-genome-map-tabs'],
          verticalTabsStyle['vertical-tabs']
@@ -197,6 +200,7 @@ function MutationViewer({
              key={`tab-${name}`}>{label} ({name})</Tab>
           ))}
         </TabList>
+        {togglerNode}
         {payloads.map(payload => (
           <TabPanel
            data-hide={!showAll && !payload.hasCoverage}
