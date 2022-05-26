@@ -113,6 +113,7 @@ export default class RegionGroup extends React.Component {
     positionGroups: positionGroupsShape,
     hidePositionAxis: PropTypes.bool.isRequired,
     positionAxis: positionAxisShape,
+    positionExtendSize: PropTypes.number,
     regions: PropTypes.arrayOf(
       regionShape.isRequired
     ).isRequired,
@@ -167,6 +168,7 @@ export default class RegionGroup extends React.Component {
     const {
       hidePositionAxis,
       positionAxis,
+      positionExtendSize,
       paddingTop,
       positionGroups,
       width,
@@ -222,6 +224,7 @@ export default class RegionGroup extends React.Component {
         const jsx = <React.Fragment key={`position-group-${posGroup.name}`}>
           <PositionGroup
            positionGroup={posGroup}
+           positionExtendSize={positionExtendSize}
            regions={regions}
            scaleX={scaleX}
            offsetY={paddingTop + posGroupAddOffsetY} />

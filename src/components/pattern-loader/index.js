@@ -44,22 +44,31 @@ function usePatterns() {
   } = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
-  let {patterns = []} = loc.state || {patterns: []};
-  let {name, mutations} = loc.query || {};
-  if (!isConfigPending && mutations) {
-    mutations = mutations
-      .split(/\s*[,+]\s*/g)
-      .filter(mut => mut);
-    [mutations] = sanitizeMutations(mutations, config, true);
-    if (!name) {
-      name = mutations.join('+');
-    }
-    patterns = [{
-      uuid: uuidv4(),
-      name,
-      mutations
-    }];
-  }
+  const {patterns: statePatterns = []} = loc.state || {patterns: []};
+  const {name: queryName, mutations: queryMuts} = loc.query || {};
+
+  const patterns = React.useMemo(
+    () => {
+      let patterns = statePatterns;
+      if (!isConfigPending && queryMuts) {
+        let name = queryName;
+        let mutations = queryMuts
+          .split(/\s*[,+]\s*/g)
+          .filter(mut => mut);
+        [mutations] = sanitizeMutations(mutations, config, true);
+        if (!name) {
+          name = mutations.join('+');
+        }
+        patterns = [{
+          uuid: uuidv4(),
+          name,
+          mutations
+        }];
+      }
+      return patterns;
+    },
+    [config, isConfigPending, statePatterns, queryName, queryMuts]
+  );
   return [patterns, isConfigPending];
 }
 

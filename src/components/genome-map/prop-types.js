@@ -87,6 +87,7 @@ const presetShape = PropTypes.shape({
   hidePositionAxis: PropTypes.bool,
   positionAxis: positionAxisShape,
   positionGroups: positionGroupsShape.isRequired,
+  positionExtendSize: PropTypes.number,
   regions: PropTypes.arrayOf(
     regionShape.isRequired
   ).isRequired,
