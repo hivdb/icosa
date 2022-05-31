@@ -1,4 +1,4 @@
-import {decompress} from 'fflate';
+import {decompress} from 'fflate/browser';
 
 export default function readFile(file) {
   return new Promise((resolve) => {
