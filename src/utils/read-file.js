@@ -1,4 +1,4 @@
-import {decompress} from 'fflate/browser';
+import {ungzip} from 'pako';
 
 export default function readFile(file) {
   return new Promise((resolve) => {
@@ -7,13 +7,9 @@ export default function readFile(file) {
       reader.readAsArrayBuffer(file);
       reader.onload = () => {
         const arrayBuffer = new Uint8Array(reader.result);
-        decompress(arrayBuffer, {}, (err, result) => {
-          if (err) {
-            throw err;
-          }
-          const decoder = new TextDecoder();
-          resolve(decoder.decode(result));
-        });
+        const result = ungzip(arrayBuffer);
+        const decoder = new TextDecoder();
+        resolve(decoder.decode(result));
       };
     }
     else {
