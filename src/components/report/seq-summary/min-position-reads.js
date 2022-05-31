@@ -30,7 +30,7 @@ function MinPositionReads({
   minPositionReads: curValue
 }) {
   const {match, router} = useRouter();
-  if (curValue === undefined) {
+  if (curValue === null || isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.posreads);
     if (isNaN(curValue)) {
       curValue = defaultValue;
@@ -47,10 +47,9 @@ function MinPositionReads({
     [match.location, router]
   );
 
-
   return <>
     <dt className={style['has-dropdown']}>
-      Read depth threshold by position:
+      Read depth threshold:
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown

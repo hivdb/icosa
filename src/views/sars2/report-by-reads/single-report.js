@@ -92,9 +92,9 @@ function SingleSeqReadsReport({
             <SeqSummary.PangoLineage />
             <SeqSummary.Genotype />
             <SeqSummary.OutbreakInfo />
+            <SeqSummary.MinPositionReads />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
-            <SeqSummary.MinCodonReads />
             <SeqSummary.ThresholdNomogram />
           </SeqSummary>
           <MutViewer {...{

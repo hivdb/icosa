@@ -102,9 +102,9 @@ function SingleSeqReadsReport({
           <SeqSummary.MultilineGeneRange />
           <SeqSummary.MedianReadDepth />
           <SeqSummary.Genotype />
+          <SeqSummary.MinPositionReads />
           <SeqSummary.MaxMixtureRate />
           <SeqSummary.MinPrevalence />
-          <SeqSummary.MinCodonReads />
           <SeqSummary.ThresholdNomogram />
         </SeqSummary>
         <MutViewer {...{

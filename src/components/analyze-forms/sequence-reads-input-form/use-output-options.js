@@ -58,9 +58,9 @@ export default function useOutputOptions({
         <legend>Output options</legend>
         <div className={style['divided-options']}>
           <SeqSummary titleWidth="14.5rem" headless>
+            <SeqSummary.MinPositionReads />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
-            <SeqSummary.MinCodonReads />
           </SeqSummary>
           <div className={style['seqreads-output-options']}>
             <div>

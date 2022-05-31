@@ -30,7 +30,7 @@ function MinCodonReads({
   minCodonReads: curValue
 }) {
   const {match, router} = useRouter();
-  if (isNaN(curValue)) {
+  if (curValue === null || isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.cdreads);
     if (isNaN(curValue)) {
       curValue = defaultValue;
