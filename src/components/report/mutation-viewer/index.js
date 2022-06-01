@@ -33,6 +33,8 @@ MutationViewer.propTypes = {
   viewCheckboxLabel: PropTypes.string.isRequired,
   noUnseqRegions: PropTypes.bool.isRequired,
   regionPresets: PropTypes.object.isRequired,
+  highlightUnusualMutation: PropTypes.bool,
+  highlightDRM: PropTypes.bool,
   defaultPresetIndex: PropTypes.number.isRequired,
   allGeneSeqs: PropTypes.arrayOf(
     PropTypes.shape({
@@ -65,7 +67,9 @@ MutationViewer.defaultProps = {
   noUnseqRegions: false,
   defaultView: 'collapse',
   viewCheckboxLabel: 'Collapse mutation maps',
-  defaultPresetIndex: 0
+  defaultPresetIndex: 0,
+  highlightUnusualMutation: true,
+  highlightDRM: true
 };
 
 
@@ -80,7 +84,9 @@ function MutationViewer({
   regionPresets,
   allGeneSeqs,
   coverages,
-  coverageUpperLimit
+  coverageUpperLimit,
+  highlightUnusualMutation,
+  highlightDRM
 }) {
   const {presets, genes} = regionPresets;
   const [selectedIndex, setSelectedIndex] = useState(defaultPresetIndex);
@@ -111,6 +117,8 @@ function MutationViewer({
         allGeneSeqs,
         geneDefs: genes,
         highlightGenes,
+        highlightUnusualMutation,
+        highlightDRM,
         minPos: presetPosStart,
         maxPos: presetPosEnd
       });
@@ -152,7 +160,16 @@ function MutationViewer({
         })
       };
     }),
-    [allGeneSeqs, coverageUpperLimit, coverages, genes, noUnseqRegions, presets]
+    [
+      allGeneSeqs,
+      coverageUpperLimit,
+      coverages,
+      genes,
+      noUnseqRegions,
+      presets,
+      highlightUnusualMutation,
+      highlightDRM
+    ]
   );
 
   const showAll = React.useMemo(
@@ -240,8 +257,18 @@ function MutationViewer({
 export default function MutationViewerLoader(props) {
 
   return <ConfigContext.Consumer>
-    {({regionPresets}) => (
-      <MutationViewer {...props} regionPresets={regionPresets} />
+    {({
+      regionPresets,
+      highlightUnusualMutation,
+      highlightDRM
+    }) => (
+      <MutationViewer
+       {...props}
+       {...{
+         regionPresets,
+         highlightUnusualMutation,
+         highlightDRM
+       }} />
     )}
   </ConfigContext.Consumer>;
 }

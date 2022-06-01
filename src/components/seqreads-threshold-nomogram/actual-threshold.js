@@ -65,7 +65,7 @@ export default function ActualThreshold({
      textAnchor="start"
      fontSize={fontSize}
      fill={MAIN_COLOR}>
-      Actual threshold: (
+      Applied thresholds: (
       {(thresholdX * 100).toPrecision(2)}%,{' '}
       {(thresholdY * 100).toFixed(1)}%)
     </text>

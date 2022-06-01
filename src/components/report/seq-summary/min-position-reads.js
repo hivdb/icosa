@@ -2,12 +2,15 @@ import React from 'react';
 import {useRouter} from 'found';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
+import {HoverPopup} from '../../popup';
+import useMessages from '../../../utils/use-messages';
 
 import style from './style.module.scss';
 
 
 MinPositionReads.propTypes = {
   config: PropTypes.shape({
+    messages: PropTypes.object.isRequired,
     seqReadsDefaultParams: PropTypes.shape({
       minPositionReads: PropTypes.number.isRequired
     }).isRequired,
@@ -22,6 +25,7 @@ MinPositionReads.propTypes = {
 
 function MinPositionReads({
   config: {
+    messages,
     seqReadsDefaultParams: {
       minPositionReads: defaultValue
     },
@@ -47,9 +51,19 @@ function MinPositionReads({
     [match.location, router]
   );
 
+  const [label, desc] = useMessages(
+    [
+      'min-position-reads-dropdown-label',
+      'min-position-reads-dropdown-desc'
+    ],
+    messages
+  );
+
   return <>
     <dt className={style['has-dropdown']}>
-      Read depth threshold:
+      <HoverPopup message={desc}>
+        {label}:
+      </HoverPopup>
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown

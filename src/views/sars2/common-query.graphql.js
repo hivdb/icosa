@@ -235,6 +235,10 @@ const geneSeqLevel = `
     isUnusual
     isAmbiguous
     isDRM
+    DRMDrugClass {
+      name
+      fullName
+    }
     totalReads
     triplet
     allAAReads {

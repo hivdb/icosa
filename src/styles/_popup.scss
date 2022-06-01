@@ -1,0 +1,80 @@
+@mixin popup(
+  $popup-bg-color: #222,
+  $popup-border-color: #222,
+  $popup-text-color: white,
+  $popup-link-color: #FAFA33,
+  $popup-link-focus-ring-color: #7DADD9
+) {
+
+  &:global(-trigger) {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    @media print {
+      text-decoration: none;
+    }
+    &[data-no-underline] {
+      text-decoration: none;
+    }
+  }
+
+  &:global(-content) {
+    color: $popup-text-color;
+    margin: auto;
+    background-color: $popup-bg-color;
+    opacity: .9;
+    padding: .5rem 1.2rem;
+    border: 1px solid $popup-border-color;
+    border-radius: .4rem;
+    a {
+      position: relative;
+      top: 0;
+      transition: top 100ms ease-in-out;
+      color: $popup-link-color;
+      &:hover {
+        top: -1px;
+      }
+    }
+    *:focus-visible {
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        right: -3px;
+        bottom: -1px;
+        left: -3px;
+        border-radius: 2px;
+        z-index: -1;
+        background-color: #000;
+        border: 1px solid $popup-link-focus-ring-color;
+      }
+      border-radius: 2px;
+      outline: none;
+    }
+    &[role="tooltip"] {
+      min-width: 10rem;
+      max-width: 30vw;
+      @media only screen and (max-width: 1200px) {
+        max-width: 40vw;
+      }
+      @media only screen and (max-width: 900px) {
+        max-width: 60vw;
+      }
+      @media only screen and (max-width: 700px) {
+        max-width: 80vw;
+      }
+    }
+  }
+  &:global(-arrow) {
+    color: $popup-bg-color;
+    stroke-width: 2px;
+    stroke: $popup-border-color;
+    stroke-dasharray: 30px;
+    stroke-dashoffset: -54px;
+  }
+  &:global(-overlay) {
+    background: rgba(0, 0, 0, 0.5);
+    &[data-popup='tooltip'] {
+      background: transparent;
+    }
+  }
+}

@@ -23,16 +23,18 @@ function MutationList({
     allGeneMutations // pattern analysis
   );
 
-  return <ConfigContext.Consumer>
-    {({geneDisplay}) => <ul className={style['mutation-list']}>
-      {geneSeqs.map(geneSeq => (
-        <GeneMutationList
-         key={geneSeq.gene.name}
-         {...geneSeq}
-         geneDisplay={geneDisplay} />
-      ))}
-    </ul>}
-  </ConfigContext.Consumer>;
+  const [config] = ConfigContext.use();
+  const {geneDisplay} = config || {};
+
+  return <ul className={style['mutation-list']}>
+    {geneSeqs.map(geneSeq => (
+      <GeneMutationList
+       key={geneSeq.gene.name}
+       {...geneSeq}
+       config={config}
+       geneDisplay={geneDisplay} />
+    ))}
+  </ul>;
 }
 
 

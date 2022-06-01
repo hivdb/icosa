@@ -50,14 +50,14 @@ function InlineGeneRange({config, geneSeqs, includeGenes}) {
         {geneSeqs.length > 1 ? 's' : null}:
       </dt>
       <dd>
-        <ul className={style['inline-gene-range-list']}>
+        <ul className={style['inline-gene-list']}>
           {geneSeqs.map(({
             gene,
             unsequencedRegions: {size, regions}
           }, idx) => (
             <li
              key={idx} className={classNames(
-               style['inline-gene-range'],
+               style['inline-gene'],
                highlightGenes.includes(gene.name) ?
                  style['hl'] : null
              )}>

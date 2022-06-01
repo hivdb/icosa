@@ -144,7 +144,10 @@ function SeqSummary(props) {
           }
 
           else if (child.type === MedianReadDepth) {
-            return <MedianReadDepthReal {...{key, readDepthStats}} />;
+            return (
+              <MedianReadDepthReal
+               {...{key, config, readDepthStats, geneSeqs}} />
+            );
           }
 
           else if (child.type === PangoLineage) {

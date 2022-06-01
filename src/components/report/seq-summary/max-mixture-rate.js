@@ -2,31 +2,33 @@ import React from 'react';
 import {useRouter} from 'found';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
+import {HoverPopup} from '../../popup';
+import useMessages from '../../../utils/use-messages';
 
 import style from './style.module.scss';
 
 
 MaxMixtureRate.propTypes = {
   config: PropTypes.shape({
+    messages: PropTypes.object.isRequired,
     seqReadsDefaultParams: PropTypes.shape({
       maxMixtureRate: PropTypes.number.isRequired
     }).isRequired,
     seqReadsMaxMixtureRate: PropTypes.array.isRequired
   }),
-  maxMixtureRate: PropTypes.number,
-  mixtureRate: PropTypes.number
+  maxMixtureRate: PropTypes.number
 };
 
 
 function MaxMixtureRate({
   config: {
+    messages,
     seqReadsDefaultParams: {
       maxMixtureRate: defaultValue
     },
     seqReadsMaxMixtureRate: options
   },
-  maxMixtureRate: curValue,
-  mixtureRate: actualValue
+  maxMixtureRate: curValue
 }) {
   const {match, router} = useRouter();
   if (isNaN(curValue)) {
@@ -46,9 +48,19 @@ function MaxMixtureRate({
     [match.location, router]
   );
 
+  const [label, desc] = useMessages(
+    [
+      'max-mixture-rate-dropdown-label',
+      'max-mixture-rate-dropdown-desc'
+    ],
+    messages
+  );
+
   return <>
     <dt className={style['has-dropdown']}>
-      Nucleotide mixture threshold:
+      <HoverPopup message={desc}>
+        {label}:
+      </HoverPopup>
     </dt>
     <dd className={style['has-dropdown']} data-wide-dropdown>
       <Dropdown
@@ -57,12 +69,6 @@ function MaxMixtureRate({
        options={options}
        name="cutoff"
        onChange={handleChange} />
-      {isNaN(actualValue) ?
-        null : <span className={style['dropdown-after']}>
-          (actual: {actualValue === 0. ? 0 : (actualValue *
-        100).toPrecision(2)}%)
-        </span>
-      }
     </dd>
   </>;
 

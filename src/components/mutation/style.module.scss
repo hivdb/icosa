@@ -1,0 +1,122 @@
+@import "../../styles/colors";
+
+
+.mutation-item {
+  --drm-color: #1b8ecc;
+  --unusual-color: #e13333;
+  position: relative;
+  display: inline-flex;
+  > .comma {
+    display: inline-block;
+    position: relative;
+    width: .9rem;
+    &::before {
+      content: '·';
+      text-indent: 0;
+      font-weight: 800;
+      width: .9rem;
+      text-align: center;
+      position: absolute;
+      left: 0;
+    }
+    text-indent: 100%;
+    overflow: hidden;
+  }
+  &:last-of-type > .comma {
+    display: none;
+  }
+
+  &[data-unusual="true"], &[data-drm="true"] {
+    .mut-text {
+      position: relative;
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1px;
+        right: -2px;
+        bottom: -1px;
+        left: -2px;
+        opacity: .15;
+      }
+    }
+  }
+
+  &[data-unusual="true"] .mut-text {
+    &::before {
+      background-color: var(--unusual-color);
+    }
+    color: var(--unusual-color);
+  }
+
+  &[data-drm="true"] .mut-text {
+    &::before {
+      background-color: var(--drm-color);
+    }
+    font-weight: 700;
+    color: var(--drm-color);
+  }
+
+  /*&:first-of-type[data-unsequenced="true"],
+  &[data-unsequenced="false"] +
+  li.mutation-item[data-unsequenced="true"] {
+    > .unseq::after {
+      content: 'unsequenced';
+      font-weight: 500;
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      bottom: -.6rem;
+      line-height: 1em;
+      font-size: .6rem;
+    }
+  }*/
+  > .unseq {
+    position: relative;
+    color: #707070;
+    text-decoration: line-through;
+    font-weight: 200;
+    padding-left: .2rem;
+    padding-right: .2rem;
+  }
+  > .annotations {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: .2rem;
+    margin-right: -.2rem;
+  }
+
+  ul.aa-percent-list {
+    margin-top: .4rem;
+    margin-bottom: 0;
+    list-style-type: none;
+    display: inline-block;
+    > li.aa-percent-item {
+      display: inline-block;
+      &:not(:first-of-type)::before {
+        content: ',';
+        padding-right: .15rem;
+      }
+    }
+    &[data-hide-aa="true"] .amino-acid {
+      display: none;
+    }
+  }
+
+  .total-reads {
+    margin-bottom: .2rem;
+  }
+
+  ul.aa-percent-list,
+  .total-reads {
+    color: #202020;
+    font-size: .6rem;
+    font-weight: 200;
+    line-height: 1em;
+    padding-left: 0;
+    @media print {
+      color: black;
+    }
+  }
+}

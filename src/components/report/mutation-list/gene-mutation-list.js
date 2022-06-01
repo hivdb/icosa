@@ -1,22 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import Mutation from './mutation';
+import Mutation from '../../mutation';
 import style from './style.module.scss';
 
 import shortenMutationList from '../../../utils/shorten-mutation-list';
 
 
-function GeneMutationList({
+GeneMutationList.propTypes = {
+  config: PropTypes.object.isRequired,
+  geneDisplay: PropTypes.objectOf(
+    PropTypes.string.isRequired
+  ).isRequired,
+  gene: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  mutations: PropTypes.array.isRequired
+};
+
+export default function GeneMutationList({
+  config,
   geneDisplay,
   gene: {name: geneName},
   mutations
 }) {
-  const shortMutations = shortenMutationList(
-    mutations.filter(({isUnsequenced}) => !isUnsequenced)
+  const shortMutations = React.useMemo(
+    () => shortenMutationList(
+      mutations.filter(({isUnsequenced}) => !isUnsequenced)
+    ),
+    [mutations]
   );
 
-  if (shortMutations.length > 0) {
-    return (
+  return <>
+    {shortMutations.length > 0 ?
       <li
        key={`${geneName}-mutation-list`}
        className={style['gene-item']}>
@@ -25,16 +41,9 @@ function GeneMutationList({
         </strong>
         <ul className={style['gene-mutation-list']}>
           {shortMutations.map((mut, idx) => (
-            <Mutation key={idx} gene={geneName} {...mut} />
+            <Mutation key={idx} {...mut} gene={geneName} config={config} />
           ))}
         </ul>
-      </li>
-    );
-  }
-  else {
-    return null;
-  }
+      </li> : null}
+  </>;
 }
-
-
-export default React.memo(GeneMutationList);

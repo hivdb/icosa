@@ -37,7 +37,6 @@ export default gql`
     ${pangolinQuery()}
     readDepthStats {
       median: percentile(p: 50)
-      p95: percentile(p: 95)
     }
     validationResults {
       level
@@ -57,6 +56,9 @@ export default gql`
       firstAA
       lastAA
       ${geneSeqLevel}
+      readDepthStats {
+        median: percentile(p: 50)
+      }
       unsequencedRegions {
         size
         regions {
