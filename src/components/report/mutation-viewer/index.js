@@ -17,7 +17,6 @@ import {
   getGenomeMapPositions,
   getCoverages
 } from './funcs';
-import parentStyle from '../style.module.scss';
 import style from './style.module.scss';
 
 const useViewReducer = createPersistedReducer(
@@ -196,61 +195,64 @@ function MutationViewer({
     [resetExpansion, setSelectedIndex]
   );
 
-  return <ReportSection title={title}>
-    <div className={parentStyle['header-annotation']}>
-      {output === 'printable' ? null :
-      <CheckboxInput
-       id="genome-map-view"
-       name="genome-map-view"
-       className={style['genome-map-view-checkbox']}
-       value="collapse"
-       onChange={toggleView}
-       checked={view === 'collapse'}>
-        {viewCheckboxLabel}
-      </CheckboxInput>}
-    </div>
-    {output !== 'printable' && view === 'collapse' ?
-      <Tabs
-       data-tabs-expanded={tabsExpanded}
-       className={classNames(
-         style['sierra-genome-map-tabs'],
-         verticalTabsStyle['vertical-tabs']
-       )}
-       onSelect={handleSelect}
-       selectedIndex={selectedIndex}>
-        <TabList>
-          {presets.map(({name, label}, idx) => (
-            <Tab
-             data-hide={!showAll && !payloads[idx].hasCoverage}
-             key={`tab-${name}`}>{label} ({name})</Tab>
+  return (
+    <ReportSection
+     title={title}
+     titleAnnotation={output === 'printable' ?
+       null :
+       <CheckboxInput
+        id="genome-map-view"
+        name="genome-map-view"
+        className={style['genome-map-view-checkbox']}
+        value="collapse"
+        onChange={toggleView}
+        checked={view === 'collapse'}>
+         {viewCheckboxLabel}
+       </CheckboxInput>}
+    >
+      {output !== 'printable' && view === 'collapse' ?
+        <Tabs
+         data-tabs-expanded={tabsExpanded}
+         className={classNames(
+           style['sierra-genome-map-tabs'],
+           verticalTabsStyle['vertical-tabs']
+         )}
+         onSelect={handleSelect}
+         selectedIndex={selectedIndex}>
+          <TabList>
+            {presets.map(({name, label}, idx) => (
+              <Tab
+               data-hide={!showAll && !payloads[idx].hasCoverage}
+               key={`tab-${name}`}>{label} ({name})</Tab>
+            ))}
+          </TabList>
+          {togglerNode}
+          {payloads.map(payload => (
+            <TabPanel
+             data-hide={!showAll && !payload.hasCoverage}
+             key={`tabpanel-${payload.name}`}>
+              <GenomeMap
+               key={`genome-map-${payload.name}`}
+               preset={payload}
+               className={style['sierra-genome-map']} />
+            </TabPanel>
           ))}
-        </TabList>
-        {togglerNode}
-        {payloads.map(payload => (
-          <TabPanel
-           data-hide={!showAll && !payload.hasCoverage}
-           key={`tabpanel-${payload.name}`}>
+        </Tabs> :
+        presets.map(({name, label}, idx) => (
+          <section
+           key={`section=${name}`}
+           data-hide={!showAll && !payloads[idx].hasCoverage}
+           class={style['genome-map-expanded']}>
+            <H3 disableAnchor>{label} ({name})</H3>
             <GenomeMap
-             key={`genome-map-${payload.name}`}
-             preset={payload}
+             key={`genome-map-${name}`}
+             preset={payloads[idx]}
              className={style['sierra-genome-map']} />
-          </TabPanel>
+          </section>
         ))}
-      </Tabs> :
-      presets.map(({name, label}, idx) => (
-        <section
-         key={`section=${name}`}
-         data-hide={!showAll && !payloads[idx].hasCoverage}
-         class={style['genome-map-expanded']}>
-          <H3 disableAnchor>{label} ({name})</H3>
-          <GenomeMap
-           key={`genome-map-${name}`}
-           preset={payloads[idx]}
-           className={style['sierra-genome-map']} />
-        </section>
-      ))}
-    {children}
-  </ReportSection>;
+      {children}
+    </ReportSection>
+  );
 }
 
 

@@ -6,7 +6,6 @@ import DRMutationByTypes from './dr-mutation-by-types';
 import DRCommentByTypes from '../dr-comment-by-types';
 import DRLevels from './dr-levels';
 
-import parentStyle from '../style.module.scss';
 import style from './style.module.scss';
 
 DRInterpretation.propTypes = {
@@ -49,10 +48,12 @@ export default function DRInterpretation({
   const {algorithm, gene} = geneDR;
 
   return (
-    <ReportSection title={`Drug resistance interpretation: ${gene.name}`}>
-      <div className={parentStyle['header-annotation']}>
-        {algorithm.family} {algorithm.version} ({algorithm.publishDate})
-      </div>
+    <ReportSection
+     title={`Drug resistance interpretation: ${gene.name}`}
+     titleAnnotation={<>
+       {algorithm.family} {algorithm.version} ({algorithm.publishDate})
+     </>}
+    >
       <DRMutationByTypes {...geneDR} {...{output, strain}} />
       {suppressDRI ?
         <p>

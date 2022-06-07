@@ -139,10 +139,10 @@ export default function DRMutationScores({geneDR, disabledDrugs}) {
   const {algorithm, gene} = geneDR;
   return (
     <ReportSection
-     title={`Mutation scoring: ${gene.name}`}>
-      <div className={parentStyle['header-annotation']}>
-        {algorithm.family} {algorithm.version} ({algorithm.publishDate})
-      </div>
+     title={`Mutation scoring: ${gene.name}`}
+     titleAnnotation={<>
+       {algorithm.family} {algorithm.version} ({algorithm.publishDate})
+     </>}>
       {geneDR.gene.drugClasses.map((drugClass, idx) => {
         return <DRClassMutScores
          key={idx}
