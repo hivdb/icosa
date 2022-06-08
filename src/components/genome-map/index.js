@@ -2,15 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import {presetShape} from './prop-types';
-import RegionGroup from './region-group';
 import Markdown from '../markdown';
 import DownloadSVG from '../download-svg';
+
+import {presetShape} from './prop-types';
+import RegionGroup from './region-group';
+import {
+  getLongestPosLabelHeight,
+  scaleMultipleLinears,
+  trimOverlaps
+} from './helpers';
 
 import style from './style.module.scss';
 
 export {presetShape};
 
+const MARGIN = 120;
+const POS_GROUP_MIN_HEIGHT = 75;
+const POS_AXIS_HEIGHT = 25;
 
 GenomeMap.propTypes = {
   className: PropTypes.string,
@@ -35,33 +44,102 @@ export default function GenomeMap({
     positionExtendSize,
     regions,
     coverages,
-    subregionGroup,
     footnote,
-    height,
-    width,
-    paddingLeft,
-    paddingRight
+    height: minHeight,
+    width: minWidth,
+    paddingLeft: minPaddingLeft,
+    paddingRight: minPaddingRight
   } = preset;
-  const [svgBorder, setSVGBorder] = React.useState({
-    height,
-    width,
-    paddingLeft,
-    paddingRight
-  });
-  const mounted = React.useRef(true);
 
-  React.useEffect(
-    () => (() => mounted.current = false),
-    []
+  const origScaleX = React.useMemo(
+    () => scaleMultipleLinears(
+      domains,
+      [minPaddingLeft, minWidth - minPaddingRight]
+    ),
+    [domains, minPaddingLeft, minPaddingRight, minWidth]
   );
 
-  const moveSVGBorder = React.useCallback(
-    ({height, width, paddingLeft, paddingRight}) => {
-      if (mounted.current && height > svgBorder.height) {
-        setSVGBorder({height, width, paddingLeft, paddingRight});
+  const origTrimmedPosGroups = React.useMemo(
+    () => positionGroups.map(
+      posGroup => trimOverlaps(posGroup, origScaleX)
+    ),
+    [positionGroups, origScaleX]
+  );
+
+  const [minX, maxX] = React.useMemo(
+    () => {
+      const [posStart, posEnd] = origScaleX.domain();
+      let minX = 0;
+      let maxX = minWidth;
+      for (const {positions} of origTrimmedPosGroups) {
+        for (const {pos, turns} of positions) {
+          if (pos < posStart || pos > posEnd) {
+            continue;
+          }
+          for (const [x] of turns) {
+            if (x < minX) {
+              minX = x;
+            }
+            else if (x > maxX) {
+              maxX = x;
+            }
+          }
+        }
       }
+      return [minX, maxX];
     },
-    [svgBorder.height]
+    [origScaleX, origTrimmedPosGroups, minWidth]
+  );
+
+  const width = maxX - minX + 2 * MARGIN;
+  const paddingLeft = -minX + MARGIN;
+  const paddingRight = maxX - minWidth + MARGIN;
+
+  const scaleX = React.useMemo(
+    () => scaleMultipleLinears(
+      domains,
+      [paddingLeft, width - paddingRight]
+    ),
+    [domains, paddingLeft, paddingRight, width]
+  );
+
+  const trimmedPosGroups = React.useMemo(
+    () => positionGroups.map(
+      posGroup => trimOverlaps(posGroup, scaleX)
+    ),
+    [positionGroups, scaleX]
+  );
+
+  const hasCoverages = !!coverages;
+  const coveragesHeight = hasCoverages ? coverages.height : 0;
+
+  const height = React.useMemo(
+    () => {
+      let height = paddingTop + 10;
+      if (hasCoverages) {
+        height += coveragesHeight;
+      }
+      else if (!hidePositionAxis) {
+        height += POS_AXIS_HEIGHT;
+      }
+
+      for (const posGroup of trimmedPosGroups) {
+        height += (
+          posGroup.addOffsetY +
+          getLongestPosLabelHeight(posGroup.positions) +
+          POS_GROUP_MIN_HEIGHT
+        );
+      }
+      return Math.max(minHeight, height);
+    },
+    [
+      minHeight,
+      hasCoverages,
+      coveragesHeight,
+      hidePositionAxis,
+      paddingTop,
+      trimmedPosGroups
+    ]
   );
 
   return <div className={classNames(
@@ -81,21 +159,18 @@ export default function GenomeMap({
       <svg
        ref={svgRef}
        fontFamily='"Source Sans Pro", "Helvetica Neue", Helvetica'
-       viewBox={`0 0 ${svgBorder.width} ${svgBorder.height}`}>
+       style={{'min-height': `${height / 2}px`}}
+       viewBox={`0 0 ${width} ${height}`}>
         <RegionGroup
+         scaleX={scaleX}
          paddingTop={paddingTop}
-         paddingRight={svgBorder.paddingRight}
-         paddingLeft={svgBorder.paddingLeft}
-         width={svgBorder.width}
-         domains={domains}
+         positionGroups={trimmedPosGroups}
          hidePositionAxis={hidePositionAxis}
          positionAxis={positionAxis}
-         positionGroups={positionGroups}
          positionExtendSize={positionExtendSize}
+         positionAxisHeight={POS_AXIS_HEIGHT}
          regions={regions}
-         coverages={coverages}
-         moveSVGBorder={moveSVGBorder}
-         subregionGroup={subregionGroup} />
+         coverages={coverages} />
       </svg>
     </div>
     {footnote && <div className={style.footnote}>

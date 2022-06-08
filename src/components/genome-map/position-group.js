@@ -23,36 +23,14 @@ export default function PositionGroup({
   positionExtendSize,
   positionGroup: {
     name,
-    label,
     positions
   },
   regions
 }) {
 
-  const labelText = React.useMemo(
-    () => {
-      let finalLabel = label;
-      if (finalLabel === undefined) {
-        finalLabel = name;
-      }
-      return finalLabel;
-    },
-    [name, label]
-  );
-
   const [posStart, posEnd] = scaleX.domain();
-  const [xStart] = scaleX.range();
 
   return <svg id={`position-group-${name}`} y={offsetY}>
-    <text
-     x={xStart - 20}
-     y={44}
-     fill="#000000"
-     textAnchor="end"
-     fontSize={21}
-     fontWeight="bolder">
-      {labelText}
-    </text>
     {regions.map((region) => (
       <Region
        offsetY={0}

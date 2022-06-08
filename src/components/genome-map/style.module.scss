@@ -40,9 +40,7 @@
   }
 
   .svg-container {
-    > svg {
-      width: 100%;
-    }
+    overflow-x: auto;
   }
 
 }

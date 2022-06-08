@@ -1,9 +1,78 @@
 import sortBy from 'lodash/sortBy';
+import {scaleLinear} from 'd3-scale';
 
 const VERTICAL_SPACING = 5;
 const HORIZONTAL_SPACING = 22;
+const POS_LABEL_HEIGHT_RATIO = 7;
 
-export function removeOverlaps(posGroup, scaleX) {
+
+export function getLongestPosLabelHeight(positions) {
+  return Math.max(
+    0,
+    ...positions.map(({name, label}) => (
+      typeof label === 'undefined' ? name : label
+    ).length)
+  ) * POS_LABEL_HEIGHT_RATIO;
+}
+
+
+export function scaleMultipleLinears(domains, range) {
+  const scales = [];
+  const [xStart, xEnd] = range;
+  const width = xEnd - xStart;
+  const totalRatio = domains.reduce((acc, {scaleRatio}) => scaleRatio + acc, 0);
+  let xOffset = xStart;
+  for (
+    const {posStart, posEnd, scaleRatio} of
+    sortBy(domains, ['posStart', 'posEnd'])
+  ) {
+    const ratio = scaleRatio / totalRatio;
+    const partWidth = Math.floor(width * ratio);
+    scales.push(
+      scaleLinear()
+        .domain([posStart, posEnd])
+        .range([xOffset, xOffset + partWidth])
+    );
+    xOffset += partWidth;
+  }
+  let [lastXStart, lastXEnd] = scales[scales.length - 1].range();
+  if (lastXEnd !== xEnd) {
+    scales[scales.length - 1].range([lastXStart, xEnd]);
+  }
+  const domain = [
+    scales[0].domain()[0],
+    scales[scales.length - 1].domain()[1]
+  ];
+
+  const ret = pos => {
+    const lastIdx = scales.length - 1;
+    for (const [idx, scale] of scales.entries()) {
+      const [left, right] = scale.domain();
+      if (
+        (idx === 0 || pos >= left) &&
+        (idx === lastIdx || pos <= right)
+      ) {
+        return scale(pos);
+      }
+    }
+  };
+  ret.domain = () => domain;
+  ret.domains = () => scales.map(s => s.domain());
+  ret.range = () => range;
+  ret.invert = x => {
+    for (const scale of scales) {
+      const [left, right] = scale.range();
+      if (x >= left && x < right) {
+        return scale.invert(x);
+      }
+    }
+  };
+
+  return ret;
+}
+
+
+export function trimOverlaps(posGroup, scaleX) {
   const [xStart, xEnd] = scaleX.range();
   const xMiddle = (xStart + xEnd) / 2;
   const posMiddle = Math.floor(scaleX.invert(xMiddle));
