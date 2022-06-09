@@ -159,7 +159,7 @@ export default function GenomeMap({
       <svg
        ref={svgRef}
        fontFamily='"Source Sans Pro", "Helvetica Neue", Helvetica'
-       style={{'min-height': `${height / 2}px`}}
+       style={{minHeight: `${height / 2}px`}}
        viewBox={`0 0 ${width} ${height}`}>
         <RegionGroup
          scaleX={scaleX}
