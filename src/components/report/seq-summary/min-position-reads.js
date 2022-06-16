@@ -20,7 +20,7 @@ MinPositionReads.propTypes = {
       }).isRequired
     ).isRequired
   }).isRequired,
-  minPositionReads: PropTypes.number.isRequired
+  minPositionReads: PropTypes.number
 };
 
 function MinPositionReads({

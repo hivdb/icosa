@@ -42,11 +42,44 @@ export default function CutoffCurve({
     mixtureRateScale,
     minPrevalenceScale
   });
-  const pathData = calcCutoffCurve(cutoffKeyPoints);
+  const prevalenceDomain = minPrevalenceScale.domain();
+  const mixtureRateDomain = mixtureRateScale.domain();
+  const pathData = React.useMemo(
+    () => {
+      const keyPoints = cutoffKeyPoints.filter(
+        d => (
+          d.mixtureRate >= mixtureRateDomain[0] &&
+          d.mixtureRate <= mixtureRateDomain[1] &&
+          d.minPrevalence >= prevalenceDomain[0] &&
+          d.minPrevalence <= prevalenceDomain[1]
+        )
+      );
+      return calcCutoffCurve(keyPoints);
+    },
+    [calcCutoffCurve, cutoffKeyPoints, mixtureRateDomain, prevalenceDomain]
+  );
+
+  const bottomPathData = React.useMemo(
+    () => {
+      const keyPoints = cutoffKeyPoints.filter(
+        d => (
+          d.mixtureRate > mixtureRateDomain[1] ||
+          d.minPrevalence < prevalenceDomain[0]
+        )
+      );
+      return calcCutoffCurve(keyPoints);
+    },
+    [calcCutoffCurve, cutoffKeyPoints, mixtureRateDomain, prevalenceDomain]
+  );
   return <g>
     <path
      d={pathData}
      stroke="#000"
+     strokeWidth={constants.strokeWidth}
+     fill="none" />
+    <path
+     d={bottomPathData}
+     stroke="rgba(0,0,0,.1)"
      strokeWidth={constants.strokeWidth}
      fill="none" />
   </g>;

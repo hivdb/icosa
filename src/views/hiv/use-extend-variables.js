@@ -20,7 +20,7 @@ export default function useExtendVariables({
       let mounted = true;
       BigData
         .load(customAlgorithms)
-        .then(algs => mounted && setCustomAlgs(algs));
+        .then(algs => mounted && setCustomAlgs(algs || []));
       return () => mounted = false;
     },
     [match]

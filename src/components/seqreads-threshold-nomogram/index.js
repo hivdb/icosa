@@ -26,12 +26,6 @@ SeqReadsThresholdNomogram.propTypes = {
   minPrevalenceActual: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  mixtureRateDomain: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  minPrevalenceDomain: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
   mixtureRateTicks: PropTypes.arrayOf(
     PropTypes.number.isRequired
   ).isRequired,
@@ -44,8 +38,6 @@ SeqReadsThresholdNomogram.propTypes = {
 SeqReadsThresholdNomogram.defaultProps = {
   width: 800,
   height: 400,
-  mixtureRateDomain: [0, 0.02],
-  minPrevalenceDomain: [0, 0.3],
   mixtureRateTicks: [0, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02],
   minPrevalenceTicks: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 };
@@ -59,18 +51,21 @@ export default function SeqReadsThresholdNomogram({
   minPrevalenceActual,
   width,
   height,
-  mixtureRateDomain,
-  minPrevalenceDomain,
   mixtureRateTicks,
   minPrevalenceTicks
 }) {
+  const minPrevalenceDomain = React.useMemo(
+    () => [Math.min(...minPrevalenceTicks), Math.max(...minPrevalenceTicks)],
+    [minPrevalenceTicks]
+  );
+
   const sizeProps = {
     width,
     height
   };
   const mixtureRateScale = useMixtureRateScale({
     ...sizeProps,
-    mixtureRateDomain
+    mixtureRateTicks
   });
   const minPrevalenceScale = useMinPrevalenceScale({
     ...sizeProps,

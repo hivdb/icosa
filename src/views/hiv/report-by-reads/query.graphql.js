@@ -16,7 +16,6 @@ export default gql`
     strain { display }
     readDepthStats {
       median: percentile(p: 50)
-      p95: percentile(p: 95)
     }
     availableGenes { name }
     bestMatchingSubtype {
@@ -53,6 +52,9 @@ export default gql`
       firstAA
       lastAA
       ${geneSeqLevel}
+      readDepthStats {
+        median: percentile(p: 50)
+      }
       unsequencedRegions {
         size
         regions {

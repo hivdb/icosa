@@ -2,4 +2,10 @@
 
 .icosa-popup {
   @include popup;
+  &:global(-content) {
+    p {
+      margin-top: .4rem;
+      margin-bottom: .4rem;
+    }
+  }
 }

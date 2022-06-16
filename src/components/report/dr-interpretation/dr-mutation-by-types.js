@@ -1,6 +1,7 @@
 import React from 'react';
-import Popup from 'reactjs-popup';
 import PropTypes from 'prop-types';
+
+import Mutation from '../../mutation';
 import ConfigContext from '../../../utils/config-context';
 
 import shortenMutationList from '../../../utils/shorten-mutation-list';
@@ -27,38 +28,9 @@ export default function DRMutationByTypes({gene, mutationsByTypes}) {
           mutations = shortenMutationList(
             mutations.filter(mut => !mut.isUnsequenced)
           );
-          let MutElem = mutationType !== 'Other' ? 'strong' : 'span';
-
-          let muts = mutations.map((mut, idx) => {
-            let mutElem = (
-              <MutElem
-               data-is-unusual={mut.isUnusual}
-               key={idx}>
-                {mut.text}
-              </MutElem>
-            );
-            if (mut.isUnusual) {
-              mutElem = (
-                <Popup
-                 key={`popup-${idx}`}
-                 on="hover"
-                 position={[
-                   'bottom center',
-                   'right center',
-                   'top center',
-                   'left center'
-                 ]}
-                 className={style['unusual-mut-popup']}
-                 closeOnDocumentClick
-                 keepTooltipInside
-                 repositionOnResize
-                 trigger={mutElem}>
-                  {mut.text} is an unusual mutation
-                </Popup>
-              );
-            }
-            return [mutElem, idx + 1 < mutations.length ? ', ' : null];
-          });
+          let muts = mutations.map((mut, idx) => (
+            <Mutation key={idx} {...mut} gene={gene.name} config={config} />
+          ));
           if (muts.length === 0) {
             muts = 'None';
           }
@@ -75,7 +47,9 @@ export default function DRMutationByTypes({gene, mutationsByTypes}) {
           r.push(
             <dd
              key={`list-${mutationType.toLowerCase()}`}>
-              {muts}
+              <ul className={style['typed-mutation-list']}>
+                {muts}
+              </ul>
             </dd>
           );
           return r;

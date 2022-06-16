@@ -60,38 +60,11 @@
   }
 }
 
-.unusual-mut-popup {
-  &:global(-content) {
-    @media only print {
-      display: none;
-    }
-    margin: auto;
-    background-color: color(name-pampas);
-    padding: 1rem;
-    border-radius: .4rem;
-    &[role="tooltip"] {
-      min-width: 10rem;
-      max-width: 40vw;
-      @media only screen and (max-width: 1200px) {
-        max-width: 50vw;
-      }
-      @media only screen and (max-width: 900px) {
-        max-width: 60vw;
-      }
-      border: 1px solid gray;
-    }
-  }
-  &:global(-arrow) {
-    color: color(name-pampas);
-    stroke-width: 2px;
-    stroke: gray;
-    stroke-dasharray: 30px;
-    stroke-dashoffset: -54px;
-  }
-  &:global(-overlay) {
-    background: rgba(0, 0, 0, 0.5);
-    &[data-popup='tooltip'] {
-      background: transparent;
-    }
-  }
+
+ul.typed-mutation-list {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style-type: none;
+  display: block;
 }

@@ -82,7 +82,20 @@ const seqLevel = `
         reference
         position
         isUnusual
+        isApobecMutation
+        isApobecDRM
+        isDRM
+        DRMDrugClass {
+          name
+          fullName
+        }
         isUnsequenced
+        totalReads
+        allAAReads {
+          aminoAcid
+          numReads
+          percent
+        }
       }
     }
     commentsByTypes {
@@ -119,13 +132,7 @@ const geneSeqLevel = `
     isUnusual
     isAmbiguous
     isDRM
-    totalReads
     triplet
-    allAAReads {
-      aminoAcid
-      numReads
-      percent
-    }
   }
 `;
 

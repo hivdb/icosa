@@ -8,7 +8,7 @@ import constants from './constants';
 
 export function useMixtureRateScale({
   width,
-  mixtureRateDomain
+  mixtureRateTicks
 }) {
   const axisStart = (
     constants.paddingH +
@@ -20,16 +20,23 @@ export function useMixtureRateScale({
   const axisEnd = width - constants.paddingH;
   return React.useMemo(
     () => {
+      const mixtureRateDomain = [
+        Math.min(...mixtureRateTicks),
+        Math.max(...mixtureRateTicks)
+      ];
+      const nonZeroMinTick = Math.min(...mixtureRateTicks.filter(n => n > 0));
+      const level = 0.2 * 10 ** -Math.floor(Math.log10(nonZeroMinTick));
+
       const baseScale = scaleLog()
         .base(10)
-        .domain(mixtureRateDomain.map(n => n * 2000 + 1))
+        .domain(mixtureRateDomain.map(n => n * level + 1))
         .range([axisStart, axisEnd]);
-      const scale = value => baseScale(value * 2000 + 1);
-      scale.domain = () => baseScale.domain().map(n => (n - 1) / 2000);
+      const scale = value => baseScale(value * level + 1);
+      scale.domain = () => baseScale.domain().map(n => (n - 1) / level);
       scale.range = baseScale.range;
       return scale;
     },
-    [axisStart, axisEnd, mixtureRateDomain]
+    [axisStart, axisEnd, mixtureRateTicks]
   );
 }
 
@@ -69,7 +76,12 @@ function useAxisPathData({
 
 
 function pcntFormat(value) {
-  return `${(value * 100).toPrecision(1)}%`;
+  if (value < 0.1) {
+    return `${(value * 100).toPrecision(1)}%`;
+  }
+  else {
+    return `${(value * 100).toFixed(0)}%`;
+  }
 }
 
 

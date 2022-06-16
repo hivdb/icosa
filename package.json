@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "resolutions": {
-    "vfile": "^4.2.1"
+    "vfile": "^4.2.1",
+    "react-input-autosize": "^3.0.0"
   },
   "devDependencies": {
     "@apollo/client": "^3.6.2",

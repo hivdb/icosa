@@ -3,7 +3,7 @@
 
 .mutation-item {
   --drm-color: #1b8ecc;
-  --unusual-color: #e13333;
+  --problem-color: #e13333;
   position: relative;
   display: inline-flex;
   > .comma {
@@ -26,7 +26,7 @@
     display: none;
   }
 
-  &[data-unusual="true"], &[data-drm="true"] {
+  &[data-unusual="true"], &[data-drm="true"], &[data-apobec="true"], &[data-apobec-drm="true"] {
     .mut-text {
       position: relative;
       &::before {
@@ -43,9 +43,23 @@
 
   &[data-unusual="true"] .mut-text {
     &::before {
-      background-color: var(--unusual-color);
+      background-color: var(--problem-color);
     }
-    color: var(--unusual-color);
+    color: var(--problem-color);
+  }
+
+  &[data-apobec="true"] .mut-text {
+    &::before {
+      background-color: var(--problem-color);
+    }
+    color: var(--problem-color);
+  }
+
+  &[data-apobec-drm="true"] .mut-text {
+    &::before {
+      background-color: var(--problem-color);
+    }
+    color: var(--problem-color);
   }
 
   &[data-drm="true"] .mut-text {

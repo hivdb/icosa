@@ -10,7 +10,7 @@ import style from './style.module.scss';
 
 
 NGSResults.propTypes = {
-  taskKey: PropTypes.string.isRequired,
+  taskKey: PropTypes.string,
   progressLookup: PropTypes.object,
   className: PropTypes.string,
   onAnalyze: PropTypes.func

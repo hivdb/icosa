@@ -9,7 +9,6 @@ import DRLevels from './dr-levels';
 import style from './style.module.scss';
 
 DRInterpretation.propTypes = {
-  strain: PropTypes.string.isRequired,
   geneDR: PropTypes.shape({
     gene: PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -38,7 +37,6 @@ DRInterpretation.defaultProps = {
 
 
 export default function DRInterpretation({
-  strain,
   suppressLevels,
   suppressDRI,
   geneDR,
@@ -54,7 +52,7 @@ export default function DRInterpretation({
        {algorithm.family} {algorithm.version} ({algorithm.publishDate})
      </>}
     >
-      <DRMutationByTypes {...geneDR} {...{output, strain}} />
+      <DRMutationByTypes {...geneDR} {...{output}} />
       {suppressDRI ?
         <p>
           Drug resistance interpretation is suppressed due to

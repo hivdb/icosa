@@ -31,12 +31,14 @@ Mutation.propTypes = {
   ]).isRequired,
   gene: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  isUnusual: PropTypes.bool.isRequired,
-  isDRM: PropTypes.bool.isRequired,
+  isUnusual: PropTypes.bool,
+  isDRM: PropTypes.bool,
   DRMDrugClass: PropTypes.shape({
     name: PropTypes.string.isRequired,
     fullName: PropTypes.string.isRequired
   }),
+  isApobecMutation: PropTypes.bool,
+  isApobecDRM: PropTypes.bool,
   isUnsequenced: PropTypes.bool.isRequired,
   totalReads: PropTypes.number,
   allAAReads: PropTypes.arrayOf(
@@ -48,6 +50,8 @@ Mutation.propTypes = {
   config: PropTypes.shape({
     highlightUnusualMutation: PropTypes.bool,
     highlightDRM: PropTypes.bool,
+    highlightApobecMutation: PropTypes.bool,
+    highlightApobecDRM: PropTypes.bool,
     geneDisplay: PropTypes.objectOf(
       PropTypes.string.isRequired
     ).isRequired,
@@ -68,10 +72,14 @@ function Mutation({
   config: {
     highlightUnusualMutation = true,
     highlightDRM = true,
+    highlightApobecMutation = true,
+    highlightApobecDRM = true,
     geneDisplay,
     messages
   },
   isUnusual,
+  isApobecMutation,
+  isApobecDRM,
   isDRM,
   DRMDrugClass,
   isUnsequenced,
@@ -87,12 +95,16 @@ function Mutation({
   const [
     msgTpl,
     msgTplIsUnusual,
+    msgTplIsApobec,
+    msgTplIsApobecDRM,
     msgTplIsDRM,
     msgTplIsDRMByDrugClass
   ] = useMessages(
     [
       'mutation-popup',
       'mutation-is-unusual',
+      'mutation-is-apobec',
+      'mutation-is-apobec-drm',
       'mutation-is-drm',
       `mutation-is-drm-${dcName}`
     ],
@@ -114,6 +126,13 @@ function Mutation({
 
       msgOptions.isUnusual = highlightUnusualMutation && isUnusual ?
         execTemplate(msgTplIsUnusual, msgOptions) : '';
+
+      msgOptions.isApobec = highlightApobecMutation && isApobecMutation ?
+        execTemplate(msgTplIsApobec, msgOptions) : '';
+
+      msgOptions.isApobecDRM = highlightApobecDRM && isApobecDRM ?
+        execTemplate(msgTplIsApobecDRM, msgOptions) : '';
+
       if (highlightDRM && isDRM) {
         if (msgTplIsDRMByDrugClass.startsWith('<mutation-is-drm-')) {
           msgOptions.isDRM = execTemplate(msgTplIsDRM, msgOptions);
@@ -134,14 +153,20 @@ function Mutation({
       text,
       dcName,
       dcFullName,
+      highlightUnusualMutation,
       isUnusual,
+      msgTplIsUnusual,
+      highlightApobecMutation,
+      isApobecMutation,
+      msgTplIsApobec,
+      highlightApobecDRM,
+      isApobecDRM,
+      msgTplIsApobecDRM,
+      highlightDRM,
       isDRM,
       msgTpl,
-      msgTplIsUnusual,
-      msgTplIsDRM,
       msgTplIsDRMByDrugClass,
-      highlightUnusualMutation,
-      highlightDRM
+      msgTplIsDRM
     ]
   );
 
@@ -151,6 +176,8 @@ function Mutation({
       className: style['mutation-item'],
       'data-unsequenced': isUnsequenced,
       'data-unusual': highlightUnusualMutation && isUnusual,
+      'data-apobec': highlightApobecMutation && isApobecMutation,
+      'data-apobec-drm': highlightApobecDRM && isApobecDRM,
       'data-drm': highlightDRM && isDRM
     },
     <>
