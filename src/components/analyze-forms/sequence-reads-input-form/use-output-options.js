@@ -57,7 +57,7 @@ export default function useOutputOptions({
       <fieldset className={style['output-options']}>
         <legend>Output options</legend>
         <div className={style['divided-options']}>
-          <SeqSummary titleWidth="14.5rem" headless>
+          <SeqSummary titleWidth="16rem" headless>
             <SeqSummary.MinPositionReads />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />

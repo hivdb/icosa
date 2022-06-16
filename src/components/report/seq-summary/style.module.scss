@@ -20,7 +20,7 @@
   .has-dropdown {
     @extend %small-dropdown;
     :global .Dropdown-root {
-      width: 8rem;
+      width: 9rem;
       display: inline-block;
     }
     // display: inline-block;

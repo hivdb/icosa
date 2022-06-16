@@ -7,25 +7,34 @@ import style from './style.module.scss';
 
 
 function inferMixtureRateTicks(mixtureRateThreshold) {
-  let curMul;
+  if (mixtureRateThreshold === 0) {
+    return [0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1];
+  }
   const ticks = [0];
-  const level = 10 ** Math.floor(Math.log10(mixtureRateThreshold));
-  for (const mul of [5, 2, 1, 0.5, 0.2, 0.1]) {
+  const level = 10 ** Math.floor(Math.log10(mixtureRateThreshold / 2));
+  for (const mul of [5, 2, 1]) {
     if (mul * level < mixtureRateThreshold) {
-      ticks.splice(1, 0, mul);
-    }
-    if (ticks.length === 3) {
+      ticks.push(mul);
       break;
     }
   }
-  curMul = ticks[ticks.length - 1];
 
   for (const mul of [1, 2, 5, 10, 20, 50, 100]) {
-    if (mul > curMul) {
-      curMul = mul;
+    if (mul * level > 1) {
+      break;
+    }
+    if (mul > ticks[1]) {
       ticks.push(mul);
     }
     if (ticks.length === 6) {
+      break;
+    }
+  }
+  for (const mul of [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01]) {
+    if (mul < ticks[1]) {
+      ticks.splice(1, 0, mul);
+    }
+    if (ticks.length === 8) {
       break;
     }
   }
