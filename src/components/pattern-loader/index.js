@@ -1,5 +1,5 @@
 import React from 'react';
-import {v4 as uuidv4} from 'uuid';
+import {v5 as uuidv5} from 'uuid';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
@@ -8,6 +8,8 @@ import ConfigContext from '../../utils/config-context';
 import {
   sanitizeMutations
 } from '../../utils/mutation';
+
+const UUID_NAMESPACE = '14ee7f0c-7b10-425e-a4b1-b9f0a03ab5a9';
 
 
 function useCurrentSelected({
@@ -44,30 +46,52 @@ function usePatterns() {
   } = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
-  const {patterns: statePatterns = []} = loc.state || {patterns: []};
+  const statePatterns = JSON.stringify(loc.state?.patterns || []);
   const {name: queryName, mutations: queryMuts} = loc.query || {};
+
+  const {
+    defaultGene,
+    geneSynonyms,
+    geneReferences,
+    messages
+  } = config || {};
 
   const patterns = React.useMemo(
     () => {
-      let patterns = statePatterns;
+      let patterns = JSON.parse(statePatterns);
       if (!isConfigPending && queryMuts) {
         let name = queryName;
         let mutations = queryMuts
           .split(/\s*[,+]\s*/g)
           .filter(mut => mut);
-        [mutations] = sanitizeMutations(mutations, config, true);
+        [mutations] = sanitizeMutations(mutations, {
+          defaultGene,
+          geneSynonyms,
+          geneReferences,
+          messages,
+          removeErrors: true
+        });
         if (!name) {
           name = mutations.join('+');
         }
         patterns = [{
-          uuid: uuidv4(),
+          uuid: uuidv5(queryMuts, UUID_NAMESPACE),
           name,
           mutations
         }];
       }
       return patterns;
     },
-    [config, isConfigPending, statePatterns, queryName, queryMuts]
+    [
+      statePatterns,
+      isConfigPending,
+      queryMuts,
+      queryName,
+      defaultGene,
+      geneSynonyms,
+      geneReferences,
+      messages
+    ]
   );
   return [patterns, isConfigPending];
 }

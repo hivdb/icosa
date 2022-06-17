@@ -43,7 +43,7 @@ class LayoutInner extends React.Component {
     className = classNames(style['layout-container'], className);
     return (
       <div id="hivdb-layout">
-        <ul>
+        <ul className={style['layout-header']}>
           <li>
             <a href="/">Home</a>
           </li>

@@ -31,6 +31,10 @@ export default function AsyncContext(defaultValue) {
     </Context.Provider>;
   }
 
+  AsyncConsumer.propTypes = {
+    children: PropTypes.func.isRequired
+  };
+
   function AsyncConsumer({children}) {
     const {loading, value} = useContext(Context);
     if (loading && value === EMPTY) {

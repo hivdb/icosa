@@ -20,7 +20,7 @@ MutationsInput.propTypes = {
         gene: PropTypes.string.isRequired,
         mutations: PropTypes.array.isRequired
       }).isRequired
-    ).isRequired,
+    ),
     geneReferences: PropTypes.object.isRequired,
     geneDisplay: PropTypes.object.isRequired
   }),

@@ -9,3 +9,7 @@
 .layout-container {
   @extend %full-container;
 }
+
+.layout-header {
+  height: 5vh;
+}
