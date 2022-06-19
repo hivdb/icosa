@@ -1,4 +1,7 @@
 import shortenMutationList from '../../../utils/shorten-mutation-list';
+import {
+  fetchPangolinResult
+} from '../../../components/report/seq-summary/pango-lineage';
 
 
 function joinCols(row, ...cols) {
@@ -50,8 +53,7 @@ function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
 }
 
 
-function seqReadsSummary({
-  currentProgramVersion,
+async function seqReadsSummary({
   sequenceReadsAnalysis,
   config,
   patternsTo
@@ -63,11 +65,20 @@ function seqReadsSummary({
     'Genes',
     'Spike Mutations',
     'Other Mutations',
+    '# Mutations',
+    '# Unusual Mutations',
+    '# Spike Mutations',
+    '# Spike Unusual Mutations',
     'Median Read Depth',
+    'PANGO Lineage',
+    'PANGO Version',
+    'Spike Variant',
     'Permanent Link (Spike Only)',
     'Permanent Link',
     'NA Mixture Threshold',
     'Mut Detection Threshold',
+    'NA Mixture - Actual',
+    'Mut Detection - Actual',
     'Read Depth Threshold by Codon'
   ];
 
@@ -78,20 +89,61 @@ function seqReadsSummary({
       availableGenes: genes,
       maxMixtureRate,
       minPrevalence,
+      mixtureRate,
+      actualMinPrevalence,
       minCodonReads,
+      bestMatchingSubtype,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
+    let {pangolin} = seqResult;
+    if (!pangolin.loaded) {
+      pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
+    }
+    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}) => gene === 'S');
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations(geneSeqs, gene => gene === 'S', geneDisplay),
-      'Other Mutations': getMutations(geneSeqs, gene => gene !== 'S', geneDisplay),
+      'Spike Mutations': getMutations(
+        geneSeqs,
+        gene => gene === 'S',
+        geneDisplay
+      ),
+      'Other Mutations': getMutations(
+        geneSeqs,
+        gene => gene !== 'S',
+        geneDisplay
+      ),
+      '# Mutations': `${seqResult.mutationCount}`,
+      '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
+      '# Spike Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.mutationCount : null
+      }`,
+      '# Spike Unusual Mutations': `${
+        spikeGeneSeq ? spikeGeneSeq.unusualMutationCount : null
+      }`,
       'Median Read Depth': readDepthStats.median,
+      'PANGO Lineage': pangolin.lineage,
+      'PANGO Version': pangolin.version,
+      'Spike Variant': (bestMatchingSubtype || {}).display || null,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
+      'NA Mixture - Actual':
+      `${(mixtureRate * 100).toFixed(3)}%`,
+      'Mut Detection - Actual':
+      `${(actualMinPrevalence * 100).toFixed(1)}%`,
       'Read Depth Threshold by Codon': minCodonReads,
-      'Permanent Link (Spike Only)': getPermanentLink(seqName, geneSeqs, patternsTo, gene => gene === 'S'),
-      'Permanent Link': getPermanentLink(seqName, geneSeqs, patternsTo, () => true)
+      'Permanent Link (Spike Only)': getPermanentLink(
+        seqName,
+        geneSeqs,
+        patternsTo,
+        gene => gene === 'S'
+      ),
+      'Permanent Link': getPermanentLink(
+        seqName,
+        geneSeqs,
+        patternsTo,
+        () => true
+      )
     };
     joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);
     rows.push(row);

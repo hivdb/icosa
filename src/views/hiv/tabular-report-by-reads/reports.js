@@ -1,21 +1,20 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 
-import useTabularReports from '../tabular-report/reports';
+import useTabularReports from '../../../components/tabular-report/reports';
 import {subOptionProcessors} from './sub-options';
 
 
 function SeqReadsTabularReports(props) {
-  return useTabularReports({
+  useTabularReports({
     ...props,
     subOptionProcessors,
     zipName: 'NGS-analysis-reports.zip'
   });
+  return <>Downloading...</>;
 }
 
 SeqReadsTabularReports.propTypes = {
-  ...useTabularReports.propTypes,
-  allSequenceReads: PropTypes.array.isRequired,
-  sequenceReadsAnalysis: PropTypes.array.isRequired
+  ...useTabularReports.propTypes
 };
 
 export default SeqReadsTabularReports;

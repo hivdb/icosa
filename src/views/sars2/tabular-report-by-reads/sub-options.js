@@ -1,10 +1,12 @@
 import seqReadsSummary from './sars2-seqreads-summary';
-import assembledConsensus from './assembled-consensus';
-import mutations from '../tabular-report/sars2-mutations';
 import suscSummary from '../tabular-report/sars2-susc-summary';
 import mutComments from '../tabular-report/sars2-mutation-comments';
-import unseqRegions from '../tabular-report/sars2-unseq-regions';
-import prettyAlignments from '../tabular-report/pretty-alignments';
+import unseqRegions from '../../../components/tabular-report/unseq-regions';
+import mutationList from '../../../components/tabular-report/mutation-list';
+import assembledConsensus
+  from '../../../components/tabular-report/assembled-consensus';
+import prettyAlignments
+  from '../../../components/tabular-report/pretty-alignments';
 
 const subOptions = [
   'Sequence summary',
@@ -19,7 +21,7 @@ const subOptions = [
 const subOptionProcessors = [
   seqReadsSummary,
   assembledConsensus,
-  mutations,
+  mutationList,
   unseqRegions,
   suscSummary,
   mutComments,

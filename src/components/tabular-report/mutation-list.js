@@ -5,7 +5,7 @@ const AA_DISPLAYS = {
 };
 
 
-function mutations({
+export default function mutationList({
   sequenceReadsAnalysis,
   sequenceAnalysis
 }) {
@@ -111,5 +111,3 @@ function mutations({
   }
   return tables;
 }
-
-export default mutations;

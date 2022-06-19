@@ -5,11 +5,14 @@ import {
   geneSeqLevel
 } from '../common-query.graphql';
 
+
 export function getExtraParams(/* subOptions */) {
   return '';
 }
 
-export default function getQuery(/* subOptions */) {
+
+export default function getQuery(subOptions) {
+  const fetchConsensus = subOptions.includes('Consensus sequence (FASTA)');
   return gql`
     fragment TabularReportBySeqReads_Root on Root {
       ${rootLevel}
@@ -22,6 +25,10 @@ export default function getQuery(/* subOptions */) {
     fragment TabularReportBySeqReads on SequenceReadsAnalysis {
       name
       ${seqLevel}
+      bestMatchingSubtype {
+        display
+        referenceAccession
+      }
       readDepthStats {
         median: percentile(p: 50)
       }
@@ -32,11 +39,22 @@ export default function getQuery(/* subOptions */) {
       minPrevalence
       minCodonReads
       minPositionReads
-      assembledConsensus
+      mutationCount
+      unusualMutationCount
+      ${fetchConsensus ? `
+        assembledConsensus
+        assembledUnambiguousConsensus
+      ` : ''}
       allGeneSequenceReads {
         firstAA
         lastAA
         ${geneSeqLevel}
+        unsequencedRegions {
+          size
+          regions {
+            posStart posEnd
+          }
+        }
         gene { name }
         mutations {
           text
@@ -49,6 +67,8 @@ export default function getQuery(/* subOptions */) {
           isUnsequenced
           isAmbiguous
         }
+        mutationCount
+        unusualMutationCount
       }
     }
   `;

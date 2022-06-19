@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useTabularReports from '../tabular-report/reports';
+import useTabularReports from '../../../components//tabular-report/reports';
 import {subOptionProcessors} from './sub-options';
 
 

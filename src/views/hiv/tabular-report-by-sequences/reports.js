@@ -1,17 +1,16 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 
-import useTabularReports from '../tabular-report/reports';
+import useTabularReports from '../../../components/tabular-report/reports';
 import {subOptionProcessors} from './sub-options';
 
 
 function SequenceTabularReports(props) {
-  return useTabularReports({...props, subOptionProcessors});
+  useTabularReports({...props, subOptionProcessors});
+  return <>Downloading...</>;
 }
 
 SequenceTabularReports.propTypes = {
-  ...useTabularReports.propTypes,
-  sequences: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired
+  ...useTabularReports.propTypes
 };
 
 export default SequenceTabularReports;

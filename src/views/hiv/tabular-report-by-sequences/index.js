@@ -40,7 +40,7 @@ export default function TabularReportBySequencesContainer({
     payload: sequences
   });
 
-  const handleExtendVariables = useExtendVariables({
+  const [handleExtendVariables, isExtVarPending] = useExtendVariables({
     config,
     match
   });
@@ -50,7 +50,7 @@ export default function TabularReportBySequencesContainer({
     [subOptionIndices]
   );
 
-  if (isConfigPending) {
+  if (isConfigPending || isExtVarPending) {
     return null;
   }
 

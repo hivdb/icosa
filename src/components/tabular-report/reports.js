@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import {makeZip, makeDownload} from '../../../utils/download';
-import {csvStringify} from '../../../utils/csv';
+import {makeZip, makeDownload} from '../../utils/download';
+import {csvStringify} from '../../utils/csv';
 
 
 function useTabularReports({
@@ -78,7 +78,17 @@ useTabularReports.propTypes = {
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       refSequence: PropTypes.string.isRequired,
-      length: PropTypes.number.isRequired
+      length: PropTypes.number.isRequired,
+      drugClasses: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          hasSurveilDrugResistMutations: PropTypes.bool,
+          hasRxSelectedMutations: PropTypes.bool
+        }).isRequired
+      ),
+      mutationTypes: PropTypes.arrayOf(
+        PropTypes.string.isRequired
+      )
     })
   ),
   loaded: PropTypes.bool.isRequired,
