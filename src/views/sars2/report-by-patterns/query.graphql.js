@@ -12,7 +12,7 @@ export default gql`
   }
   fragment ReportByPattern on MutationsAnalysis {
     name
-    validationResults {
+    validationResults(includeGenes: [_3CLpro, RdRP, S]) {
       level
       message
     }

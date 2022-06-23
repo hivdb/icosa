@@ -54,8 +54,13 @@ function SingleSequenceReport({
 
   const {
     alignedGeneSequences,
-    strain: {name: strain} = {}
+    strain: {name: strain} = {},
+    validationResults
   } = sequenceResult || {};
+
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
 
   return (
     <article
@@ -77,55 +82,57 @@ function SingleSequenceReport({
             <SeqSummary.OutbreakInfo />
           </SeqSummary>
           <MutViewer {...{
-            title: 'Sequence quality assessment',
+            title: 'Mutation map & quality assessment',
             allGeneSeqs: alignedGeneSequences,
             output,
             strain
           }}>
             <ValidationReport {...sequenceResult} {...{output, strain}} />
           </MutViewer>
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...sequenceResult} {...{output, strain}} />
-          </ReportSection>
-          <ReportSection
-           titleAnnotation={<>
-             Last updated on {formatDate(cmtVersion)}
-           </>}
-           title="Mutation comments">
-            <SARS2MutComments {...sequenceResult} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="MAb susceptibility summary">
-            <AbSuscSummary
-             antibodies={antibodies}
-             {...sequenceResult}
-             {...{output, strain}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Convalescent plasma susceptibility summary">
-            <CPSuscSummary
-             {...sequenceResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Plasma from vaccinated persons susceptibility summary">
-            <VPSuscSummary
-             {...sequenceResult} {...{output}} />
-          </ReportSection>
-          <RefsSection />
+          {isCritical ? null : <>
+            <ReportSection
+             className={style['no-page-break']}
+             title="Mutation list">
+              <MutList {...sequenceResult} {...{output, strain}} />
+            </ReportSection>
+            <ReportSection
+             titleAnnotation={<>
+               Last updated on {formatDate(cmtVersion)}
+             </>}
+             title="Mutation comments">
+              <SARS2MutComments {...sequenceResult} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="MAb susceptibility summary">
+              <AbSuscSummary
+               antibodies={antibodies}
+               {...sequenceResult}
+               {...{output, strain}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Convalescent plasma susceptibility summary">
+              <CPSuscSummary
+               {...sequenceResult} {...{output}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Plasma from vaccinated persons susceptibility summary">
+              <VPSuscSummary
+               {...sequenceResult} {...{output}} />
+            </ReportSection>
+            <RefsSection />
+          </>}
         </> : null}
       </RefContextWrapper>
     </article>

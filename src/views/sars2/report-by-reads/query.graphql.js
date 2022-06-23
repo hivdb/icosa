@@ -38,7 +38,7 @@ export default gql`
     readDepthStats {
       median: percentile(p: 50)
     }
-    validationResults {
+    validationResults(includeGenes: [_3CLpro, RdRP, S]) {
       level
       message
     }

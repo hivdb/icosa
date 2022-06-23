@@ -28,7 +28,7 @@ export default gql`
     }
     ${pangolinQuery()}
     availableGenes { name }
-    validationResults {
+    validationResults(includeGenes: [_3CLpro, RdRP, S]) {
       level
       message
     }

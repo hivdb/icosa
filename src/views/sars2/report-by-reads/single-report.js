@@ -5,6 +5,7 @@ import {
   // DRInterpretation, DRMutationScores,
   SeqSummary, // MutationStats,
   MutationViewer as MutViewer,
+  ValidationReport,
   ReportHeader,
   ReportSection,
   MutationList as MutList,
@@ -68,8 +69,13 @@ function SingleSeqReadsReport({
   const {
     strain: {display: strain} = {},
     readDepthStats: {p95: coverageUpperLimit} = {},
-    allGeneSequenceReads
+    allGeneSequenceReads,
+    validationResults
   } = sequenceReadsResult || {};
+
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
 
   const coverages = useCoverages(inputSequenceReads);
 
@@ -98,55 +104,59 @@ function SingleSeqReadsReport({
             <SeqSummary.ThresholdNomogram />
           </SeqSummary>
           <MutViewer {...{
-            title: 'Sequence quality assessment',
+            title: 'Mutation map & quality assessment',
             coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
             allGeneSeqs: allGeneSequenceReads,
             coverages,
             output,
             strain
-          }} />
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...sequenceReadsResult} {...{output, strain}} />
-          </ReportSection>
-          <ReportSection
-           titleAnnotation={<>
-             Last updated on {formatDate(cmtVersion)}
-           </>}
-           title="Mutation comments">
-            <SARS2MutComments {...sequenceReadsResult} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="MAb susceptibility summary">
-            <AbSuscSummary
-             antibodies={antibodies}
-             {...sequenceReadsResult}
-             {...{output, strain}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Convalescent plasma susceptibility summary">
-            <CPSuscSummary
-             {...sequenceReadsResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Plasma from vaccinated persons susceptibility summary">
-            <VPSuscSummary
-             {...sequenceReadsResult} {...{output}} />
-          </ReportSection>
-          <RefsSection />
+          }}>
+            <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
+          </MutViewer>
+          {isCritical ? null : <>
+            <ReportSection
+             className={style['no-page-break']}
+             title="Mutation list">
+              <MutList {...sequenceReadsResult} {...{output, strain}} />
+            </ReportSection>
+            <ReportSection
+             titleAnnotation={<>
+               Last updated on {formatDate(cmtVersion)}
+             </>}
+             title="Mutation comments">
+              <SARS2MutComments {...sequenceReadsResult} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="MAb susceptibility summary">
+              <AbSuscSummary
+               antibodies={antibodies}
+               {...sequenceReadsResult}
+               {...{output, strain}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Convalescent plasma susceptibility summary">
+              <CPSuscSummary
+               {...sequenceReadsResult} {...{output}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Plasma from vaccinated persons susceptibility summary">
+              <VPSuscSummary
+               {...sequenceReadsResult} {...{output}} />
+            </ReportSection>
+            <RefsSection />
+          </>}
         </RefContextWrapper>
       </> : null}
     </article>

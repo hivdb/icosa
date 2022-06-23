@@ -83,7 +83,7 @@ function InlineGeneRange({config, geneSeqs, includeGenes}) {
         missing:
       </dt>
       <dd className={style.warning}>
-        <ul className={style['inline-gene-range-list']}>
+        <ul className={style['inline-gene-list']}>
           {includeGenes
             .filter(curGene => !geneSeqs.some(
               ({gene}) => gene.name === curGene
@@ -91,7 +91,7 @@ function InlineGeneRange({config, geneSeqs, includeGenes}) {
             .map((geneName, idx) => (
               <li
                key={idx} className={classNames(
-                 style['inline-gene-range'],
+                 style['inline-gene'],
                  highlightGenes.includes(geneName) ?
                    style['hl'] : null
                )}>

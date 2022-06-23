@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   MutationViewer as MutViewer,
+  ValidationReport,
   ReportHeader,
   ReportSection,
   MutationList as MutList,
@@ -53,8 +54,15 @@ function SinglePatternReport({
   onDisconnect
 }) {
   const {
-    allGeneMutations
+    allGeneMutations,
+    validationResults
   } = patternResult || {};
+
+  const isCritical = !!validationResults && validationResults.some(
+    ({level}) => level === 'CRITICAL'
+  );
+
+  const strain = 'SARS2';
 
   return (
     <article
@@ -70,51 +78,55 @@ function SinglePatternReport({
       {patternResult ? <>
         <RefContextWrapper>
           <MutViewer
-           title="Mutation map"
+           title="Mutation map & quality assessment"
            noUnseqRegions
            allGeneSeqs={allGeneMutations}
-           output={output} />
-          <ReportSection
-           className={style['no-page-break']}
-           title="Mutation list">
-            <MutList {...patternResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           titleAnnotation={<>
-             Last updated on {formatDate(cmtVersion)}
-           </>}
-           title="Mutation comments">
-            <SARS2MutComments {...patternResult} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="MAb susceptibility summary">
-            <AbSuscSummary
-             antibodies={antibodies}
-             {...patternResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Convalescent plasma susceptibility summary">
-            <CPSuscSummary
-             {...patternResult} {...{output}} />
-          </ReportSection>
-          <ReportSection
-           className={style['no-page-break']}
-           titleAnnotation={<>
-             Last updated on {formatDateTime(drdbLastUpdate)}
-           </>}
-           title="Plasma from vaccinated persons susceptibility summary">
-            <VPSuscSummary
-             {...patternResult} {...{output}} />
-          </ReportSection>
-          <RefsSection />
+           output={output}>
+            <ValidationReport {...patternResult} {...{output, strain}} />
+          </MutViewer>
+          {isCritical ? null : <>
+            <ReportSection
+             className={style['no-page-break']}
+             title="Mutation list">
+              <MutList {...patternResult} {...{output}} />
+            </ReportSection>
+            <ReportSection
+             titleAnnotation={<>
+               Last updated on {formatDate(cmtVersion)}
+             </>}
+             title="Mutation comments">
+              <SARS2MutComments {...patternResult} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="MAb susceptibility summary">
+              <AbSuscSummary
+               antibodies={antibodies}
+               {...patternResult} {...{output}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Convalescent plasma susceptibility summary">
+              <CPSuscSummary
+               {...patternResult} {...{output}} />
+            </ReportSection>
+            <ReportSection
+             className={style['no-page-break']}
+             titleAnnotation={<>
+               Last updated on {formatDateTime(drdbLastUpdate)}
+             </>}
+             title="Plasma from vaccinated persons susceptibility summary">
+              <VPSuscSummary
+               {...patternResult} {...{output}} />
+            </ReportSection>
+            <RefsSection />
+          </>}
         </RefContextWrapper>
       </> : null}
     </article>

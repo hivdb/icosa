@@ -115,7 +115,7 @@ export default function GenomeMap({
 
   const height = React.useMemo(
     () => {
-      let height = paddingTop + 10;
+      let height = paddingTop + (positionExtendSize || 0) + 10;
       if (hasCoverages) {
         height += coveragesHeight;
       }
@@ -138,6 +138,7 @@ export default function GenomeMap({
       coveragesHeight,
       hidePositionAxis,
       paddingTop,
+      positionExtendSize,
       trimmedPosGroups
     ]
   );
