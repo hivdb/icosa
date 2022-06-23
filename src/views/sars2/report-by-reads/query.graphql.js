@@ -37,6 +37,7 @@ export default gql`
     ${pangolinQuery()}
     readDepthStats {
       median: percentile(p: 50)
+      p95: percentile(p: 95)
     }
     validationResults(includeGenes: [_3CLpro, RdRP, S]) {
       level
