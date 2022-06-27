@@ -66,8 +66,8 @@ export default function ActualThreshold({
      fontSize={fontSize}
      fill={MAIN_COLOR}>
       Applied thresholds:
-      (MDT={(thresholdX * 100).toPrecision(2)}%,{' '}
-      NMT={(thresholdY * 100).toFixed(1)}%)
+      (NMT={(thresholdX * 100).toPrecision(2)}%,{' '}
+      MDT={(thresholdY * 100).toFixed(1)}%)
     </text>
   </g>;
 }
