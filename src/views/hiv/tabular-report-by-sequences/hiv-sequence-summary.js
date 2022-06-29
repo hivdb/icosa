@@ -1,6 +1,3 @@
-import {loadMessages} from '../../../utils/use-messages';
-
-
 function joinCols(row) {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
@@ -44,14 +41,22 @@ async function sequenceSummary({
 }) {
   const rows = [];
   const {geneDisplay} = config;
-  const mutTypeHeaderKeys = allGenes.reduce(
-    (acc, {name, mutationTypes}) => [
+  const mutTypeHeaders = allGenes.reduce(
+    (acc, {name: geneName, drugClasses}) => [
       ...acc,
-      ...mutationTypes.map(mtype => `mutation-type-${name}-${mtype}`)
+      ...drugClasses.reduce(
+        (acc2, {name: dcName, mutationTypes}) => [
+          ...acc2,
+          ...mutationTypes
+            .filter(mtype => mtype !== 'Other')
+            .map(mtype => mtype === dcName ? mtype : `${dcName} ${mtype}`)
+        ],
+        []
+      ),
+      `${geneName} Other`
     ],
     []
   );
-  const mutTypeHeaders = loadMessages(mutTypeHeaderKeys, config.messages);
   const allGeneNames = allGenes.map(({name}) => name);
 
   let header = [
@@ -150,12 +155,24 @@ async function sequenceSummary({
         patternsTo
       )
     };
-    for (const {gene: {name: geneText}, mutationsByTypes} of geneDRs) {
-      for (const {mutationType, mutations} of mutationsByTypes) {
-        const mutTypeHdrIdx = mutTypeHeaderKeys.indexOf(
-          `mutation-type-${geneText}-${mutationType}`
-        );
-        const mutTypeHdr = mutTypeHeaders[mutTypeHdrIdx];
+    for (const {gene: {name: geneName}, mutationsByTypes} of geneDRs) {
+      for (const {
+        drugClass,
+        mutationType,
+        mutations
+      } of mutationsByTypes) {
+        let mutTypeHdr;
+        if (drugClass) {
+          if (drugClass.name === mutationType) {
+            mutTypeHdr = mutationType;
+          }
+          else {
+            mutTypeHdr = `${drugClass.name} ${mutationType}`;
+          }
+        }
+        else {
+          mutTypeHdr = `${geneName} ${mutationType}`;
+        }
         row[mutTypeHdr] = getObjectTextNoGene(mutations);
       }
     }

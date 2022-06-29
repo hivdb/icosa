@@ -15,6 +15,11 @@ export function loadMessages(messageKeys, allMessages) {
 }
 
 
+export function loadMessage(messageKey, allMessages) {
+  return loadMessages([messageKey], allMessages)[0];
+}
+
+
 export default function useMessages(messageKeys, allMessages) {
   return useMemo(
     () => loadMessages(messageKeys, allMessages),

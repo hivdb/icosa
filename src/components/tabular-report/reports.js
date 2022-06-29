@@ -83,11 +83,22 @@ useTabularReports.propTypes = {
         PropTypes.shape({
           name: PropTypes.string.isRequired,
           hasSurveilDrugResistMutations: PropTypes.bool,
-          hasRxSelectedMutations: PropTypes.bool
+          hasRxSelectedMutations: PropTypes.bool,
+          drugClasses: PropTypes.arrayOf(
+            PropTypes.shape({
+              name: PropTypes.string.isRequired,
+              mutationTypes: PropTypes.arrayOf(
+                PropTypes.string.isRequired
+              ),
+              drugs: PropTypes.arrayOf(
+                PropTypes.shape({
+                  name: PropTypes.string.isRequired,
+                  displayAbbr: PropTypes.string.isRequired
+                }).isRequired
+              )
+            }).isRequired
+          )
         }).isRequired
-      ),
-      mutationTypes: PropTypes.arrayOf(
-        PropTypes.string.isRequired
       )
     })
   ),
@@ -101,7 +112,9 @@ useTabularReports.propTypes = {
     publishDate: PropTypes.string.isRequired
   }),
   currentProgramVersion: PropTypes.shape({
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string,
+    family: PropTypes.string,
+    version: PropTypes.string,
     publishDate: PropTypes.string.isRequired
   }),
   onFinish: PropTypes.func.isRequired

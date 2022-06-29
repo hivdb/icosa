@@ -19,6 +19,7 @@ export default function getQuery(/* subOptions */) {
   return gql`
     fragment TabularReportBySequences_Root on Root {
       ${rootLevel}
+      currentVersion { family version publishDate }
       allGenes: genes(names: $includeGenes) {
         name
         refSequence
@@ -27,8 +28,12 @@ export default function getQuery(/* subOptions */) {
           name
           hasSurveilDrugResistMutations
           hasRxSelectedMutations
+          mutationTypes
+          drugs {
+            name
+            displayAbbr
+          }
         }
-        mutationTypes
       }
     }
     fragment TabularReportBySequences on SequenceAnalysis {

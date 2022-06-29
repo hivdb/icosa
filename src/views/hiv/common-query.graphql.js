@@ -75,6 +75,7 @@ const seqLevel = `
       text
     }
     mutationsByTypes {
+      drugClass { name }
       mutationType
       mutations {
         text
@@ -110,6 +111,7 @@ const seqLevel = `
       drugClass { name }
       drug { name displayAbbr }
       score
+      level
       partialScores {
         mutations { text }
         score
