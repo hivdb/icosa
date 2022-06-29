@@ -123,6 +123,7 @@ const geneSeqLevel = `
   mutations {
     text
     AAs
+    unusualAAs
     reference
     position
     primaryType
@@ -132,7 +133,17 @@ const geneSeqLevel = `
     isUnusual
     isAmbiguous
     isDRM
+    DRMDrugClass {
+      name
+      fullName
+    }
+    totalReads
     triplet
+    allAAReads {
+      aminoAcid
+      numReads
+      percent
+    }
   }
 `;
 
