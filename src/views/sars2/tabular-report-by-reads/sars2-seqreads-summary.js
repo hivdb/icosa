@@ -75,11 +75,11 @@ async function seqReadsSummary({
     'Spike Variant',
     'Permanent Link (Spike Only)',
     'Permanent Link',
+    'Minimum Read Depth',
     'NA Mixture Threshold',
     'Mut Detection Threshold',
     'NA Mixture - Actual',
-    'Mut Detection - Actual',
-    'Read Depth Threshold by Codon'
+    'Mut Detection - Actual'
   ];
 
   for (const seqResult of sequenceReadsAnalysis) {
@@ -91,7 +91,7 @@ async function seqReadsSummary({
       minPrevalence,
       mixtureRate,
       actualMinPrevalence,
-      minCodonReads,
+      minPositionReads,
       bestMatchingSubtype,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
@@ -131,7 +131,7 @@ async function seqReadsSummary({
       `${(mixtureRate * 100).toFixed(3)}%`,
       'Mut Detection - Actual':
       `${(actualMinPrevalence * 100).toFixed(1)}%`,
-      'Read Depth Threshold by Codon': minCodonReads,
+      'Minimum Read Depth': minPositionReads,
       'Permanent Link (Spike Only)': getPermanentLink(
         seqName,
         geneSeqs,
