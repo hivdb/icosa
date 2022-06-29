@@ -33,8 +33,9 @@ function getPermanentLink(seqName, mutations, patternsTo) {
 }
 
 
-async function sequenceSummary({
+async function seqSummary({
   allGenes,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   config,
   patternsTo
@@ -59,7 +60,7 @@ async function sequenceSummary({
   );
   const allGeneNames = allGenes.map(({name}) => name);
 
-  let header = [
+  const header = [
     'Sequence Name',
     'Genes',
     ...allGenes.reduce(
@@ -71,7 +72,10 @@ async function sequenceSummary({
       []
     ),
     'Subtype (%)',
-    'Pcnt Mix',
+    ...(sequenceReadsAnalysis ? [
+      'Median Read Depth'
+    ] : []),
+    'NA Mixture Rate (%)',
     ...mutTypeHeaders,
     ...allGenes.reduce(
       (acc, {drugClasses}) => [
@@ -93,8 +97,10 @@ async function sequenceSummary({
       ],
       []
     ),
-    'Num Frame Shifts',
-    'Frame Shifts',
+    ...(sequenceAnalysis ? [
+      'Num Frame Shifts',
+      'Frame Shifts'
+    ] : []),
     'Num Insertions',
     'Insertions',
     'Num Deletions',
@@ -107,16 +113,29 @@ async function sequenceSummary({
     'Apobec Mutations',
     'Num Unusual Mutations',
     'Unusual Mutations',
-    'Permanent Link'
+    'Permanent Link',
+    ...(sequenceReadsAnalysis ? [
+      'Minimal Read Depth',
+      'NA Mixture Threshold',
+      'Mutation Detection Threshold',
+      'Applied Mutation Detection Threshold'
+    ] : [])
   ];
 
-  for (const seqResult of sequenceAnalysis) {
+  for (const seqResult of sequenceAnalysis || sequenceReadsAnalysis) {
     const {
-      inputSequence: {header: seqName},
-      mixtureRate,
+      name: seqName1,
+      inputSequence: {header: seqName2} = {},
+      readDepthStats = {},
       availableGenes: genes,
       bestMatchingSubtype,
-      alignedGeneSequences: geneSeqs,
+      maxMixtureRate,
+      minPrevalence,
+      mixtureRate,
+      actualMinPrevalence,
+      minPositionReads,
+      alignedGeneSequences: geneSeqs1,
+      allGeneSequenceReads: geneSeqs2,
       drugResistance: geneDRs,
       mutations,
       unusualMutations,
@@ -128,14 +147,13 @@ async function sequenceSummary({
       apobecMutations
     } = seqResult;
     let row = {
-      'Sequence Name': seqName,
+      'Sequence Name': seqName1 || seqName2,
       'Genes': genes
         .filter(({name}) => allGeneNames.includes(name))
         .map(({name}) => geneDisplay[name] || name),
       'Subtype (%)': (bestMatchingSubtype || {}).display || null,
-      'Pcnt Mix': (100 * mixtureRate).toFixed(2),
-      'Frame Shifts': getObjectText(frameShifts),
-      'Num Frame Shifts': `${frameShifts.length}`,
+      'Median Read Depth': readDepthStats.median,
+      'NA Mixture Rate (%)': (100 * mixtureRate).toFixed(2),
       'Insertions': getObjectText(insertions),
       'Num Insertions': `${insertions.length}`,
       'Deletions': getObjectText(deletions),
@@ -150,11 +168,20 @@ async function sequenceSummary({
       'Num Unusual Mutations': `${unusualMutations.length}`,
 
       'Permanent Link': getPermanentLink(
-        seqName,
+        seqName1 || seqName2,
         mutations,
         patternsTo
-      )
+      ),
+      'Minimal Read Depth': minPositionReads,
+      'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
+      'Mutation Detection Threshold': `≥${minPrevalence * 100}%`,
+      'Applied Mutation Detection Threshold':
+      `${(actualMinPrevalence * 100).toFixed(1)}%`
     };
+    if (frameShifts) {
+      row['Frame Shifts'] = getObjectText(frameShifts);
+      row['Num Frame Shifts'] = `${frameShifts.length}`;
+    }
     for (const {gene: {name: geneName}, mutationsByTypes} of geneDRs) {
       for (const {
         drugClass,
@@ -182,7 +209,7 @@ async function sequenceSummary({
       lastAA,
       sdrms,
       tsms
-    } of geneSeqs) {
+    } of geneSeqs1 || geneSeqs2) {
       row[`${geneText} Start`] = firstAA;
       row[`${geneText} End`] = lastAA;
       const {drugClasses} = allGenes.find(({name}) => geneText === name);
@@ -196,10 +223,13 @@ async function sequenceSummary({
       }
     }
     joinCols(row);
-
     rows.push(row);
   }
-  return [{tableName: 'sequenceSummaries', header, rows}];
+  return [{
+    tableName: 'sequenceSummaries',
+    header,
+    rows
+  }];
 }
 
-export default sequenceSummary;
+export default seqSummary;

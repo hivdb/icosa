@@ -1,4 +1,4 @@
-import seqSummary from './hiv-sequence-summary';
+import seqSummary from '../tabular-report/hiv-seq-summary';
 import resistanceSummary from '../tabular-report/hiv-resistance-summary';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import unseqRegions from '../../../components/tabular-report/unseq-regions';

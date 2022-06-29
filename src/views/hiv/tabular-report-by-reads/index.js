@@ -34,7 +34,7 @@ export default function TabularReportByReadsContainer({
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
-  const handleExtendVariables = useExtendVariables({
+  const [handleExtendVariables, isExtVarPending] = useExtendVariables({
     config,
     match
   });
@@ -56,7 +56,7 @@ export default function TabularReportByReadsContainer({
     [children]
   );
 
-  if (isConfigPending || isPending) {
+  if (isConfigPending || isExtVarPending || isPending) {
     return null;
   }
 

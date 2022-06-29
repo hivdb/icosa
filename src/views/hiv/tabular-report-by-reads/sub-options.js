@@ -1,4 +1,5 @@
-import seqReadsSummary from './hiv-seqreads-summary';
+import seqSummary from '../tabular-report/hiv-seq-summary';
+import resistanceSummary from '../tabular-report/hiv-resistance-summary';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import unseqRegions from '../../../components/tabular-report/unseq-regions';
 import assembledConsensus
@@ -8,15 +9,16 @@ import prettyAlignments
 
 const subOptions = [
   'Sequence summary',
+  'Resistance summary',
   'Consensus sequence (FASTA)',
   'Mutation list',
   'Unsequenced regions',
-  'Mutation comments',
   'Pretty amino acid alignments'
 ];
 
 const subOptionProcessors = [
-  seqReadsSummary,
+  seqSummary,
+  resistanceSummary,
   assembledConsensus,
   mutationList,
   unseqRegions,

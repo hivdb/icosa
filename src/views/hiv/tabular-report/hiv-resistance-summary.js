@@ -19,6 +19,7 @@ function getObjectTextNoGene(objects) {
 
 async function resistanceSummary({
   allGenes,
+  sequenceReadsAnalysis,
   sequenceAnalysis,
   currentVersion,
   config
@@ -56,14 +57,15 @@ async function resistanceSummary({
   header.push('Algorithm Version');
   header.push('Algorithm Date');
 
-  for (const seqResult of sequenceAnalysis) {
+  for (const seqResult of sequenceAnalysis || sequenceReadsAnalysis) {
     const {
-      inputSequence: {header: seqName},
+      name: seqName1,
+      inputSequence: {header: seqName2} = {},
       availableGenes: genes,
       drugResistance: geneDRs
     } = seqResult;
     let row = {
-      'Sequence Name': seqName,
+      'Sequence Name': seqName1 || seqName2,
       'Genes': genes
         .filter(({name}) => allGeneNames.includes(name))
         .map(({name}) => geneDisplay[name] || name),
