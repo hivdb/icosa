@@ -1,11 +1,18 @@
 import React from 'react';
 
 import useTabularReports from '../../../components/tabular-report/reports';
-import {subOptionProcessors} from './sub-options';
+import useProcessors from '../tabular-report/use-processors';
+import {subOptions, subOptionProcessors} from './sub-options';
 
 
 function SequenceTabularReports(props) {
-  useTabularReports({...props, subOptionProcessors});
+  const {config} = props;
+  const processors = useProcessors({config, subOptions, subOptionProcessors});
+
+  useTabularReports({
+    ...props,
+    subOptionProcessors: processors
+  });
   return <>Downloading...</>;
 }
 

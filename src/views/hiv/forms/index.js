@@ -13,10 +13,10 @@ import Markdown from '../../../components/markdown';
 } from '../../components/algver-select'; */
 
 import SeqTabularReports, {
-  subOptions as seqSubOptions
+  subOptions as seqAllSubOptions
 } from '../tabular-report-by-sequences';
 import ReadsTabularReports, {
-  subOptions as readsSubOptions
+  subOptions as readsAllSubOptions
 } from '../tabular-report-by-reads';
 
 import useDrugDisplayOptions from './drug-display-options';
@@ -36,6 +36,17 @@ function loadExampleFasta(examples, config) {
   }));
 }
 
+function useTabularReportOptions({config, allSubOptions}) {
+  const {formEnableTabularReportOptions} = config;
+  return React.useMemo(
+    () => (formEnableTabularReportOptions || []).filter(
+      opt => allSubOptions.includes(opt)
+    ),
+    [formEnableTabularReportOptions, allSubOptions]
+  );
+}
+
+
 SierraForms.propTypes = {
   config: PropTypes.shape({
     // species: PropTypes.string.isRequired,
@@ -52,6 +63,9 @@ SierraForms.propTypes = {
       }).isRequired
     ).isRequired,
     seqReadsExamples: PropTypes.arrayOf(
+      PropTypes.string.isRequired
+    ).isRequired,
+    formEnableTabularReportOptions: PropTypes.arrayOf(
       PropTypes.string.isRequired
     ).isRequired
   }).isRequired,
@@ -107,6 +121,16 @@ function SierraForms({
 
   setTitle(title);
 
+  const seqSubOptions = useTabularReportOptions({
+    config,
+    allSubOptions: seqAllSubOptions
+  });
+
+  const readsSubOptions = useTabularReportOptions({
+    config,
+    allSubOptions: readsAllSubOptions
+  });
+
   return <>
     <Intro>
       <IntroHeader>
@@ -160,35 +184,39 @@ function SierraForms({
        __printable: {
          label: 'Printable HTML'
        },
-       csv: {
-         label: "Spreadsheets (CSV)",
-         subOptions: seqSubOptions,
-         defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-         renderer: props => (
-           <SeqTabularReports
-            patternsTo={patternsTo}
-            sequencesTo={sequencesTo}
-            readsTo={readsTo}
-            {...props} />
-         )
-       }
+       ...(seqSubOptions.length > 0 ? {
+         csv: {
+           label: "Spreadsheets (CSV)",
+           subOptions: seqSubOptions,
+           defaultSubOptions: seqSubOptions.map((_, idx) => idx),
+           renderer: props => (
+             <SeqTabularReports
+              patternsTo={patternsTo}
+              sequencesTo={sequencesTo}
+              readsTo={readsTo}
+              {...props} />
+           )
+         }
+       } : {})
      }}
      seqReadsOutputOptions={{
        __printable: {
          label: 'Printable HTML'
        },
-       csv: {
-         label: "Sequences and spreadsheets (FASTA/CSV)",
-         children: readsSubOptions,
-         defaultChildren: readsSubOptions.map((_, idx) => idx),
-         renderer: props => (
-           <ReadsTabularReports
-            patternsTo={patternsTo}
-            sequencesTo={sequencesTo}
-            readsTo={readsTo}
-            {...props} />
-         )
-       }
+       ...(readsSubOptions.length > 0 ? {
+         csv: {
+           label: "Sequences and spreadsheets (FASTA/CSV)",
+           children: readsSubOptions,
+           defaultChildren: readsSubOptions.map((_, idx) => idx),
+           renderer: props => (
+             <ReadsTabularReports
+              patternsTo={patternsTo}
+              sequencesTo={sequencesTo}
+              readsTo={readsTo}
+              {...props} />
+           )
+         }
+       } : {})
      }}
     />
   </>;
