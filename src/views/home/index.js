@@ -51,6 +51,14 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        HIV-2 Analysis Program
+        <ul>
+          <li><Link to="/hiv2/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hiv2/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hiv2/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
         <Link to="/mut-annot-viewer/">Mutation Annotation Viewer</Link>
         <ul>
           <li><Link to="/mut-annot-viewer/SARS2S/">SARS2 S</Link></li>

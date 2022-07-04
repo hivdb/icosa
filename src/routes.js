@@ -4,7 +4,7 @@ import {Route} from 'found';
 import Layout from './components/layout';
 import Home from './views/home';
 import SARS2Routes from './views/sars2';
-import HIV1Routes from './views/hiv';
+import HIVRoutes from './views/hiv';
 import MutAnnotViewerRoutes from './views/mut-annot-viewer';
 import GenomeViewerRoutes from './views/genome-viewer';
 import NGS2CodFreqDev from './views/ngs2codfreq-dev';
@@ -28,10 +28,10 @@ const routes = (
       {SARS2Routes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
-      {HIV1Routes({
+      {HIVRoutes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
-      {HIV1Routes({
+      {HIVRoutes({
         defaultForm: 'by-sequences/',
         pathPrefix: 'hivca/',
         config: {
@@ -42,7 +42,7 @@ const routes = (
           refDataLoader: DebugRefDataLoader
         }
       })}
-      {HIV1Routes({
+      {HIVRoutes({
         pathPrefix: 'hivseq/',
         config: {
           configFromURL: (
@@ -52,12 +52,23 @@ const routes = (
           refDataLoader: DebugRefDataLoader
         }
       })}
-      {HIV1Routes({
+      {HIVRoutes({
         pathPrefix: 'hivalg/',
         config: {
           configFromURL: (
             'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
             'pages/sierra-hivalg.json'
+          ),
+          refDataLoader: DebugRefDataLoader
+        }
+      })}
+      {HIVRoutes({
+        pathPrefix: 'hiv2/',
+        config: {
+          graphqlURI: 'http://localhost:8111/sierra/rest/hiv2/graphql',
+          configFromURL: (
+            'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
+            'pages/sierra-hiv2.json'
           ),
           refDataLoader: DebugRefDataLoader
         }

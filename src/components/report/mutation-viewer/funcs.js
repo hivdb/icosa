@@ -44,6 +44,7 @@ function calcUnseqRegionOffsetY(knownRegions, posStart, posEnd) {
 
 
 export function getUnsequencedRegions({
+  strain,
   allGeneSeqs,
   geneDefs,
   knownRegions,
@@ -58,7 +59,8 @@ export function getUnsequencedRegions({
     wavyRepeats: 5
   };
   for (const geneDef of geneDefs) {
-    const {gene, range, readingFrame} = geneDef;
+    const {gene, rangeByStrain, readingFrame} = geneDef;
+    const range = geneDef.range ? geneDef.range : rangeByStrain[strain];
     const geneSeq = allGeneSeqs.find(({gene: {name}}) => name === gene);
     if (typeof geneSeq === 'undefined') {
       let [posStart, posEnd] = range;
@@ -100,6 +102,7 @@ export function getUnsequencedRegions({
 
 
 export function getGenomeMapPositions({
+  strain,
   allGeneSeqs,
   geneDefs,
   highlightGenes,
@@ -118,10 +121,9 @@ export function getGenomeMapPositions({
     if (!(geneName in geneDefs)) {
       continue;
     }
-    const {
-      displayGene, range,
-      readingFrame
-    } = geneDefs[geneName];
+    const geneDef = geneDefs[geneName];
+    const {displayGene, rangeByStrain, readingFrame} = geneDef;
+    const range = geneDef.range ? geneDef.range : rangeByStrain[strain];
     const highlight = highlightGenes.includes(geneName);
     const shortMutations = shortenMutationList(mutations);
 
@@ -183,6 +185,7 @@ export function getGenomeMapPositions({
 
 
 export function getCoverages({
+  strain,
   coverages,
   geneDefs,
   minPos,
@@ -209,7 +212,9 @@ export function getCoverages({
     if (!(gene in geneDefs)) {
       continue;
     }
-    const {range, readingFrame} = geneDefs[gene];
+    const geneDef = geneDefs[gene];
+    const {rangeByStrain, readingFrame} = geneDef;
+    const range = geneDef.range ? geneDef.range : rangeByStrain[strain];
     const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
     results.push({position: absNAPos, coverage});
   }

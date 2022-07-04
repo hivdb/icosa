@@ -79,6 +79,7 @@ function SinglePatternReport({
          viewCheckboxLabel="Collapse genes"
          noUnseqRegions
          allGeneSeqs={allGeneMutations}
+         strain={strain}
          output={output}>
           <ValidationReport {...patternResult} {...{output, strain}} />
         </MutViewer>

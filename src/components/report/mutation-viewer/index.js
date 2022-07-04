@@ -26,6 +26,7 @@ const useViewReducer = createPersistedReducer(
 
 MutationViewer.propTypes = {
   title: PropTypes.string.isRequired,
+  strain: PropTypes.string,
   output: PropTypes.string,
   children: PropTypes.node,
   defaultView: PropTypes.oneOf(['collapse', 'expansion']).isRequired,
@@ -77,6 +78,7 @@ function MutationViewer({
   children,
   defaultView,
   viewCheckboxLabel,
+  strain,
   output,
   noUnseqRegions,
   defaultPresetIndex,
@@ -87,12 +89,19 @@ function MutationViewer({
   highlightUnusualMutation,
   highlightDRM
 }) {
-  const {presets, genes} = regionPresets;
+  const {presets: origPresets, genes} = regionPresets;
   const [selectedIndex, setSelectedIndex] = useState(defaultPresetIndex);
   const [view, toggleView] = useViewReducer(
     v => v === 'expansion' ? 'collapse' : 'expansion',
     defaultView
   );
+  const presets = React.useMemo(
+    () => origPresets.filter(
+      ({strainOnly}) => !strainOnly || strainOnly.includes(strain)
+    ),
+    [origPresets, strain]
+  );
+
 
   const payloads = React.useMemo(
     () => presets.map(({
@@ -105,6 +114,7 @@ function MutationViewer({
       const unseqRegions = (
         noUnseqRegions ? [] :
           getUnsequencedRegions({
+            strain,
             allGeneSeqs,
             geneDefs: genes,
             knownRegions: regions,
@@ -113,6 +123,7 @@ function MutationViewer({
           })
       );
       const positions = getGenomeMapPositions({
+        strain,
         allGeneSeqs,
         geneDefs: genes,
         highlightGenes,
@@ -151,6 +162,7 @@ function MutationViewer({
           positions
         }],
         coverages: getCoverages({
+          strain,
           coverages,
           geneDefs: genes,
           minPos: presetPosStart,
@@ -160,6 +172,7 @@ function MutationViewer({
       };
     }),
     [
+      strain,
       allGeneSeqs,
       coverageUpperLimit,
       coverages,
