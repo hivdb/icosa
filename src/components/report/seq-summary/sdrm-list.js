@@ -7,23 +7,43 @@ import Button from '../../button';
 import parentStyle from '../style.module.scss';
 
 SDRMButton.propTypes = {
+  config: PropTypes.shape({
+    displaySDRMs: PropTypes.oneOfType(
+      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+      PropTypes.bool.isRequired
+    )
+  }).isRequired,
   disableSDRMs: PropTypes.bool.isRequired,
   showSDRMs: PropTypes.bool,
   toggleSDRMs: PropTypes.func
 };
 
-function SDRMButton({disableSDRMs, showSDRMs, toggleSDRMs}) {
-  return <Button
-   className={parentStyle.button}
-   onClick={toggleSDRMs} disabled={disableSDRMs}>
-    {showSDRMs ?
-      <FaEyeSlash className={parentStyle['icon-before-text']} /> :
-      <FaEye className={parentStyle['icon-before-text']} />} SDRMs
-  </Button>;
+function SDRMButton({
+  config: {displaySDRMs},
+  disableSDRMs,
+  showSDRMs,
+  toggleSDRMs
+}) {
+  return displaySDRMs &&
+    (displaySDRMs === true || displaySDRMs.length > 0) ? (
+      <Button
+       className={parentStyle.button}
+       onClick={toggleSDRMs} disabled={disableSDRMs}>
+        {showSDRMs ?
+          <FaEyeSlash className={parentStyle['icon-before-text']} /> :
+          <FaEye className={parentStyle['icon-before-text']} />} SDRMs
+      </Button>
+    ) : null;
 }
 
 
 SDRMList.propTypes = {
+  config: PropTypes.shape({
+    displaySDRMs: PropTypes.oneOfType(
+      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+      PropTypes.bool.isRequired
+    )
+  }).isRequired,
   geneSeqs: PropTypes.arrayOf(
     PropTypes.shape({
       gene: PropTypes.shape({
@@ -40,21 +60,23 @@ SDRMList.propTypes = {
 
 SDRMList.defaultProps = {geneSeqs: []};
 
-function SDRMList({geneSeqs}) {
+function SDRMList({geneSeqs, config: {displaySDRMs}}) {
   return <>
-    {geneSeqs.map((geneSeq, idx) => {
+    {displaySDRMs ? geneSeqs.map((geneSeq, idx) => {
       const {gene: {name: gene}, sdrms} = geneSeq;
-      return <React.Fragment key={idx}>
-        <dt>{gene} SDRMs:</dt>
-        <dd>
-          {(
-            sdrms.length > 0 ?
-              sdrms.map(sdrm => sdrm.text).join(", ") :
-              "None"
-          )}
-        </dd>
-      </React.Fragment>;
-    })}
+      return displaySDRMs === true || displaySDRMs.includes(gene) ? (
+        <React.Fragment key={idx}>
+          <dt>{gene} SDRMs:</dt>
+          <dd>
+            {(
+              sdrms.length > 0 ?
+                sdrms.map(sdrm => sdrm.text).join(", ") :
+                "None"
+            )}
+          </dd>
+        </React.Fragment>
+      ) : null;
+    }) : null}
   </>;
 }
 

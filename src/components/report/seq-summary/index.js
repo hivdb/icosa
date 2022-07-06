@@ -214,7 +214,7 @@ function SeqSummary(props) {
           }
 
           else if (showSDRMs && child.type === SDRMs) {
-            return <SDRMList {...{key, geneSeqs}} />;
+            return <SDRMList {...{key, geneSeqs, config}} />;
           }
 
           return null;
@@ -239,7 +239,7 @@ function SeqSummary(props) {
       <h2>Sequence summary</h2>
       <div className={parentStyle['buttons-right']}>
         {childArray.some(child => child.type === SDRMs) && (
-          <SDRMButton {...{disableSDRMs, showSDRMs, toggleSDRMs}} />
+          <SDRMButton {...{disableSDRMs, showSDRMs, toggleSDRMs, config}} />
         )}
         {childArray.some(child => child.type === PrettyPairwise) && (
           <PrettyPairwiseButton {...{

@@ -83,6 +83,7 @@ function SingleSequenceReport({
           <SeqSummary.MultilineGeneRange />
           <SeqSummary.Genotype />
           <SeqSummary.PrettyPairwise />
+          <SeqSummary.SDRMs />
         </SeqSummary>
         <MutViewer {...{
           title: 'Sequence quality assessment',

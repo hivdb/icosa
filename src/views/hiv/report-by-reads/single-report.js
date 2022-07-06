@@ -106,6 +106,7 @@ function SingleSeqReadsReport({
           <SeqSummary.MaxMixtureRate />
           <SeqSummary.MinPrevalence />
           <SeqSummary.ThresholdNomogram />
+          <SeqSummary.SDRMs />
         </SeqSummary>
         <MutViewer {...{
           title: 'Sequence quality assessment',
