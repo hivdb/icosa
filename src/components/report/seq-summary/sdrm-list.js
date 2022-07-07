@@ -8,10 +8,10 @@ import parentStyle from '../style.module.scss';
 
 SDRMButton.propTypes = {
   config: PropTypes.shape({
-    displaySDRMs: PropTypes.oneOfType(
+    displaySDRMs: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
       PropTypes.bool.isRequired
-    )
+    ])
   }).isRequired,
   disableSDRMs: PropTypes.bool.isRequired,
   showSDRMs: PropTypes.bool,
@@ -39,10 +39,10 @@ function SDRMButton({
 
 SDRMList.propTypes = {
   config: PropTypes.shape({
-    displaySDRMs: PropTypes.oneOfType(
+    displaySDRMs: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
       PropTypes.bool.isRequired
-    )
+    ])
   }).isRequired,
   geneSeqs: PropTypes.arrayOf(
     PropTypes.shape({

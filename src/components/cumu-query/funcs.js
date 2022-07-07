@@ -34,6 +34,8 @@ export function calcInitOffsetLimit({
   quickLoadLimit = DEFAULT_QUICKLOAD_LIMIT
 }) {
   if (curIndex === null || curIndex === undefined) {
+    // don't load anything in lazy-loading mode
+    // if curIndex is not specified
     let initOffset = 0, initLimit = 0;
     if (!lazyLoad) {
       initLimit = size;

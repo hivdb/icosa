@@ -8,7 +8,36 @@ import {calcInitOffsetLimit} from '../cumu-query';
 const SeqReadsContext = React.createContext({});
 
 
-function SeqReadsAnalysisContainer(props) {
+SeqReadsAnalysisContainer.propTypes = {
+  query: PropTypes.object.isRequired,
+  extraParams: PropTypes.string,
+  allSequenceReads: PropTypes.array.isRequired,
+  currentSelected: PropTypes.shape({
+    index: PropTypes.number,
+    name: PropTypes.string
+  }),
+  client: PropTypes.any.isRequired,
+  progressText: PropTypes.func.isRequired,
+  onExtendVariables: PropTypes.func.isRequired,
+  lazyLoad: PropTypes.bool.isRequired,
+  renderPartialResults: PropTypes.bool.isRequired,
+  maxPerRequest: PropTypes.number,
+  quickLoadLimit: PropTypes.number,
+  children: PropTypes.func.isRequired
+};
+
+SeqReadsAnalysisContainer.defaultProps = {
+  renderPartialResults: true,
+  progressText: (progress, total) => (
+    `Running sequence reads analysis... (${progress}/${total})`
+  ),
+  quickLoadLimit: 2,
+  onExtendVariables: vars => vars
+};
+
+SeqReadsAnalysisContainer.SequenceReadsConsumer = SeqReadsContext.Consumer;
+
+export default function SeqReadsAnalysisContainer(props) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.debug(
@@ -26,6 +55,8 @@ function SeqReadsAnalysisContainer(props) {
     progressText,
     onExtendVariables,
     lazyLoad,
+    maxPerRequest,
+    quickLoadLimit,
     renderPartialResults,
     children
   } = props;
@@ -43,10 +74,12 @@ function SeqReadsAnalysisContainer(props) {
        onExtendVariables={onExtendVariables}
        renderPartialResults={renderPartialResults}
        allSequenceReads={allSequenceReads}
+       maxPerRequest={maxPerRequest}
        {...calcInitOffsetLimit({
          size: allSequenceReads.length,
          curIndex: currentSelected.index,
-         lazyLoad
+         lazyLoad,
+         quickLoadLimit
        })}>
         {children}
       </SeqReadsAnalysisQuery>
@@ -54,32 +87,3 @@ function SeqReadsAnalysisContainer(props) {
   );
 
 }
-
-
-SeqReadsAnalysisContainer.propTypes = {
-  query: PropTypes.object.isRequired,
-  extraParams: PropTypes.string,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.shape({
-    index: PropTypes.number,
-    name: PropTypes.string
-  }),
-  client: PropTypes.any.isRequired,
-  progressText: PropTypes.func.isRequired,
-  onExtendVariables: PropTypes.func.isRequired,
-  lazyLoad: PropTypes.bool.isRequired,
-  renderPartialResults: PropTypes.bool.isRequired,
-  children: PropTypes.func.isRequired
-};
-
-SeqReadsAnalysisContainer.defaultProps = {
-  renderPartialResults: true,
-  progressText: (progress, total) => (
-    `Running sequence reads analysis... (${progress}/${total})`
-  ),
-  onExtendVariables: vars => vars
-};
-
-SeqReadsAnalysisContainer.SequenceReadsConsumer = SeqReadsContext.Consumer;
-
-export default SeqReadsAnalysisContainer;

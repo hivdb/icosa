@@ -61,6 +61,7 @@ export default function TabularReportBySequencesContainer({
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
+   maxPerRequest={14}
    extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (

@@ -19,6 +19,7 @@ SequenceAnalysisContainer.propTypes = {
   onExtendVariables: PropTypes.func,
   lazyLoad: PropTypes.bool.isRequired,
   renderPartialResults: PropTypes.bool,
+  maxPerRequest: PropTypes.number,
   quickLoadLimit: PropTypes.number,
   children: PropTypes.func.isRequired
 };
@@ -50,6 +51,7 @@ function SequenceAnalysisContainer(props) {
     progressText,
     onExtendVariables,
     lazyLoad,
+    maxPerRequest,
     quickLoadLimit,
     renderPartialResults,
     children
@@ -68,6 +70,7 @@ function SequenceAnalysisContainer(props) {
      progressText={progressText}
      onExtendVariables={onExtendVariables}
      sequences={sequences}
+     maxPerRequest={maxPerRequest}
      {...calcInitOffsetLimit({
        size: sequences.length,
        curIndex: currentSelected.index,

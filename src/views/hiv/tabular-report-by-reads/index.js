@@ -67,6 +67,7 @@ export default function TabularReportByReadsContainer({
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
+   maxPerRequest={3}
    extraParams={getExtraParams(curSubOptions)}
    onExtendVariables={handleExtendVariables}>
     {props => (

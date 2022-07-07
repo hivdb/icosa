@@ -52,7 +52,8 @@ function ReportBySequencesContainer({
   return isVarsPending ? null : <SeqAnalysisLayout
    query={query}
    client={client}
-   quickLoadLimit={5}
+   quickLoadLimit={7}
+   maxPerRequest={7}
    sequences={sequences}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}

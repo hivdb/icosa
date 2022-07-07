@@ -46,6 +46,8 @@ function ReportByReadsContainer({
   return isVarsPending ? null : <SeqReadsAnalysisLayout
    query={query}
    client={client}
+   quickLoadLimit={5}
+   maxPerRequest={2}
    allSequenceReads={allSequenceReads}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}

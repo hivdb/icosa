@@ -11,8 +11,6 @@ import {
 import useCumuQuery from '../cumu-query';
 
 
-const MAX_PER_REQUEST = 1;
-
 function getQuery(fragment, extraParams) {
   return gql`
     query SequenceAnalyses(
@@ -47,9 +45,13 @@ SequenceAnalysisQuery.propTypes = {
   client: PropTypes.any,
   progressText: PropTypes.func.isRequired,
   showProgressBar: PropTypes.bool.isRequired,
-  onExtendVariables: PropTypes.func.isRequired
+  onExtendVariables: PropTypes.func.isRequired,
+  maxPerRequest: PropTypes.number
 };
 
+SequenceAnalysisQuery.defaultProps = {
+  maxPerRequest: 1
+};
 
 export default function SequenceAnalysisQuery({
   lazyLoad,
@@ -65,7 +67,8 @@ export default function SequenceAnalysisQuery({
   client,
   progressText,
   showProgressBar,
-  onExtendVariables
+  onExtendVariables,
+  maxPerRequest
 }) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
@@ -92,7 +95,7 @@ export default function SequenceAnalysisQuery({
     client,
     currentSelected,
     onExtendVariables,
-    maxPerRequest: MAX_PER_REQUEST,
+    maxPerRequest,
     mainInputName: 'sequences',
     inputUniqKeyName: 'header',
     mainOutputName: 'sequenceAnalysis',
