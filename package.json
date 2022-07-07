@@ -107,9 +107,8 @@
   "scripts": {
     "start": "PORT=3009 react-scripts start",
     "dist": "rm -rf dist/ && NODE_ENV=production npx babel src --out-dir dist --copy-files",
-    "prepare": "npm run dist",
-    "build": "npm run dist",
-    "postinstall": "yarn install && rm -rf dist/ && NODE_ENV=production npx babel src --out-dir dist --copy-files",
+    "build": "yarn dist",
+    "postinstall": "yarn dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-colors": "node ./scripts/generate-colors.js > src/views/mut-annot-editor/components/canvas-sequence-viewer/colors.json"
