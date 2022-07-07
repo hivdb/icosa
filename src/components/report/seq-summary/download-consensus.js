@@ -12,7 +12,7 @@ DownloadConsensus.propTypes = {
   assembledConsensus: PropTypes.string.isRequired,
   maxMixtureRate: PropTypes.number.isRequired,
   minPrevalence: PropTypes.number.isRequired,
-  minCodonReads: PropTypes.number.isRequired
+  minPositionReads: PropTypes.number.isRequired
 };
 
 export default function DownloadConsensus({
@@ -20,14 +20,14 @@ export default function DownloadConsensus({
   assembledConsensus,
   maxMixtureRate,
   minPrevalence,
-  minCodonReads
+  minPositionReads
 }) {
   const onDownload = React.useCallback(
     () => {
       const fasta = `>${
         name
-      } cdreads: ${
-        minCodonReads
+      } posreads: ${
+        minPositionReads
       }; cutoff: ${
         minPrevalence
       }; mixrate: ${
@@ -35,7 +35,7 @@ export default function DownloadConsensus({
       }\n${assembledConsensus}`;
       makeDownload(`${name}.fas`, 'application/fasta', fasta);
     },
-    [name, maxMixtureRate, minPrevalence, minCodonReads, assembledConsensus]
+    [name, maxMixtureRate, minPrevalence, minPositionReads, assembledConsensus]
   );
   return <Button
    className={parentStyle.button}

@@ -10,13 +10,13 @@ function assembledConsensus({
       assembledUnambiguousConsensus: unambiSeq,
       maxMixtureRate,
       minPrevalence,
-      minCodonReads
+      minPositionReads
     } = seqResult;
     fasta.push(
       `>${
         name
-      } cdreads: ${
-        minCodonReads
+      } posreads: ${
+        minPositionReads
       }; cutoff: ${
         minPrevalence
       }; mixrate: ${
@@ -27,8 +27,8 @@ function assembledConsensus({
     unambiFasta.push(
       `>${
         name
-      } unambiguous NA only; cdreads: ${
-        minCodonReads
+      } unambiguous NA only; posreads: ${
+        minPositionReads
       }`
     );
     unambiFasta.push(unambiSeq);

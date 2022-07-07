@@ -254,7 +254,7 @@ function SeqSummary(props) {
             assembledConsensus,
             maxMixtureRate,
             minPrevalence,
-            minCodonReads
+            minPositionReads
           }} />
         )}
       </div>
