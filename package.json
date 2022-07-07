@@ -1,6 +1,6 @@
 {
-  "name": "sierra-frontend",
-  "version": "0.1.0",
+  "name": "icosa",
+  "version": "0.2.0",
   "private": true,
   "resolutions": {
     "vfile": "^4.2.1",
@@ -101,10 +101,14 @@
     "xlsx": "^0.18.5",
     "youtube-url": "^0.5.0"
   },
+  "exports": {
+    "./": "./dist/"
+  },
   "scripts": {
     "start": "PORT=3009 react-scripts start",
     "dist": "rm -rf dist/ && NODE_ENV=production npx babel src --out-dir dist --copy-files",
-    "build": "npx --node-arg '--max-old-space-size=8192' react-scripts build",
+    "prepare": "npm run dist",
+    "build": "npm run dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-colors": "node ./scripts/generate-colors.js > src/views/mut-annot-editor/components/canvas-sequence-viewer/colors.json"
