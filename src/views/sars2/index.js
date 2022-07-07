@@ -8,7 +8,7 @@ import style from './style.module.scss';
 import defaultConfig from './config';
 
 import ConfigContext, {
-  configWrapper
+  useConfigLoader
 } from '../../utils/config-context';
 import CustomColors from '../../components/custom-colors';
 
@@ -18,25 +18,55 @@ const ReportBySequences = lazy(() => import('./report-by-sequences'));
 const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
 
-SARS2Routes.propTypes = {
-  pathPrefix: PropTypes.string,
-  config: PropTypes.object,
-  formProps: PropTypes.object,
-  colors: PropTypes.object,
-  className: PropTypes.string
+Layout.propTypes = {
+  data: PropTypes.shape({
+    defaultConfig: PropTypes.object.isRequired,
+    config: PropTypes.object,
+    className: PropTypes.string,
+    colors: PropTypes.object
+  }),
+  children: PropTypes.node
 };
 
-export default function SARS2Routes({
+
+function Layout({
+  children,
+  data: {
+    defaultConfig,
+    config,
+    className,
+    colors
+  }
+}) {
+  const combinedConfig = React.useMemo(
+    () => ({...defaultConfig, ...config}),
+    [defaultConfig, config]
+  );
+  const configContextLoader = useConfigLoader(combinedConfig);
+  const layoutClassName = makeClassNames(style['sierra-webui'], className);
+  return <Suspense fallback={<Loader loaded={false} />}>
+    <CustomColors className={layoutClassName} colors={colors}>
+      <ConfigContext.Provider value={configContextLoader}>
+        {children}
+      </ConfigContext.Provider>
+    </CustomColors>
+  </Suspense>;
+}
+
+
+export default function sars2Routes({
   pathPrefix = "sars2/",
+  defaultForm = "by-patterns/",
   config = {},
   formProps,
   colors,
   className
 } = {}) {
-  const configContext = configWrapper({...defaultConfig, ...config});
-  const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
-  return <Route path={pathPrefix} Component={wrapper}>
+  return <Route
+   path={pathPrefix}
+   data={{defaultConfig, config, className, colors}}
+   Component={Layout}>
     <Route path="by-patterns/">
       <Route render={({props}) => (
         <SeqAnaForms
@@ -73,17 +103,12 @@ export default function SARS2Routes({
         curAnalysis="ngs2codfreq" />
      )} />
     <Redirect to={({location: {pathname}}) => (
-      `${pathname}${pathname.endsWith('/') ? '' : '/'}by-patterns/`
+      `${pathname}${pathname.endsWith('/') ? '' : '/'}${defaultForm}`
     )} />
+    <Redirect
+     from="by-mutations/"
+     to={({location: {pathname}}) => (
+       pathname.replace(/by-mutations\/?$/, 'by-patterns/')
+     )} />
   </Route>;
-
-  function wrapper({children}) {
-    return <Suspense fallback={<Loader loaded={false} />}>
-      <CustomColors className={wrapperClassName} colors={colors}>
-        <ConfigContext.Provider value={configContext}>
-          {children}
-        </ConfigContext.Provider>
-      </CustomColors>
-    </Suspense>;
-  }
 }

@@ -8,7 +8,7 @@ import style from './style.module.scss';
 import defaultConfig from './config';
 
 import ConfigContext, {
-  configWrapper
+  useConfigLoader
 } from '../../utils/config-context';
 import CustomColors from '../../components/custom-colors';
 
@@ -18,16 +18,43 @@ const ReportBySequences = lazy(() => import('./report-by-sequences'));
 const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
 
-HIV1Routes.propTypes = {
-  pathPrefix: PropTypes.string,
-  defaultForm: PropTypes.string,
-  config: PropTypes.object,
-  formProps: PropTypes.object,
-  colors: PropTypes.object,
-  className: PropTypes.string
+Layout.propTypes = {
+  data: PropTypes.shape({
+    defaultConfig: PropTypes.object.isRequired,
+    config: PropTypes.object,
+    className: PropTypes.string,
+    colors: PropTypes.object
+  }),
+  children: PropTypes.node
 };
 
-export default function HIV1Routes({
+
+function Layout({
+  children,
+  data: {
+    defaultConfig,
+    config,
+    className,
+    colors
+  }
+}) {
+  const combinedConfig = React.useMemo(
+    () => ({...defaultConfig, ...config}),
+    [defaultConfig, config]
+  );
+  const configContextLoader = useConfigLoader(combinedConfig);
+  const layoutClassName = makeClassNames(style['sierra-webui'], className);
+  return <Suspense fallback={<Loader loaded={false} />}>
+    <CustomColors className={layoutClassName} colors={colors}>
+      <ConfigContext.Provider value={configContextLoader}>
+        {children}
+      </ConfigContext.Provider>
+    </CustomColors>
+  </Suspense>;
+}
+
+
+export default function hiv1Routes({
   pathPrefix = "hiv/",
   defaultForm = "by-patterns/",
   config = {},
@@ -35,10 +62,11 @@ export default function HIV1Routes({
   colors,
   className
 } = {}) {
-  const configContext = configWrapper({...defaultConfig, ...config});
-  const wrapperClassName = makeClassNames(style['sierra-webui'], className);
 
-  return <Route path={pathPrefix} Component={wrapper}>
+  return <Route
+   path={pathPrefix}
+   data={{defaultConfig, config, className, colors}}
+   Component={Layout}>
     <Route path="by-patterns/">
       <Route render={({props}) => (
         <SeqAnaForms
@@ -83,14 +111,4 @@ export default function HIV1Routes({
        pathname.replace(/by-mutations\/?$/, 'by-patterns/')
      )} />
   </Route>;
-
-  function wrapper({children}) {
-    return <Suspense fallback={<Loader loaded={false} />}>
-      <CustomColors className={wrapperClassName} colors={colors}>
-        <ConfigContext.Provider value={configContext}>
-          {children}
-        </ConfigContext.Provider>
-      </CustomColors>
-    </Suspense>;
-  }
 }

@@ -9,7 +9,10 @@ export default function AsyncContext(defaultValue) {
   const Context = React.createContext(defaultValue);
 
   AsyncProvider.propTypes = {
-    value: PropTypes.object,
+    value: PropTypes.oneOfType([
+      PropTypes.object.isRequired,
+      PropTypes.func.isRequired
+    ]),
     children: PropTypes.node
   };
 
@@ -20,7 +23,7 @@ export default function AsyncContext(defaultValue) {
     useEffect(() => {
       (async () => {
         setLoading(true);
-        const loadedValue = await value;
+        const loadedValue = await (value instanceof Function ? value() : value);
         setData(loadedValue);
         setLoading(false);
       })();

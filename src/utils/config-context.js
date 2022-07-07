@@ -1,23 +1,41 @@
+import React from 'react';
+import memoize from 'lodash/memoize';
+
 import createAsyncContext from './async-context';
 
 
-export async function configWrapper(config) {
-
-  if (config.configFromURL) {
-    const resp = await fetch(config.configFromURL);
-    const asyncConfig = await resp.json();
-    config = {
-      ...config,
-      ...asyncConfig
-    };
+const fetchConfig = memoize(
+  async url => {
+    const resp = await fetch(url);
+    return await resp.json();
   }
+);
 
-  return new Proxy(config, {
-    get(target, name) {
-      return Object.freeze(target[name]);
-    }
-  });
 
+export function useConfigLoader(config) {
+
+  return React.useCallback(
+    async () => {
+      let loadedConfig;
+      if (config.configFromURL) {
+        const asyncConfig = await fetchConfig(config.configFromURL);
+        loadedConfig = {
+          ...config,
+          ...asyncConfig
+        };
+      }
+      else {
+        loadedConfig = config;
+      }
+
+      return new Proxy(loadedConfig, {
+        get(target, name) {
+          return Object.freeze(target[name]);
+        }
+      });
+    },
+    [config]
+  );
 }
 
 

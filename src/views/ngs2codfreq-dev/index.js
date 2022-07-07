@@ -3,7 +3,7 @@ import {useRouter} from 'found';
 
 import NGS2CodFreq from '../../components/ngs2codfreq';
 import ConfigContext, {
-  configWrapper
+  useConfigLoader
 } from '../../utils/config-context';
 
 
@@ -39,7 +39,7 @@ export default function NGS2CodFreqDev() {
       } = {}
     }
   } = useRouter();
-  const configContext = configWrapper({
+  const configContext = useConfigLoader({
     configFromURL: (
       'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/' +
       'pages/sierra-sars2.json'
