@@ -109,6 +109,7 @@
     "dist": "rm -rf dist/ && NODE_ENV=production npx babel src --out-dir dist --copy-files",
     "prepare": "npm run dist",
     "build": "npm run dist",
+    "install": "npm run dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-colors": "node ./scripts/generate-colors.js > src/views/mut-annot-editor/components/canvas-sequence-viewer/colors.json"
