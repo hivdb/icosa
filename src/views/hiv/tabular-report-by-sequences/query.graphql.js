@@ -107,6 +107,7 @@ export default function getQuery(/* subOptions */) {
           displayAAs
           insertedNAs
           primaryType
+          DRMDrugClass { name }
           isInsertion
           isDeletion
           hasStop

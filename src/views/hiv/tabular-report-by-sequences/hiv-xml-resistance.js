@@ -2,6 +2,34 @@ import uniq from 'lodash/uniq';
 import {create as createXML} from 'xmlbuilder2';
 
 
+function getOldMutType(mutType, drugClass) {
+  if (mutType === 'Other') {
+    return 'OTHER';
+  }
+  else if (mutType === 'Major') {
+    if (drugClass === 'PI') {
+      return 'PI_MAJOR';
+    }
+    else if (drugClass === 'INSTI') {
+      return 'INI_MAJOR';
+    }
+  }
+  else if (mutType === 'Accessory') {
+    if (drugClass === 'PI') {
+      return 'PI_MINOR';
+    }
+    else if (drugClass === 'INSTI') {
+      return 'INI_MINOR';
+    }
+  }
+  else {
+    // NRTI or NNRTI
+    return mutType;
+  }
+  return 'OTHER';
+}
+
+
 export default async function xmlResistance({
   allGenes,
   sequenceAnalysis,
@@ -97,8 +125,8 @@ export default async function xmlResistance({
       // <mutation>'s
       for (const mut of geneSeq.mutations) {
         const mutElem = geneDataElem.ele('mutation');
-        mutElem.ele('classification').txt(mut.primaryType);
-        let typeText = 'mut';
+        mutElem.ele('classification').txt(getOldMutType(mut.primaryType));
+        let typeText = 'mutation';
         if (mut.isInsertion) {
           typeText = 'insertion';
         }
