@@ -96,7 +96,7 @@ export default async function xmlResistance({
 
       // <mutation>'s
       for (const mut of geneSeq.mutations) {
-        const mutElem = geneDataElem.ele('mut');
+        const mutElem = geneDataElem.ele('mutation');
         mutElem.ele('classification').txt(mut.primaryType);
         let typeText = 'mut';
         if (mut.isInsertion) {
