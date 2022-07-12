@@ -37,10 +37,6 @@ export function makeDownload(fileName, mediaType, data, isBlob = false) {
     // download method of IE
     window.navigator.msSaveOrOpenBlob(data, fileName);
   }
-  else if (fileName.endsWith('.xml') && data.size < 1024 * 1024) {
-    // open small XML in browser instead of downloading it
-    window.location = uri;
-  }
   else {
     let a = document.createElement('a');
 
