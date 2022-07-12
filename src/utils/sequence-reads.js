@@ -308,15 +308,12 @@ export function parseSequenceReads(name, data, geneValidator) {
     untranslatedRegions,
     unparsedRows
   ] = parseUntransRegions(data.split(/[\r\n]+/g));
-  const isTSV = testTSV(unparsedRows[0]);
   let rows;
-  if (isTSV) {
-    if (unparsedRows[0].startsWith('##fileformat=AAVF')) {
-      return parseAAVF(name, unparsedRows, geneValidator);
-    }
-    else {
-      rows = unparsedRows.map(tsvrow);
-    }
+  if (unparsedRows[0].startsWith('##fileformat=AAVF')) {
+    return parseAAVF(name, unparsedRows, geneValidator);
+  }
+  else if (testTSV(unparsedRows[0])) {
+    rows = unparsedRows.map(tsvrow);
   }
   else {
     rows = csvParse(unparsedRows.join('\n'), false);
