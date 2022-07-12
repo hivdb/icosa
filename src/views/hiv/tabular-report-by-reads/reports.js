@@ -1,4 +1,5 @@
 import React from 'react';
+import {matchShape} from 'found';
 
 import useTabularReports from '../../../components/tabular-report/reports';
 import useProcessors from '../tabular-report/use-processors';
@@ -6,8 +7,13 @@ import {subOptions, subOptionProcessors} from './sub-options';
 
 
 function SeqReadsTabularReports(props) {
-  const {config} = props;
-  const processors = useProcessors({config, subOptions, subOptionProcessors});
+  const {config, match} = props;
+  const processors = useProcessors({
+    config,
+    match,
+    subOptions,
+    subOptionProcessors
+  });
 
   useTabularReports({
     ...props,
@@ -18,6 +24,7 @@ function SeqReadsTabularReports(props) {
 }
 
 SeqReadsTabularReports.propTypes = {
+  match: matchShape.isRequired,
   ...useTabularReports.propTypes
 };
 

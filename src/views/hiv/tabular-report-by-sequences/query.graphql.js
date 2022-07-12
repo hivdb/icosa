@@ -31,15 +31,17 @@ export default function getQuery(/* subOptions */) {
           mutationTypes
           drugs {
             name
+            fullName
             displayAbbr
           }
         }
       }
     }
     fragment TabularReportBySequences on SequenceAnalysis {
-      inputSequence { header }
+      inputSequence { header MD5 sequence }
       bestMatchingSubtype {
         display
+        distance
         referenceAccession
       }
       availableGenes { name }
@@ -54,31 +56,33 @@ export default function getQuery(/* subOptions */) {
       ) { gene { name } text }
       frameShifts(
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position size }
       insertions: mutations(
         filterOptions: [SEQUENCED_ONLY, INSERTION],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       deletions: mutations(
         filterOptions: [SEQUENCED_ONLY, DELETION],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       stopCodons: mutations(
         filterOptions: [SEQUENCED_ONLY, STOPCODON],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       ambiguousMutations: mutations(
         filterOptions: [SEQUENCED_ONLY, AMBIGUOUS],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       apobecMutations: mutations(
         filterOptions: [SEQUENCED_ONLY, APOBEC],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       ${seqLevel}
       alignedGeneSequences(includeGenes: $includeGenes) {
         firstAA
         lastAA
+        alignedNAs
+        alignedAAs
         ${geneSeqLevel}
         unsequencedRegions {
           size
@@ -97,12 +101,17 @@ export default function getQuery(/* subOptions */) {
         }
         mutations {
           text
+          reference
           position
+          triplet
           displayAAs
+          insertedNAs
           primaryType
           isInsertion
           isDeletion
           hasStop
+          isUnusual
+          isApobecMutation
           isUnsequenced
           isAmbiguous
         }

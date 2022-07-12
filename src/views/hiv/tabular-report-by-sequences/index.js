@@ -67,6 +67,7 @@ export default function TabularReportBySequencesContainer({
     {props => (
       <SeqTabularReports
        config={config}
+       match={match}
        subOptionIndices={subOptionIndices}
        onFinish={onFinish}
        patternsTo={patternsTo}

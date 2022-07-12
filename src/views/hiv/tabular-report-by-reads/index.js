@@ -73,6 +73,7 @@ export default function TabularReportByReadsContainer({
     {props => (
       <SeqTabularReports
        config={config}
+       match={match}
        children={children}
        onFinish={onFinish}
        patternsTo={patternsTo}

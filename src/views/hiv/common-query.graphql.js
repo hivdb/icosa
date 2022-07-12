@@ -105,6 +105,7 @@ const seqLevel = `
         name
         text
         highlightText
+        boundMutation { position text }
       }
     }
     drugScores {
@@ -112,6 +113,8 @@ const seqLevel = `
       drug { name displayAbbr }
       score
       level
+      text
+      SIR
       partialScores {
         mutations { text }
         score

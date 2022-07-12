@@ -36,13 +36,26 @@ function loadExampleFasta(examples, config) {
   }));
 }
 
-function useTabularReportOptions({config, allSubOptions}) {
+function useTabularReportOptions({config, match, allSubOptions}) {
   const {formEnableTabularReportOptions} = config;
   return React.useMemo(
-    () => (formEnableTabularReportOptions || []).filter(
-      opt => allSubOptions.includes(opt)
-    ),
-    [formEnableTabularReportOptions, allSubOptions]
+    () => {
+      const options = [...(formEnableTabularReportOptions || [])];
+      if (
+        options.length > 0 &&
+        match.location.query?.legacyXML !== undefined
+      ) {
+        options.push('Raw XML report');
+      }
+      return options.filter(
+        opt => allSubOptions.includes(opt)
+      );
+    },
+    [
+      match.location.query?.legacyXML,
+      formEnableTabularReportOptions,
+      allSubOptions
+    ]
   );
 }
 
@@ -123,11 +136,13 @@ function SierraForms({
 
   const seqSubOptions = useTabularReportOptions({
     config,
+    match,
     allSubOptions: seqAllSubOptions
   });
 
   const readsSubOptions = useTabularReportOptions({
     config,
+    match,
     allSubOptions: readsAllSubOptions
   });
 
@@ -186,7 +201,7 @@ function SierraForms({
        },
        ...(seqSubOptions.length > 0 ? {
          csv: {
-           label: "Spreadsheets (CSV)",
+           label: "Machine-readable data (CSV/JSON)",
            subOptions: seqSubOptions,
            defaultSubOptions: seqSubOptions.map((_, idx) => idx),
            renderer: props => (
@@ -205,7 +220,7 @@ function SierraForms({
        },
        ...(readsSubOptions.length > 0 ? {
          csv: {
-           label: "Sequences and spreadsheets (FASTA/CSV)",
+           label: "Machine-readable data (FASTA/CSV/JSON)",
            children: readsSubOptions,
            defaultChildren: readsSubOptions.map((_, idx) => idx),
            renderer: props => (

@@ -2,13 +2,21 @@ import React from 'react';
 
 export default function useProcessors({
   config,
+  match,
   subOptions,
   subOptionProcessors
 }) {
   return React.useMemo(
     () => {
       const processors = [];
-      for (const opt of config.formEnableTabularReportOptions || []) {
+      const options = [...(config.formEnableTabularReportOptions || [])];
+      if (
+        options.length > 0 &&
+        match.location.query?.legacyXML !== undefined
+      ) {
+        options.push('Raw XML report');
+      }
+      for (const opt of options) {
         const idx = subOptions.indexOf(opt);
         if (idx > -1) {
           processors.push(subOptionProcessors[idx]);
@@ -16,6 +24,11 @@ export default function useProcessors({
       }
       return processors;
     },
-    [config.formEnableTabularReportOptions, subOptionProcessors, subOptions]
+    [
+      config.formEnableTabularReportOptions,
+      match.location.query?.legacyXML,
+      subOptionProcessors,
+      subOptions
+    ]
   );
 }

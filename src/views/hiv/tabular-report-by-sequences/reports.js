@@ -1,4 +1,5 @@
 import React from 'react';
+import {matchShape} from 'found';
 
 import useTabularReports from '../../../components/tabular-report/reports';
 import useProcessors from '../tabular-report/use-processors';
@@ -6,8 +7,13 @@ import {subOptions, subOptionProcessors} from './sub-options';
 
 
 function SequenceTabularReports(props) {
-  const {config} = props;
-  const processors = useProcessors({config, subOptions, subOptionProcessors});
+  const {config, match} = props;
+  const processors = useProcessors({
+    config,
+    match,
+    subOptions,
+    subOptionProcessors
+  });
 
   useTabularReports({
     ...props,
@@ -17,6 +23,7 @@ function SequenceTabularReports(props) {
 }
 
 SequenceTabularReports.propTypes = {
+  match: matchShape.isRequired,
   ...useTabularReports.propTypes
 };
 
