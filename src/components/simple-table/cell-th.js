@@ -22,7 +22,7 @@ function getNextDirection(direction) {
 }
 
 
-function setNullsLast(data, name) {
+function moveNullsLast(data, name) {
   const nonNulls = [];
   const nulls = [];
   for (const item of data) {
@@ -38,6 +38,30 @@ function setNullsLast(data, name) {
     }
   }
   return [...nonNulls, ...nulls];
+}
+
+
+function applySorts(data, columns) {
+  let sortedData = [...data];
+  for (let idx = columns.length - 1; idx > -1; idx --) {
+    const {name, sort, direction, nullsLast} = columns[idx];
+    if (direction === 'descending' && idx + 1 < columns.length) {
+      // if current direction is descending, reverse first to
+      // preserve previous sorting order
+      sortedData.reverse();
+      if (columns[idx + 1].nullsLast) {
+        sortedData = moveNullsLast(sortedData, columns[idx + 1].name);
+      }
+    }
+    sortedData = sort(sortedData, name);
+    if (direction === 'descending') {
+      sortedData.reverse();
+    }
+    if (nullsLast) {
+      sortedData = moveNullsLast(sortedData);
+    }
+  }
+  return sortedData;
 }
 
 
@@ -61,60 +85,45 @@ function SimpleTableCellTh({
   const curIndex = columns.findIndex(c => c.name === name);
   const curDirection = curIndex > -1 ? columns[curIndex].direction : null;
 
-  const handleSort = React.useCallback(
-    async () => {
+  const sortByColumns = React.useCallback(
+    async reset => {
+      // make a copy to prevent pollute original `columns`
+      const newColumns = [...columns];
       let {sortedData} = sortState;
 
       let idx = curIndex;
       if (idx > -1) {
-        const direction = getNextDirection(columns[idx].direction);
-        if (direction === null) {
-          // remove idx'th column and what after idx'th column
-          columns.splice(idx);
-        }
-        else {
-          columns[idx].direction = direction;
-          // remove what after idx'th column
-          columns.splice(idx + 1);
+        newColumns[idx].direction = getNextDirection(newColumns[idx].direction);
+        if (reset) {
+          // reset
+          newColumns.splice(idx, 1);
         }
       }
-      else {
-        idx = columns.length;
-        columns.push({
+      else if (!reset) {
+        idx = newColumns.length;
+        newColumns.push({
           name,
-          direction: 'ascending'
+          direction: 'ascending',
+          nullsLast,
+          sort
         });
       }
 
-      onBeforeSort && onBeforeSort({columns});
+      if (newColumns.every(({direction}) => direction === null)) {
+        newColumns.length = 0;
+      }
 
-      // await for sorting=true applied (transition takes 150ms)
+      onBeforeSort && onBeforeSort({columns: newColumns});
+
+      // await for sorting=true applied (transition takes ~150ms)
+      // Note: while waiting for the 300ms, sortByColumns can be triggered
+      // again. That's why we need to make a copy of `columns` at the beginning
+      // of the function to prevent dirty data
       await sleep(300);
 
-      if (columns.length === 0) {
-        sortedData = data;
-      }
-      else if (columns.length === idx) {
-        sortedData = columns[idx - 1].sortedData;
-      }
-      else {
-        if (columns[idx].direction === 'ascending') {
-          sortedData = sort(
-            [...(idx === 0 ? data : columns[idx - 1].sortedData)],
-            name
-          );
-        }
-        else { // descending
-          // make a copy of sortedData.reverse() to update the reference
-          sortedData = [...(columns[idx].sortedData).reverse()];
-        }
-        if (nullsLast) {
-          sortedData = setNullsLast(sortedData, name);
-        }
-        columns[idx].sortedData = sortedData;
-      }
+      sortedData = applySorts(data, newColumns);
 
-      onSort && onSort({columns, sortedData});
+      onSort && onSort({columns: newColumns, sortedData});
     },
     [
       data,
@@ -129,12 +138,27 @@ function SimpleTableCellTh({
     ]
   );
 
+  const handleSwitch = React.useCallback(
+    () => sortByColumns(false),
+    [sortByColumns]
+  );
+
+  /* const handleReset = React.useCallback(
+    e => {
+      e && e.preventDefault();
+      e && e.stopPropagation();
+      sortByColumns(true);
+    },
+    [sortByColumns]
+  ); */
+
   return React.useMemo(
     () => (
       <th
        {...(sortable ? {
          'data-sorted': curDirection,
-         onClick: handleSort
+         onClick: handleSwitch
+         // onDoubleClick: handleReset
        } : {})}
        data-colname={name}
        data-column
@@ -149,6 +173,7 @@ function SimpleTableCellTh({
             {curIndex > -1 ? <>
               {curDirection === 'ascending' && <FaSortUp />}
               {curDirection === 'descending' && <FaSortDown />}
+              {curDirection === null && <FaSort />}
               {columns.length > 1 ? <sup>{curIndex + 1}</sup> : null}
             </> : <FaSort />}
           </div>}
@@ -162,7 +187,8 @@ function SimpleTableCellTh({
       sortable,
       curIndex,
       curDirection,
-      handleSort,
+      handleSwitch,
+      // handleReset,
       headCellStyle
     ]
   );

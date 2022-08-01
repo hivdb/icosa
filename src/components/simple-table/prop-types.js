@@ -26,9 +26,8 @@ const sortStateShape = PropTypes.shape({
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       direction: PropTypes.oneOf(['ascending', 'descending']),
-      sortedData: PropTypes.arrayOf(
-        PropTypes.object.isRequired
-      ).isRequired
+      nullsLast: PropTypes.bool.isRequired,
+      sort: PropTypes.func.isRequired
     }).isRequired
   ),
   sortedData: PropTypes.arrayOf(
