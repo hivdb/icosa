@@ -46,18 +46,19 @@ function applySorts(data, columns) {
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
     if (direction === 'descending' && idx + 1 < columns.length) {
+      const prevCol = columns[idx + 1];
       // if current direction is descending, reverse first to
       // preserve previous sorting order
       sortedData.reverse();
-      if (columns[idx + 1].nullsLast) {
-        sortedData = moveNullsLast(sortedData, columns[idx + 1].name);
+      if (prevCol.direction && prevCol.nullsLast) {
+        sortedData = moveNullsLast(sortedData, prevCol.name);
       }
     }
     sortedData = sort(sortedData, name);
     if (direction === 'descending') {
       sortedData.reverse();
     }
-    if (nullsLast) {
+    if (direction && nullsLast) {
       sortedData = moveNullsLast(sortedData, name);
     }
   }
