@@ -58,7 +58,7 @@ function applySorts(data, columns) {
       sortedData.reverse();
     }
     if (nullsLast) {
-      sortedData = moveNullsLast(sortedData);
+      sortedData = moveNullsLast(sortedData, name);
     }
   }
   return sortedData;
