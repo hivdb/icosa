@@ -105,15 +105,12 @@ function coerceSort({sort, decorator, name}) {
   }
   else if (sort && typeof sort !== 'function') {
     const sortKeys = mySort.map(key => (
-      // prepend name to string key
-      key instanceof Function ? key : `${name}.${key}`
+      key instanceof Function ?
+        key :
+        // prepend name to string key
+        row => nestedGet(row, `${name}.${key}`) || ''
     ));
-    mySort = rows => sortBy(rows, row => sortKeys.map(
-      key => key instanceof Function ?
-        key(row) :
-        nestedGet(row, key) ||
-        ''
-    ));
+    mySort = rows => sortBy(rows, sortKeys);
   }
   else {
     mySort = sort;
