@@ -22,8 +22,15 @@ const columnDefShape = PropTypes.shape({
 });
 
 const sortStateShape = PropTypes.shape({
-  byColumn: PropTypes.string,
-  direction: PropTypes.oneOf(['ascending', 'descending']),
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      direction: PropTypes.oneOf(['ascending', 'descending']),
+      sortedData: PropTypes.arrayOf(
+        PropTypes.object.isRequired
+      ).isRequired
+    }).isRequired
+  ),
   sortedData: PropTypes.arrayOf(
     PropTypes.object.isRequired
   ).isRequired

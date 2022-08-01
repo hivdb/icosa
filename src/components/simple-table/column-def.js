@@ -153,9 +153,12 @@ export default class ColumnDef {
    * @param {list/function} sort  - A list of sort keys (lodash/sortBy style)
    *                                or a function accepting input row array and
    *                                returning sorted row array.
-   * @param {bool} sortable       - Flag to enable/disable sorting feature.
+   * @param {bool} sortable       - Flag for enable/disable sorting feature.
    * @param {string} textAlign    - CSS text-align.
-   * @param {string} none         - String to be displayed when cellData is
+   * @param {bool} nullsLast      - Flag for always placing cellData at the end
+   *                                of the table when they are empty or
+   *                                undefined.
+   * @param {string} none         - String to be displayed when cellData are
    *                                empty or undefined. Only used if render
    *                                function is not provided.
    * @param {bool} multiCells     - Flag to enable/disable rowspan merging of
@@ -183,6 +186,7 @@ export default class ColumnDef {
     sort,
     sortable = true,
     textAlign = 'center',
+    nullsLast = false,
     none = '?',
     multiCells = false,
     rowSpanKey,
@@ -201,6 +205,7 @@ export default class ColumnDef {
     this.renderConfig = renderConfig;
     this.sortable = Boolean(sortable);
     this.textAlign = textAlign;
+    this.nullsLast = nullsLast;
     this.multiCells = multiCells;
     this.rowSpanKey = rowSpanKey;
     this.rowSpanKeyGetter = rowSpanKeyGetter;

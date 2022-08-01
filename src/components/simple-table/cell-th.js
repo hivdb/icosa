@@ -22,6 +22,25 @@ function getNextDirection(direction) {
 }
 
 
+function setNullsLast(data, name) {
+  const nonNulls = [];
+  const nulls = [];
+  for (const item of data) {
+    if (
+      item[name] === undefined ||
+      item[name] === null ||
+      item[name] === ''
+    ) {
+      nulls.push(item);
+    }
+    else {
+      nonNulls.push(item);
+    }
+  }
+  return [...nonNulls, ...nulls];
+}
+
+
 function SimpleTableCellTh({
   data,
   columnDef,
@@ -34,71 +53,92 @@ function SimpleTableCellTh({
     label,
     sort,
     sortable,
+    nullsLast,
     headCellStyle
   } = columnDef;
 
+  const {columns} = sortState;
+  const curIndex = columns.findIndex(c => c.name === name);
+  const curDirection = curIndex > -1 ? columns[curIndex].direction : null;
+
   const handleSort = React.useCallback(
     async () => {
-      let {
-        byColumn,
-        direction,
-        sortedData
-      } = sortState;
+      let {sortedData} = sortState;
 
-      if (name === byColumn) {
-        direction = getNextDirection(direction);
+      let idx = curIndex;
+      if (idx > -1) {
+        const direction = getNextDirection(columns[idx].direction);
+        if (direction === null) {
+          // remove idx'th column and what after idx'th column
+          columns.splice(idx);
+        }
+        else {
+          columns[idx].direction = direction;
+          // remove what after idx'th column
+          columns.splice(idx + 1);
+        }
       }
       else {
-        direction = 'ascending';
+        idx = columns.length;
+        columns.push({
+          name,
+          direction: 'ascending'
+        });
       }
 
-      byColumn = name;
-
-      onBeforeSort && onBeforeSort({
-        byColumn,
-        direction
-      });
+      onBeforeSort && onBeforeSort({columns});
 
       // await for sorting=true applied (transition takes 150ms)
       await sleep(300);
 
-      if (direction === null) {
+      if (columns.length === 0) {
         sortedData = data;
       }
-      else if (direction === 'ascending') {
-        sortedData = sort(sortedData, name);
+      else if (columns.length === idx) {
+        sortedData = columns[idx - 1].sortedData;
       }
-      else { // descending
-        // make a copy of sortedData.reverse() to update the reference
-        sortedData = [...sortedData.reverse()];
+      else {
+        if (columns[idx].direction === 'ascending') {
+          sortedData = sort(
+            [...(idx === 0 ? data : columns[idx - 1].sortedData)],
+            name
+          );
+        }
+        else { // descending
+          // make a copy of sortedData.reverse() to update the reference
+          sortedData = [...(columns[idx].sortedData).reverse()];
+        }
+        if (nullsLast) {
+          sortedData = setNullsLast(sortedData, name);
+        }
+        columns[idx].sortedData = sortedData;
       }
 
-      onSort && onSort({
-        byColumn,
-        direction,
-        sortedData
-      });
-
+      onSort && onSort({columns, sortedData});
     },
-    [data, sortState, onBeforeSort, onSort, name, sort]
+    [
+      data,
+      nullsLast,
+      columns,
+      sortState,
+      curIndex,
+      onBeforeSort,
+      onSort,
+      name,
+      sort
+    ]
   );
-
-  const {
-    byColumn,
-    direction
-  } = sortState;
 
   return React.useMemo(
     () => (
       <th
        {...(sortable ? {
-         'data-sorted': (
-           byColumn === name ? direction : null
-         ),
+         'data-sorted': curDirection,
          onClick: handleSort
        } : {})}
        data-colname={name}
        data-column
+       data-nth-sort={curIndex + 1}
        data-sortable={sortable}
        style={headCellStyle}>
         <div className={style['th-container']}>
@@ -106,12 +146,11 @@ function SimpleTableCellTh({
             {label}
           </div>
           {sortable && <div className={style['sort-icon']}>
-            {byColumn === name && <>
-              {direction === 'ascending' && <FaSortUp />}
-              {direction === 'descending' && <FaSortDown />}
-            </>}
-            {(byColumn !== name ||
-              !direction) && <FaSort />}
+            {curIndex > -1 ? <>
+              {curDirection === 'ascending' && <FaSortUp />}
+              {curDirection === 'descending' && <FaSortDown />}
+              {columns.length > 1 ? <sup>{curIndex + 1}</sup> : null}
+            </> : <FaSort />}
           </div>}
         </div>
       </th>
@@ -119,9 +158,10 @@ function SimpleTableCellTh({
     [
       name,
       label,
+      columns,
       sortable,
-      byColumn,
-      direction,
+      curIndex,
+      curDirection,
       handleSort,
       headCellStyle
     ]
