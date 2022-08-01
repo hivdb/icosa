@@ -45,21 +45,25 @@ function applySorts(data, columns) {
   let sortedData = [...data];
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
-    if (direction === 'descending' && idx + 1 < columns.length) {
-      const prevCol = columns[idx + 1];
-      // if current direction is descending, reverse first to
-      // preserve previous sorting order
-      sortedData.reverse();
-      if (prevCol.direction && prevCol.nullsLast) {
-        sortedData = moveNullsLast(sortedData, prevCol.name);
+    if (direction === 'descending') {
+      const prevCol = columns.find((col, jdx) => col.direction && jdx > idx);
+      if (prevCol) {
+        // if current direction is descending, reverse before the sorting
+        // to preserve previous sorting order
+        sortedData.reverse();
+        if (prevCol.nullsLast) {
+          sortedData = moveNullsLast(sortedData, prevCol.name);
+        }
       }
     }
-    sortedData = sort(sortedData, name);
-    if (direction === 'descending') {
-      sortedData.reverse();
-    }
-    if (direction && nullsLast) {
-      sortedData = moveNullsLast(sortedData, name);
+    if (direction) {
+      sortedData = sort(sortedData, name);
+      if (direction === 'descending') {
+        sortedData.reverse();
+      }
+      if (nullsLast) {
+        sortedData = moveNullsLast(sortedData, name);
+      }
     }
   }
   return sortedData;
