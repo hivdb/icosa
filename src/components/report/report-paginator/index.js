@@ -79,6 +79,7 @@ function ReportPaginator({
       </Paginator>*/}
       <div className={style['dropdown-container']}>
         <Select
+         isSearchable
          options={options}
          className={style['report-paginator-select']}
          name="sequence-select"
