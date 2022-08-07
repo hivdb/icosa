@@ -3,6 +3,7 @@
 
 $header-bgcolor: #f9fafb;
 $header-bgcolor-hover: #f3f3f3;
+$header-bgcolor-sorted: rgba(34, 36, 38, .15);
 $bgcolor-hover: rgba(0, 0, 0, .05);
 $outline-color: #969696;
 $border-color: rgba(34, 36, 38, .15);
@@ -96,6 +97,23 @@ table.simple-table {
         &:hover {
           background-color: $header-bgcolor-hover;
         }
+        &[data-sorted]::before {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          z-index: -1;
+          background-color: $header-bgcolor-sorted;
+        }
+        &[data-sorted="ascending"]::before {
+          clip-path: polygon(0 100%, 100% 100%, 100% 80%);
+        }
+        &[data-sorted="descending"]::before {
+          clip-path: polygon(0 80%, 100% 100%, 0 100%);
+        }
         &[data-sortable="false"] {
           cursor: default;
         }
@@ -110,6 +128,9 @@ table.simple-table {
             margin-left: .1rem;
             > svg {
               vertical-align: top;
+            }
+            > sup {
+              font-size: .9rem;
             }
             @media print {
               display: none;
