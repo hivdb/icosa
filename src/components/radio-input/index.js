@@ -1,48 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import style from './style.module.scss';
 
 
-export default class RadioInput extends React.Component {
+RadioInput.propTypes = {
+  id: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  value: PropTypes.any.isRequired,
+  title: PropTypes.string,
+  children: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  checked: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
+  style: PropTypes.object
+};
 
-  static propTypes = {
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    value: PropTypes.any.isRequired,
-    title: PropTypes.string,
-    children: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    checked: PropTypes.bool.isRequired,
-    disabled: PropTypes.bool.isRequired,
-    style: PropTypes.object.isRequired
-  };
+RadioInput.defaultProps = {
+  style: {},
+  disabled: false
+};
 
-  static defaultProps = {
-    style: {},
-    disabled: false
-  };
 
-  render() {
-    const {
-      id, name, value, title, onChange, checked, disabled,
-      children, style: userStyle
-    } = this.props;
-    return (
-      <span title={title} className={style['general-radio-input']}>
-        <input
-         id={id}
-         type="radio" name={name}
-         value={value}
-         onChange={onChange}
-         disabled={disabled}
-         checked={checked} />
-        <label
-         data-disabled={disabled}
-         style={userStyle}
-         htmlFor={id}>
-          {children}
-        </label>
-      </span>
-    );
-  }
+export default function RadioInput({
+  id,
+  className,
+  name,
+  value,
+  title,
+  onChange,
+  checked,
+  disabled,
+  children,
+  style: userStyle
+}) {
+  return (
+    <span
+     title={title}
+     className={classNames(style['general-radio-input'], className)}>
+      <input
+       id={id}
+       type="radio"
+       name={name}
+       value={value}
+       onChange={onChange}
+       disabled={disabled}
+       checked={checked} />
+      <label
+       data-disabled={disabled}
+       style={userStyle}
+       htmlFor={id}>
+        {children}
+      </label>
+    </span>
+  );
 }
