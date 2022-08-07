@@ -99,7 +99,7 @@ function SimpleTableCellTh({
       let idx = curIndex;
       if (idx > -1) {
         newColumns[idx].direction = getNextDirection(newColumns[idx].direction);
-        if (reset) {
+        if (reset || newColumns[idx].direction === null) {
           // reset
           newColumns.splice(idx, 1);
         }
@@ -148,22 +148,22 @@ function SimpleTableCellTh({
     [sortByColumns]
   );
 
-  /* const handleReset = React.useCallback(
+  const handleReset = React.useCallback(
     e => {
       e && e.preventDefault();
       e && e.stopPropagation();
       sortByColumns(true);
     },
     [sortByColumns]
-  ); */
+  );
 
   return React.useMemo(
     () => (
       <th
        {...(sortable ? {
          'data-sorted': curDirection,
-         onClick: handleSwitch
-         // onDoubleClick: handleReset
+         onClick: handleSwitch,
+         onDoubleClick: handleReset
        } : {})}
        data-colname={name}
        data-column
@@ -193,7 +193,7 @@ function SimpleTableCellTh({
       curIndex,
       curDirection,
       handleSwitch,
-      // handleReset,
+      handleReset,
       headCellStyle
     ]
   );
