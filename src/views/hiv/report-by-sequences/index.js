@@ -45,8 +45,7 @@ function ReportBySequencesContainer({
     config
   });
   const [onExtendVariables, isVarsPending] = useExtendVariables({
-    config,
-    match
+    config
   });
 
   return isVarsPending ? null : <SeqAnalysisLayout

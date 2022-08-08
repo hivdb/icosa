@@ -21,7 +21,8 @@ TabularReportBySequencesContainer.propTypes = {
   ),
   sequences: PropTypes.array.isRequired,
   onFinish: PropTypes.func.isRequired,
-  patternsTo: PropTypes.string.isRequired
+  patternsTo: PropTypes.string.isRequired,
+  getSubmitState: PropTypes.func.isRequired
 };
 
 
@@ -29,10 +30,11 @@ export default function TabularReportBySequencesContainer({
   subOptionIndices,
   sequences,
   onFinish,
-  patternsTo
+  patternsTo,
+  getSubmitState
 }) {
-
   const {match} = useRouter();
+
   const [config, isConfigPending] = ConfigContext.use();
   const client = useApolloClient({
     config,
@@ -42,7 +44,7 @@ export default function TabularReportBySequencesContainer({
 
   const [handleExtendVariables, isExtVarPending] = useExtendVariables({
     config,
-    match
+    getSubmitState
   });
 
   const curSubOptions = React.useMemo(

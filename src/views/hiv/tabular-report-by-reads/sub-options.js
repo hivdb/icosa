@@ -8,6 +8,7 @@ import prettyAlignments
   from '../../../components/tabular-report/pretty-alignments';
 import rawJSON
   from '../../../components/tabular-report/raw-json';
+import algComparison from '../tabular-report/hiv-alg-comparison';
 
 const subOptions = [
   'Sequence summary',
@@ -16,6 +17,7 @@ const subOptions = [
   'Mutation list',
   'Unsequenced regions',
   'Pretty amino acid alignments',
+  'Algorithm comparison',
   'Raw JSON report'
 ];
 
@@ -26,6 +28,7 @@ const subOptionProcessors = [
   mutationList,
   unseqRegions,
   prettyAlignments,
+  algComparison,
   rawJSON
 ];
 

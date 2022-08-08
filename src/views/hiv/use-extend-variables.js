@@ -1,50 +1,59 @@
 import React from 'react';
+import {useRouter} from 'found';
 import BigData from '../../utils/big-data';
 
+const SUBMIT_STATE_ALLOWLIST = ['algorithm', 'algorithms', 'customAlgorithms'];
+
+
 export default function useExtendVariables({
-  match,
+  getSubmitState,
   config
 }) {
   const {allGenes} = config;
-  const [customAlgs, setCustomAlgs] = React.useState(null);
+  const [extendVars, setExtendVars] = React.useState(null);
+  const {match} = useRouter();
 
   React.useEffect(
     () => {
-      const {
-        location: {
-          state: {
-            customAlgorithms
-          } = {}
-        }
-      } = match;
       let mounted = true;
-      BigData
-        .load(customAlgorithms)
-        .then(algs => mounted && setCustomAlgs(algs || []));
+      setExtendVars(null);
+      (async () => {
+        const submitState = (
+          getSubmitState ?
+            await getSubmitState() :
+            match.location?.state
+        );
+        const {customAlgorithms} = submitState;
+        if (mounted) {
+          if (customAlgorithms) {
+            setExtendVars({
+              ...submitState,
+              customAlgorithms: (await BigData.load(customAlgorithms)) || []
+            });
+          }
+          else {
+            setExtendVars(submitState);
+          }
+        }
+      })();
       return () => mounted = false;
     },
-    [match]
+    [match.location?.state, getSubmitState]
   );
 
   return [
     React.useCallback(
       vars => {
-        const {
-          location: {
-            state: {
-              algorithm,
-              algorithms
-            } = {}
+        for (const key of SUBMIT_STATE_ALLOWLIST) {
+          if (key in extendVars) {
+            vars[key] = extendVars[key];
           }
-        } = match;
-        vars.algorithm = algorithm;
-        vars.algorithms = algorithms;
-        vars.customAlgorithms = customAlgs;
+        }
         vars.includeGenes = allGenes;
         return vars;
       },
-      [match, customAlgs, allGenes]
+      [extendVars, allGenes]
     ),
-    /* isPending = */!customAlgs
+    /* isPending = */!extendVars
   ];
 }

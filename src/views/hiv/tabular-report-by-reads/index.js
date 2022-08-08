@@ -20,7 +20,8 @@ TabularReportByReadsContainer.propTypes = {
   children: PropTypes.object, // Set of ids, new interface by seqreads-report
   allSequenceReads: PropTypes.array.isRequired,
   onFinish: PropTypes.func.isRequired,
-  patternsTo: PropTypes.string.isRequired
+  patternsTo: PropTypes.string.isRequired,
+  getSubmitState: PropTypes.func.isRequired
 };
 
 
@@ -28,7 +29,8 @@ export default function TabularReportByReadsContainer({
   children,
   allSequenceReads,
   onFinish,
-  patternsTo
+  patternsTo,
+  getSubmitState
 }) {
 
   const {match} = useRouter();
@@ -36,7 +38,7 @@ export default function TabularReportByReadsContainer({
 
   const [handleExtendVariables, isExtVarPending] = useExtendVariables({
     config,
-    match
+    getSubmitState
   });
 
   const [allSeqReadsWithParams, isPending] = useAddParams({

@@ -46,8 +46,7 @@ function ReportByPatternsContainer({
     config
   });
   const [onExtendVariables, isVarsPending] = useExtendVariables({
-    config,
-    match
+    config
   });
   return isVarsPending ? null : <PatternAnalysisLayout
    query={query}

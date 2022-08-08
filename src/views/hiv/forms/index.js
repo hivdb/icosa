@@ -117,6 +117,14 @@ function SierraForms({
     getAlgSubmitState
   ] = useAlgorithmSelector(config);
 
+  const getSubmitState = React.useCallback(
+    async () => ({
+      ...await getDrugSubmitState(),
+      ...await getAlgSubmitState()
+    }),
+    [getDrugSubmitState, getAlgSubmitState]
+  );
+
   // const [algorithm, setAlgorithm] = React.useState(
   //   getLatestVersion('HIVDB', species)
   // );
@@ -124,12 +132,9 @@ function SierraForms({
 
   const handleSubmit = React.useCallback(
     async () => {
-      return [true, {
-        ...await getDrugSubmitState(),
-        ...await getAlgSubmitState()
-      }];
+      return [true, await getSubmitState()];
     },
-    [getDrugSubmitState, getAlgSubmitState]
+    [getSubmitState]
   );
 
   setTitle(title);
@@ -209,6 +214,7 @@ function SierraForms({
               patternsTo={patternsTo}
               sequencesTo={sequencesTo}
               readsTo={readsTo}
+              getSubmitState={getSubmitState}
               {...props} />
            )
          }
@@ -228,6 +234,7 @@ function SierraForms({
               patternsTo={patternsTo}
               sequencesTo={sequencesTo}
               readsTo={readsTo}
+              getSubmitState={getSubmitState}
               {...props} />
            )
          }
