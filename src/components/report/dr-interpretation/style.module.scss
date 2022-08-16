@@ -27,39 +27,38 @@
 
 .dr-levels {
   overflow: hidden;
-
-  table.dr-level {
-    float: left;
-    margin-left: -1rem;
-    @media only screen and (min-width: 640px) {
-      margin-right: 15%;
-    };
-    border-collapse: collapse;
-    line-height: 1.5;
-    border-spacing: 0;
-    caption {
-      font-weight: 700;
-      border-bottom: 1px solid color(dividing-line);
-      margin: 1rem auto .5rem
-    }
-    tr {
-      &:hover {
-        background-color: color(table-row-hover-bg);
-      }
-    }
-    th {
-      box-sizing: content-box;
-      padding: 0 0 0 1rem;
-      width: 18rem;
-      text-align: left;
-    }
-    td {
-      box-sizing: content-box;
-      padding: 0 1rem 0 0;
-    }
-  }
 }
 
+table.dr-level {
+  float: left;
+  margin-left: -1rem;
+  @media only screen and (min-width: 640px) {
+    margin-right: 15%;
+  };
+  border-collapse: collapse;
+  line-height: 1.5;
+  border-spacing: 0;
+  caption {
+    font-weight: 700;
+    border-bottom: 1px solid color(dividing-line);
+    margin: 1rem auto .5rem
+  }
+  tr {
+    &:hover {
+      background-color: color(table-row-hover-bg);
+    }
+  }
+  th {
+    box-sizing: content-box;
+    padding: 0 0 0 1rem;
+    width: 18rem;
+    text-align: left;
+  }
+  td {
+    box-sizing: content-box;
+    padding: 0 1rem 0 0;
+  }
+}
 
 ul.typed-mutation-list {
   margin-top: 0;
