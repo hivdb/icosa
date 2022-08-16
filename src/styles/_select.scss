@@ -11,11 +11,13 @@
 
   :global .#{$class-name-prefix}__indicator {
     padding: 4px;
+    cursor: pointer;
   }
 
   :global .#{$class-name-prefix}__menu {
     border-radius: 0;
     background-color: color(dropdown-menu-bg);
+    z-index: 100;
   }
 
   :global .#{$class-name-prefix}__option {
