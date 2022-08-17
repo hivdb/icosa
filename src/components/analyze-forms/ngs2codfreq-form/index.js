@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import BigData from '../../../utils/big-data';
@@ -36,6 +37,12 @@ function reformCodFreqs(allSequenceReads, geneValidator) {
   );
 }
 
+
+NGS2CodFreqForm.propTypes = {
+  runners: PropTypes.array,
+  redirectTo: PropTypes.string,
+  analyzeTo: PropTypes.string
+};
 
 export default function NGS2CodFreqForm({
   runners,

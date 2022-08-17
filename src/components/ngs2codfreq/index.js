@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import fastq2codfreq, {restoreTask} from '../../utils/fastq2codfreq';
 
@@ -27,6 +28,15 @@ function updateProgress({
   }
   return false;
 }
+
+NGS2CodFreq.propTypes = {
+  taskKey: PropTypes.string,
+  onTriggerRunner: PropTypes.func,
+  onLoad: PropTypes.func,
+  onAnalyze: PropTypes.func,
+  className: PropTypes.string,
+  runners: PropTypes.array
+};
 
 
 export default function NGS2CodFreq({
