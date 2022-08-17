@@ -45,7 +45,7 @@ function useTabularReportOptions({config, match, allSubOptions}) {
         options.length > 0 &&
         match.location.query?.legacyXML !== undefined
       ) {
-        options.push('Raw XML report');
+        options.push('Raw XML report (deprecated)');
       }
       return options.filter(
         opt => allSubOptions.includes(opt)

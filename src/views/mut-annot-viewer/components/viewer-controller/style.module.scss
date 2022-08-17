@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import "../../../../styles";
 @import "../../../../styles/dropdown";
 
@@ -57,8 +59,8 @@
 
       > a.remove-annot-button {
         $container-size: .9rem;
-        $bar-width: $container-size / 5 * 4;
-        $bar-height: $container-size / 5;
+        $bar-width: math.div($container-size, 5) * 4;
+        $bar-height: math.div($container-size, 5);
         vertical-align: top;
         height: $container-size;
         width: $container-size;
@@ -68,8 +70,8 @@
         position: relative;
         &::before, &::after {
           position: absolute;
-          top: ($container-size - $bar-height) / 2;
-          left: ($container-size - $bar-width) / 2;
+          top: math.div($container-size - $bar-height, 2);
+          left: math.div($container-size - $bar-width, 2);
           width: $bar-width;
           height: $bar-height;
           content: "";

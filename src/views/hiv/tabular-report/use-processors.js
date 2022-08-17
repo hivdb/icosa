@@ -14,7 +14,7 @@ export default function useProcessors({
         options.length > 0 &&
         match.location.query?.legacyXML !== undefined
       ) {
-        options.push('Raw XML report');
+        options.push('Raw XML report (deprecated)');
       }
       for (const opt of options) {
         const idx = subOptions.indexOf(opt);

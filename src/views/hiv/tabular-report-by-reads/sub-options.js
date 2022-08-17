@@ -18,7 +18,7 @@ const subOptions = [
   'Unsequenced regions',
   'Pretty amino acid alignments',
   'Algorithm comparison',
-  'Raw JSON report'
+  'Raw JSON report (deprecated)'
 ];
 
 const subOptionProcessors = [

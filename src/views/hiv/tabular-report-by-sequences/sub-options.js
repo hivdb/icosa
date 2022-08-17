@@ -17,7 +17,7 @@ const subOptions = [
   'Pretty amino acid alignments',
   'Algorithm comparison',
   'Raw JSON report',
-  'Raw XML report'
+  'Raw XML report (deprecated)'
 ];
 
 const subOptionProcessors = [
