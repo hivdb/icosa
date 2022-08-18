@@ -9,7 +9,8 @@ input.file-input_file {
 }
 
 input.file-input_text {
-  @extend %inline-input;
+  @extend %input-general;
+  padding-right: 1rem;
   cursor: pointer;
   background-color: transparent;
   border-width: 0;
