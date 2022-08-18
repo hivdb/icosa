@@ -1,6 +1,14 @@
 import JSZip from 'jszip';
 
-export function makeZip(fileName, files) {
+export async function showFilePicker(fileName) {
+  if (window.showSaveFilePicker) {
+    return await window.showSaveFilePicker({
+      suggestedName: fileName
+    });
+  }
+}
+
+export async function makeZip(fileName, files, fileHandle = null) {
   let zip = new JSZip();
   let reports = zip.folder(fileName.replace(/\.zip$/, ''));
   files.forEach(({folder, fileName, data}) => {
@@ -17,14 +25,38 @@ export function makeZip(fileName, files) {
       compression: "DEFLATE",
       compressionOptions: {level: 1}
     })
-    .then(data => makeDownload(fileName, 'application/zip', data, true));
+    .then(data => makeDownload(
+      fileName,
+      'application/zip',
+      data,
+      true,
+      fileHandle
+    ));
 }
 
 const utf8Encoder = new TextEncoder();
 
-export function makeDownload(fileName, mediaType, data, isBlob = false) {
+export async function makeDownload(
+  fileName,
+  mediaType,
+  data,
+  isBlob = false,
+  fileHandle = null
+) {
   if (typeof(document) === 'undefined') {
     return;
+  }
+  if (!fileHandle) {
+    try {
+      fileHandle = await showFilePicker(fileName);
+    }
+    catch (error) {
+      if (error.name === 'AbortError') {
+        // user aborts downloading
+        return;
+      }
+      // else fallback to use Downloads/ folder
+    }
   }
   const ts = new Date().getTime();
   fileName = fileName.replace(/(\.[^.]+$|$)/, `_${ts}$1`);
@@ -32,21 +64,28 @@ export function makeDownload(fileName, mediaType, data, isBlob = false) {
     data = utf8Encoder.encode(data);
     data = new Blob([data], {type: mediaType});
   }
-  let uri = URL.createObjectURL(data);
-  if (window.navigator.msSaveOrOpenBlob) {
-    // download method of IE
-    window.navigator.msSaveOrOpenBlob(data, fileName);
+  if (fileHandle) {
+    const writable = await fileHandle.createWritable();
+    await writable.write(data);
+    await writable.close();
   }
   else {
-    let a = document.createElement('a');
+    let uri = URL.createObjectURL(data);
+    if (window.navigator.msSaveOrOpenBlob) {
+      // download method of IE
+      window.navigator.msSaveOrOpenBlob(data, fileName);
+    }
+    else {
+      let a = document.createElement('a');
 
-    // firefox required a tag being attached to document
-    a.style.display = 'none';
-    document.body.appendChild(a);
+      // firefox required a tag being attached to document
+      a.style.display = 'none';
+      document.body.appendChild(a);
 
-    a.setAttribute('href', uri);
-    a.setAttribute('download', fileName);
-    a.click();
-    setTimeout(() => document.body.removeChild(a));
+      a.setAttribute('href', uri);
+      a.setAttribute('download', fileName);
+      a.click();
+      setTimeout(() => document.body.removeChild(a));
+    }
   }
 }
