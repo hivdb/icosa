@@ -92,6 +92,7 @@
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4",
     "webpack": "^5.72.0",
+    "worker-loader": "^3.0.8",
     "xlsx": "^0.18.5",
     "xmlbuilder2": "^3.0.2",
     "youtube-url": "^0.5.0"
