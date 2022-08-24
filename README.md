@@ -25,7 +25,7 @@ Like HIV Analysis Program, this YAML file also need to be built into JSON format
 
 ### Markdown renderer
 
-The [`src/components/markdown`](https://github.com/hivdb/icosa/tree/main/src/components/markdown) component wraps and extends `react-markdown` for rendering Markdowns from cms.hivdb.org. It is the core component of the `/page/` prefixed pages on hivdb and covdb websites.
+The [`src/components/markdown`](https://github.com/hivdb/icosa/tree/main/src/components/markdown) component wraps and extends [`react-markdown`](https://github.com/remarkjs/react-markdown) for rendering Markdowns from cms.hivdb.org. It is the core component of the `/page/` prefixed pages on hivdb and covdb websites.
 
 ### Genome map
 
