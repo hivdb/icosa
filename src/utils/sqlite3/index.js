@@ -223,7 +223,7 @@ export function useQuery({
   if (!skip && !baseURI) {
     throw new Error('Required parameter "baseURI" is empty');
   }
-  const [res, setRes] = React.useState(null);
+  const [[resQueryString, res], setRes] = React.useState([null, null]);
   const queryString = React.useMemo(
     () => JSON.stringify({sql, params, dbVersion, dbName, baseURI}),
     [sql, params, dbVersion, dbName, baseURI]
@@ -235,9 +235,9 @@ export function useQuery({
         return;
       }
       let mounted = true;
-      setRes(null);
+      setRes([null, null]);
       execSQL(JSON.parse(queryString))
-        .then(res => mounted && setRes(res));
+        .then(res => mounted && setRes([queryString, res]));
       return () => mounted = false;
     },
     [
@@ -254,7 +254,7 @@ export function useQuery({
           isPending: false
         };
       }
-      if (res) {
+      if (res && resQueryString === queryString) {
         if (res.length === 0) {
           return {
             payload: [],
@@ -285,7 +285,7 @@ export function useQuery({
         };
       }
     },
-    [res, skip, camel]
+    [res, resQueryString, queryString, skip, camel]
   );
 
 }
