@@ -89,10 +89,14 @@ function SingleSequenceReport({
           title: 'Sequence quality assessment',
           viewCheckboxLabel: 'Collapse genes',
           allGeneSeqs: alignedGeneSequences,
+          defaultView: 'expansion',
           output,
           strain
         }}>
-          <ValidationReport {...sequenceResult} {...{output, strain}} />
+          <ValidationReport
+           placeholder="There are no known sequence quality issues."
+           {...sequenceResult}
+           {...{output, strain}} />
         </MutViewer>
         {isCritical || !displayDRInterpretation ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>

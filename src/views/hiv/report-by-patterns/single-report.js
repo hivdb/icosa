@@ -80,8 +80,12 @@ function SinglePatternReport({
          noUnseqRegions
          allGeneSeqs={allGeneMutations}
          strain={strain}
+         defaultView="expansion"
          output={output}>
-          <ValidationReport {...patternResult} {...{output, strain}} />
+          <ValidationReport
+           placeholder="There are no known mutation quality issues."
+           {...patternResult}
+           {...{output, strain}} />
         </MutViewer>
         {isCritical || !displayDRInterpretation ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>

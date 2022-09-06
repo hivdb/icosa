@@ -112,11 +112,15 @@ function SingleSeqReadsReport({
           title: 'Sequence quality assessment',
           coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
           allGeneSeqs: allGeneSequenceReads,
+          defaultView: 'expansion',
           coverages,
           output,
           strain
         }}>
-          <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
+          <ValidationReport
+           placeholder="There are no known sequence quality issues."
+           {...sequenceReadsResult}
+           {...{output, strain}} />
         </MutViewer>
         {isCritical || !displayDRInterpretation ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
