@@ -4,8 +4,6 @@ import {
   buildPayload
 } from '../../../../components/susc-summary/ab-susc-summary';
 
-import shortenMutList from '../../../../utils/shorten-mutation-list';
-
 
 function extractFold(item) {
   if (!item) {
@@ -26,19 +24,14 @@ function extractCumuCount(item) {
 }
 
 
-function joinMutations(mutations, geneDisplay) {
-  return mutations.map(
-    ({gene: {name}, text}) => (
-      name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
-    )
-  ).join(', ') || 'None';
+function joinMutations(mutations) {
+  return mutations.map(({text}) => text).join(', ') || 'None';
 }
 
 
 function buildAbTable({
   seqName,
   itemsByVariantOrMutations,
-  geneDisplay,
   drdbLastUpdate,
   antibodyColumns
 }) {
@@ -52,19 +45,15 @@ function buildAbTable({
     displayOrder,
     ...abData
   } of buildPayload(itemsByVariantOrMutations)) {
-    const shorten = shortenMutList(mutations);
-    const addMuts =
-      variant ? shortenMutList(variantMissingMutations) : [];
-    const misMuts =
-      variant ? shortenMutList(variantExtraMutations) : [];
     const row = {
       'Sequence Name': seqName,
-      'Mutations': joinMutations(shorten, geneDisplay),
+      'Gene': 'Spike',
+      'Mutations': joinMutations(mutations),
       'Variant': variant ? variant.name : 'NA',
       'Additional Mutations':
-        variant ? joinMutations(addMuts, geneDisplay) : 'NA',
+        variant ? joinMutations(variantMissingMutations) : 'NA',
       'Missing Mutations':
-        variant ? joinMutations(misMuts, geneDisplay) : 'NA',
+        variant ? joinMutations(variantExtraMutations) : 'NA',
       'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate,
       'Top Match': displayOrder === 0 ? 'Yes' : 'No'
@@ -89,12 +78,11 @@ function abSuscSummary({
   drdbLastUpdate,
   antibodies,
   sequenceReadsAnalysis,
-  sequenceAnalysis,
-  config
+  sequenceAnalysis
 }) {
-  const {geneDisplay} = config;
   const commonHeader = [
     'Sequence Name',
+    'Gene',
     'Mutations',
     'Variant'
   ];
@@ -139,7 +127,6 @@ function abSuscSummary({
     const rows = buildAbTable({
       seqName,
       itemsByVariantOrMutations,
-      geneDisplay,
       drdbLastUpdate,
       antibodyColumns
     });

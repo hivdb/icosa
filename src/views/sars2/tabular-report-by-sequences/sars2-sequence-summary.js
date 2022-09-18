@@ -1,49 +1,50 @@
-import shortenMutationList from '../../../utils/shorten-mutation-list';
 import {
   fetchPangolinResult
 } from '../../../components/report/seq-summary/pango-lineage';
 
 
-function joinCols(row, ...cols) {
-  for (const col of cols) {
-    if (row[col] && row[col].length > 0) {
-      row[col] = row[col].join(',');
-    }
-    else if (col in row) {
-      row[col] = 'None';
+function joinCols(row) {
+  for (const col of Object.keys(row)) {
+    if (row[col] instanceof Array) {
+      if (row[col].length > 0) {
+        row[col] = row[col].join(',');
+      }
+      else if (col in row) {
+        row[col] = 'None';
+      }
     }
   }
 }
 
 
-function getMutations(geneSeqs, geneFilter, geneDisplay, raw = false) {
+function getMutations({
+  geneSeqs,
+  geneFilter,
+  mutFilter,
+  mutWithGene = true
+}) {
   let results = [];
   for (const geneSeq of geneSeqs.filter(
-    ({gene: {name}}) => geneFilter(name)
+    ({gene: {name}}) => geneFilter ? geneFilter(name) : true
   )) {
-    const gene = geneSeq.gene.name;
+    const gene = geneSeq.gene.name.replace(/^_/, '');
     const mutations = geneSeq.mutations
       .filter(
-        ({isUnsequenced}) => !isUnsequenced
+        m => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
       )
       .map(mut => ({...mut, gene}));
-    if (raw) {
-      results = [...results, ...mutations];
-    }
-    else {
-      results = [...results, ...shortenMutationList(mutations)];
-    }
+    results = [...results, ...mutations];
   }
   return results.map(
     ({gene, text}) => (
-      gene === 'S' ? text : `${geneDisplay[gene] || gene}:${text}`
+      mutWithGene ? `${gene}:${text}` : text
     )
   );
 }
 
 
 function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
-  const mutText = getMutations(geneSeqs, geneFilter, {}, true);
+  const mutText = getMutations({geneSeqs, geneFilter});
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
   query.set('name', seqName);
@@ -64,6 +65,11 @@ async function sequenceSummary({
     'Sequence Name',
     'Genes',
     'Spike Mutations',
+    'Spike mAb-RMs',
+    '3CLpro Mutations',
+    '3CL-PI DRMs',
+    'RdRP Mutations',
+    'RdRPI DRMs',
     'Other Mutations',
     '# Mutations',
     '# Unusual Mutations',
@@ -91,16 +97,47 @@ async function sequenceSummary({
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations(
+      'Spike Mutations': getMutations({
         geneSeqs,
-        gene => gene === 'S',
-        geneDisplay
-      ),
-      'Other Mutations': getMutations(
+        geneFilter: gene => gene === 'S',
+        mutWithGene: false
+      }),
+      'Spike mAb-RMs': getMutations({
         geneSeqs,
-        gene => gene !== 'S',
-        geneDisplay
-      ),
+        geneFilter: gene => gene === 'S',
+        mutFilter: m => m.isDRM,
+        mutWithGene: false
+      }),
+      '3CLpro Mutations': getMutations({
+        geneSeqs,
+        geneFilter: gene => gene === '_3CLpro',
+        mutWithGene: false
+      }),
+      '3CL-PI DRMs': getMutations({
+        geneSeqs,
+        geneFilter: gene => gene === '_3CLpro',
+        mutFilter: m => m.isDRM,
+        mutWithGene: false
+      }),
+      'RdRP Mutations': getMutations({
+        geneSeqs,
+        geneFilter: gene => gene === 'RdRP',
+        mutWithGene: false
+      }),
+      'RdRPI DRMs': getMutations({
+        geneSeqs,
+        geneFilter: gene => gene === 'RdRP',
+        mutFilter: m => m.isDRM,
+        mutWithGene: false
+      }),
+      'Other Mutations': getMutations({
+        geneSeqs,
+        geneFilter: (
+          gene => gene !== 'S' &&
+          gene !== '_3CLpro' &&
+          gene !== 'RdRP'
+        )
+      }),
       '# Mutations': `${seqResult.mutationCount}`,
       '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
       '# Spike Mutations': `${
@@ -125,7 +162,7 @@ async function sequenceSummary({
         () => true
       )
     };
-    joinCols(row, ['genes', 'Spike Mutations', 'Other Mutations']);
+    joinCols(row);
     rows.push(row);
   }
   return [{tableName: 'sequenceSummaries', header, rows}];

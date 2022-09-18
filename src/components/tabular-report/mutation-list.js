@@ -40,7 +40,7 @@ export default function mutationList({
     const seqName = seqName1 || seqName2;
     const geneSeqs = geneSeqs1 || geneSeqs2;
     for (const geneSeq of geneSeqs) {
-      const gene = geneSeq.gene.name;
+      const gene = geneSeq.gene.name.replace(/^_/, '');
       for (let {
         reference,
         AAs,
@@ -68,11 +68,7 @@ export default function mutationList({
             rows.push({
               ...row,
               'MutAA': aaDisplay,
-              'Mutation': gene === 'S' ? (
-                `${reference}${position}${aaDisplay}`
-              ) : (
-                `${gene}:${reference}${position}${aaDisplay}`
-              ),
+              'Mutation': `${gene}:${reference}${position}${aaDisplay}`,
               'Is Unusual': unusualAAs.includes(aminoAcid) ? 'Yes' : 'No',
               'Count': numReads,
               'Total': totalReads,
@@ -90,11 +86,7 @@ export default function mutationList({
               ...row,
               'MutAA': aaDisplay,
               'Is Unusual': unusualAAs.includes(aa) ? 'Yes' : 'No',
-              'Mutation': gene === 'S' ? (
-                `${reference}${position}${aaDisplay}`
-              ) : (
-                `${gene}:${reference}${position}${aaDisplay}`
-              )
+              'Mutation': `${gene}:${reference}${position}${aaDisplay}`
             });
           }
         }

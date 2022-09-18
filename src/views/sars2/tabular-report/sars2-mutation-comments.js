@@ -1,12 +1,7 @@
-import shortenMutList from '../../../utils/shorten-mutation-list';
-
-
 function mutationComments({
   sequenceReadsAnalysis,
-  sequenceAnalysis,
-  config
+  sequenceAnalysis
 }) {
-  const {geneDisplay} = config;
   let header = [
     'Sequence Name',
     'Mutation',
@@ -24,9 +19,9 @@ function mutationComments({
     const seqName = seqName1 || seqName2;
     const rows = [];
     for (const {triggeredMutations, version, comment} of mutationComments) {
-      const muts = shortenMutList(triggeredMutations).map(({
+      const muts = triggeredMutations.map(({
         gene: {name}, text
-      }) => name === 'S' ? text : `${geneDisplay[name] || name}:${text}`);
+      }) => `${name.replace(/^_/, '')}:${text}`);
       rows.push({
         'Sequence Name': seqName,
         'Mutation': muts.join(','),

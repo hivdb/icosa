@@ -4,18 +4,20 @@ import {
   buildPayload
 } from '../../../../components/susc-summary/vp-susc-summary';
 
-import shortenMutList from '../../../../utils/shorten-mutation-list';
-
 
 function formatFold(fold) {
   return fold >= 1000 ? '≥1000' : `${fold.toFixed(1)}`;
 }
 
 
+function joinMutations(mutations) {
+  return mutations.map(({text}) => text).join(', ') || 'None';
+}
+
+
 function buildVPTable({
   seqName,
   itemsByVariantOrMutations,
-  geneDisplay,
   drdbLastUpdate
 }) {
   const rows = [];
@@ -29,17 +31,13 @@ function buildVPTable({
     variant,
     ...vpData
   } of buildPayload(itemsByVariantOrMutations)) {
-    const shorten = shortenMutList(mutations);
     const level1 = nestedGet(vpData, 'levels.susceptible');
     const level2 = nestedGet(vpData, 'levels.partial-resistance');
     const level3 = nestedGet(vpData, 'levels.resistant');
     const row = {
       'Sequence Name': seqName,
-      'Mutations': shorten.map(
-        ({gene: {name}, text}) => (
-          name === 'S' ? text : `${geneDisplay[name] || name}:${text}`
-        )
-      ),
+      'Gene': 'Spike',
+      'Mutations': joinMutations(mutations),
       'Variant': variant ? variant.name : 'NA',
       'Vaccine': vaccineName,
       '# Studies': numRefs,
@@ -66,12 +64,11 @@ function buildVPTable({
 function vpSuscSummary({
   drdbLastUpdate,
   sequenceReadsAnalysis,
-  sequenceAnalysis,
-  config
+  sequenceAnalysis
 }) {
-  const {geneDisplay} = config;
   const header = [
     'Sequence Name',
+    'Gene',
     'Mutations',
     'Variant',
     'Vaccine',
@@ -99,7 +96,6 @@ function vpSuscSummary({
     const rows = buildVPTable({
       seqName,
       itemsByVariantOrMutations,
-      geneDisplay,
       drdbLastUpdate
     });
     tables.push({
