@@ -5,21 +5,23 @@ import classNames from 'classnames';
 import style from './style.module.scss';
 
 
-export default class AnalyzeFormsContainer extends React.Component {
+AnalyzeFormsContainer.propTypes = {
+  tabName: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  children: PropTypes.node
+};
 
-  static propTypes = {
-    className: PropTypes.string,
-    children: PropTypes.node
-  };
+export default function AnalyzeFormsContainer({
+  className,
+  children,
+  tabName
+}) {
 
-  render() {
-    const {className, children} = this.props;
-
-    return (
-      <section className={classNames(style['analyze-form-tabs'], className)}>
-        {children}
-      </section>
-    );
-  }
-
+  return (
+    <section
+     data-tabname={tabName}
+     className={classNames(style['analyze-form-tabs'], className)}>
+      {children}
+    </section>
+  );
 }

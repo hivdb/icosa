@@ -138,7 +138,7 @@ export default function AnalyzeForms({
   );
 
   return <>
-    <FormsContainer>
+    <FormsContainer tabName={tabName}>
       {tabName === 'ngs2codfreq' ?
         null :
         <Tabs
@@ -159,6 +159,7 @@ export default function AnalyzeForms({
         </Tabs>}
       {tabName === 'by-reads' || tabName === 'ngs2codfreq' ?
         <NGS2CodFreqForm
+         showOptionsForm={tabName === 'ngs2codfreq'}
          runners={ngsRunners}
          redirectTo={`${basePath}/ngs2codfreq/`}
          analyzeTo={readsTo}

@@ -17,12 +17,12 @@ const SUPPORT_FORMATS = {
   'application/gzip': ['.fastq.gz']
 };
 
-NGSForm.propTypes = {
+NGSUploadForm.propTypes = {
   className: PropTypes.string,
   onSubmit: PropTypes.func
 };
 
-export default function NGSForm({className, onSubmit}) {
+export default function NGSUploadForm({className, onSubmit}) {
 
   const [config, isConfigPending] = ConfigContext.use();
   const [fastqPairs, setFastqPairs] = React.useState([]);

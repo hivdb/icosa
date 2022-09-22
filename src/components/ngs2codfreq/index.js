@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 
 import fastq2codfreq, {restoreTask} from '../../utils/fastq2codfreq';
 
-import NGSForm from './form';
+import UploadForm from './upload-form';
+import OptionsForm from './options-form';
 import NGSResults from './results';
 
+import useOptions from './use-options';
 
 function updateProgress({
   progress,
@@ -30,6 +32,7 @@ function updateProgress({
 }
 
 NGS2CodFreq.propTypes = {
+  showOptionsForm: PropTypes.bool.isRequired,
   taskKey: PropTypes.string,
   onTriggerRunner: PropTypes.func,
   onLoad: PropTypes.func,
@@ -38,8 +41,12 @@ NGS2CodFreq.propTypes = {
   runners: PropTypes.array
 };
 
+NGS2CodFreq.defaultProps = {
+  showOptionsForm: false
+};
 
 export default function NGS2CodFreq({
+  showOptionsForm,
   taskKey,
   onTriggerRunner,
   onLoad,
@@ -50,6 +57,7 @@ export default function NGS2CodFreq({
 
   const [, forceUpdate] = React.useReducer(n => n + 1, 0);
   const {current: progressLookup} = React.useRef({});
+  const [options, setOptions] = useOptions();
 
   React.useEffect(
     () => {
@@ -107,10 +115,14 @@ export default function NGS2CodFreq({
     );
   }
   else {
-    return (
-      <NGSForm
+    return <>
+      <UploadForm
        className={className}
        onSubmit={handleSubmit} />
-    );
+      {showOptionsForm ?
+        <OptionsForm
+         {...options}
+         onChange={setOptions} /> : null}
+    </>;
   }
 }

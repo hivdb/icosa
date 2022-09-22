@@ -9,11 +9,18 @@
   --tab-v-padding: 0.42rem;
   --tab-h-padding: 0.84rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   @extend %react-tabs-container;
   margin-top: 1rem;
   @media only screen and (max-width: 900px) {
     flex-direction: column;
+  }
+
+  &[data-tabname="ngs2codfreq"] {
+    > form:nth-child(2) {
+      flex-basis: css-max(40%, 40rem);
+    }
   }
 
   :global {
@@ -51,7 +58,7 @@
       flex-direction: column;
       margin-left: 1rem;
       &:first-child {
-        flex-basis: css-max(60%, 60rem);
+        flex-basis: css-max(40%, 20rem);
         margin-left: 0;
         margin-right: css-min(10%, 4rem);
       }

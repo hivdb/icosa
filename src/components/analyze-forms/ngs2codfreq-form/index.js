@@ -39,12 +39,14 @@ function reformCodFreqs(allSequenceReads, geneValidator) {
 
 
 NGS2CodFreqForm.propTypes = {
+  showOptionsForm: PropTypes.bool,
   runners: PropTypes.array,
   redirectTo: PropTypes.string,
   analyzeTo: PropTypes.string
 };
 
 export default function NGS2CodFreqForm({
+  showOptionsForm,
   runners,
   redirectTo,
   analyzeTo
@@ -94,6 +96,7 @@ export default function NGS2CodFreqForm({
   else {
     return (
       <NGS2CodFreq
+       showOptionsForm={showOptionsForm}
        className={style['analyze-ngs2codfreq']}
        key={taskKey || 'new-ngs2codfreq'}
        taskKey={taskKey}
