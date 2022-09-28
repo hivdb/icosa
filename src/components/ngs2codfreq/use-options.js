@@ -16,8 +16,9 @@ export default function useOptions() {
 
   const onChange = React.useCallback(
     (key, value) => {
-      set(options, key, value);
-      setOptions(options);
+      const newOptions = {...options};
+      set(newOptions, key, value);
+      setOptions(newOptions);
     },
     [options]
   );
