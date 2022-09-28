@@ -4,8 +4,10 @@
 form.ngs-options-form {
   fieldset {
     border: 1px solid color(dividing-line);
-    margin-bottom: 1rem;
     padding: 1rem 1.5rem;
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
   }
 
 }
@@ -28,6 +30,8 @@ form.ngs-options-form {
   > input[type="range"] {
     font-size: 1.5rem;
     width: 100%;
+    padding-right: 0.5em;
+    box-sizing: border-box;
     -webkit-appearance: none;
   
     @mixin thumb() {
@@ -53,20 +57,19 @@ form.ngs-options-form {
     @mixin track() {
       width: 100%;
       height: 0.5em;
-      margin-right: 0.5em;
       cursor: pointer;
-      background: color(type-highlight);
+      background-color: color(type-highlight);
       border: 0;
       transition: filter 150ms ease-in-out;
+    }
+
+    @mixin track-hover() {
+      filter: brightness(1.1);
     }
 
     @mixin track-disabled() {
       cursor: not-allowed;
       background-color: rgba(0, 0, 0, .2);
-    }
-
-    @mixin track-hover() {
-      filter: brightness(1.1);
     }
   
     &::-webkit-slider-thumb {
@@ -82,9 +85,17 @@ form.ngs-options-form {
     &::-moz-range-thumb {
       @include thumb();
     }
+
+    &::-moz-range-track {
+      @include track();
+    }
   
     &::-ms-thumb {
       @include thumb();
+    }
+
+    &::-ms-track {
+      @include track();
     }
 
     &:hover {
@@ -99,9 +110,17 @@ form.ngs-options-form {
       &::-moz-range-thumb {
         @include thumb-hover();
       }
+
+      /* &::-moz-range-track {
+        @include track-hover();
+      } */
   
       &::-ms-thumb {
         @include thumb-hover();
+      }
+
+      &::-ms-track {
+        @include track-hover()
       }
     }
 
@@ -117,15 +136,29 @@ form.ngs-options-form {
       &::-moz-range-thumb {
         @include thumb-disabled();
       }
+
+      &::-moz-range-track {
+        @include track-disabled();
+      }
   
       &::-ms-thumb {
         @include thumb-disabled();
+      }
+
+      &::-ms-track {
+        @include track-disabled()
       }
     }
   }
 
   > input[type="number"] {
     @extend %inline-input;
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
