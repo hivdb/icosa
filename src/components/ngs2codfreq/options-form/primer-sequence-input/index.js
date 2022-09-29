@@ -2,9 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import ItemInput from './item-input';
 import Button from '../../../button';
+import FileInput from '../../../file-input';
 import {primerSeqShape} from '../prop-types';
+import {parseFasta} from '../../../../utils/fasta';
+import readFile from '../../../../utils/read-file';
+
+import ItemInput from './item-input';
+import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
@@ -22,46 +27,21 @@ export default function PrimerSequenceInput({
   value,
   onChange
 }) {
+  const mounted = React.useRef(false);
   const [autoIncr, setAutoIncr] = React.useState(
     value.length > 0 ? Math.max(
       ...value.map(({idx}) => idx)
     ) + 1 : 0
   );
   const [pendingItems, setPendingItems] = React.useState([]);
-  const [errors, setErrors] = React.useState([]);
+  const errors = useValidation(value);
 
   React.useEffect(
     () => {
-      const newErrors = [];
-      const headerCounter = {};
-      const seqCounter = {};
-      for (const {header, sequence: seq} of value) {
-        if (header in headerCounter) {
-          if (headerCounter[header] === 1) {
-            newErrors.push(<>
-              Error: Duplicate headers <strong>{header}</strong>
-            </>);
-          }
-          headerCounter[header] ++;
-        }
-        else {
-          headerCounter[header] = 1;
-        }
-        if (seq in seqCounter) {
-          if (seqCounter[seq] === 1) {
-            newErrors.push(<>
-              Error: Duplicate primer sequences <strong>{seq}</strong>
-            </>);
-          }
-          seqCounter[seq] ++;
-        }
-        else {
-          seqCounter[seq] = 1;
-        }
-      }
-      setErrors(newErrors);
+      mounted.current = true;
+      return () => mounted.current = false;
     },
-    [value]
+    []
   );
 
   const handleChange = React.useCallback(
@@ -98,9 +78,14 @@ export default function PrimerSequenceInput({
 
   const handleReset = React.useCallback(
     () => {
-      setAutoIncr(0);
-      setPendingItems([]);
-      onChange(name, []);
+      if (window.confirm(
+        'This operation will irrecoverably remove all primer ' +
+        'sequences. Please confirm:'
+      )) {
+        setAutoIncr(0);
+        setPendingItems([]);
+        onChange(name, []);
+      }
     },
     [name, onChange]
   );
@@ -117,6 +102,37 @@ export default function PrimerSequenceInput({
       setPendingItems(newPendingItems);
     },
     [pendingItems, autoIncr]
+  );
+
+  const handleUpload = React.useCallback(
+    async files => {
+      const newItems = [];
+      let newAutoIncr = autoIncr;
+      for (const file of files) {
+        if (
+          !file ||
+          !(/^text\/.+$|^application\/x-gzip$|^$/.test(file.type))
+        ) {
+          continue;
+        }
+        const rawFasta = await readFile(file);
+        for (const {header, sequence} of parseFasta(rawFasta, file.name)) {
+          newItems.push({
+            idx: newAutoIncr ++,
+            header,
+            sequence,
+            type: 'both-end'
+          });
+        }
+      }
+
+      if (!mounted.current) {
+        return;
+      }
+      onChange(name, [...value, ...newItems]);
+      setAutoIncr(newAutoIncr);
+    },
+    [onChange, autoIncr, name, value]
   );
 
   return <>
@@ -148,6 +164,15 @@ export default function PrimerSequenceInput({
         style['fieldinput'],
         style['primer-sequence-buttons']
       )}>
+        <FileInput
+         multiple
+         hideSelected
+         btnStyle="info"
+         accept=".fasta,.fas,.fa,.txt,.gz"
+         onChange={handleUpload}>
+          Upload FASTA
+        </FileInput>
+        <span className={style.or}> or </span>
         <Button
          btnStyle="primary"
          onClick={handleAddNew}>
@@ -155,6 +180,7 @@ export default function PrimerSequenceInput({
             'Add one primer' : 'Add more primer'}
         </Button>
         <Button
+         disabled={value.length + pendingItems.length === 0}
          btnStyle="light"
          onClick={handleReset}>
           Reset

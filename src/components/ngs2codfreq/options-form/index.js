@@ -223,7 +223,7 @@ export default function NGSOptionsForm({
         Another program{' '}
         <ExtLink
          href="https://andersen-lab.github.io/ivar/html/index.html">
-          ivar
+          iVar
         </ExtLink> will be used if "location (BED)" primers are provided.
       </FlagSwitch>
       {primerType === 'fasta' ? <>

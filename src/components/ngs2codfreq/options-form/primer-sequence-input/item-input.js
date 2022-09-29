@@ -134,7 +134,7 @@ export default function PrimerSeqItemInput({
   const [
     unsavedHeader,
     setUnsavedHeader
-  ] = React.useState(header || `Primer-${idx + 1}`);
+  ] = React.useState(header);
   const [
     unsavedSeq,
     setUnsavedSeq
@@ -143,6 +143,12 @@ export default function PrimerSeqItemInput({
     unsavedType,
     setUnsavedType
   ] = React.useState(type);
+
+  const dirty = (
+    unsavedHeader !== header ||
+    unsavedSeq !== sequence ||
+    unsavedType !== type
+  );
 
   const {
     threeEndType,
@@ -176,18 +182,33 @@ export default function PrimerSeqItemInput({
     [unsavedHeader, unsavedSeq, unsavedType, idx, onChange, isNew]
   );
 
+  const handleReset = React.useCallback(
+    () => {
+      setUnsavedHeader(header);
+      setUnsavedSeq(sequence);
+      setUnsavedType(type);
+    },
+    [header, sequence, type]
+  );
+
   const handleRemove = React.useCallback(
     () => onChange({idx}, isNew, true),
     [idx, isNew, onChange]
   );
 
-  return <div className={style['fieldrow']}>
+  return <div
+   className={classNames(
+     style['fieldrow'],
+     style['primer-sequence-row']
+   )}
+   data-dirty={dirty}>
     <div className={classNames(
       style['fieldlabel'],
       style['primer-sequence-label']
     )}>
       <HoverPopup
        noUnderline
+       delay={724}
        position="left"
        message={<>
          Primer header (optional)
@@ -201,7 +222,7 @@ export default function PrimerSeqItemInput({
          placeholder="Header"
          onChange={handleHeaderChange} />
       </HoverPopup>
-      {isNew || unsavedHeader !== header || unsavedSeq !== sequence ?
+      {isNew || dirty ?
         <Button
          className={style['btn-save-item']}
          disabled={unsavedHeader === '' || unsavedSeq === ''}
@@ -210,13 +231,21 @@ export default function PrimerSeqItemInput({
          onClick={handleSave}>
           {isNew ? 'Add' : 'Update'}
         </Button> : null}
-      <Button
-       className={style['btn-remove-item']}
-       btnSize="small"
-       btnStyle="light"
-       onClick={handleRemove}>
-        Remove
-      </Button>
+      {dirty ?
+        <Button
+         className={style['btn-reset-item']}
+         btnSize="small"
+         btnStyle="light"
+         onClick={handleReset}>
+          Reset
+        </Button> :
+        <Button
+         className={style['btn-remove-item']}
+         btnSize="small"
+         btnStyle="light"
+         onClick={handleRemove}>
+          Remove
+        </Button>}
     </div>
     <div className={classNames(
       style['fieldinput'],
@@ -232,6 +261,7 @@ export default function PrimerSeqItemInput({
        onChange={handleSeqChange} />
       <HoverPopup
        position="left"
+       delay={724}
        message={<HelpLink option="-b" anchor="#or-3-adapters" />}>
         <RadioInput
          id={`${name}-${idx}-both-end`}
@@ -245,6 +275,7 @@ export default function PrimerSeqItemInput({
       </HoverPopup>
       <HoverPopup
        position="left"
+       delay={724}
        message={<HelpLink option="-g" anchor="#id4" />}>
         <RadioInput
          disabled={threeEndType !== 'regular'}
@@ -259,6 +290,7 @@ export default function PrimerSeqItemInput({
       </HoverPopup>
       <HoverPopup
        position="left"
+       delay={724}
        message={<HelpLink option="-a" anchor="#id3" />}>
         <RadioInput
          disabled={fiveEndType !== 'regular'}
@@ -286,6 +318,7 @@ export default function PrimerSeqItemInput({
           trimmingType => (
             <HoverPopup
              position="bottom"
+             delay={724}
              message={(
                <HelpLink
                 option={'-a' + {
@@ -325,6 +358,7 @@ export default function PrimerSeqItemInput({
           trimmingType => (
             <HoverPopup
              position="bottom"
+             delay={724}
              message={(
                <HelpLink
                 option={'-g' + {
