@@ -33,16 +33,16 @@ const defaultFastpConfig = {
   disableLengthFiltering: false
 };
 
+const primerSeqShape = PropTypes.shape({
+  idx: PropTypes.number.isRequired,
+  header: PropTypes.string.isRequired,
+  sequence: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['three-end', 'five-end', 'both-end']).isRequired
+});
 
 const cutadaptConfigShape = PropTypes.shape({
-  adapter3: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  adapter5: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  adapter53: PropTypes.arrayOf(
-    PropTypes.string.isRequired
+  primerSeqs: PropTypes.arrayOf(
+    primerSeqShape.isRequired
   ).isRequired,
   errorRate: PropTypes.number.isRequired,
   noIndels: PropTypes.bool.isRequired,
@@ -51,9 +51,7 @@ const cutadaptConfigShape = PropTypes.shape({
 });
 
 const defaultCutadaptConfig = {
-  adapter3: [],
-  adapter5: [],
-  adapter53: [],
+  primerSeqs: [],
   errorRate: 0.1,
   noIndels: true,
   times: 1,
@@ -88,6 +86,7 @@ const defaultIvarConfig = {
 export {
   fastpConfigShape,
   defaultFastpConfig,
+  primerSeqShape,
   cutadaptConfigShape,
   defaultCutadaptConfig,
   ivarConfigShape,

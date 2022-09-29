@@ -15,19 +15,43 @@ import style from './style.module.scss';
 import FlagSwitch from './flag-switch';
 import NumberRangeInput from './number-range-input';
 import AdapterInput from './adapter-input';
+import PrimerSequenceInput from './primer-sequence-input';
+
+const ADAPTER_TRIMMING_VALUES = [false, true];
+const ADAPTER_TRIMMING_TEXTS = ['Yes', 'No'];
+
+const QUALITY_FILTERING_VALUES = [false, true];
+const QUALITY_FILTERING_TEXTS = ['Yes', 'No'];
+
+const LENGTH_FILTERING_VALUES = [false, true];
+const LENGTH_FILTERING_TEXTS = ['Yes', 'No'];
+
+const PRIMER_TYPE_VALUES = ['fasta', 'bed', 'off'];
+const PRIMER_TYPE_TEXTS = ['Sequence (FASTA)', 'Location (BED)', 'Off'];
+
+const NO_INDELS_VALUES = [false, true];
+const NO_INDELS_TEXTS = ['Allow', 'Disallow'];
+
+const POLY_G_TRIMMING_VALUES = [false, true];
+const POLY_G_TRIMMING_TEXTS = ['Yes', 'No'];
+
+const INCLUDE_UNMERGED_VALUES = [true, false];
+const INCLUDE_UNMERGED_TEXTS = ['Include', 'Exclude'];
 
 
 NGSOptionsForm.propTypes = {
   fastpConfig: fastpConfigShape.isRequired,
   cutadaptConfig: cutadaptConfigShape.isRequired,
   ivarConfig: ivarConfigShape.isRequired,
+  primerType: PropTypes.oneOf(['fasta', 'bed', 'off']).isRequired,
   onChange: PropTypes.func.isRequired
 };
 
 NGSOptionsForm.defaultProps = {
   fastpConfig: {...defaultFastpConfig},
   cutadaptConfig: {...defaultCutadaptConfig},
-  ivarConfig: {...defaultIvarConfig}
+  ivarConfig: {...defaultIvarConfig},
+  primerType: 'off'
 };
 
 
@@ -46,18 +70,26 @@ export default function NGSOptionsForm({
     disableTrimPolyG,
     disableQualityFiltering,
     disableLengthFiltering
-
   },
+  cutadaptConfig: {
+    primerSeqs,
+    errorRate,
+    noIndels,
+    times,
+    minOverlap
+  },
+  primerType,
   onChange
 }) {
 
   return <form className={style['ngs-options-form']}>
     <fieldset>
       <FlagSwitch
-       trueWhenDisabled
        name="fastpConfig.disableAdapterTrimming"
        label="Adapter trimming"
-       flag={disableAdapterTrimming}
+       value={disableAdapterTrimming}
+       valueChoices={ADAPTER_TRIMMING_VALUES}
+       textChoices={ADAPTER_TRIMMING_TEXTS}
        onChange={onChange} />
       <AdapterInput
        disabled={disableAdapterTrimming}
@@ -82,10 +114,11 @@ export default function NGSOptionsForm({
     </fieldset>
     <fieldset>
       <FlagSwitch
-       trueWhenDisabled
        name="fastpConfig.disableQualityFiltering"
        label="Quality filtering"
-       flag={disableQualityFiltering}
+       value={disableQualityFiltering}
+       valueChoices={QUALITY_FILTERING_VALUES}
+       textChoices={QUALITY_FILTERING_TEXTS}
        onChange={onChange} />
       <NumberRangeInput
        disabled={disableQualityFiltering}
@@ -116,7 +149,7 @@ export default function NGSOptionsForm({
       <NumberRangeInput
        disabled={disableQualityFiltering}
        name="fastpConfig.nBaseLimit"
-       label="Max # N base"
+       label="Max # N bases"
        value={nBaseLimit}
        defaultValue={defaultFastpConfig.nBaseLimit}
        onChange={onChange}
@@ -142,10 +175,11 @@ export default function NGSOptionsForm({
     </fieldset>
     <fieldset>
       <FlagSwitch
-       trueWhenDisabled
        name="fastpConfig.disableLengthFiltering"
        label="Length filtering"
-       flag={disableLengthFiltering}
+       value={disableLengthFiltering}
+       valueChoices={LENGTH_FILTERING_VALUES}
+       textChoices={LENGTH_FILTERING_TEXTS}
        onChange={onChange} />
       <NumberRangeInput
        disabled={disableLengthFiltering}
@@ -175,10 +209,89 @@ export default function NGSOptionsForm({
     </fieldset>
     <fieldset>
       <FlagSwitch
-       trueWhenDisabled
+       name="primerType"
+       label="Primer trimming"
+       value={primerType}
+       valueChoices={PRIMER_TYPE_VALUES}
+       textChoices={PRIMER_TYPE_TEXTS}
+       onChange={onChange}>
+        Method to trim primers. Program{' '}
+        <ExtLink
+         href="https://cutadapt.readthedocs.io/en/stable/index.html">
+          Cutadapt
+        </ExtLink> will be used if "sequence (FASTA)" primers are provided.
+        Another program{' '}
+        <ExtLink
+         href="https://andersen-lab.github.io/ivar/html/index.html">
+          ivar
+        </ExtLink> will be used if "location (BED)" primers are provided.
+      </FlagSwitch>
+      {primerType === 'fasta' ? <>
+        <PrimerSequenceInput
+         name="cutadaptConfig.primerSeqs"
+         value={primerSeqs}
+         onChange={onChange} />
+        <NumberRangeInput
+         name="cutadaptConfig.errorRate"
+         label="Error tolerance"
+         value={errorRate}
+         defaultValue={defaultCutadaptConfig.errorRate}
+         onChange={onChange}
+         min={0}
+         max={1}
+         step={0.01}>
+          Level of error tolerance for allowing mismatches, insertions and
+          deletions. Check{' '}
+          <ExtLink href={
+            "https://cutadapt.readthedocs.io/en/v4.1/guide.html#error-tolerance"
+          }>the documentation</ExtLink> for more information. Default is 0.1.
+        </NumberRangeInput>
+        <FlagSwitch
+         name="cutadaptConfig.noIndels"
+         label="Indels"
+         value={noIndels}
+         valueChoices={NO_INDELS_VALUES}
+         textChoices={NO_INDELS_TEXTS}
+         onChange={onChange}>
+          Should insertions and deletions be allowed or disallowed when matching
+          primers against reads?
+        </FlagSwitch>
+        <NumberRangeInput
+         name="cutadaptConfig.times"
+         label="Max # matches"
+         value={times}
+         defaultValue={defaultCutadaptConfig.times}
+         onChange={onChange}
+         min={1}
+         max={20}
+         step={1}>
+          Repeat the primer finding and removal step up to given times.{' '}
+          <ExtLink href={
+            "https://cutadapt.readthedocs.io/en/v4.1/guide.html#more-than-one"
+          }>The default is to search for only one primer in each read</ExtLink>.
+        </NumberRangeInput>
+        <NumberRangeInput
+         name="cutadaptConfig.minOverlap"
+         label="Min matching length"
+         value={minOverlap}
+         defaultValue={defaultCutadaptConfig.minOverlap}
+         onChange={onChange}
+         min={3}
+         max={50}
+         step={1}>
+          Set the <ExtLink href={
+            "https://cutadapt.readthedocs.io/en/v4.1/guide.html#minimum-overlap"
+          }>minimum</ExtLink> overlap to given length. Default is 3.
+        </NumberRangeInput>
+      </> : null}
+    </fieldset>
+    <fieldset>
+      <FlagSwitch
        name="fastpConfig.disableTrimPolyG"
        label="Poly-G trimming"
-       flag={disableTrimPolyG}
+       value={disableTrimPolyG}
+       valueChoices={POLY_G_TRIMMING_VALUES}
+       textChoices={POLY_G_TRIMMING_TEXTS}
        onChange={onChange}>
         Enable <ExtLink href={
           'https://support.illumina.com/content/dam/illumina-support/help/' +
@@ -190,9 +303,9 @@ export default function NGSOptionsForm({
       <FlagSwitch
        name="fastpConfig.includeUnmerged"
        label="Unpaired reads"
-       flag={includeUnmerged}
-       textEnable="Include"
-       textDisable="Exclude"
+       value={includeUnmerged}
+       valueChoices={INCLUDE_UNMERGED_VALUES}
+       textChoices={INCLUDE_UNMERGED_TEXTS}
        onChange={onChange}>
         (Paired-end data only) should the unpaired reads be included or
         excluded, default is to be included.

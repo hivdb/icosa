@@ -9,39 +9,29 @@ import style from './style.module.scss';
 DisableFlagSwitch.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  flag: PropTypes.bool.isRequired,
+  value: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
-  trueWhenDisabled: PropTypes.bool,
-  textEnable: PropTypes.string,
-  textDisable: PropTypes.string,
+  valueChoices: PropTypes.array.isRequired,
+  textChoices: PropTypes.array.isRequired,
   children: PropTypes.node
-};
-
-DisableFlagSwitch.defaultProps = {
-  trueWhenDisabled: false,
-  textEnable: 'Yes',
-  textDisable: 'No'
 };
 
 
 export default function DisableFlagSwitch({
   name,
   label,
-  flag,
+  value,
   onChange,
-  trueWhenDisabled,
-  textEnable,
-  textDisable,
+  valueChoices,
+  textChoices,
   children
 }) {
   const handleChange = React.useCallback(
     event => onChange(
       name,
-      trueWhenDisabled ?
-        event.currentTarget.value === 'disable' :
-        event.currentTarget.value === 'enable'
+      valueChoices[Number.parseInt(event.currentTarget.value)]
     ),
-    [name, trueWhenDisabled, onChange]
+    [name, valueChoices, onChange]
   );
 
   return (
@@ -52,24 +42,20 @@ export default function DisableFlagSwitch({
         {label}:
       </label>
       <div className={style['fieldinput']}>
-        <RadioInput
-         id={`${name}-enable`}
-         className={style['flag-switch-radio']}
-         name={name}
-         value="enable"
-         onChange={handleChange}
-         checked={trueWhenDisabled ? !flag : flag}>
-          {textEnable}
-        </RadioInput>
-        <RadioInput
-         id={`${name}-disable`}
-         className={style['flag-switch-radio']}
-         name={name}
-         value="disable"
-         onChange={handleChange}
-         checked={trueWhenDisabled ? flag : !flag}>
-          {textDisable}
-        </RadioInput>
+        {valueChoices.map(
+          (val, idx) => (
+            <RadioInput
+             id={`${name}-${idx}`}
+             key={`${name}-${idx}`}
+             className={style['switch-radio']}
+             name={name}
+             value={idx}
+             onChange={handleChange}
+             checked={value === val}>
+              {textChoices[idx]}
+            </RadioInput>
+          )
+        )}
       </div>
       {children ?
         <div className={style['fielddesc']}>

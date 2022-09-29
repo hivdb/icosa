@@ -8,7 +8,7 @@ import style from './style.module.scss';
 AdapterInput.propTypes = {
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
-  value: PropTypes.number.isRequired,
+  value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   autoValue: PropTypes.string,

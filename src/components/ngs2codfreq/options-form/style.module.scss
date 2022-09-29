@@ -15,7 +15,6 @@ form.ngs-options-form {
 .reset {
   font-size: .9rem;
   margin-top: .25rem;
-  grid-row: 2;
   .reset-link {
     @extend %link;
   }
@@ -169,14 +168,80 @@ form.ngs-options-form {
   @extend %textarea;
   display: block;
   width: 100%;
-  height: 5em;
+  height: 4em;
   resize: none;
   margin-top: .5rem;
 }
 
+.fieldrow > .fieldlabel.primer-sequence-label {
+  display: grid;
+  grid-row: auto;
+  grid-template-columns: 1fr 1fr;
+  column-gap: .5rem;
+
+  > *:first-child {
+    grid-column: 1 / span 2;
+  }
+
+  input.name-input {
+    @extend %inline-input;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: .5rem;
+  }
+}
+
+.fieldrow > .fieldinput.primer-sequence-input {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr 6rem;
+
+  > .sequence-textarea {
+    margin-top: 0;
+    height: 100%;
+    width: calc(100% - .5rem);
+    grid-row: auto / span 3;
+  }
+
+  .switch-radio {
+    font-size: .8rem;
+    align-self: center;
+    > label {
+      margin-right: 0;
+    }
+  }
+
+}
+
+.fieldrow > .fieldinput.primer-sequence-buttons {
+  text-align: right;
+  > button:not(:last-child) {
+    margin-right: .5rem;
+  }
+}
+
+.fieldrow > .fielddesc.primer-sequence-options {
+
+  .primer-sequence-option-label {
+    margin-right: .5rem;
+  }
+  
+  .primer-sequence-radio-option {
+    > label {
+      margin-right: .5rem;
+    }
+  }
+}
+
+ul.fielderrors {
+  padding-left: 1.5rem;
+  color: color(type-error);
+}
+
 .fieldrow {
   display: grid;
-  grid-template-columns: minmax(11.5vw, 11.5rem) 1fr;
+  grid-template-columns: minmax(8vw, 8rem) 1fr;
   grid-template-rows: max-content 1fr;
   align-items: start;
 
@@ -190,19 +255,15 @@ form.ngs-options-form {
     display: block;
     margin-top: .5rem;
     padding-right: 1rem;
-    grid-column-start: 1;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 3;
+    grid-column: 1;
+    grid-row: auto / span 2;
   }
 
   > .fieldinput {
     margin-top: .5rem;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    .flag-switch-radio > label {
+    grid-column: 2;
+    grid-row: auto;
+    .switch-radio > label {
       margin-top: 0;
       margin-bottom: 0;
     }
@@ -215,10 +276,8 @@ form.ngs-options-form {
   > .fielddesc {
     margin-top: .25rem;
     font-size: .85rem;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 3;
+    grid-column: 2;
+    grid-row: auto;
   }
 
 }
