@@ -42,6 +42,14 @@ export default function useValidation(primers) {
           </>);
         }
 
+        if (bareSeq.length > 200) {
+          newErrors.push(<>
+            primer sequence is too
+            long: <strong>{bareSeq.slice(0, 180)}</strong>... (
+            <em>{header}</em>).
+          </>);
+        }
+
         if (type === 'three-end' && /^[X^]/.test(bareSeq)) {
           newErrors.push(<>
             A 3’ end primer can not be anchored or placed at 5’ end.  Remove

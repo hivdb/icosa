@@ -258,7 +258,7 @@ export default function NGSOptionsForm({
         </FlagSwitch>
         <NumberRangeInput
          name="cutadaptConfig.times"
-         label="Max # matches"
+         label="Max # matched primers"
          value={times}
          defaultValue={defaultCutadaptConfig.times}
          onChange={onChange}
@@ -277,7 +277,7 @@ export default function NGSOptionsForm({
          defaultValue={defaultCutadaptConfig.minOverlap}
          onChange={onChange}
          min={3}
-         max={50}
+         max={200}
          step={1}>
           Set the <ExtLink href={
             "https://cutadapt.readthedocs.io/en/v4.1/guide.html#minimum-overlap"
