@@ -36,6 +36,11 @@ export default function NumberRangeInput({
   disabled,
   children
 }) {
+  const handleSelectAll = React.useCallback(
+    event => event.currentTarget.select(),
+    []
+  );
+
   const handleChange = React.useCallback(
     event => onChange(
       name,
@@ -94,6 +99,7 @@ export default function NumberRangeInput({
          max={max}
          step={step}
          value={value}
+         onClick={handleSelectAll}
          onChange={handleChange} />
       </div>
       {children ?

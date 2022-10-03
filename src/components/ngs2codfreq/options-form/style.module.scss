@@ -25,6 +25,10 @@ form.ngs-options-form {
   margin-right: .5rem;
 }
 
+.scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+}
 
 .fieldinput-number-range {
   display: grid;
@@ -36,6 +40,7 @@ form.ngs-options-form {
     width: 100%;
     padding-right: 0.5em;
     box-sizing: border-box;
+    background-color: transparent;
     -webkit-appearance: none;
   
     @mixin thumb() {
@@ -169,6 +174,19 @@ form.ngs-options-form {
   }
 }
 
+input.number-input {
+  @extend %inline-input;
+  -moz-appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .sequence-textarea {
   @extend %textarea;
   display: block;
@@ -219,10 +237,38 @@ form.ngs-options-form {
 
 }
 
+.fieldrow > .fieldinput.primer-bed-input {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr 2rem 1fr;
+
+  .tilde {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  pre.sequence-preview {
+    color: rgba(0, 0, 0, .4);
+    grid-column: 1 / span 3;
+    white-space: pre-wrap;
+    max-width: 100%;
+    overflow: auto;
+    height: max-content;
+    padding-bottom: .15rem;
+    margin: .5rem 0 0;
+    .hl-primer-seq {
+      color: black;
+      background-color: color(type-highlight);
+    }
+  }
+
+  .primer-strand-options {
+    grid-column: 1 / span 3;
+  }
+}
+
 .fieldrow.primer-sequence-row {
   background-color: rgba(0, 0, 0, .05);
-  margin-left: -.5rem;
-  margin-right: -.5rem;
   padding-left: .5rem;
   padding-right: .5rem;
   &[data-dirty="true"] {

@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import ConfigContext from '../../../../utils/config-context';
+import {useCMS} from '../../../../utils/cms';
 
 import Button from '../../../button';
 import FileInput from '../../../file-input';
-import {primerSeqShape} from '../prop-types';
+import InlineLoader from '../../../inline-loader';
+import {primerBedShape} from '../prop-types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
 
@@ -13,20 +16,21 @@ import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
-PrimerSequenceInput.propTypes = {
+PrimerLocationInput.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.arrayOf(
-    primerSeqShape.isRequired
+    primerBedShape.isRequired
   ).isRequired,
   onChange: PropTypes.func.isRequired
 };
 
 
-export default function PrimerSequenceInput({
+export default function PrimerLocationInput({
   name,
   value,
   onChange
 }) {
+  const [config] = ConfigContext.use();
   const mounted = React.useRef(false);
   const [autoIncr, setAutoIncr] = React.useState(
     value.length > 0 ? Math.max(
@@ -34,7 +38,6 @@ export default function PrimerSequenceInput({
     ) + 1 : 0
   );
   const [pendingItems, setPendingItems] = React.useState([]);
-  const errors = useValidation(value);
 
   React.useEffect(
     () => {
@@ -43,6 +46,19 @@ export default function PrimerSequenceInput({
     },
     []
   );
+
+  const [
+    refSequenceText,
+    isRefSeqPending
+  ] = useCMS(config.refSequencePath, config);
+
+  const refSequence = React.useMemo(
+    () => isRefSeqPending ?
+      null : parseFasta(refSequenceText, 'ref')[0].sequence,
+    [refSequenceText, isRefSeqPending]
+  );
+
+  const errors = useValidation(value, refSequence);
 
   const handleChange = React.useCallback(
     (item, isNew, isRemove = false) => {
@@ -94,14 +110,17 @@ export default function PrimerSequenceInput({
     () => {
       const newPendingItems = [...pendingItems, {
         idx: autoIncr,
-        header: `Primer-${autoIncr + 1}`,
-        sequence: '',
-        type: 'both-end'
+        region: config.refSequenceName || '<Unknown>',
+        start: -1,
+        end: -1,
+        name: `Primer-${autoIncr + 1}`,
+        score: 60,
+        strand: '+'
       }];
       setAutoIncr(autoIncr + 1);
       setPendingItems(newPendingItems);
     },
-    [pendingItems, autoIncr]
+    [pendingItems, autoIncr, config.refSequenceName]
   );
 
   const handleUpload = React.useCallback(
@@ -115,14 +134,21 @@ export default function PrimerSequenceInput({
         ) {
           continue;
         }
-        const rawFasta = await readFile(file);
-        for (const {header, sequence} of parseFasta(rawFasta, file.name)) {
-          newItems.push({
-            idx: newAutoIncr ++,
-            header,
-            sequence,
-            type: 'both-end'
-          });
+        const rawBed = await readFile(file);
+        for (const row of rawBed.split(/[\r\n]+/g)) {
+          const [, start, end, name,, strand] = row.split('\t');
+          if (!isNaN(start) && !isNaN(end)) {
+            newItems.push({
+              idx: newAutoIncr ++,
+              region: config.refSequenceName || '<Unknown>',
+              start: Number.parseInt(start),
+              end: Number.parseInt(end),
+              name: name || `Primer-${autoIncr + 1}`,
+              score: 60,
+              // drop invalid strand
+              strand: strand === '+' || strand === '-' ? strand : '+'
+            });
+          }
         }
       }
 
@@ -132,7 +158,7 @@ export default function PrimerSequenceInput({
       onChange(name, [...value, ...newItems]);
       setAutoIncr(newAutoIncr);
     },
-    [onChange, autoIncr, name, value]
+    [autoIncr, onChange, name, value, config.refSequenceName]
   );
 
   return <div className={style['scroll']}>
@@ -142,9 +168,10 @@ export default function PrimerSequenceInput({
     {value.map(
       item => (
         <ItemInput
-         key={`primer-sequence-${item.idx}`}
+         key={`primer-bed-${item.idx}`}
          name={name}
          value={item}
+         refSequence={refSequence}
          onChange={handleChange} />
       )
     )}
@@ -152,40 +179,43 @@ export default function PrimerSequenceInput({
       item => (
         <ItemInput
          isNew
-         key={`primer-sequence-${item.idx}`}
+         key={`primer-bed-${item.idx}`}
          name={name}
          value={item}
+         refSequence={refSequence}
          onChange={handleChange} />
       )
     )}
-    <div className={style['fieldrow']}>
-      <div className={style['fieldlabel']} />
-      <div className={classNames(
-        style['fieldinput'],
-        style['primer-sequence-buttons']
-      )}>
-        <FileInput
-         multiple
-         hideSelected
-         btnStyle="info"
-         accept=".fasta,.fas,.fa,.txt,.gz"
-         onChange={handleUpload}>
-          Upload FASTA
-        </FileInput>
-        <span className={style.or}> or </span>
-        <Button
-         btnStyle="primary"
-         onClick={handleAddNew}>
-          {value.length + pendingItems.length === 0 ?
-            'Add one primer' : 'Add more primer'}
-        </Button>
-        <Button
-         disabled={value.length + pendingItems.length === 0}
-         btnStyle="light"
-         onClick={handleReset}>
-          Reset
-        </Button>
-      </div>
-    </div>
+    {isRefSeqPending ?
+      <InlineLoader /> :
+      <div className={style['fieldrow']}>
+        <div className={style['fieldlabel']} />
+        <div className={classNames(
+          style['fieldinput'],
+          style['primer-sequence-buttons']
+        )}>
+          <FileInput
+           multiple
+           hideSelected
+           btnStyle="info"
+           accept=".bed,.gz"
+           onChange={handleUpload}>
+            Upload BED
+          </FileInput>
+          <span className={style.or}> or </span>
+          <Button
+           btnStyle="primary"
+           onClick={handleAddNew}>
+            {value.length + pendingItems.length === 0 ?
+              'Add one primer' : 'Add more primer'}
+          </Button>
+          <Button
+           disabled={value.length + pendingItems.length === 0}
+           btnStyle="light"
+           onClick={handleReset}>
+            Reset
+          </Button>
+        </div>
+      </div>}
   </div>;
 }

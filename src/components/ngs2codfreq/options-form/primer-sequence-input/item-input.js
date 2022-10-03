@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import ExtLink from '../../../link/external';
 import {HoverPopup} from '../../../popup';
 import Button from '../../../button';
 import RadioInput from '../../../radio-input';
@@ -10,102 +9,9 @@ import RadioInput from '../../../radio-input';
 import {primerSeqShape} from '../prop-types';
 import style from '../style.module.scss';
 
-
-function useEndsType(sequence, setSequence) {
-  const threeEndType = React.useMemo(
-    () => {
-      const [seq] = sequence.split(';', 1);
-      if (seq.length > 1) {
-        if (seq.endsWith('X')) {
-          return 'non-internal';
-        }
-        if (seq.endsWith('$')) {
-          return 'anchored';
-        }
-      }
-      return 'regular';
-    },
-    [sequence]
-  );
-
-  const fiveEndType = React.useMemo(
-    () => {
-      if (sequence.length > 1) {
-        if (sequence.startsWith('X')) {
-          return 'non-internal';
-        }
-        if (sequence.startsWith('^')) {
-          return 'anchored';
-        }
-      }
-      return 'regular';
-    },
-    [sequence]
-  );
-
-  const setThreeEndType = React.useCallback(
-    event => {
-      const type = event.currentTarget.value;
-      const [seq, ...seqopts] = sequence.split(';');
-      const bareSeq = seq.replace(/[X$]$/, '');
-      if (type === 'regular') {
-        setSequence([bareSeq, ...seqopts].join(';'));
-      }
-      else if (type === 'anchored') {
-        setSequence([bareSeq + '$', ...seqopts].join(';'));
-      }
-      else if (type === 'non-internal') {
-        setSequence([bareSeq + 'X', ...seqopts].join(';'));
-      }
-    },
-    [setSequence, sequence]
-  );
-
-  const setFiveEndType = React.useCallback(
-    event => {
-      const type = event.currentTarget.value;
-      const bareSeq = sequence.replace(/^[X^]/, '');
-      if (type === 'regular') {
-        setSequence(bareSeq);
-      }
-      else if (type === 'anchored') {
-        setSequence('^' + bareSeq);
-      }
-      else if (type === 'non-internal') {
-        setSequence('X' + bareSeq);
-      }
-    },
-    [setSequence, sequence]
-  );
-
-  return {
-    threeEndType,
-    setThreeEndType,
-    fiveEndType,
-    setFiveEndType
-  };
-}
-
-
-HelpLink.propTypes = {
-  option: PropTypes.string.isRequired,
-  anchor: PropTypes.string.isRequired
-};
-
-function HelpLink({option, anchor}) {
-  return <>
-    Cutadapt option "{option}".
-    <br />
-    Check {' '}
-    <ExtLink
-     href={
-       "https://cutadapt.readthedocs.io/en/v4.1/guide.html" +
-       anchor
-     }>
-      the documentation
-    </ExtLink> for more information.
-  </>;
-}
+import useEndsType from './use-ends-type';
+import HeaderInput from './item-header-input';
+import HelpLink from './help-link';
 
 
 PrimerSeqItemInput.propTypes = {
@@ -157,11 +63,6 @@ export default function PrimerSeqItemInput({
     setFiveEndType
   } = useEndsType(unsavedSeq, setUnsavedSeq);
 
-  const handleHeaderChange = React.useCallback(
-    event => setUnsavedHeader(event.currentTarget.value),
-    []
-  );
-
   const handleSeqChange = React.useCallback(
     event => setUnsavedSeq(event.currentTarget.value),
     []
@@ -206,22 +107,10 @@ export default function PrimerSeqItemInput({
       style['fieldlabel'],
       style['primer-sequence-label']
     )}>
-      <HoverPopup
-       noUnderline
-       delay={724}
-       position="left"
-       message={<>
-         Primer header (optional)
-       </>}>
-        <input
-         type="text"
-         id={`${name}-${idx}-name`}
-         name={`${name}-${idx}-name`}
-         className={style['name-input']}
-         value={unsavedHeader}
-         placeholder="Header"
-         onChange={handleHeaderChange} />
-      </HoverPopup>
+      <HeaderInput
+       name={`${name}-${idx}-name`}
+       header={unsavedHeader}
+       setHeader={setUnsavedHeader} />
       {isNew || dirty ?
         <Button
          className={style['btn-save-item']}
@@ -261,7 +150,6 @@ export default function PrimerSeqItemInput({
        onChange={handleSeqChange} />
       <HoverPopup
        position="left"
-       delay={724}
        message={<HelpLink option="-b" anchor="#or-3-adapters" />}>
         <RadioInput
          id={`${name}-${idx}-both-end`}
@@ -275,7 +163,6 @@ export default function PrimerSeqItemInput({
       </HoverPopup>
       <HoverPopup
        position="left"
-       delay={724}
        message={<HelpLink option="-g" anchor="#id4" />}>
         <RadioInput
          disabled={threeEndType !== 'regular'}
@@ -290,7 +177,6 @@ export default function PrimerSeqItemInput({
       </HoverPopup>
       <HoverPopup
        position="left"
-       delay={724}
        message={<HelpLink option="-a" anchor="#id3" />}>
         <RadioInput
          disabled={fiveEndType !== 'regular'}
@@ -317,8 +203,8 @@ export default function PrimerSeqItemInput({
         {['regular', 'anchored', 'non-internal'].map(
           trimmingType => (
             <HoverPopup
+             key={`three-end-${trimmingType}`}
              position="bottom"
-             delay={724}
              message={(
                <HelpLink
                 option={'-a' + {
@@ -334,7 +220,6 @@ export default function PrimerSeqItemInput({
                />
             )}>
               <RadioInput
-               key={`three-end-${trimmingType}`}
                disabled={unsavedSeq.length < 2 || unsavedType === 'five-end'}
                id={`${name}-${idx}-three-end-type-${trimmingType}`}
                name={`${name}-${idx}-three-end-type`}
@@ -357,8 +242,8 @@ export default function PrimerSeqItemInput({
         {['regular', 'anchored', 'non-internal'].map(
           trimmingType => (
             <HoverPopup
+             key={`five-end-${trimmingType}`}
              position="bottom"
-             delay={724}
              message={(
                <HelpLink
                 option={'-g' + {
@@ -374,7 +259,6 @@ export default function PrimerSeqItemInput({
                />
             )}>
               <RadioInput
-               key={`five-end-${trimmingType}`}
                disabled={unsavedSeq.length < 2 || unsavedType === 'three-end'}
                id={`${name}-${idx}-five-end-type-${trimmingType}`}
                name={`${name}-${idx}-five-end-type`}

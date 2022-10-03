@@ -16,6 +16,7 @@ import FlagSwitch from './flag-switch';
 import NumberRangeInput from './number-range-input';
 import AdapterInput from './adapter-input';
 import PrimerSequenceInput from './primer-sequence-input';
+import PrimerLocationInput from './primer-location-input';
 
 const ADAPTER_TRIMMING_VALUES = [false, true];
 const ADAPTER_TRIMMING_TEXTS = ['Yes', 'No'];
@@ -77,6 +78,9 @@ export default function NGSOptionsForm({
     noIndels,
     times,
     minOverlap
+  },
+  ivarConfig: {
+    primerBeds
   },
   primerType,
   onChange
@@ -283,6 +287,12 @@ export default function NGSOptionsForm({
             "https://cutadapt.readthedocs.io/en/v4.1/guide.html#minimum-overlap"
           }>minimum</ExtLink> overlap to given length. Default is 3.
         </NumberRangeInput>
+      </> : null}
+      {primerType === 'bed' ? <>
+        <PrimerLocationInput
+         name="ivarConfig.primerBeds"
+         value={primerBeds}
+         onChange={onChange} />
       </> : null}
     </fieldset>
     <fieldset>

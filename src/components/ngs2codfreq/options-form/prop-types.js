@@ -58,25 +58,25 @@ const defaultCutadaptConfig = {
   minOverlap: 3
 };
 
+const primerBedShape = PropTypes.shape({
+  idx: PropTypes.number.isRequired,
+  region: PropTypes.string.isRequired, // not used by ivar
+  start: PropTypes.number.isRequired,
+  end: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  score: PropTypes.number.isRequired, // not used by ivar
+  strand: PropTypes.oneOf(['+', '-']).isRequired
+});
 
 const ivarConfigShape = PropTypes.shape({
-  primersBed: PropTypes.arrayOf(
-    PropTypes.shape({
-      chrom: PropTypes.string.isRequired,
-      chromStart: PropTypes.number.isRequired,
-      chromEnd: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      score: PropTypes.number.isRequired,
-      strand: PropTypes.oneOf(['+', '-']).isRequired
-    }).isRequired
-  ).isRequired,
+  primerBeds: PropTypes.arrayOf(primerBedShape.isRequired).isRequired,
   minLength: PropTypes.number.isRequired,
   minQuality: PropTypes.number.isRequired,
   includeReadsWithNoPrimers: PropTypes.bool.isRequired
 });
 
 const defaultIvarConfig = {
-  primersBed: [],
+  primerBeds: [],
   minLength: 0, // ivar should only perform primer trimming
   minQuality: 0, //
   includeReadsWithNoPrimers: true
@@ -89,6 +89,7 @@ export {
   primerSeqShape,
   cutadaptConfigShape,
   defaultCutadaptConfig,
+  primerBedShape,
   ivarConfigShape,
   defaultIvarConfig
 };
