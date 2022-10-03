@@ -352,6 +352,13 @@ ul.fielderrors {
     font-size: .85rem;
     grid-column: 2;
     grid-row: auto;
+
+    p:first-child {
+      margin-top: 0;
+    }
+    p:last-child {
+      margin-bottom: 0;
+    }
   }
 
 }

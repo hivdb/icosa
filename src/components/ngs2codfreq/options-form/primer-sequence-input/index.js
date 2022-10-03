@@ -13,6 +13,17 @@ import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
+function detectHeaderType(header) {
+  if (/forward|left|fwd|5-?end/i.test(header)) {
+    return 'five-end';
+  }
+  else if (/backward|reverse|right|bwd|rev|rvs|3-?end/i.test(header)) {
+    return 'three-end';
+  }
+  return 'both-end';
+}
+
+
 PrimerSequenceInput.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.arrayOf(
@@ -121,7 +132,7 @@ export default function PrimerSequenceInput({
             idx: newAutoIncr ++,
             header,
             sequence,
-            type: 'both-end'
+            type: detectHeaderType(header)
           });
         }
       }

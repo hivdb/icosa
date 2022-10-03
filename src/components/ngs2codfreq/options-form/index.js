@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import ConfigContext from '../../../utils/config-context';
+import useMessages from '../../../utils/use-messages';
 import ExtLink from '../../link/external';
+import Markdown from '../../markdown';
 import {
   fastpConfigShape,
   defaultFastpConfig,
@@ -98,6 +101,11 @@ export default function NGSOptionsForm({
   onChange
 }) {
   const mounted = React.useRef(false);
+  const [config] = ConfigContext.use();
+  const [fastaDesc, bedDesc] = useMessages([
+    'ngs2codfreq-primer-fasta-input-desc',
+    'ngs2codfreq-primer-bed-input-desc'
+  ], config?.messages);
 
   React.useEffect(
     () => {
@@ -140,6 +148,23 @@ export default function NGSOptionsForm({
     [onChange]
   );
 
+  const handleReset = React.useCallback(
+    () => {
+      if (window.confirm(
+        "You are about to reset all settings. " +
+        "This operation is irreversible if you don't have a local backup. " +
+        "Please confirm to proceed."
+      )) {
+        onChange('.', {
+          fastpConfig: {...defaultFastpConfig},
+          cutadaptConfig: {...defaultCutadaptConfig},
+          ivarConfig: {...defaultIvarConfig}
+        });
+      }
+    },
+    [onChange]
+  );
+
   return <form className={style['ngs-options-form']}>
     <fieldset>
       <div className={style['fieldrow']}>
@@ -161,13 +186,19 @@ export default function NGSOptionsForm({
            btnStyle="info"
            accept=".cdfjson"
            onChange={handleUpload}>
-            Upload Settings
+            Upload
           </FileInput>
           <span className={style['or']}>or</span>
           <Button
            btnStyle="primary"
            onClick={handleDownload}>
             Download settings
+          </Button>
+          {'\xa0\xa0\xa0'}
+          <Button
+           btnStyle="light"
+           onClick={handleReset}>
+            Reset all
           </Button>
         </div>
       </div>
@@ -304,16 +335,24 @@ export default function NGSOptionsForm({
        valueChoices={PRIMER_TYPE_VALUES}
        textChoices={PRIMER_TYPE_TEXTS}
        onChange={onChange}>
-        Method to trim primers. Program{' '}
-        <ExtLink
-         href="https://cutadapt.readthedocs.io/en/stable/index.html">
-          Cutadapt
-        </ExtLink> will be used if "sequence (FASTA)" primers are provided.
-        Another program{' '}
-        <ExtLink
-         href="https://andersen-lab.github.io/ivar/html/index.html">
-          iVar
-        </ExtLink> will be used if "location (BED)" primers are provided.
+        <p>
+          Method to trim primers. Program{' '}
+          <ExtLink
+           href="https://cutadapt.readthedocs.io/en/stable/index.html">
+            Cutadapt
+          </ExtLink> will be used if "sequence (FASTA)" primers are provided.
+          Another program{' '}
+          <ExtLink
+           href="https://andersen-lab.github.io/ivar/html/index.html">
+            iVar
+          </ExtLink> will be used if "location (BED)" primers are provided.
+        </p>
+        <div>
+          {primerType === 'fasta' ?
+            <Markdown inline>{fastaDesc}</Markdown> : null}
+          {primerType === 'bed' ?
+            <Markdown inline>{bedDesc}</Markdown> : null}
+        </div>
       </FlagSwitch>
       {primerType === 'fasta' ? <>
         <PrimerSequenceInput

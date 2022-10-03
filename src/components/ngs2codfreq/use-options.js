@@ -5,13 +5,21 @@ import {
   defaultCutadaptConfig,
   defaultIvarConfig
 } from './options-form/prop-types';
+import createPersistedState from 'use-persisted-state/src';
+
+const usePersistedOptions = createPersistedState(
+  '--ngs2codfreq-persisted-settings'
+);
 
 
 export default function useOptions() {
+  const [persistedOptions, setPersistedOptions] = usePersistedOptions({});
   const [options, setOptions] = React.useState({
     fastpConfig: {...defaultFastpConfig},
     cutadaptConfig: {...defaultCutadaptConfig},
-    ivarConfig: {...defaultIvarConfig}
+    ivarConfig: {...defaultIvarConfig},
+    saveInBrowser: true,
+    ...persistedOptions
   });
 
   const onChange = React.useCallback(
@@ -23,9 +31,17 @@ export default function useOptions() {
       else {
         set(newOptions, key, value);
       }
+      if (newOptions.saveInBrowser) {
+        setPersistedOptions(newOptions);
+      }
+      else {
+        setPersistedOptions({
+          saveInBrowser: false
+        });
+      }
       setOptions(newOptions);
     },
-    [options]
+    [options, setPersistedOptions]
   );
 
   return [options, onChange];
