@@ -53,8 +53,8 @@ export default function PrimerLocationInput({
   ] = useCMS(config.refSequencePath, config);
 
   const refSequence = React.useMemo(
-    () => isRefSeqPending ?
-      null : parseFasta(refSequenceText, 'ref')[0].sequence,
+    () => !isRefSeqPending && refSequenceText ?
+      parseFasta(refSequenceText, 'ref')[0].sequence : null,
     [refSequenceText, isRefSeqPending]
   );
 

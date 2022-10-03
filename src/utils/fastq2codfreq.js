@@ -15,10 +15,12 @@ function handleResponseError(e) {
 }
 
 
-async function createTask() {
+async function createTask(options) {
   let resp;
   try {
-    resp = await axios.post(`${API_SERVER}/create-task`);
+    resp = await axios.post(`${API_SERVER}/create-task`, {
+      options
+    });
   } catch (e) {
     handleResponseError(e);
   }
@@ -151,6 +153,30 @@ async function * fetchRunnerProgress(taskKey) {
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
     switch (op) {
+      case 'preprocess': {
+        const {status, query} = event;
+        let qname = query.split('/');
+        qname = qname[qname.length - 1];
+        yield {
+          step: `preprocess-${ecsTaskId}-${qname}`,
+          description: `Pre-processing ${qname} using fastp...`,
+          count: status === 'working' ? 0 : 1,
+          total: 1
+        };
+        break;
+      }
+      case 'trim': {
+        const {status, command, query} = event;
+        let qname = query.split('/');
+        qname = qname[qname.length - 1];
+        yield {
+          step: `trim-${ecsTaskId}-${qname}`,
+          description: `Trimming primer(s) of ${qname} using ${command}...`,
+          count: status === 'working' ? 0 : 1,
+          total: 1
+        };
+        break;
+      }
       case 'alignment': {
         const {status, query, target} = event;
         let qname = query.split('/');
@@ -396,8 +422,8 @@ export async function * restoreTask(taskKey) {
 }
 
 
-export default async function * fastq2codfreq(filePairs, runners) {
-  const {taskKey} = await createTask();
+export default async function * fastq2codfreq(filePairs, runners, options) {
+  const {taskKey} = await createTask(options);
   let loaded = false;
   yield {
     loaded,

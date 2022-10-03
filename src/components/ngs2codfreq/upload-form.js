@@ -6,6 +6,7 @@ import Dropzone from 'react-dropzone';
 
 import ConfigContext from '../../utils/config-context';
 
+import Link from '../link';
 import InlineLoader from '../inline-loader';
 
 import {identifyPairs} from './fastq-pairs';
@@ -18,11 +19,18 @@ const SUPPORT_FORMATS = {
 };
 
 NGSUploadForm.propTypes = {
+  isOptionsDefault: PropTypes.bool.isRequired,
+  showOptionsForm: PropTypes.bool.isRequired,
   className: PropTypes.string,
   onSubmit: PropTypes.func
 };
 
-export default function NGSUploadForm({className, onSubmit}) {
+export default function NGSUploadForm({
+  isOptionsDefault,
+  showOptionsForm,
+  className,
+  onSubmit
+}) {
 
   const [config, isConfigPending] = ConfigContext.use();
   const [fastqPairs, setFastqPairs] = React.useState([]);
@@ -89,6 +97,10 @@ export default function NGSUploadForm({className, onSubmit}) {
     return <InlineLoader />;
   }
 
+  const ngs2codfreqPath = (
+    window.location.pathname.replace(/[^/]+\/?$/, 'ngs2codfreq/')
+  );
+
   return (
     <form
      data-num-pairs={fastqPairs.length}
@@ -129,6 +141,22 @@ export default function NGSUploadForm({className, onSubmit}) {
           </div>
         </>}
       </Dropzone>
+      {showOptionsForm ? null : (
+        <div className={classNames(
+          style['options-detail'],
+          className ? `${className}__options-detail` : null
+        )}>
+          {isOptionsDefault ? <>
+            Default filter/trimming options will be applied.
+          </> : <>
+            Browser stored filter/trimming options will be applied.
+          </>}
+          <br />
+          <Link to={ngs2codfreqPath}>
+            Click here
+          </Link>{' '}to view and edit all the settings.
+        </div>
+      )}
       <PreviewFiles
        fastqPairs={fastqPairs}
        onChange={setFastqPairs}

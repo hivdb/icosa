@@ -42,6 +42,8 @@ label.input-label {
   --result-desc-v-padding: .25rem;
   --result-desc-h-padding: 1rem;
 
+  position: relative;
+
   .button-group {
     margin-top: 1rem;
     position: relative;
@@ -127,6 +129,14 @@ label.input-label {
       color: white;
       border-color: white;
     }
+  }
+
+  .options-detail {
+    position: absolute;
+    bottom: .5rem;
+    left: .5rem;
+    right: .5rem;
+    text-align: right;
   }
   
   ul.preview-files {

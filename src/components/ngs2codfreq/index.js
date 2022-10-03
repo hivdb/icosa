@@ -57,7 +57,7 @@ export default function NGS2CodFreq({
 
   const [, forceUpdate] = React.useReducer(n => n + 1, 0);
   const {current: progressLookup} = React.useRef({});
-  const [options, setOptions] = useOptions();
+  const [options, setOptions, isOptionsDefault] = useOptions();
 
   React.useEffect(
     () => {
@@ -88,7 +88,21 @@ export default function NGS2CodFreq({
   const handleSubmit = React.useCallback(
     async fastqPairs => {
       if (fastqPairs.length > 0) {
-        for await (const progress of fastq2codfreq(fastqPairs, runners)) {
+        const {fastpConfig, cutadaptConfig, ivarConfig, primerType} = options;
+        const requestOptions = {fastpConfig};
+        if (primerType === 'fasta') {
+          requestOptions.cutadaptConfig = cutadaptConfig;
+        }
+        else if (primerType === 'bed') {
+          requestOptions.ivarConfig = ivarConfig;
+        }
+        for await (
+          const progress of fastq2codfreq(
+            fastqPairs,
+            runners,
+            requestOptions
+          )
+        ) {
           const shouldBreak = updateProgress({
             progress,
             progressLookup,
@@ -102,7 +116,7 @@ export default function NGS2CodFreq({
         }
       }
     },
-    [forceUpdate, onTriggerRunner, onLoad, progressLookup, runners]
+    [options, forceUpdate, onTriggerRunner, onLoad, progressLookup, runners]
   );
 
   if (progressLookup['create-task']) {
@@ -117,11 +131,14 @@ export default function NGS2CodFreq({
   else {
     return <>
       <UploadForm
+       isOptionsDefault={isOptionsDefault}
+       showOptionsForm={showOptionsForm}
        className={className}
        onSubmit={handleSubmit} />
       {showOptionsForm ?
         <OptionsForm
          {...options}
+         isDefault={isOptionsDefault}
          onChange={setOptions} /> : null}
     </>;
   }

@@ -3,6 +3,8 @@
 
 form.ngs-options-form {
   fieldset {
+    margin-left: 0;
+    margin-right: 0;
     border: 1px solid color(dividing-line);
     padding: 1rem 1.5rem;
     &:not(:last-child) {

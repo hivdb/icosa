@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import pluralize from 'pluralize';
 
 import ConfigContext from '../../../utils/config-context';
 import useMessages from '../../../utils/use-messages';
@@ -50,6 +51,7 @@ const INCLUDE_UNMERGED_TEXTS = ['Include', 'Exclude'];
 
 
 NGSOptionsForm.propTypes = {
+  isDefault: PropTypes.bool.isRequired,
   fastpConfig: fastpConfigShape.isRequired,
   cutadaptConfig: cutadaptConfigShape.isRequired,
   ivarConfig: ivarConfigShape.isRequired,
@@ -68,6 +70,7 @@ NGSOptionsForm.defaultProps = {
 
 
 export default function NGSOptionsForm({
+  isDefault,
   fastpConfig,
   cutadaptConfig,
   ivarConfig,
@@ -158,7 +161,8 @@ export default function NGSOptionsForm({
         onChange('.', {
           fastpConfig: {...defaultFastpConfig},
           cutadaptConfig: {...defaultCutadaptConfig},
-          ivarConfig: {...defaultIvarConfig}
+          ivarConfig: {...defaultIvarConfig},
+          primerType: 'off'
         });
       }
     },
@@ -178,6 +182,14 @@ export default function NGSOptionsForm({
             Save below settings in my browser for future use
           </CheckboxInput>
         </div>
+        <div className={classNames(style['pull-right'], style['fielddesc'])}>
+          {isDefault ? <>
+            Current settings are the default settings.
+          </> : <>
+            Current settings are <strong>not</strong> the default settings.
+            Use "reset all" to restore to default.
+          </>}
+        </div>
       </div>
       <div className={style['fieldrow']}>
         <div className={classNames(style['pull-right'], style['fieldinput'])}>
@@ -186,13 +198,13 @@ export default function NGSOptionsForm({
            btnStyle="info"
            accept=".cdfjson"
            onChange={handleUpload}>
-            Upload
+            Open settings
           </FileInput>
           <span className={style['or']}>or</span>
           <Button
            btnStyle="primary"
            onClick={handleDownload}>
-            Download settings
+            Save settings
           </Button>
           {'\xa0\xa0\xa0'}
           <Button
@@ -336,22 +348,43 @@ export default function NGSOptionsForm({
        textChoices={PRIMER_TYPE_TEXTS}
        onChange={onChange}>
         <p>
-          Method to trim primers. Program{' '}
+          Method for trimming primers.{' '}
           <ExtLink
            href="https://cutadapt.readthedocs.io/en/stable/index.html">
             Cutadapt
-          </ExtLink> will be used if "sequence (FASTA)" primers are provided.
-          Another program{' '}
+          </ExtLink> is used if "sequence (FASTA)" primers are provided.
+          {' '}
           <ExtLink
            href="https://andersen-lab.github.io/ivar/html/index.html">
             iVar
-          </ExtLink> will be used if "location (BED)" primers are provided.
+          </ExtLink> is used if "location (BED)" primers are provided.
         </p>
         <div>
-          {primerType === 'fasta' ?
-            <Markdown inline>{fastaDesc}</Markdown> : null}
-          {primerType === 'bed' ?
-            <Markdown inline>{bedDesc}</Markdown> : null}
+          {primerType === 'fasta' ? <>
+            <Markdown inline>{fastaDesc}</Markdown>
+            <p><em>
+              {primerSeqs.length.toLocaleString('en-US')}{' '}
+              {pluralize('primer sequence', primerSeqs.length, false)}{' '}
+              {pluralize('is', primerSeqs.length, false)}{' '}
+              uploaded/entered. {primerSeqs.length > 3 ? <>
+                Scroll up/down to view them all.
+              </> : null}
+            </em></p>
+          </> : null}
+          {primerType === 'bed' ? <>
+            <Markdown inline>{bedDesc}</Markdown>
+            <p><em>
+              {primerBeds.length.toLocaleString('en-US')}{' '}
+              {pluralize('primer location', primerBeds.length, false)}{' '}
+              {pluralize('is', primerBeds.length, false)}{' '}
+              uploaded/entered. {primerBeds.length > 3 ? <>
+                Scroll up/down to view them all.
+              </> : null}
+            </em></p>
+          </> : null}
+          {primerType === 'off' ? <p>
+            Primer trimming is turned off since the "off" option is selected.
+          </p> : null}
         </div>
       </FlagSwitch>
       {primerType === 'fasta' ? <>

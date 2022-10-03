@@ -1,5 +1,6 @@
 import React from 'react';
 import set from 'lodash/set';
+import isEqual from 'lodash/isEqual';
 import {
   defaultFastpConfig,
   defaultCutadaptConfig,
@@ -19,6 +20,7 @@ export default function useOptions() {
     cutadaptConfig: {...defaultCutadaptConfig},
     ivarConfig: {...defaultIvarConfig},
     saveInBrowser: true,
+    primerType: 'off',
     ...persistedOptions
   });
 
@@ -44,5 +46,23 @@ export default function useOptions() {
     [options, setPersistedOptions]
   );
 
-  return [options, onChange];
+  const isDefault = React.useMemo(
+    () => {
+      const {
+        fastpConfig,
+        cutadaptConfig,
+        ivarConfig,
+        primerType
+      } = options;
+      return (
+        isEqual(fastpConfig, defaultFastpConfig) &&
+        isEqual(cutadaptConfig, defaultCutadaptConfig) &&
+        isEqual(ivarConfig, defaultIvarConfig) &&
+        primerType === 'off'
+      );
+    },
+    [options]
+  );
+
+  return [options, onChange, isDefault];
 }
