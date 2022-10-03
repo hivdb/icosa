@@ -165,6 +165,7 @@ export default function PrimerSequenceInput({
         style['primer-sequence-buttons']
       )}>
         <FileInput
+         name="upload-primer-fasta"
          multiple
          hideSelected
          btnStyle="info"
@@ -174,12 +175,14 @@ export default function PrimerSequenceInput({
         </FileInput>
         <span className={style.or}> or </span>
         <Button
+         name="add-new-primer-seq"
          btnStyle="primary"
          onClick={handleAddNew}>
           {value.length + pendingItems.length === 0 ?
             'Add one primer' : 'Add more primer'}
         </Button>
         <Button
+         name="reset-primer-seq"
          disabled={value.length + pendingItems.length === 0}
          btnStyle="light"
          onClick={handleReset}>

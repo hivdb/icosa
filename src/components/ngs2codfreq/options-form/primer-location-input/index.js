@@ -165,57 +165,58 @@ export default function PrimerLocationInput({
     {errors ? <ul className={style['fielderrors']}>
       {errors.map((error, idx) => <li key={idx}>{error}</li>)}
     </ul> : null}
-    {value.map(
-      item => (
-        <ItemInput
-         key={`primer-bed-${item.idx}`}
-         name={name}
-         value={item}
-         refSequence={refSequence}
-         onChange={handleChange} />
-      )
-    )}
-    {pendingItems.map(
-      item => (
-        <ItemInput
-         isNew
-         key={`primer-bed-${item.idx}`}
-         name={name}
-         value={item}
-         refSequence={refSequence}
-         onChange={handleChange} />
-      )
-    )}
     {isRefSeqPending ?
-      <InlineLoader /> :
-      <div className={style['fieldrow']}>
-        <div className={style['fieldlabel']} />
-        <div className={classNames(
-          style['fieldinput'],
-          style['primer-sequence-buttons']
-        )}>
-          <FileInput
-           multiple
-           hideSelected
-           btnStyle="info"
-           accept=".bed,.gz"
-           onChange={handleUpload}>
-            Upload BED
-          </FileInput>
-          <span className={style.or}> or </span>
-          <Button
-           btnStyle="primary"
-           onClick={handleAddNew}>
-            {value.length + pendingItems.length === 0 ?
-              'Add one primer' : 'Add more primer'}
-          </Button>
-          <Button
-           disabled={value.length + pendingItems.length === 0}
-           btnStyle="light"
-           onClick={handleReset}>
-            Reset
-          </Button>
+      <InlineLoader /> : <>
+        {value.map(
+          item => (
+            <ItemInput
+             key={`primer-bed-${item.idx}`}
+             name={name}
+             value={item}
+             refSequence={refSequence}
+             onChange={handleChange} />
+          )
+        )}
+        {pendingItems.map(
+          item => (
+            <ItemInput
+             isNew
+             key={`primer-bed-${item.idx}`}
+             name={name}
+             value={item}
+             refSequence={refSequence}
+             onChange={handleChange} />
+          )
+        )}
+        <div className={style['fieldrow']}>
+          <div className={style['fieldlabel']} />
+          <div className={classNames(
+            style['fieldinput'],
+            style['primer-sequence-buttons']
+          )}>
+            <FileInput
+             multiple
+             hideSelected
+             btnStyle="info"
+             accept=".bed,.gz"
+             onChange={handleUpload}>
+              Upload BED
+            </FileInput>
+            <span className={style.or}> or </span>
+            <Button
+             btnStyle="primary"
+             onClick={handleAddNew}>
+              {value.length + pendingItems.length === 0 ?
+                'Add one primer' : 'Add more primer'}
+            </Button>
+            <Button
+             disabled={value.length + pendingItems.length === 0}
+             btnStyle="light"
+             onClick={handleReset}>
+              Reset
+            </Button>
+          </div>
         </div>
-      </div>}
+      </>}
   </div>;
 }

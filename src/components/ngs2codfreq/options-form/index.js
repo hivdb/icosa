@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import ExtLink from '../../link/external';
 import {
@@ -17,6 +18,11 @@ import NumberRangeInput from './number-range-input';
 import AdapterInput from './adapter-input';
 import PrimerSequenceInput from './primer-sequence-input';
 import PrimerLocationInput from './primer-location-input';
+import CheckboxInput from '../../checkbox-input';
+import Button from '../../button';
+import FileInput from '../../file-input';
+import readFile from '../../../utils/read-file';
+import {makeDownload} from '../../../utils/download';
 
 const ADAPTER_TRIMMING_VALUES = [false, true];
 const ADAPTER_TRIMMING_TEXTS = ['Yes', 'No'];
@@ -45,6 +51,7 @@ NGSOptionsForm.propTypes = {
   cutadaptConfig: cutadaptConfigShape.isRequired,
   ivarConfig: ivarConfigShape.isRequired,
   primerType: PropTypes.oneOf(['fasta', 'bed', 'off']).isRequired,
+  saveInBrowser: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired
 };
 
@@ -52,11 +59,15 @@ NGSOptionsForm.defaultProps = {
   fastpConfig: {...defaultFastpConfig},
   cutadaptConfig: {...defaultCutadaptConfig},
   ivarConfig: {...defaultIvarConfig},
+  saveInBrowser: true,
   primerType: 'off'
 };
 
 
 export default function NGSOptionsForm({
+  fastpConfig,
+  cutadaptConfig,
+  ivarConfig,
   fastpConfig: {
     includeUnmerged,
     qualifiedQualityPhred,
@@ -83,10 +94,84 @@ export default function NGSOptionsForm({
     primerBeds
   },
   primerType,
+  saveInBrowser,
   onChange
 }) {
+  const mounted = React.useRef(false);
+
+  React.useEffect(
+    () => {
+      mounted.current = true;
+      return () => mounted.current = false;
+    },
+    []
+  );
+
+  const handleSaveInBrowserChange = React.useCallback(
+    event => onChange('saveInBrowser', event.currentTarget.checked),
+    [onChange]
+  );
+
+  const handleDownload = React.useCallback(
+    () => {
+      const payload = JSON.stringify({
+        fastpConfig,
+        cutadaptConfig,
+        ivarConfig,
+        primerType
+      });
+      makeDownload(
+        'ngs2codfreq.cdfjson',
+        'application/json',
+        payload
+      );
+    },
+    [fastpConfig, cutadaptConfig, ivarConfig, primerType]
+  );
+
+  const handleUpload = React.useCallback(
+    async ([file]) => {
+      const rawJSON = await readFile(file);
+      const payload = JSON.parse(rawJSON);
+      if (mounted.current) {
+        onChange('.', payload);
+      }
+    },
+    [onChange]
+  );
 
   return <form className={style['ngs-options-form']}>
+    <fieldset>
+      <div className={style['fieldrow']}>
+        <div className={classNames(style['pull-right'], style['fieldinput'])}>
+          <CheckboxInput
+           id="saveInBrowser"
+           name="saveInBrowser"
+           checked={saveInBrowser}
+           value=""
+           onChange={handleSaveInBrowserChange}>
+            Save below settings in my browser for future use
+          </CheckboxInput>
+        </div>
+      </div>
+      <div className={style['fieldrow']}>
+        <div className={classNames(style['pull-right'], style['fieldinput'])}>
+          <FileInput
+           hideSelected
+           btnStyle="info"
+           accept=".cdfjson"
+           onChange={handleUpload}>
+            Upload Settings
+          </FileInput>
+          <span className={style['or']}>or</span>
+          <Button
+           btnStyle="primary"
+           onClick={handleDownload}>
+            Download settings
+          </Button>
+        </div>
+      </div>
+    </fieldset>
     <fieldset>
       <FlagSwitch
        name="fastpConfig.disableAdapterTrimming"

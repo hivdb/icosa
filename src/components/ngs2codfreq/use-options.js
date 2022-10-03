@@ -17,7 +17,12 @@ export default function useOptions() {
   const onChange = React.useCallback(
     (key, value) => {
       const newOptions = {...options};
-      set(newOptions, key, value);
+      if (key === '.') {
+        Object.assign(newOptions, value);
+      }
+      else {
+        set(newOptions, key, value);
+      }
       setOptions(newOptions);
     },
     [options]

@@ -28,6 +28,12 @@ form.ngs-options-form {
 .scroll {
   max-height: 60vh;
   overflow-y: auto;
+
+  &:not(:last-child) {
+    padding-bottom: .5rem;
+    border-bottom: 2px solid rgba(0, 0, 0, .15);
+    margin-bottom: .5rem;
+  }
 }
 
 .fieldinput-number-range {
@@ -298,7 +304,13 @@ input.number-input {
 
 ul.fielderrors {
   padding-left: 1.5rem;
+  margin-top: 0;
+  margin-bottom: .5rem;
   color: color(type-error);
+}
+
+.pull-right {
+  text-align: right;
 }
 
 .fieldrow {
