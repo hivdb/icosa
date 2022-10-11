@@ -85,6 +85,10 @@ label.input-label {
       }
     }
 
+    > .or {
+      line-height: var(--button-height);
+    }
+
   }
 
   &[data-num-pairs="0"] .button-group {

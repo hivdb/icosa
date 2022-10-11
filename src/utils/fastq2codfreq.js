@@ -262,6 +262,39 @@ async function * fetchRunnerLogs(taskKey) {
 }
 
 
+export async function saveAllFiles(taskKey, {onAddFile, onFinish}) {
+  let resp;
+  let nextToken;
+  let isTruncated;
+  do {
+    try {
+      resp = await fetch(`${API_SERVER}/fetch-allfiles`, {
+        method: 'POST',
+        body: JSON.stringify({
+          taskKey,
+          nextToken
+        })
+      });
+    } catch (e) {
+      handleResponseError(e);
+    }
+    const payload = await resp.json();
+    isTruncated = payload.isTruncated;
+    nextToken = payload.nextToken;
+    for (const {fileName, url} of payload.files) {
+      const fileResp = await fetch(url);
+      await onAddFile({
+        fileName,
+        data: await fileResp.blob(),
+        isBlob: true
+      });
+    }
+  } while (isTruncated);
+
+  onFinish();
+}
+
+
 export async function downloadCodfreqs(taskKey) {
   let resp;
   try {
