@@ -5,6 +5,8 @@ import unseqRegions from '../../../components/tabular-report/unseq-regions';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import prettyAlignments
   from '../../../components/tabular-report/pretty-alignments';
+import rawJSON
+  from '../../../components/tabular-report/raw-json';
 
 const subOptions = [
   'Sequence summary',
@@ -12,7 +14,8 @@ const subOptions = [
   'Unsequenced regions',
   'Susceptibility summary',
   'Mutation comments',
-  'Pretty amino acid alignments'
+  'Pretty amino acid alignments',
+  'Raw JSON report'
 ];
 
 const subOptionProcessors = [
@@ -21,7 +24,8 @@ const subOptionProcessors = [
   unseqRegions,
   suscSummary,
   mutComments,
-  prettyAlignments
+  prettyAlignments,
+  rawJSON
 ];
 
 export {subOptions, subOptionProcessors};

@@ -86,7 +86,7 @@ function SierraForms({
          label: 'Printable HTML'
        },
        csv: {
-         label: "Spreadsheets (CSV)",
+         label: 'Machine-readable data (CSV/JSON)',
          subOptions: seqSubOptions,
          defaultSubOptions: seqSubOptions.map((_, idx) => idx),
          renderer: props => (
@@ -103,7 +103,7 @@ function SierraForms({
          label: 'Printable HTML'
        },
        csv: {
-         label: "Sequences and spreadsheets (FASTA/CSV)",
+         label: "Machine-readable data (FASTA/CSV/JSON)",
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
          renderer: props => (
