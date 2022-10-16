@@ -9,7 +9,10 @@ import {
 
 
 export function getExtraParams(subOptions) {
-  const fetchMutComments = subOptions.includes('Mutation comments');
+  const fetchMutComments = (
+    subOptions.includes('Mutation comments') ||
+    subOptions.includes('Raw JSON report')
+  );
   const extraParams = ['$drdbVersion: String!'];
   if (fetchMutComments) {
     extraParams.push('$cmtVersion: String!');
@@ -19,9 +22,18 @@ export function getExtraParams(subOptions) {
 
 
 export default function getQuery(subOptions) {
-  const fetchConsensus = subOptions.includes('Consensus sequence (FASTA)');
-  const fetchSuscSummary = subOptions.includes('Susceptibility summary');
-  const fetchMutComments = subOptions.includes('Mutation comments');
+  const fetchConsensus = (
+    subOptions.includes('Consensus sequence (FASTA)') ||
+    subOptions.includes('Raw JSON report')
+  );
+  const fetchSuscSummary = (
+    subOptions.includes('Susceptibility summary') ||
+    subOptions.includes('Raw JSON report')
+  );
+  const fetchMutComments = (
+    subOptions.includes('Mutation comments') ||
+    subOptions.includes('Raw JSON report')
+  );
   return gql`
     fragment TabularReportBySeqReads_Root on Root {
       ${rootLevel}
