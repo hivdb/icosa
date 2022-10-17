@@ -39,12 +39,17 @@ function prettyAlignments({
         ({gene: {name}}) => name === geneKey
       );
       if (geneSeq) {
-        const {firstAA, lastAA, mutations} = geneSeq;
-        for (let pos0 = 0; pos0 < firstAA - 1; pos0 ++) {
-          row[`${pos0 + 1}`] = '.';
+        const {mutations, unsequencedRegions: unseqs} = geneSeq;
+        for (const {posStart, posEnd} of unseqs.regions) {
+          for (let pos = posStart; pos <= posEnd; pos ++) {
+            row[`${pos}`] = '.';
+          }
         }
         for (const mut of mutations) {
-          let {position, displayAAs} = mut;
+          let {position, displayAAs, isUnsequenced} = mut;
+          if (isUnsequenced) {
+            continue;
+          }
           if (displayAAs.includes('-')) {
             displayAAs = (
               [displayAAs.replace('-', ''), 'del']
@@ -53,9 +58,6 @@ function prettyAlignments({
             );
           }
           row[`${position}`] = displayAAs;
-        }
-        for (let pos0 = lastAA; pos0 < geneSize; pos0 ++) {
-          row[`${pos0 + 1}`] = '.';
         }
       }
       else {
