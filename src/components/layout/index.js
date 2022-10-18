@@ -5,55 +5,24 @@ import classNames from 'classnames';
 import '../../styles/globals.scss';
 import style from './style.module.scss';
 
-class LayoutInner extends React.Component {
+LayoutInner.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired
+};
 
-  static propTypes = {
-    className: PropTypes.string,
-    children: PropTypes.node.isRequired
-  };
-
-  static childContextTypes = {
-    setContainerWidth: PropTypes.func
-  };
-
-  getChildContext() {
-    return {
-      setContainerWidth: this.setContainerWidth
-    };
-  }
-
-  constructor() {
-    super(...arguments);
-    this.state = {containerWidth: null};
-  }
-
-  setContainerWidth = (width) => {
-    if (width !== this.state.containerWidth) {
-      this.setState({containerWidth: width});
-    }
-  };
-
-  render() {
-    let {className, children} = this.props;
-    const {containerWidth} = this.state;
-    const customStyle = {};
-    if (containerWidth) {
-      customStyle.maxWidth = containerWidth;
-    }
-    className = classNames(style['layout-container'], className);
-    return (
-      <div id="hivdb-layout">
-        <ul className={style['layout-header']}>
-          <li>
-            <a href="/">Home</a>
-          </li>
-        </ul>
-        <div className={className} style={customStyle}>
-          {children}
-        </div>
+function LayoutInner({className, children}) {
+  return (
+    <div id="hivdb-layout">
+      <ul className={style['layout-header']}>
+        <li>
+          <a href="/">Home</a>
+        </li>
+      </ul>
+      <div className={classNames(style['layout-container'], className)}>
+        {children}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default class Layout extends React.Component {

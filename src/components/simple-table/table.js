@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import Loader from '../inline-loader';
+import Loader from '../loader';
 
 import style from './style.module.scss';
 import {columnDefShape} from './prop-types';

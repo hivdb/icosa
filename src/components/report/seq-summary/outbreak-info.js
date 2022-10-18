@@ -1,7 +1,7 @@
 import React from 'react';
 import ExtLink from '../../link/external';
 
-import InlineLoader from '../../inline-loader';
+import Loader from '../../loader';
 import {usePangoLineage} from './pango-lineage';
 
 import style from './style.module.scss';
@@ -43,7 +43,7 @@ export default function OutbreakInfo(props) {
     child = `Error! ${error.message}`;
   }
   else if (isPending) {
-    child = <InlineLoader />;
+    child = <Loader inline />;
   }
   else {
     child = <ul className={style['outbreak-info-list']}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InlineLoader from '../inline-loader';
+import Loader from '../loader';
 
 import ConfigContext from '../../utils/config-context';
 import createPersistedReducer from '../../utils/use-persisted-reducer';
@@ -30,7 +30,7 @@ export function RefContextWrapper({children}) {
   const {refDataLoader} = config || {};
   const refContext = useReference(refDataLoader);
   if (loading) {
-    return <InlineLoader />;
+    return <Loader inline />;
   }
   return <ReferenceContext.Provider value={refContext}>
     {children}

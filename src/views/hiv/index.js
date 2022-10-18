@@ -2,7 +2,7 @@ import React, {Suspense, lazy} from 'react';
 import PropTypes from 'prop-types';
 import {Route, Redirect} from 'found';
 import makeClassNames from 'classnames';
-import Loader from 'react-loader';
+import Loader from '../../components/loader';
 
 import style from './style.module.scss';
 import defaultConfig from './config';
@@ -44,7 +44,7 @@ function Layout({
   );
   const configContextLoader = useConfigLoader(combinedConfig);
   const layoutClassName = makeClassNames(style['sierra-webui'], className);
-  return <Suspense fallback={<Loader loaded={false} />}>
+  return <Suspense fallback={<Loader />}>
     <CustomColors className={layoutClassName} colors={colors}>
       <ConfigContext.Provider value={configContextLoader}>
         {children}

@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
-import Loader from 'react-loader';
+import Loader from '../components/loader';
 
 const EMPTY = {_emptyObject: 1};
 
@@ -41,7 +41,7 @@ export default function AsyncContext(defaultValue) {
   function AsyncConsumer({children}) {
     const {loading, value} = useContext(Context);
     if (loading && value === EMPTY) {
-      return <Loader loaded={false} />;
+      return <Loader />;
     }
 
     return children(value);

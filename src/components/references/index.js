@@ -11,7 +11,7 @@ import InlineRef from './inline-reference';
 import {focusElement} from './funcs';
 import useAutoUpdate from './use-auto-update';
 
-import InlineLoader from '../inline-loader';
+import Loader from '../loader';
 
 export {
   ReferenceContext,
@@ -100,7 +100,7 @@ References.propTypes = {
 };
 
 References.defaultProps = {
-  placeholder: <InlineLoader />
+  placeholder: <Loader inline />
 };
 
 export default function References({

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 
-import FixedLoader from '../fixed-loader';
+import Loader from '../loader';
 import useCumuQuery from '../cumu-query';
 import SmoothProgressBar from '../smooth-progress-bar';
 import {
@@ -144,7 +144,7 @@ export default function PatternAnalysisQuery({
   }
 
   return <>
-    {(showProgressBar || loaded) ? null : <FixedLoader />}
+    {(showProgressBar || loaded) ? null : <Loader modal />}
     {progressbar}
     {childNode}
   </>;

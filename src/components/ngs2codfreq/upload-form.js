@@ -7,7 +7,7 @@ import Dropzone from 'react-dropzone';
 import ConfigContext from '../../utils/config-context';
 
 import Link from '../link';
-import InlineLoader from '../inline-loader';
+import Loader from '../loader';
 
 import {identifyPairs} from './fastq-pairs';
 import PreviewFiles from './preview-files';
@@ -94,7 +94,7 @@ export default function NGSUploadForm({
   );
 
   if (isConfigPending) {
-    return <InlineLoader />;
+    return <Loader inline />;
   }
 
   const ngs2codfreqPath = (

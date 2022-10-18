@@ -2,7 +2,7 @@ import React, {Suspense, lazy} from 'react';
 import PropTypes from 'prop-types';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
-import Loader from 'react-loader';
+import Loader from '../../components/loader';
 
 import CustomColors from '../../components/custom-colors';
 
@@ -50,7 +50,7 @@ export default function MutAnnotViewerRoutes({
   </Route>;
 
   function wrapper(props) {
-    return <Suspense fallback={<Loader loaded={false} />}>
+    return <Suspense fallback={<Loader />}>
       <CustomColors
        {...props}
        className={wrapperClassName}

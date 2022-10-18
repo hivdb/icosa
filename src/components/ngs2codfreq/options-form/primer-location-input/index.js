@@ -6,7 +6,7 @@ import {useCMS} from '../../../../utils/cms';
 
 import Button from '../../../button';
 import FileInput from '../../../file-input';
-import InlineLoader from '../../../inline-loader';
+import Loader from '../../../loader';
 import {primerBedShape} from '../prop-types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
@@ -166,7 +166,7 @@ export default function PrimerLocationInput({
       {errors.map((error, idx) => <li key={idx}>{error}</li>)}
     </ul> : null}
     {isRefSeqPending ?
-      <InlineLoader /> : <>
+      <Loader inline /> : <>
         {value.map(
           item => (
             <ItemInput

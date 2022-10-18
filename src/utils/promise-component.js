@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Loader from 'react-loader';
+import Loader from '../components/loader';
 import sleep from 'sleep-promise';
 
 
@@ -20,7 +20,7 @@ export default class PromiseComponent extends React.Component {
   };
 
   static defaultProps = {
-    children: <Loader loaded={false} />,
+    children: <Loader />,
     then: value => value,
     error: value => value
   };

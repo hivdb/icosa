@@ -6,7 +6,7 @@ import BigData from '../../../utils/big-data';
 import ConfigContext from '../../../utils/config-context';
 
 import NGS2CodFreq from '../../ngs2codfreq';
-import InlineLoader from '../../inline-loader';
+import Loader from '../../loader';
 import {buildGeneValidator} from '../../../utils/sequence-reads';
 import style from '../style.module.scss';
 
@@ -91,7 +91,7 @@ export default function NGS2CodFreqForm({
   );
 
   if (isConfigPending) {
-    return <InlineLoader />;
+    return <Loader inline />;
   }
   else {
     return (

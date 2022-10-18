@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
-import FixedLoader from '../fixed-loader';
+import Loader from '../loader';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -53,7 +53,7 @@ function SeqReadsLoader(props) {
     lazyLoad, allSequenceReads
   });
   if (isPending) {
-    return <FixedLoader />;
+    return <Loader modal />;
   }
   else {
     return children({
@@ -70,7 +70,7 @@ function SeqReadsLoaderWrapper(props) {
   const [config, isPending] = ConfigContext.use();
 
   if (isPending) {
-    return <FixedLoader />;
+    return <Loader modal />;
   }
 
   const {seqReadsDefaultParams: defaultParams} = config;

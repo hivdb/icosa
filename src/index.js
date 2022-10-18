@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {
   BrowserProtocol,
   queryMiddleware
@@ -34,11 +34,10 @@ const Router = createFarceRouter({
  * us locate problems. Don't disable it permanently!
  *
  */
-ReactDOM.render(
-  <React.StrictMode>
-    <Router resolver={resolver} />
-  </React.StrictMode>,
-  document.getElementById('root')
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+  <Router resolver={resolver} />
 );
 
 // If you want to start measuring performance in your app, pass a function

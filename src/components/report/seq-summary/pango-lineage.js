@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import memoize from 'lodash/memoize';
 import sleep from 'sleep-promise';
 
-import InlineLoader from '../../inline-loader';
+import Loader from '../../loader';
 import useSmartAsync from '../../../utils/use-smart-async';
 
 
@@ -76,7 +76,7 @@ export default function PangoLineage({
     child = `Error! ${error.message}`;
   }
   else if (isPending) {
-    child = <InlineLoader />;
+    child = <Loader inline />;
   }
   else {
     const {lineage, probability, version} = data;

@@ -1,7 +1,7 @@
 import React, {Suspense, lazy} from 'react';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
-import Loader from 'react-loader';
+import Loader from '../../components/loader';
 
 import PromiseComponent from '../../utils/promise-component';
 import CustomColors from '../../components/custom-colors';
@@ -51,7 +51,7 @@ export default function GenomeViewerRoutes({
 
   function wrapper(props) {
     return (
-      <Suspense fallback={<Loader loaded={false} />}>
+      <Suspense fallback={<Loader />}>
         <CustomColors
          {...props}
          className={wrapperClassName}

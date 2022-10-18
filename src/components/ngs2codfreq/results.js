@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import classNames from 'classnames';
 import {useDownload} from '../../utils/download';
 import {downloadCodfreqs, saveAllFiles} from '../../utils/fastq2codfreq';
-import InlineLoader from '../inline-loader';
+import Loader from '../loader';
 // import ProgressBar from 'react-progressbar';
 
 import style from './style.module.scss';
@@ -145,7 +145,7 @@ export default function NGSResults({
           Download all files (BAM/FASTQ/CodFreq/logs)
         </button>
       </div> : <>
-        <InlineLoader />
+        <Loader inline />
         {loadedFiles.length > 0 ?
           <ul>
             {loadedFiles.map(fName => (

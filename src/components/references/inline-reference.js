@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Children from 'react-children-utilities';
-import InlineLoader from '../inline-loader';
+import Loader from '../loader';
 
 import useAutoUpdate from './use-auto-update';
 import ReferenceContext from './reference-context';
@@ -46,7 +46,7 @@ function InlineRef({name, identifier, ...ref}) {
     return buildRef(storedRef);
   }
   else {
-    return <InlineLoader />;
+    return <Loader inline />;
   }
 }
 

@@ -17,7 +17,7 @@ import ConfigContext from '../../../utils/config-context';
 import BaseForm from '../base';
 import FileInput from '../../file-input';
 import Link from '../../link/basic';
-import InlineLoader from '../../inline-loader';
+import Loader from '../../loader';
 
 import style from '../style.module.scss';
 
@@ -188,7 +188,7 @@ function SequenceReadsInputForm(props) {
   );
 
   if (isConfigPending) {
-    return <InlineLoader />;
+    return <Loader inline />;
   }
 
   return (
@@ -244,7 +244,7 @@ function SequenceReadsInputForm(props) {
             <div
              className={style['loading-mask']}
              {...(loading ? {'data-loading': ''} : null)}>
-              <InlineLoader />
+              <Loader inline />
             </div>
           </div>
         )}

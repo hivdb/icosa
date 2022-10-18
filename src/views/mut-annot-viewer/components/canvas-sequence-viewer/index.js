@@ -2,7 +2,7 @@ import React, {createRef} from 'react';
 import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import debounce from 'lodash/debounce';
-import Loader from 'react-loader';
+import Loader from '../../../../components/loader';
 
 import style from './style.module.scss';
 import ConfigGenerator, {preloadFonts} from './config-generator';
@@ -176,7 +176,7 @@ export default class CanvasSequenceViewer extends React.Component {
       <div
        ref={this.containerRef}
        className={combinedClassName}>
-        {config === null ? <Loader loaded={false} /> :
+        {config === null ? <Loader /> :
         <LegendContext.Consumer>
           {(context) => {
             setTimeout(() => config.updateLegendContext(context));

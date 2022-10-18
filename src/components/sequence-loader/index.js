@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
-import FixedLoader from '../fixed-loader';
+import Loader from '../loader';
 import BigData, {isBigData} from '../../utils/big-data';
 
 
@@ -99,7 +99,7 @@ function SequenceLoader({
   });
 
   if (isPending) {
-    return <FixedLoader />;
+    return <Loader modal />;
   }
 
   return children({

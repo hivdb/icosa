@@ -7,7 +7,7 @@ import createLocationState from '../../../utils/use-location-state';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
 import ConfigContext from '../../../utils/config-context';
 import MutationsInput from '../../mutations-input';
-import InlineLoader from '../../inline-loader';
+import Loader from '../../loader';
 
 import BaseForm from '../base';
 import parentStyle from '../style.module.scss';
@@ -110,7 +110,7 @@ function PatternsInputForm({children, to, onSubmit}) {
      onReset={handleReset}>
       {children}
       <div className={style['patterns-input-container']}>
-        {isConfigPending ? <InlineLoader /> :
+        {isConfigPending ? <Loader inline /> :
           patterns.map(({uuid, name, mutations}) => (
             <MutationsInput
              key={uuid}

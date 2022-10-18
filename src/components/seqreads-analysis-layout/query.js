@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 
-import FixedLoader from '../fixed-loader';
+import Loader from '../loader';
 import SmoothProgressBar from '../smooth-progress-bar';
 import {
   includeFragment, includeFragmentIfExist
@@ -159,7 +159,7 @@ export default function SeqReadsAnalysisQuery({
   }
 
   return <>
-    {(showProgressBar || loaded) ? null : <FixedLoader />}
+    {(showProgressBar || loaded) ? null : <Loader modal />}
     {progressbar}
     {childNode}
   </>;
