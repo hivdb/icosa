@@ -7,6 +7,8 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
 
 .general-checkbox-input {
 
+  margin-right: 2em;
+
   &:focus {
     outline: none;
     label::before {
@@ -23,10 +25,6 @@ $tick-polygon: polygon(42.5% 55%, 72.5% 25%, 82.5% 35%, 42.5% 75%, 17.5% 50%, 27
       color: transparent;
       background-color: color(chkbox-disabled);
     }
-  }
-
-  &:not(:last-child) {
-    margin-right: 2em;
   }
 
   label {

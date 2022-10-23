@@ -5,9 +5,8 @@ $radio-on-border-width: 0.36em;
 $radio-off-border-width: 1px;
 
 .general-radio-input {
-  &:not(:last-child) {
-    margin-right: 2em;
-  }
+  margin-right: 2em;
+
   label {
     display: inline-grid;
     grid-template-columns: $radio-size 1fr;
