@@ -5,15 +5,21 @@ $radio-on-border-width: 0.36em;
 $radio-off-border-width: 1px;
 
 .general-radio-input {
-  label {
-    position: relative;
-    display: inline-block;
+  &:not(:last-child) {
     margin-right: 2em;
+  }
+  label {
+    display: inline-grid;
+    grid-template-columns: $radio-size 1fr;
+    grid-column-gap: .4em;
+    align-items: center;
     margin-top: .5em;
     margin-bottom: .5em;
     cursor: pointer;
 
     &::before, &::after {
+      grid-column: 1;
+      grid-row: 1;
       box-sizing: border-box;
       content: "\a0";  // use &nbsp; to enable line-height
       display: inline-block;
@@ -23,16 +29,12 @@ $radio-off-border-width: 1px;
     }
 
     &::before {
-      margin-right: .4em;
       padding: calc($radio-on-border-width - $radio-off-border-width);
-      line-height: calc($radio-size - 2 * $radio-on-border-width);
       background-color: color(radio-off-bg);
       border: $radio-off-border-width solid color(radio-off-border);
     }
 
     &::after {
-      position: absolute;
-      left: 0;
       border: 0 solid color(radio-on-border);
       transition: border-width 0.15s ease;
     }

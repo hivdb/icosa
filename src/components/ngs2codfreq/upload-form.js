@@ -149,7 +149,7 @@ export default function NGSUploadForm({
           {isOptionsDefault ? <>
             Default filter/trimming options will be applied.
           </> : <>
-            Browser stored filter/trimming options will be applied.
+            Non-default customized filter/trimming options will be applied.
           </>}
           <br />
           <Link to={ngs2codfreqPath}>
