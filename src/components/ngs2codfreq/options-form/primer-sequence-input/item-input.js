@@ -149,6 +149,7 @@ export default function PrimerSeqItemInput({
        placeholder="Primer sequence"
        onChange={handleSeqChange} />
       <HoverPopup
+       noUnderline
        position="left"
        message={<HelpLink option="-b" anchor="#or-3-adapters" />}>
         <RadioInput
@@ -162,6 +163,7 @@ export default function PrimerSeqItemInput({
         </RadioInput>
       </HoverPopup>
       <HoverPopup
+       noUnderline
        position="left"
        message={<HelpLink option="-g" anchor="#id4" />}>
         <RadioInput
@@ -176,6 +178,7 @@ export default function PrimerSeqItemInput({
         </RadioInput>
       </HoverPopup>
       <HoverPopup
+       noUnderline
        position="left"
        message={<HelpLink option="-a" anchor="#id3" />}>
         <RadioInput
@@ -203,6 +206,7 @@ export default function PrimerSeqItemInput({
         {['regular', 'anchored', 'non-internal'].map(
           trimmingType => (
             <HoverPopup
+             noUnderline
              key={`three-end-${trimmingType}`}
              position="bottom"
              message={(
@@ -242,6 +246,7 @@ export default function PrimerSeqItemInput({
         {['regular', 'anchored', 'non-internal'].map(
           trimmingType => (
             <HoverPopup
+             noUnderline
              key={`five-end-${trimmingType}`}
              position="bottom"
              message={(

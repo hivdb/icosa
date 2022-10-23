@@ -252,6 +252,7 @@ export default function PrimerBedItemInput({
         {[['+', 'forward (+)'], ['-', 'reverse (-)']].map(
           ([value, label]) => (
             <HoverPopup
+             noUnderline
              key={`strand-${value}`}
              position="bottom"
              message={<>
