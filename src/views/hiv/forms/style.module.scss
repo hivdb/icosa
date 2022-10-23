@@ -65,15 +65,14 @@ span.with-trailing-space {
     margin-bottom: $vertical-margin;
   }
 
-  .drug-display-option-checkbox label {
-    font-size: $label-font-size;
-    margin-top: $vertical-margin;
-    margin-bottom: $vertical-margin;
-    margin-right: 0;
-    width: 4.2rem;
-    &:before {
-      margin-right: .2rem;
+  .drug-display-option-checkbox {
+    label {
+      font-size: $label-font-size;
+      margin-top: $vertical-margin;
+      margin-bottom: $vertical-margin;
+      width: 4.2rem;
     }
+    margin-right: 0;
   }
 
   .all-options {
