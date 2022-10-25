@@ -7,6 +7,7 @@ import FileInput from '../../../file-input';
 import {primerSeqShape} from '../prop-types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
+import useMounted from '../../../../utils/use-mounted';
 
 import ItemInput from './item-input';
 import useValidation from './use-validation';
@@ -38,7 +39,7 @@ export default function PrimerSequenceInput({
   value,
   onChange
 }) {
-  const mounted = React.useRef(false);
+  const isMounted = useMounted();
   const [autoIncr, setAutoIncr] = React.useState(
     value.length > 0 ? Math.max(
       ...value.map(({idx}) => idx)
@@ -46,14 +47,6 @@ export default function PrimerSequenceInput({
   );
   const [pendingItems, setPendingItems] = React.useState([]);
   const errors = useValidation(value);
-
-  React.useEffect(
-    () => {
-      mounted.current = true;
-      return () => mounted.current = false;
-    },
-    []
-  );
 
   const handleChange = React.useCallback(
     (item, isNew, isRemove = false) => {
@@ -137,13 +130,13 @@ export default function PrimerSequenceInput({
         }
       }
 
-      if (!mounted.current) {
+      if (!isMounted()) {
         return;
       }
       onChange(name, [...value, ...newItems]);
       setAutoIncr(newAutoIncr);
     },
-    [onChange, autoIncr, name, value]
+    [onChange, autoIncr, name, value, isMounted]
   );
 
   return <div className={style['scroll']}>

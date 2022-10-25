@@ -10,6 +10,7 @@ import Loader from '../../../loader';
 import {primerBedShape} from '../prop-types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
+import useMounted from '../../../../utils/use-mounted';
 
 import ItemInput from './item-input';
 import useValidation from './use-validation';
@@ -31,21 +32,13 @@ export default function PrimerLocationInput({
   onChange
 }) {
   const [config] = ConfigContext.use();
-  const mounted = React.useRef(false);
+  const isMounted = useMounted();
   const [autoIncr, setAutoIncr] = React.useState(
     value.length > 0 ? Math.max(
       ...value.map(({idx}) => idx)
     ) + 1 : 0
   );
   const [pendingItems, setPendingItems] = React.useState([]);
-
-  React.useEffect(
-    () => {
-      mounted.current = true;
-      return () => mounted.current = false;
-    },
-    []
-  );
 
   const [
     refSequenceText,
@@ -152,13 +145,13 @@ export default function PrimerLocationInput({
         }
       }
 
-      if (!mounted.current) {
+      if (!isMounted()) {
         return;
       }
       onChange(name, [...value, ...newItems]);
       setAutoIncr(newAutoIncr);
     },
-    [autoIncr, onChange, name, value, config.refSequenceName]
+    [autoIncr, onChange, name, value, config.refSequenceName, isMounted]
   );
 
   return <div className={style['scroll']}>

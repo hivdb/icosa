@@ -1,5 +1,6 @@
 import React from 'react';
 import JSZip from 'jszip';
+import useMounted from './use-mounted';
 
 export async function showFilePicker(fileName) {
   if (window.showSaveFilePicker) {
@@ -139,17 +140,9 @@ function defaultState() {
 
 
 export function useDownload({name, suffix, types, multiple = true}) {
-  const mounted = React.useRef(false);
+  const isMounted = useMounted();
   const [isDownloading, setIsDownloading] = React.useState(false);
   const state = React.useRef(defaultState());
-
-  React.useEffect(
-    () => {
-      mounted.current = true;
-      return () => mounted.current = false;
-    },
-    []
-  );
 
   const onInit = React.useCallback(
     async () => {
@@ -181,9 +174,9 @@ export function useDownload({name, suffix, types, multiple = true}) {
         state.current.zipObj = new JSZip();
       }
       state.current.initiated = true;
-      mounted.current && setIsDownloading(true);
+      isMounted() && setIsDownloading(true);
     },
-    [multiple, name, suffix, types]
+    [multiple, name, suffix, types, isMounted]
   );
 
   const onAddFile = React.useCallback(
@@ -236,9 +229,9 @@ export function useDownload({name, suffix, types, multiple = true}) {
       state.current.loadedFiles.push(
         folder ? `${folder}/${fileName}` : fileName
       );
-      mounted.current && setIsDownloading(Math.random());
+      isMounted() && setIsDownloading(Math.random());
     },
-    [onInit, name, suffix]
+    [onInit, name, suffix, isMounted]
   );
 
   const onFinish = React.useCallback(
@@ -268,10 +261,10 @@ export function useDownload({name, suffix, types, multiple = true}) {
         }
       }
 
-      mounted.current && setIsDownloading(false);
+      isMounted() && setIsDownloading(false);
       state.current = defaultState();
     },
-    [name]
+    [name, isMounted]
   );
 
   return {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import readFile from '../../../utils/read-file';
 import BigData from '../../../utils/big-data';
+import useMounted from '../../../utils/use-mounted';
 
 import FileInput from '../../../components/file-input';
 import AlgVerSelect, {
@@ -77,8 +78,7 @@ function AlgorithmSelector({
   const {messages} = config;
   const [checkboxError, setCheckboxError] = React.useState(null);
 
-  const mounted = React.useRef(true);
-  React.useEffect(() => (() => mounted.current = false), []);
+  const isMounted = useMounted();
 
   const timeoutLock = React.useRef(null);
   const setTimeoutClearError = React.useCallback(
@@ -87,13 +87,13 @@ function AlgorithmSelector({
         clearTimeout(timeoutLock.current);
       }
       timeoutLock.current = setTimeout(() => {
-        if (mounted.current) {
+        if (isMounted()) {
           setCheckboxError(null);
           timeoutLock.current = null;
         }
       }, 5000);
     },
-    [setCheckboxError]
+    [setCheckboxError, isMounted]
   );
 
   const handleAdd = React.useCallback(
@@ -134,11 +134,11 @@ function AlgorithmSelector({
           xml: await readFile(file)
         };
       }
-      if (mounted.current) {
+      if (isMounted) {
         onChange(myAlgorithms);
       }
     },
-    [algorithms, onChange]
+    [algorithms, onChange, isMounted]
   );
 
 

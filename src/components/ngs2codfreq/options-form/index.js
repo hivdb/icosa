@@ -27,6 +27,7 @@ import Button from '../../button';
 import FileInput from '../../file-input';
 import readFile from '../../../utils/read-file';
 import {makeDownload} from '../../../utils/download';
+import useMounted from '../../../utils/use-mounted';
 
 const ADAPTER_TRIMMING_VALUES = [false, true];
 const ADAPTER_TRIMMING_TEXTS = ['Yes', 'No'];
@@ -103,20 +104,12 @@ export default function NGSOptionsForm({
   saveInBrowser,
   onChange
 }) {
-  const mounted = React.useRef(false);
+  const isMounted = useMounted();
   const [config] = ConfigContext.use();
   const [fastaDesc, bedDesc] = useMessages([
     'ngs2codfreq-primer-fasta-input-desc',
     'ngs2codfreq-primer-bed-input-desc'
   ], config?.messages);
-
-  React.useEffect(
-    () => {
-      mounted.current = true;
-      return () => mounted.current = false;
-    },
-    []
-  );
 
   const handleSaveInBrowserChange = React.useCallback(
     event => onChange('saveInBrowser', event.currentTarget.checked),
@@ -144,11 +137,11 @@ export default function NGSOptionsForm({
     async ([file]) => {
       const rawJSON = await readFile(file);
       const payload = JSON.parse(rawJSON);
-      if (mounted.current) {
+      if (isMounted()) {
         onChange('.', payload);
       }
     },
-    [onChange]
+    [isMounted, onChange]
   );
 
   const handleReset = React.useCallback(
