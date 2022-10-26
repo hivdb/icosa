@@ -28,8 +28,17 @@
 
   > .header-annotation {
     position: absolute;
+    display: grid;
     right: 0;
-    margin-top: -2.8rem;
+    top: 1px;
+    height: 2.29rem;
+    line-height: 2.29rem;
+    label {
+      line-height: 1rem;
+    }
+    > *:last-child {
+      margin-right: 0;
+    }
   }
 
 }
