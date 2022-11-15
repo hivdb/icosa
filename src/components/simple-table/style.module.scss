@@ -14,7 +14,7 @@ $border-radius: 0;
 $padding-h: .7rem;
 $padding-v: .7rem;
 
-.simple-table-container[window-scroll="true"] .simple-table-scroll {
+.simple-table-container[data-window-scroll="true"] .simple-table-scroll {
   @media only screen {
     overflow: visible;
   }
