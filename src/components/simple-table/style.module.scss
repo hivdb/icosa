@@ -14,6 +14,16 @@ $border-radius: 0;
 $padding-h: .7rem;
 $padding-v: .7rem;
 
+.simple-table-container[window-scroll="true"] .simple-table-scroll {
+  @media only screen {
+    overflow: visible;
+  }
+  max-height: max-content;
+  @media only screen and (min-width: 768px) {
+    max-height: max-content;
+  }
+}
+
 .simple-table-scroll {
   --desktop-max-height: 80vh;
   border: 1px solid $outline-color;
@@ -34,6 +44,7 @@ $padding-v: .7rem;
 }
 
 table.simple-table {
+  position: relative;
   font-family: "Arial Narrow", $base-font-family;
   margin-top: 0;
   margin-bottom: 0;

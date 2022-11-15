@@ -213,6 +213,7 @@ Table.propTypes = {
   compact: PropTypes.bool,
   lastCompact: PropTypes.bool,
   noHeaderOverlapping: PropTypes.bool,
+  windowScroll: PropTypes.bool,
   references: PropTypes.array,
   mdProps: PropTypes.shape({
     renderers: PropTypes.object
@@ -230,6 +231,7 @@ export function Table({
   compact,
   lastCompact,
   noHeaderOverlapping,
+  windowScroll,
   references,
   mdProps: {renderers, ...mdProps},
   cmsPrefix,
@@ -249,6 +251,7 @@ export function Table({
      compact={compact}
      lastCompact={lastCompact}
      noHeaderOverlapping={noHeaderOverlapping}
+     windowScroll={windowScroll}
      cacheKey={cacheKey}
      tableScrollStyle={tableScrollStyle}
      tableStyle={tableStyle}
@@ -262,8 +265,13 @@ export function Table({
 }
 
 export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
-  // eslint-disable-next-line react/prop-types
-  return ({tableName, compact, lastCompact, noHeaderOverlapping}) => {
+  return ({
+    tableName, // eslint-disable-line react/prop-types
+    compact, // eslint-disable-line react/prop-types
+    lastCompact, // eslint-disable-line react/prop-types
+    noHeaderOverlapping, // eslint-disable-line react/prop-types
+    windowScroll // eslint-disable-line react/prop-types
+  }) => {
     compact = compact !== undefined;
     lastCompact = lastCompact !== undefined;
     if (tableName in tables) {
@@ -273,6 +281,7 @@ export default function TableNodeWrapper({tables, mdProps, cmsPrefix}) {
          compact={compact}
          lastCompact={lastCompact}
          noHeaderOverlapping={noHeaderOverlapping}
+         windowScroll={windowScroll}
          cacheKey={tableName}
          mdProps={mdProps}
          cmsPrefix={cmsPrefix}

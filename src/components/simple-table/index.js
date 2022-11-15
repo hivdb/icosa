@@ -12,6 +12,7 @@ export {ColumnDef};
 
 
 SimpleTable.propTypes = {
+  windowScroll: PropTypes.bool.isRequired,
   compact: PropTypes.bool.isRequired,
   lastCompact: PropTypes.bool.isRequired,
   noHeaderOverlapping: PropTypes.bool.isRequired,
@@ -34,6 +35,7 @@ SimpleTable.propTypes = {
 };
 
 SimpleTable.defaultProps = {
+  windowScroll: false,
   compact: false,
   lastCompact: false,
   noHeaderOverlapping: false,
@@ -45,6 +47,7 @@ SimpleTable.defaultProps = {
 };
 
 export default function SimpleTable({
+  windowScroll,
   compact,
   lastCompact,
   noHeaderOverlapping,
@@ -127,6 +130,7 @@ export default function SimpleTable({
      data-sorting={sorting}
      data-compact={compact}
      data-last-compact={lastCompact}
+     data-window-scroll={windowScroll}
      data-no-header-overlapping={
       noHeaderOverlapping === false ? undefined : ''
      }
