@@ -27,6 +27,19 @@
     }
   }
 
+  @media only print {
+    grid-template-columns: auto;
+    > ul[role="tablist"] {
+      display: none;
+    }
+    > div[role="tabpanel"] {
+      border: none;
+    }
+    > div.toggle-tabs {
+      display: none;
+    }
+  }
+
   @media only screen and (max-width: 900px) {
     &[data-tabs-expanded="true"] {
       grid-template-columns: auto;
