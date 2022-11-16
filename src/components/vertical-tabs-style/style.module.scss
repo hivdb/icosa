@@ -33,7 +33,7 @@
       display: none;
     }
     > div[role="tabpanel"] {
-      border: none;
+      border: none !important;
     }
     > div.toggle-tabs {
       display: none;
