@@ -14,6 +14,11 @@ $border-radius: 0;
 $padding-h: .7rem;
 $padding-v: .7rem;
 
+.simple-table-container {
+  container-type: inline-size;
+  container-name: simple-table-container;
+}
+
 .simple-table-container[data-window-scroll="true"] .simple-table-scroll {
   @media only screen {
     overflow: visible;
@@ -92,6 +97,7 @@ table.simple-table {
 
   > thead {
     box-shadow: none;
+    break-inside: avoid;
     > tr {
       > th {
         position: sticky;
@@ -336,6 +342,9 @@ table.simple-table {
     &[data-nocopy="false"] {
       margin-top: 3rem;
     }
+    @media print {
+      margin-top: 1rem;
+    }
   }
   &[data-compact="true"] {
     width: auto;
@@ -345,6 +354,9 @@ table.simple-table {
     }
     &[data-nocopy="false"] {
       margin-top: 3rem;
+    }
+    @media print {
+      margin-top: 1rem;
     }
     margin-right: 4rem;
     &[data-last-compact="true"] + .clearfix {
