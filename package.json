@@ -1,6 +1,6 @@
 {
   "name": "icosa",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "private": true,
   "resolutions": {
     "vfile": "^4.2.1",
