@@ -1,5 +1,4 @@
 import React, {Suspense, lazy} from 'react';
-import PropTypes from 'prop-types';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
@@ -12,15 +11,7 @@ const PresetSelection = lazy(() => import('./preset-selection'));
 const MutAnnotViewer = lazy(() => import('./viewer'));
 
 
-MutAnnotViewerRoutes.propTypes = {
-  pathPrefix: PropTypes.string,
-  presets: PropTypes.array,
-  colors: PropTypes.object,
-  className: PropTypes.string,
-  refDataLoader: PropTypes.func
-};
-
-export default function MutAnnotViewerRoutes({
+export default function mutAnnotViewerRoutes({
   pathPrefix = "mut-annot-viewer/",
   presets = [],
   colors,
@@ -57,4 +48,5 @@ export default function MutAnnotViewerRoutes({
        colors={colors} />
     </Suspense>;
   }
+
 }

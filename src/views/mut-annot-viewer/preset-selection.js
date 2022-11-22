@@ -6,33 +6,35 @@ import Dropdown from 'react-dropdown';
 import style from './style.module.scss';
 
 
-export default class PresetSelection extends React.Component {
+PresetSelection.propTypes = {
+  match: matchShape.isRequired,
+  router: routerShape.isRequired,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.node.isRequired
+    })
+  ).isRequired
+};
 
-  static propTypes = {
-    match: matchShape.isRequired,
-    router: routerShape.isRequired,
-    options: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.string.isRequired,
-        label: PropTypes.node.isRequired
-      })
-    ).isRequired
-  };
 
-  handleChange = ({value}) => {
-    const {match: {location}} = this.props;
-    this.props.router.push(`${location.pathname}${value}/`);
-  };
+export default function PresetSelection({
+  match: {location},
+  router,
+  options
+}) {
 
-  render() {
-    const {options} = this.props;
-    return <section className={style['preset-selection']}>
-      <Dropdown
-       placeholder="Choose a gene to view..."
-       options={options}
-       name="preset"
-       onChange={this.handleChange} />
-    </section>;
-  }
+  const handleChange = React.useCallback(
+    ({value}) => router.push(`${location.pathname}${value}/`),
+    [router, location]
+  );
+
+  return <section className={style['preset-selection']}>
+    <Dropdown
+     placeholder="Choose a gene to view..."
+     options={options}
+     name="preset"
+     onChange={handleChange} />
+  </section>;
 
 }
