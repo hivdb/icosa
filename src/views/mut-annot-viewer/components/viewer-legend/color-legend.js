@@ -161,7 +161,7 @@ function CircleInBoxDesc({
 AAColorDesc.propTypes = {
   catName: PropTypes.string.isRequired,
   display: PropTypes.bool.isRequired,
-  color: PropTypes.object
+  color: PropTypes.string
 };
 
 function AAColorDesc({catName, display, color}) {
@@ -196,7 +196,7 @@ function AAColorDesc({catName, display, color}) {
 
 
 AnnotDesc.propTypes = {
-  color: PropTypes.string.isRequired,
+  color: PropTypes.object.isRequired,
   positions: PropTypes.arrayOf(
     PropTypes.number.isRequired
   ).isRequired,

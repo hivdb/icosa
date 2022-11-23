@@ -9,13 +9,11 @@ import {seqViewerSizeType} from '../../prop-types';
 
 
 SizeController.propTypes = {
-  allowEditing: PropTypes.bool.isRequired,
   size: seqViewerSizeType.isRequired,
   onChange: PropTypes.func.isRequired
 };
 
 export default function SizeController({
-  allowEditing,
   size: seqViewerSize,
   onChange
 }) {
@@ -27,7 +25,7 @@ export default function SizeController({
 
   return (
     <div className={style['input-group']}>
-      <h3>{allowEditing ? 'Editor' : 'Viewer'} size:</h3>
+      <h3>Viewer size:</h3>
       <div className={style['inline-buttons']}>
         {['large', 'middle', 'small'].map(size => (
           <Button
