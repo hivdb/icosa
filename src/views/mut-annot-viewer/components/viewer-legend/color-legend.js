@@ -15,12 +15,11 @@ import LegendContext from '../legend-context';
 import style from './style.module.scss';
 
 
-function getAllAnnotations(props) {
-  const {
-    positionLookup: posLookup,
-    seqFragment: [posStart, posEnd],
-    colorBoxAnnotDef: {name: annotName}
-  } = props;
+function getAllAnnotations({
+  positionLookup: posLookup,
+  seqFragment: [posStart, posEnd],
+  colorBoxAnnotDef: {name: annotName}
+}) {
   const annotObjs = [];
   const annotLookup = {};
   const allPos = range(posStart, posEnd + 1);
@@ -93,6 +92,12 @@ function isShortDesc(content) {
 }
 
 
+CitationList.propTypes = {
+  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
+  citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
+  annotName: PropTypes.string.isRequired
+};
+
 function CitationList({positionLookup, citations, annotName}) {
   const citationIds = {};
   for (const posdata of Object.values(positionLookup)) {
@@ -117,6 +122,12 @@ function CitationList({positionLookup, citations, annotName}) {
   </ul>;
 }
 
+
+CircleInBoxDesc.propTypes = {
+  annot: annotShape.isRequired,
+  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
+  citations: PropTypes.objectOf(citationShape.isRequired).isRequired
+};
 
 function CircleInBoxDesc({
   annot: {name: annotName, label, hideCitations},
@@ -146,6 +157,12 @@ function CircleInBoxDesc({
   </div>;
 }
 
+
+AAColorDesc.propTypes = {
+  catName: PropTypes.string.isRequired,
+  display: PropTypes.bool.isRequired,
+  color: PropTypes.object
+};
 
 function AAColorDesc({catName, display, color}) {
   if (display === false) {
@@ -178,6 +195,15 @@ function AAColorDesc({catName, display, color}) {
 }
 
 
+AnnotDesc.propTypes = {
+  color: PropTypes.string.isRequired,
+  positions: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  annotVal: PropTypes.string.isRequired,
+  annotDesc: PropTypes.string.isRequired
+};
+
 function AnnotDesc({positions, annotVal, annotDesc, color}) {
   const rangeStr = integersToRangeString(positions);
   const short = isShortDesc(annotDesc);
@@ -204,73 +230,68 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
 }
 
 
-export default class ColorLegend extends React.Component {
+ColorLegend.propTypes = {
+  seqFragment: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
+  colorBoxAnnotDef: annotShape.isRequired,
+  aminoAcidsCats: PropTypes.arrayOf(
+    annotCategoryShape.isRequired
+  ).isRequired,
+  circleInBoxAnnotDef: annotShape,
+  citations: PropTypes.objectOf(citationShape.isRequired).isRequired
+};
 
-  static propTypes = {
-    seqFragment: PropTypes.arrayOf(
-      PropTypes.number.isRequired
-    ).isRequired,
-    positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-    colorBoxAnnotDef: annotShape.isRequired,
-    aminoAcidsCats: PropTypes.arrayOf(
-      annotCategoryShape.isRequired
-    ).isRequired,
-    circleInBoxAnnotDef: annotShape,
-    citations: PropTypes.objectOf(citationShape.isRequired).isRequired
-  };
+export default function ColorLegend({
+  seqFragment,
+  positionLookup,
+  colorBoxAnnotDef,
+  aminoAcidsCats,
+  circleInBoxAnnotDef,
+  citations
+}) {
 
-  static getDerivedStateFromProps(props) {
-    return {
-      annotObjs: getAllAnnotations(props)
-    };
-  }
-
-  constructor() {
-    super(...arguments);
-    this.state = this.constructor.getDerivedStateFromProps(this.props);
-  }
-
-  render() {
-    const {
-      circleInBoxAnnotDef,
-      aminoAcidsCats,
+  const annotObjs = React.useMemo(
+    () => getAllAnnotations({
       positionLookup,
-      citations
-    } = this.props;
-    const {annotObjs} = this.state;
+      seqFragment,
+      colorBoxAnnotDef
+    }),
+    [positionLookup, seqFragment, colorBoxAnnotDef]
+  );
 
-    const showCirleInBoxDesc = !!circleInBoxAnnotDef;
-    return (
-      <div className={style['color-legend']}>
-        <h3>Legend:</h3>
-        <LegendContext.Consumer>
-          {({colorBoxAnnotColorLookup, aminoAcidsCatColorLookup}) => <>
-            {annotObjs.length > 0 ? annotObjs.map((annot, idx) => (
-              <AnnotDesc
-               key={idx}
-               color={colorBoxAnnotColorLookup[annot.annotVal] || {}}
-               {...annot} />
-            )) : 'None'}
-            <hr />
-            {showCirleInBoxDesc ?
-              <>
-                <CircleInBoxDesc
-                 positionLookup={positionLookup}
-                 annot={circleInBoxAnnotDef}
-                 citations={citations} />
-                <hr />
-              </> : null}
-            {aminoAcidsCats.map(({name, display}, idx) => (
-              <AAColorDesc
-               key={idx}
-               catName={name}
-               display={display}
-               color={aminoAcidsCatColorLookup[name]} />
-            ))}
-          </>}
-        </LegendContext.Consumer>
-      </div>
-    );
-  }
+  const showCirleInBoxDesc = !!circleInBoxAnnotDef;
+  return (
+    <div className={style['color-legend']}>
+      <h3>Legend:</h3>
+      <LegendContext.Consumer>
+        {({colorBoxAnnotColorLookup, aminoAcidsCatColorLookup}) => <>
+          {annotObjs.length > 0 ? annotObjs.map((annot, idx) => (
+            <AnnotDesc
+             key={idx}
+             color={colorBoxAnnotColorLookup[annot.annotVal] || {}}
+             {...annot} />
+          )) : 'None'}
+          <hr />
+          {showCirleInBoxDesc ?
+            <>
+              <CircleInBoxDesc
+               positionLookup={positionLookup}
+               annot={circleInBoxAnnotDef}
+               citations={citations} />
+              <hr />
+            </> : null}
+          {aminoAcidsCats.map(({name, display}, idx) => (
+            <AAColorDesc
+             key={idx}
+             catName={name}
+             display={!!display}
+             color={aminoAcidsCatColorLookup[name]} />
+          ))}
+        </>}
+      </LegendContext.Consumer>
+    </div>
+  );
 
 }
