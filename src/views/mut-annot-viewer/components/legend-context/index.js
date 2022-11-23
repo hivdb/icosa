@@ -4,34 +4,34 @@ import PropTypes from 'prop-types';
 
 const Context = React.createContext({});
 
-export default class LegendContext extends React.Component {
 
-  static Consumer = Context.Consumer;
-  static propTypes = {
-    children: PropTypes.node
-  };
+LegendContext.propTypes = {
+  children: PropTypes.node
+};
 
-  constructor() {
-    super(...arguments);
-    this.state = {
-      colorBoxAnnotColorLookup: {},
-      underscoreAnnotColorLookup: {},
-      aminoAcidsCatColorLookup: {}
-    };
-  }
+LegendContext.ContextObj = Context;
+LegendContext.Consumer = Context.Consumer;
 
-  handleUpdate = state => {
-    if (JSON.stringify(state) !== JSON.stringify(this.state)) {
-      this.setState(state);
-    }
-  };
+export default function LegendContext({children}) {
 
-  render() {
-    return <Context.Provider value={{
-      ...this.state,
-      onUpdate: this.handleUpdate
-    }}>
-      {this.props.children}
-    </Context.Provider>;
-  }
+  const [state, setState] = React.useState({
+    colorBoxAnnotColorLookup: {},
+    underscoreAnnotColorLookup: {},
+    aminoAcidsCatColorLookup: {}
+  });
+
+  const handleUpdate = React.useCallback(
+    newState => {
+      const mergedState = {...state, ...newState};
+      setState(mergedState);
+    },
+    [state]
+  );
+
+  return <Context.Provider value={{
+    ...state,
+    onUpdate: handleUpdate
+  }}>
+    {children}
+  </Context.Provider>;
 }

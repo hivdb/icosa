@@ -14,95 +14,61 @@ import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
 
 
-export default class ViewerController extends React.Component {
+ViewerController.propTypes = {
+  className: PropTypes.string,
+  fragmentOptions: PropTypes.arrayOf(
+    fragmentOptionShape.isRequired
+  ).isRequired,
+  seqFragment: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  annotCategories: PropTypes.arrayOf(
+    annotCategoryShape.isRequired
+  ).isRequired,
+  curAnnotNameLookup: curAnnotNameLookupShape.isRequired,
+  annotations: PropTypes.arrayOf(
+    annotShape.isRequired
+  ).isRequired,
+  seqViewerSize: seqViewerSizeType.isRequired,
+  onCurAnnotNameLookupChange: PropTypes.func.isRequired,
+  onSeqFragmentChange: PropTypes.func.isRequired,
+  onSeqViewerSizeChange: PropTypes.func.isRequired
+};
 
-  static propTypes = {
-    className: PropTypes.string,
-    fragmentOptions: PropTypes.arrayOf(
-      fragmentOptionShape.isRequired
-    ).isRequired,
-    seqFragment: PropTypes.arrayOf(
-      PropTypes.number.isRequired
-    ).isRequired,
-    annotCategories: PropTypes.arrayOf(
-      annotCategoryShape.isRequired
-    ).isRequired,
-    curAnnotNameLookup: curAnnotNameLookupShape.isRequired,
-    annotations: PropTypes.arrayOf(
-      annotShape.isRequired
-    ).isRequired,
-    allowEditing: PropTypes.bool,
-    seqViewerSize: seqViewerSizeType.isRequired,
-    onCurAnnotNameLookupChange: PropTypes.func.isRequired,
-    onSeqFragmentChange: PropTypes.func.isRequired,
-    onSeqViewerSizeChange: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired
-  };
+export default function ViewerController({
+  className,
+  fragmentOptions,
+  seqFragment,
+  annotCategories,
+  curAnnotNameLookup,
+  annotations,
+  seqViewerSize,
+  onCurAnnotNameLookupChange,
+  onSeqViewerSizeChange,
+  onSeqFragmentChange
+}) {
 
-  get className() {
-    const {className} = this.props;
-    return makeClassNames(
-      style['viewer-controller'],
-      className
-    );
-  }
+  const mergedClassName = makeClassNames(
+    style['viewer-controller'],
+    className
+  );
 
-  get colorBoxAnnotDef() {
-    const {curAnnotNameLookup, annotCategories, annotations} = this.props;
-    const catName = (
-      annotCategories
-        .find(({annotStyle}) => annotStyle === 'colorBox')
-        .name
-    );
-    const annotName = curAnnotNameLookup[catName][0];
-    return annotations.find(({name}) => name === annotName);
-  }
-
-  get circleInBoxAnnotDef() {
-    const {curAnnotNameLookup, annotCategories, annotations} = this.props;
-    const category = (
-      annotCategories
-        .find(({annotStyle}) => annotStyle === 'circleInBox')
-    );
-    if (!category) {
-      return null;
-    }
-    const catName = category.name;
-    const annotName = curAnnotNameLookup[catName][0];
-    return annotations.find(({name}) => name === annotName);
-  }
-
-  handleCurAnnotNamesChange(catName) {
-    return (newCurAnnotNames) => {
-      const {curAnnotNameLookup, onCurAnnotNameLookupChange} = this.props;
+  const handleCurAnnotNamesChange = React.useCallback(
+    catName => newCurAnnotNames => {
       const {curAnnotNames} = curAnnotNameLookup[catName];
-      if (JSON.stringify(newCurAnnotNames) !== JSON.stringify(curAnnotNames)) {
+      if (newCurAnnotNames !== curAnnotNames) {
         curAnnotNameLookup[catName] = newCurAnnotNames;
-        onCurAnnotNameLookupChange(curAnnotNameLookup);
+        onCurAnnotNameLookupChange({...curAnnotNameLookup});
       }
-    };
-  }
+    },
+    [curAnnotNameLookup, onCurAnnotNameLookupChange]
+  );
 
-  render() {
-    const {className} = this;
-    const {
-      allowEditing,
-      curAnnotNameLookup,
-      fragmentOptions,
-      seqFragment,
-      seqViewerSize,
-      onSeqViewerSizeChange,
-      onSeqFragmentChange,
-      onSave,
-      annotCategories,
-      annotations
-    } = this.props;
-
-    return (
-      <div className={className}>
+  return React.useMemo(
+    () => (
+      <div className={mergedClassName}>
         <SizeController
          size={seqViewerSize}
-         allowEditing={allowEditing}
          onChange={onSeqViewerSizeChange} />
         <FragmentDropdown
          fragmentOptions={fragmentOptions}
@@ -114,11 +80,21 @@ export default class ViewerController extends React.Component {
            annotCategory={cat}
            curAnnotNames={curAnnotNameLookup[cat.name]}
            annotations={annotations}
-           onChange={this.handleCurAnnotNamesChange(cat.name)}
-           onSave={onSave} />
+           onChange={handleCurAnnotNamesChange(cat.name)} />
         ))}
       </div>
-    );
-  }
-
+    ),
+    [
+      annotCategories,
+      annotations,
+      curAnnotNameLookup,
+      fragmentOptions,
+      handleCurAnnotNamesChange,
+      mergedClassName,
+      onSeqFragmentChange,
+      onSeqViewerSizeChange,
+      seqFragment,
+      seqViewerSize
+    ]
+  );
 }

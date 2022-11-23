@@ -8,94 +8,93 @@ import Markdown from '../../../../components/markdown';
 import style from './style.module.scss';
 
 
-export default class ViewerFooter extends React.Component {
+ViewerFooter.propTypes = {
+  refDataLoader: PropTypes.func,
+  commentLookup: PropTypes.objectOf(PropTypes.shape({
+    position: PropTypes.number.isRequired,
+    comment: PropTypes.string.isRequired
+  }).isRequired).isRequired,
+  commentReferences: PropTypes.string.isRequired,
+  selectedPositions: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired
+};
 
-  static propTypes = {
-    refDataLoader: PropTypes.func,
-    commentLookup: PropTypes.objectOf(PropTypes.shape({
-      position: PropTypes.number.isRequired,
-      comment: PropTypes.string.isRequired
-    }).isRequired).isRequired,
-    commentReferences: PropTypes.string.isRequired,
-    selectedPositions: PropTypes.arrayOf(
-      PropTypes.number.isRequired
-    ).isRequired
-  };
+export default function ViewerFooter({
+  refDataLoader,
+  commentLookup,
+  commentReferences,
+  selectedPositions
+}) {
 
-  constructor() {
-    super(...arguments);
-    this.state = {expanded: false};
-    this.defaultBodyOverflow = document.body.style.overflow;
-    this.scrollableRef = React.createRef();
-  }
+  const [expanded, setExpanded] = React.useState(false);
+  const [defaultBodyOverflow] = React.useState(document.body.style.overflow);
+  const scrollableRef = React.useRef();
 
-  get commentMdText() {
-    const {commentLookup, commentReferences, selectedPositions} = this.props;
-    const buffer = [];
-    for (const pos of selectedPositions) {
-      if (!(pos in commentLookup)) {
-        continue;
+  const commentMdText = React.useMemo(
+    () => {
+      const buffer = [];
+      for (const pos of selectedPositions) {
+        if (!(pos in commentLookup)) {
+          continue;
+        }
+        const {comment} = commentLookup[pos];
+        buffer.push(`- ${comment}`);
       }
-      const {comment} = commentLookup[pos];
-      buffer.push(`- ${comment}`);
-    }
-    if (buffer.length > 0) {
-      let leadText = 'Following position has been selected:';
-      if (buffer.length > 1) {
-        leadText = 'Following positions have been selected:';
+      if (buffer.length > 0) {
+        let leadText = 'Following position has been selected:';
+        if (buffer.length > 1) {
+          leadText = 'Following positions have been selected:';
+        }
+        return (
+          `\n## Comments\n\n${leadText}\n` +
+          `\n${buffer.join('\n')}\n\n${commentReferences}`
+        );
       }
-      return (
-        `\n## Comments\n\n${leadText}\n` +
-        `\n${buffer.join('\n')}\n\n${commentReferences}`
-      );
-    }
-    return 'Select positions/a position to view the comments.';
-  }
+      return 'Select positions/a position to view the comments.';
+    },
+    [commentLookup, commentReferences, selectedPositions]
+  );
 
-  get hasSelectedComments() {
-    const {commentLookup, selectedPositions} = this.props;
-    return Object.keys(commentLookup)
-      .some(pos => selectedPositions.includes(parseInt(pos)));
-  }
+  const hasSelectedComments = React.useMemo(
+    () => Object.keys(commentLookup)
+      .some(pos => selectedPositions.includes(parseInt(pos))),
+    [commentLookup, selectedPositions]
+  );
 
-  toggleDisplay = () => {
-    const {expanded} = this.state;
-    if (!expanded) {
-      document.body.style.overflow = 'hidden';
-    }
-    else {
-      this.scrollableRef.current.scrollTo({top: 0});
-      document.body.style.overflow = this.defaultBodyOverflow;
-    }
-    this.setState({expanded: !expanded});
-  };
+  const toggleDisplay = React.useCallback(
+    () => {
+      if (!expanded) {
+        document.body.style.overflow = 'hidden';
+      }
+      else {
+        scrollableRef.current.scrollTo({top: 0});
+        document.body.style.overflow = defaultBodyOverflow;
+      }
+      setExpanded(!expanded);
+    },
+    [expanded, defaultBodyOverflow]
+  );
 
-  render() {
-    const {commentMdText, hasSelectedComments} = this;
-    let {expanded} = this.state;
-    expanded = hasSelectedComments ? expanded : false;
-    const {refDataLoader} = this.props;
-    return <div
-     className={style['footer-container']}
-     data-expanded={expanded}>
-      <section
-       className={style.footer}>
-        <button
-         className={style["toggle-button"]}
-         disabled={!hasSelectedComments}
-         onClick={this.toggleDisplay}>
-          {expanded ? <FaArrowDown /> : <FaArrowUp />}
-          {expanded ? 'Less' : 'More'}
-        </button>
-        <div className={style.scrollable} ref={this.scrollableRef}>
-          <Markdown
-           disableHeadingTagAnchor
-           {...{refDataLoader}}>
-            {commentMdText}
-          </Markdown>
-        </div>
-      </section>
-    </div>;
-  }
-
+  return <div
+   className={style['footer-container']}
+   data-expanded={hasSelectedComments ? expanded : false}>
+    <section
+     className={style.footer}>
+      <button
+       className={style["toggle-button"]}
+       disabled={!hasSelectedComments}
+       onClick={toggleDisplay}>
+        {expanded ? <FaArrowDown /> : <FaArrowUp />}
+        {expanded ? 'Less' : 'More'}
+      </button>
+      <div className={style.scrollable} ref={scrollableRef}>
+        <Markdown
+         disableHeadingTagAnchor
+         {...{refDataLoader}}>
+          {commentMdText}
+        </Markdown>
+      </div>
+    </section>
+  </div>;
 }

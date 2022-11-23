@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Group, Rect, Circle, Text} from 'react-konva';
 
 
@@ -7,9 +8,14 @@ function getDisplayAA(aa) {
 }
 
 
+PositionGroup.propTypes = {
+  config: PropTypes.object.isRequired,
+  position: PropTypes.number.isRequired,
+  residue: PropTypes.string.isRequired
+};
+
 export default function PositionGroup({
   config,
-  posAnnot,
   position,
   residue
 }) {
@@ -27,10 +33,22 @@ export default function PositionGroup({
     posNumColor,
     fontFamily
   } = config;
-  const {x, y} = config.pos2Coord(position);
-  const isColorBox = config.isPositionAnnotated(position, 'colorBox');
-  const isCircleInBox = config.isPositionAnnotated(position, 'circleInBox');
-  const aaDefs = config.getAnnotatedAAs(position);
+  const {x, y} = React.useMemo(
+    () => config.pos2Coord(position),
+    [config, position]
+  );
+  const isColorBox = React.useMemo(
+    () => config.isPositionAnnotated(position, 'colorBox'),
+    [config, position]
+  );
+  const isCircleInBox = React.useMemo(
+    () => config.isPositionAnnotated(position, 'circleInBox'),
+    [config, position]
+  );
+  const aaDefs = React.useMemo(
+    () => config.getAnnotatedAAs(position),
+    [config, position]
+  );
 
   return <Group x={x} y={y}>
     {/* background:

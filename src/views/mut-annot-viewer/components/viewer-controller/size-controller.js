@@ -8,41 +8,38 @@ import Button from '../../../../components/button';
 import {seqViewerSizeType} from '../../prop-types';
 
 
-export default class SizeController extends React.Component {
+SizeController.propTypes = {
+  allowEditing: PropTypes.bool.isRequired,
+  size: seqViewerSizeType.isRequired,
+  onChange: PropTypes.func.isRequired
+};
 
-  static propTypes = {
-    allowEditing: PropTypes.bool.isRequired,
-    size: seqViewerSizeType.isRequired,
-    onChange: PropTypes.func.isRequired
-  };
+export default function SizeController({
+  allowEditing,
+  size: seqViewerSize,
+  onChange
+}) {
 
-  handleChange = ({currentTarget: {value}}) => {
-    this.props.onChange(value);
-  };
+  const handleChange = React.useCallback(
+    ({currentTarget: {value}}) => onChange(value),
+    [onChange]
+  );
 
-  render() {
-    const {
-      allowEditing,
-      size: seqViewerSize
-    } = this.props;
-
-    return (
-      <div className={style['input-group']}>
-        <h3>{allowEditing ? 'Editor' : 'Viewer'} size:</h3>
-        <div className={style['inline-buttons']}>
-          {['large', 'middle', 'small'].map(size => (
-            <Button
-             key={size}
-             name="size"
-             btnStyle={size === seqViewerSize ? 'primary' : 'light'}
-             onClick={this.handleChange}
-             value={size}>
-              {capitalize(size)}
-            </Button>
-          ))}
-        </div>
+  return (
+    <div className={style['input-group']}>
+      <h3>{allowEditing ? 'Editor' : 'Viewer'} size:</h3>
+      <div className={style['inline-buttons']}>
+        {['large', 'middle', 'small'].map(size => (
+          <Button
+           key={size}
+           name="size"
+           btnStyle={size === seqViewerSize ? 'primary' : 'light'}
+           onClick={handleChange}
+           value={size}>
+            {capitalize(size)}
+          </Button>
+        ))}
       </div>
-    );
-  }
-
+    </div>
+  );
 }

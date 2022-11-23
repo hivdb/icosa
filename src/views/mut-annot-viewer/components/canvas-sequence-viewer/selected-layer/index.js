@@ -5,25 +5,23 @@ import {Layer} from 'react-konva';
 import PositionGroup from './position-group';
 
 
-export default class SelectedLayer extends React.Component {
+SelectedLayer.propTypes = {
+  selectedPositions: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired,
+  config: PropTypes.object.isRequired
+};
 
-  static propTypes = {
-    selectedPositions: PropTypes.arrayOf(
-      PropTypes.number.isRequired
-    ).isRequired,
-    config: PropTypes.object.isRequired
-  };
-
-  render() {
-    const {
-      selectedPositions,
-      config
-    } = this.props;
-
-    return <Layer>
+export default function SelectedLayer({
+  selectedPositions,
+  config
+}) {
+  return React.useMemo(
+    () => <Layer>
       {selectedPositions.map(pos => (
         <PositionGroup position={pos} config={config} key={pos} />
       ))}
-    </Layer>;
-  }
+    </Layer>,
+    [selectedPositions, config]
+  );
 }
