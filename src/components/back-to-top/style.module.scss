@@ -1,0 +1,51 @@
+.back-to-top-container {
+  display: block;
+  position: absolute;
+  top: 150vh; 
+  bottom: 0;
+  right: -8rem;
+  pointer-events: none;
+  a.back-to-top {
+    font-size: 3.2rem;
+    border-radius: 10%;
+    pointer-events: all;
+    box-sizing: border-box;
+    padding-left: 4px;
+    padding-top: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: sticky;
+    top: calc(100vh - 10rem);
+    background-color: rgba(0,0,0,.4);
+    color: white;
+    width: 4rem;
+    height: 4rem;
+    transition: transform 200ms ease-out;
+    transform-origin: center-left;
+    &:hover {
+      transform: translateY(-4px);
+      text-decoration: none;
+    }
+    z-index: 100;
+  }
+  
+  @media only screen and (max-width: 1400px) {
+    right: 2rem;
+    a.back-to-top {
+      opacity: .4;
+      &:hover {
+        opacity: .8;
+      }
+    }
+  }
+  @media print {
+    display: none;
+  }
+
+}
+
+:global(body.chiro-body) .back-to-top-container {
+  display: none;
+}
+
