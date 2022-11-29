@@ -4,13 +4,11 @@ import {Group, Rect} from 'react-konva';
 
 
 PositionGroup.propTypes = {
-  isAnchor: PropTypes.bool.isRequired,
   position: PropTypes.number.isRequired,
   config: PropTypes.object.isRequired
 };
 
 export default function PositionGroup({
-  isAnchor,
   position: pos,
   config: {
     posItemSizePixel,
@@ -20,8 +18,6 @@ export default function PositionGroup({
     selectedBackgroundColor
   }
 }) {
-  const bgColor = isAnchor ? 'transparent' : selectedBackgroundColor;
-
   return React.useMemo(
     () => <Group {...pos2Coord(pos)}>
       <Rect
@@ -29,7 +25,7 @@ export default function PositionGroup({
        y={0}
        width={posItemSizePixel}
        height={posItemSizePixel}
-       fill={bgColor} />
+       fill={selectedBackgroundColor} />
       <Rect
        x={-strokeWidthPixel / 2}
        y={-strokeWidthPixel / 2}
@@ -39,7 +35,7 @@ export default function PositionGroup({
        strokeWidth={strokeWidthPixel} />
     </Group>,
     [
-      bgColor,
+      selectedBackgroundColor,
       pos,
       pos2Coord,
       posItemSizePixel,

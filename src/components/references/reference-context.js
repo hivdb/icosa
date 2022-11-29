@@ -116,37 +116,13 @@ class ReferenceObject {
 }
 
 
-export function useReference(refDataLoader) {
-  /*const [references, setRef] = React.useReducer(
-    (refs, {refName, ref}) => {
-      refs[refName] = ref;
-      return refs;
-    },
-    {}
-  );
-  const [refNames, pushRefName] = React.useReducer(
-    (refNames, refName) => {
-      if (!refNames.includes(refName)) {
-        refNames.push(refName);
-      }
-      return refNames;
-    },
-    []
-  );*/
+export function useReference(refDataLoader, cacheKey) {
+  // the purpose of cacheKey is for refreshing memoized ReferenceObject
   return React.useMemo(
-    () => {
-
-      /*const pushRefName = refName => {
-        if (!refNames.includes(refName)) {
-          refNames.push(refName);
-        }
-      };*/
-
-      return new ReferenceObject({
-        refDataLoader
-      });
-    },
-    [refDataLoader]
+    () => cacheKey || !cacheKey ? new ReferenceObject({
+      refDataLoader
+    }) : null,
+    [refDataLoader, cacheKey]
   );
 }
 

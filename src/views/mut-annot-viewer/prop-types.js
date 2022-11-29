@@ -15,7 +15,7 @@ const citationShape = PropTypes.shape({
   sectionId: PropTypes.number.isRequired,
   author: PropTypes.string.isRequired,
   year: PropTypes.number.isRequired,
-  doi: PropTypes.string.isRequired,
+  doi: PropTypes.string,
   section: PropTypes.string.isRequired
 });
 

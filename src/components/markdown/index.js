@@ -96,7 +96,7 @@ function ExtendedMarkdown({
      renderers={renderers}
      plugins={[macroPlugin.transformer]} />
   );
-  const refContext = useReference(refDataLoader);
+  const refContext = useReference(refDataLoader, /*cacheKey = */children);
   if (displayReferences) {
     jsx = (
       <ReferenceContext.Provider value={refContext}>
