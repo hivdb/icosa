@@ -160,7 +160,10 @@ function CircleInBoxDesc({
 
 AAColorDesc.propTypes = {
   catName: PropTypes.string.isRequired,
-  display: PropTypes.bool.isRequired,
+  display: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.bool.isRequired
+  ]).isRequired,
   color: PropTypes.string
 };
 
@@ -286,7 +289,7 @@ export default function ColorLegend({
             <AAColorDesc
              key={idx}
              catName={name}
-             display={!!display}
+             display={display}
              color={aminoAcidsCatColorLookup[name]} />
           ))}
         </>}

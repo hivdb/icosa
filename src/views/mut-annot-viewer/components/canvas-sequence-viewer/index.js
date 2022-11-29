@@ -22,20 +22,6 @@ import {
 } from '../../prop-types';
 
 
-function useForceUpdateOnResize() {
-  const [, forceUpdate] = React.useReducer(n => n + 1, 0);
-  React.useEffect(
-    () => {
-      const onWindowResize = debounce(() => {
-        forceUpdate();
-      }, 200);
-      window.addEventListener('resize', onWindowResize, false);
-      return window.removeEventListener('resize', onWindowResize, false);
-    },
-    []
-  );
-}
-
 function useContainer() {
   const containerRef = React.useRef();
   const [containerWidth, setContainerWidth] = React.useState(null);
@@ -43,22 +29,28 @@ function useContainer() {
   React.useEffect(
     () => {
       let mounted = true;
-      const konva = containerRef.current.querySelector('.konvajs-content');
-      try {
+      const onWindowResize = debounce(() => {
+        const konva = containerRef.current.querySelector('.konvajs-content');
         if (konva) {
           konva.style.display = 'none';
         }
-        preloadFonts().then(() => (
-          mounted &&
-          setContainerWidth(containerRef.current.clientWidth)
-        ));
-        return () => mounted = false;
-      }
-      finally {
-        if (konva) {
-          konva.style.display = null;
-        }
-      }
+        preloadFonts()
+          .then(() => (
+            mounted &&
+            setContainerWidth(containerRef.current.clientWidth)
+          ))
+          .finally(() => {
+            if (konva) {
+              konva.style.display = null;
+            }
+          });
+      }, 200);
+      onWindowResize();
+      window.addEventListener('resize', onWindowResize, false);
+      return () => {
+        window.removeEventListener('resize', onWindowResize, false);
+        mounted = false;
+      };
     },
     []
   );
@@ -74,9 +66,10 @@ function useConfig({
   positionLookup,
   curAnnotNameLookup,
   annotCategories,
-  containerWidth
+  containerWidth,
+  legendContext
 }) {
-  return React.useMemo(
+  const config = React.useMemo(
     () => {
       let colorBoxPositions = [];
       let circleInBoxPositions = [];
@@ -149,7 +142,19 @@ function useConfig({
       containerWidth
     ]
   );
+  const {onUpdate} = legendContext;
 
+  React.useEffect(
+    () => {
+      const update = config?.updateLegendContext;
+      if (update) {
+        update({onUpdate});
+      }
+    },
+    [config?.updateLegendContext, onUpdate]
+  );
+
+  return config;
 }
 
 
@@ -187,9 +192,9 @@ export default function CanvasSequenceViewer({
   onChange
 }) {
 
-  useForceUpdateOnResize();
-
   const [containerRef, containerWidth] = useContainer();
+
+  const legendContext = React.useContext(LegendContext.ContextObj);
 
   const config = useConfig({
     size,
@@ -199,7 +204,8 @@ export default function CanvasSequenceViewer({
     positionLookup,
     curAnnotNameLookup,
     annotCategories,
-    containerWidth
+    containerWidth,
+    legendContext
   });
 
   const combinedClassName = makeClassNames(
@@ -211,25 +217,18 @@ export default function CanvasSequenceViewer({
     <div
      ref={containerRef}
      className={combinedClassName}>
-      {config === null ? <Loader /> :
-      <LegendContext.Consumer>
-        {(context) => {
-          setTimeout(() => config.updateLegendContext(context));
-          return (
-            <SeqViewerStage
-             {...{
-               config,
-               sequence,
-               annotCategories,
-               noBlurSelector,
-               positionLookup,
-               selectedPositions,
-               onChange
-             }} />
-          );
-        }}
-      </LegendContext.Consumer>
-      }
+      {config === null ? <Loader /> : (
+        <SeqViewerStage
+         {...{
+           config,
+           sequence,
+           annotCategories,
+           noBlurSelector,
+           positionLookup,
+           selectedPositions,
+           onChange
+         }} />
+      )}
     </div>
   );
 

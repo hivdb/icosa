@@ -55,7 +55,7 @@ export default function ViewerController({
 
   const handleCurAnnotNamesChange = React.useCallback(
     catName => newCurAnnotNames => {
-      const {curAnnotNames} = curAnnotNameLookup[catName];
+      const curAnnotNames = curAnnotNameLookup[catName];
       if (newCurAnnotNames !== curAnnotNames) {
         curAnnotNameLookup[catName] = newCurAnnotNames;
         onCurAnnotNameLookupChange({...curAnnotNameLookup});

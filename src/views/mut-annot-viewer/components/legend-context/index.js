@@ -14,24 +14,56 @@ LegendContext.Consumer = Context.Consumer;
 
 export default function LegendContext({children}) {
 
-  const [state, setState] = React.useState({
-    colorBoxAnnotColorLookup: {},
-    underscoreAnnotColorLookup: {},
-    aminoAcidsCatColorLookup: {}
-  });
+  const [
+    colorBoxAnnotColorLookup,
+    setColorBoxAnnotColorLookup
+  ] = React.useState({});
+
+  const [
+    underscoreAnnotColorLookup,
+    setUnderscoreAnnotColorLookup
+  ] = React.useState({});
+
+  const [
+    aminoAcidsCatColorLookup,
+    setAminoAcidsCatColorLookup
+  ] = React.useState({});
 
   const handleUpdate = React.useCallback(
-    newState => {
-      const mergedState = {...state, ...newState};
-      setState(mergedState);
+    ({
+      colorBoxAnnotColorLookup,
+      underscoreAnnotColorLookup,
+      aminoAcidsCatColorLookup
+    }) => {
+      if (colorBoxAnnotColorLookup) {
+        setColorBoxAnnotColorLookup(colorBoxAnnotColorLookup);
+      }
+      if (underscoreAnnotColorLookup) {
+        setUnderscoreAnnotColorLookup(underscoreAnnotColorLookup);
+      }
+      if (aminoAcidsCatColorLookup) {
+        setAminoAcidsCatColorLookup(aminoAcidsCatColorLookup);
+      }
     },
-    [state]
+    []
   );
 
-  return <Context.Provider value={{
-    ...state,
-    onUpdate: handleUpdate
-  }}>
+  const context = React.useMemo(
+    () => ({
+      colorBoxAnnotColorLookup,
+      underscoreAnnotColorLookup,
+      aminoAcidsCatColorLookup,
+      onUpdate: handleUpdate
+    }),
+    [
+      colorBoxAnnotColorLookup,
+      underscoreAnnotColorLookup,
+      aminoAcidsCatColorLookup,
+      handleUpdate
+    ]
+  );
+
+  return <Context.Provider value={context}>
     {children}
   </Context.Provider>;
 }

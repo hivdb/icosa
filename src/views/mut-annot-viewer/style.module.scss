@@ -12,26 +12,20 @@
   }
   .viewer {
     display: grid;
-    grid-template-columns: 20rem auto 24rem;
-    grid-template-rows: auto;
+    grid-template-columns: 24rem 1fr;
+    grid-template-rows: max-content 1fr;
     > .seqviewer {
       grid-row-start: 1;
+      grid-row-end: 3;
+      grid-column: 2;
     }
     > .controller-container {
-      grid-row-start: 1;
-      > .controller {
-        z-index: 1;
-        position: sticky;
-        top: 2rem;
-      }
+      grid-row: 1;
+      grid-column: 1;
     }
     > .legend-container {
-      grid-row-start: 1;
-      > .legend {
-        z-index: 1;
-        position: sticky;
-        top: 2rem;
-      }
+      grid-row: 2;
+      grid-column: 1;
     }
   }
 }
