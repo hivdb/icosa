@@ -105,7 +105,7 @@ function parseAAVF(name, rows, geneValidator) {
           break;
       }
     }
-    if (refCodon.length === 6) {
+    if (refCodon && refCodon.length === 6) {
       // deletion in next position
       pos += 1;
       refCodon = refCodon.slice(3);
@@ -138,7 +138,9 @@ function parseAAVF(name, rows, geneValidator) {
       ...gpMap[gpKey].allCodonReads,
       ...allCodonReads
     ];
-    gpRefMap[gpKey] = refCodon;
+    if (refCodon) {
+      gpRefMap[gpKey] = refCodon;
+    }
   }
   for (const gpKey in gpMap) {
     const gpData = gpMap[gpKey];
@@ -148,10 +150,12 @@ function parseAAVF(name, rows, geneValidator) {
         .map(({reads}) => reads)
         .reduce((a, b) => a + b, 0)
     );
-    gpData.allCodonReads.push({
-      codon: gpRefMap[gpKey],
-      reads: refCount
-    });
+    if (gpKey in gpRefMap) {
+      gpData.allCodonReads.push({
+        codon: gpRefMap[gpKey],
+        reads: refCount
+      });
+    }
   }
   return {
     name,
