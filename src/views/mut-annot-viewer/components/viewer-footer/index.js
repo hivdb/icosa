@@ -1,35 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FaArrowUp} from '@react-icons/all-files/fa/FaArrowUp';
-import {FaArrowDown} from '@react-icons/all-files/fa/FaArrowDown';
+import {IoClose} from '@react-icons/all-files/io5/IoClose';
+import NewWindow from 'react-new-window';
 
 import Markdown from '../../../../components/markdown';
 
 import style from './style.module.scss';
 
 
-ViewerFooter.propTypes = {
-  refDataLoader: PropTypes.func,
-  commentLookup: PropTypes.objectOf(PropTypes.shape({
-    position: PropTypes.number.isRequired,
-    comment: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  commentReferences: PropTypes.string.isRequired,
-  selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired
-};
-
-export default function ViewerFooter({
-  refDataLoader,
+export function useFootnote({
+  selectedPositions,
   commentLookup,
-  commentReferences,
-  selectedPositions
+  commentReferences
 }) {
+  const [showFootnote, setShowFootnote] = React.useState(false);
+  const openFn = React.useCallback(
+    () => setShowFootnote(true),
+    []
+  );
 
-  const [expanded, setExpanded] = React.useState(false);
-  const [defaultBodyOverflow] = React.useState(document.body.style.overflow);
-  const scrollableRef = React.useRef();
+  const closeFn = React.useCallback(
+    () => setShowFootnote(false),
+    []
+  );
 
   const commentMdText = React.useMemo(
     () => {
@@ -62,39 +55,56 @@ export default function ViewerFooter({
     [commentLookup, selectedPositions]
   );
 
-  const toggleDisplay = React.useCallback(
-    () => {
-      if (!expanded) {
-        document.body.style.overflow = 'hidden';
-      }
-      else {
-        scrollableRef.current.scrollTo({top: 0});
-        document.body.style.overflow = defaultBodyOverflow;
-      }
-      setExpanded(!expanded);
-    },
-    [expanded, defaultBodyOverflow]
-  );
+  return [
+    commentMdText,
+    hasSelectedComments,
+    hasSelectedComments && showFootnote,
+    openFn,
+    closeFn
+  ];
+}
 
-  return <div
-   className={style['footer-container']}
-   data-expanded={hasSelectedComments ? expanded : false}>
-    <section
-     className={style.footer}>
-      <button
-       className={style["toggle-button"]}
-       disabled={!hasSelectedComments}
-       onClick={toggleDisplay}>
-        {expanded ? <FaArrowDown /> : <FaArrowUp />}
-        {expanded ? 'Less' : 'More'}
-      </button>
-      <div className={style.scrollable} ref={scrollableRef}>
-        <Markdown
-         disableHeadingTagAnchor
-         {...{refDataLoader}}>
-          {commentMdText}
-        </Markdown>
-      </div>
-    </section>
-  </div>;
+
+ViewerFooter.propTypes = {
+  refDataLoader: PropTypes.func,
+  children: PropTypes.string.isRequired,
+  onClose: PropTypes.func.isRequired
+};
+
+export default function ViewerFooter({
+  refDataLoader,
+  children,
+  onClose
+}) {
+  const scrollableRef = React.useRef();
+
+  return <NewWindow
+   name="mut-annot-footer-tab"
+   center="no"
+   onUnload={onClose}
+   features={{
+     left: 50,
+     top: 50,
+     width: 800,
+     height: 600
+   }}>
+    <div className={style['footer-container']}>
+      <section
+       className={style.footer}>
+        <button
+         onClick={onClose}
+         className={style["toggle-button"]}>
+          <IoClose />
+          Close
+        </button>
+        <div className={style.scrollable} ref={scrollableRef}>
+          <Markdown
+           disableHeadingTagAnchor
+           {...{refDataLoader}}>
+            {children}
+          </Markdown>
+        </div>
+      </section>
+    </div>
+  </NewWindow>;
 }

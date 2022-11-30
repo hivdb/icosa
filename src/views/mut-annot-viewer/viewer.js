@@ -8,7 +8,7 @@ import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
 import ViewerController from './components/viewer-controller';
 import ViewerLegend from './components/viewer-legend';
-import ViewerFooter from './components/viewer-footer';
+import ViewerFooter, {useFootnote} from './components/viewer-footer';
 import {usePositionLookup} from './utils';
 
 import style from './style.module.scss';
@@ -152,14 +152,22 @@ function MutAnnotViewerInner({
     setSelectedPositions
   ] = React.useState([]);
 
+  const [footnote, hasFootnote, showFootnote, openFn, closeFn] = useFootnote({
+    selectedPositions,
+    commentLookup,
+    commentReferences: comments.references
+  });
+
   return <LegendContext>
     <section className={style.viewer}>
       <div className={style['controller-container']}>
         <ViewerController
          sequence={refSeq}
+         hasFootnote={hasFootnote}
          onSeqViewerSizeChange={setSeqViewerSize}
          onSeqFragmentChange={setSeqFragment}
          onCurAnnotNameLookupChange={setCurAnnotNameLookup}
+         onOpenFootnote={openFn}
          className={style['controller']}
          {...{
            seqFragment,
@@ -174,7 +182,7 @@ function MutAnnotViewerInner({
        size={seqViewerSize}
        sequence={refSeq}
        onChange={setSelectedPositions}
-       noBlurSelector={`*[class*="footer-container"], *[role="tooltip"]`}
+       noBlurSelector={`*[role="tooltip"], *[data-no-blur]`}
        className={style.seqviewer}
        {...{
          seqFragment,
@@ -200,13 +208,12 @@ function MutAnnotViewerInner({
          }} />
       </div>
     </section>
-    <ViewerFooter
-     {...{
-       refDataLoader,
-       commentLookup,
-       commentReferences: comments.references,
-       selectedPositions
-     }} />
+    {showFootnote ?
+      <ViewerFooter
+       refDataLoader={refDataLoader}
+       onClose={closeFn}>
+        {footnote}
+      </ViewerFooter> : null}
   </LegendContext>;
 
 }

@@ -12,6 +12,7 @@ import style from './style.module.scss';
 import SizeController from './size-controller';
 import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
+import FootnoteOpener from './footnote-opener';
 
 
 ViewerController.propTypes = {
@@ -30,9 +31,11 @@ ViewerController.propTypes = {
     annotShape.isRequired
   ).isRequired,
   seqViewerSize: seqViewerSizeType.isRequired,
+  hasFootnote: PropTypes.bool.isRequired,
   onCurAnnotNameLookupChange: PropTypes.func.isRequired,
   onSeqFragmentChange: PropTypes.func.isRequired,
-  onSeqViewerSizeChange: PropTypes.func.isRequired
+  onSeqViewerSizeChange: PropTypes.func.isRequired,
+  onOpenFootnote: PropTypes.func.isRequired
 };
 
 export default function ViewerController({
@@ -43,9 +46,11 @@ export default function ViewerController({
   curAnnotNameLookup,
   annotations,
   seqViewerSize,
+  hasFootnote,
   onCurAnnotNameLookupChange,
   onSeqViewerSizeChange,
-  onSeqFragmentChange
+  onSeqFragmentChange,
+  onOpenFootnote
 }) {
 
   const mergedClassName = makeClassNames(
@@ -70,6 +75,9 @@ export default function ViewerController({
         <SizeController
          size={seqViewerSize}
          onChange={onSeqViewerSizeChange} />
+        <FootnoteOpener
+         disabled={!hasFootnote}
+         onClick={onOpenFootnote} />
         <FragmentDropdown
          fragmentOptions={fragmentOptions}
          seqFragment={seqFragment}
@@ -94,7 +102,9 @@ export default function ViewerController({
       onSeqFragmentChange,
       onSeqViewerSizeChange,
       seqFragment,
-      seqViewerSize
+      seqViewerSize,
+      hasFootnote,
+      onOpenFootnote
     ]
   );
 }

@@ -79,7 +79,12 @@ function useSelectionState({selectedPositions, onChange}) {
         curSelecteds === undefined || setCurSelecteds(curSelecteds);
         prevSelecteds === undefined || setPrevSelecteds(prevSelecteds);
       }
-      curSelecteds === undefined || onChange(curSelecteds);
+      if (reset) {
+        onChange([]);
+      }
+      else if (curSelecteds !== undefined) {
+        onChange(curSelecteds);
+      }
     },
     [onChange]
   );
