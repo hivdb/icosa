@@ -32,7 +32,9 @@ export function useFootnote({
           continue;
         }
         const {comment} = commentLookup[pos];
-        buffer.push(`- ${comment}`);
+        for (const cmt of comment) {
+          buffer.push(`- ${cmt}`);
+        }
       }
       if (buffer.length > 0) {
         let leadText = 'Following position has been selected:';
@@ -58,7 +60,7 @@ export function useFootnote({
   return [
     commentMdText,
     hasSelectedComments,
-    hasSelectedComments && showFootnote,
+    showFootnote,
     openFn,
     closeFn
   ];

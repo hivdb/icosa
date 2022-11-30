@@ -66,6 +66,7 @@
   }
 
   > button.toggle-button {
+    z-index: 1;
     padding-left: 1rem;
     padding-right: 1rem;
     background-color: white;
