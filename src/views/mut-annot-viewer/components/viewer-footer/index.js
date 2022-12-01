@@ -37,29 +37,21 @@ export function useFootnote({
         }
       }
       if (buffer.length > 0) {
-        let leadText = 'Following position has been selected:';
-        if (buffer.length > 1) {
-          leadText = 'Following positions have been selected:';
-        }
         return (
-          `\n## Comments\n\n${leadText}\n` +
+          `\n## Comments\n\n` +
           `\n${buffer.join('\n')}\n\n${commentReferences}`
         );
       }
-      return 'Select positions/a position to view the comments.';
+      return 'No comment was found for selected position(s).';
     },
     [commentLookup, commentReferences, selectedPositions]
   );
 
-  const hasSelectedComments = React.useMemo(
-    () => Object.keys(commentLookup)
-      .some(pos => selectedPositions.includes(parseInt(pos))),
-    [commentLookup, selectedPositions]
-  );
+  const hasSelectedPos = selectedPositions.length > 0;
 
   return [
     commentMdText,
-    hasSelectedComments,
+    hasSelectedPos,
     showFootnote,
     openFn,
     closeFn

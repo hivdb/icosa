@@ -26,7 +26,7 @@ export default function FootnoteOpener({
          btnStyle="primary"
          disabled={disabled}
          onClick={onClick}>
-          View
+          {disabled ? '(Select a position)' : 'View'}
         </Button>
       </div>
     </div>
