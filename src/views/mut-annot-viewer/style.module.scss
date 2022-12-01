@@ -12,20 +12,16 @@
   }
   .viewer {
     display: grid;
-    grid-template-columns: 24rem 1fr;
-    grid-template-rows: max-content 1fr;
+    grid-template-columns: 24rem 1fr 24rem;
+    grid-template-rows: max-content;
+    > .controller-container {
+      grid-column: 1;
+    }
     > .seqviewer {
-      grid-row-start: 1;
-      grid-row-end: 3;
       grid-column: 2;
     }
-    > .controller-container {
-      grid-row: 1;
-      grid-column: 1;
-    }
     > .legend-container {
-      grid-row: 2;
-      grid-column: 1;
+      grid-column: 3;
     }
   }
 }
