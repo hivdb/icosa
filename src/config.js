@@ -64,6 +64,11 @@ const mutAnnotViewerConfig = {
       name: 'SARS2RdRP',
       display: "SARS-CoV-2 RNA-dependent RNA polymerase",
       annotationLoader: makeMutAnnotLoader('mutannot-rdrp')
+    },
+    {
+      name: 'SARS23CLpro',
+      display: "SARS-CoV-2 3C-like protease",
+      annotationLoader: makeMutAnnotLoader('mutannot-3clpro')
     }
   ]
 };

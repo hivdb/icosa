@@ -17,7 +17,7 @@ export default function PosAnnotGroup({
   config: {
     getUnderscoreAnnotColor,
     posRange2CoordPairs,
-    underscoreAnnotLocations: {locations: annotLocs}
+    underscoreAnnotLocations: {locations: annotLocs = []}
   }
 }) {
   return <Group>

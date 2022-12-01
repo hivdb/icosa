@@ -50,8 +50,9 @@ const annotCategoryShape = PropTypes.shape({
     PropTypes.string.isRequired,
     PropTypes.bool.isRequired
   ]),
-  dropdown: PropTypes.bool.isRequired,
-  multiSelect: PropTypes.bool.isRequired,
+  dropdown: PropTypes.bool,
+  checkbox: PropTypes.bool,
+  multiSelect: PropTypes.bool,
   defaultAnnot: PropTypes.string,
   defaultAnnots: PropTypes.arrayOf(
     PropTypes.string.isRequired

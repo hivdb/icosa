@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
+import CheckboxInput from '../../../../components/checkbox-input';
 
 import {
   annotShape,
@@ -95,6 +96,18 @@ export default function AnnotCategory({
     [curAnnotNames, onChange]
   );
 
+  const handleToggle = React.useCallback(
+    evt => {
+      if (curAnnotNames && curAnnotNames.length) {
+        onChange([]);
+      }
+      else {
+        onChange([evt.currentTarget.value]);
+      }
+    },
+    [curAnnotNames, onChange]
+  );
+
   const handleSelectAll = React.useCallback(
     evt => {
       evt.preventDefault();
@@ -115,14 +128,15 @@ export default function AnnotCategory({
     name: catName,
     display,
     dropdown,
+    checkbox,
     multiSelect,
     annotStyle
   } = annotCategory;
 
   const displayName = display ? display : catName;
-  let dropdownValue = null;
+  let value = null;
   if (!multiSelect && curAnnotNames && curAnnotNames.length) {
-    dropdownValue = curAnnotNames[0];
+    value = curAnnotNames[0];
   }
   const curAnnots = React.useMemo(
     () => annotations.filter(
@@ -136,9 +150,9 @@ export default function AnnotCategory({
   } = React.useContext(LegendContext.ContextObj);
 
   const jsx = React.useMemo(
-    () => display && (dropdown || multiSelect) ?
+    () => display && (dropdown || checkbox || multiSelect) ?
       <div className={style['input-group']}>
-        <h3>
+        {dropdown || multiSelect ? <h3>
           {displayName}
           {multiSelect && curAnnotNames.length === 0 ? <>
             {' ('}<a
@@ -154,7 +168,7 @@ export default function AnnotCategory({
               remove all
             </a>)
           </> : null}
-          {!multiSelect && curAnnotNames.length === 1 ? <>
+          {!checkbox && !multiSelect && curAnnotNames.length === 1 ? <>
             {' ('}<a
              href="#remove-all-annots"
              onClick={handleRemoveAll}>
@@ -162,15 +176,26 @@ export default function AnnotCategory({
             </a>)
           </> : null}
           :
-        </h3>
+        </h3> : null}
         {dropdown ?
           <Dropdown
-           value={dropdownValue}
+           value={value}
            options={options}
            name={`annot-dropdown-${catName}`}
            placeholder={`Select ${displayName}...`}
            className={style['dropdown-annotations']}
            onChange={handleAdd} /> : null}
+        {checkbox ? <h3>
+          <CheckboxInput
+           id={`annot-checkbox-${catName}`}
+           name={`annot-checkbox-${catName}`}
+           value={options[0].value}
+           checked={!!value}
+           className={style['checkbox-annotations']}
+           onChange={handleToggle}>
+            {displayName}
+          </CheckboxInput>
+        </h3> : null}
         {multiSelect && curAnnotNames.length > 0 ?
           <ul className={style['fold']}>
             {curAnnots.map(({name, label}) => {
@@ -207,11 +232,13 @@ export default function AnnotCategory({
       display,
       displayName,
       dropdown,
-      dropdownValue,
+      checkbox,
+      value,
       handleAdd,
       handleRemove,
       handleRemoveAll,
       handleSelectAll,
+      handleToggle,
       multiSelect,
       options,
       underscoreAnnotColorLookup

@@ -163,7 +163,7 @@ export default class ConfigGenerator {
       aminoAcidAnnotHeightPixel,
       seqFragment: [absPosStart]
     } = this;
-    const {matrix: usLocMatrix} = underscoreAnnotLocations;
+    const {matrix: usLocMatrix = []} = underscoreAnnotLocations;
     let underscoreAnnotColorIndexOffset = 0;
     const usOuterSize = (
       underscoreAnnotMarginPixel + underscoreAnnotHeightPixel
@@ -348,7 +348,7 @@ export default class ConfigGenerator {
       aminoAcidAnnotHeightPixel,
       aminoAcidAnnotMarginPixel
     } = this;
-    const {matrix: usLocMatrix} = underscoreAnnotLocations;
+    const {matrix: usLocMatrix = []} = underscoreAnnotLocations;
     const usOuterSize = (
       underscoreAnnotHeightPixel + underscoreAnnotMarginPixel
     );
@@ -389,7 +389,7 @@ export default class ConfigGenerator {
       posItemSizePixel,
       underscoreAnnotHeightPixel,
       underscoreAnnotMarginPixel,
-      underscoreAnnotLocations: {matrix}
+      underscoreAnnotLocations: {matrix = []}
     } = this;
     const offsetY = posItemSizePixel + underscoreAnnotMarginPixel;
     const usHeight = underscoreAnnotHeightPixel + underscoreAnnotMarginPixel;
