@@ -2838,6 +2838,11 @@
   resolved "https://registry.yarnpkg.com/@n1ru4l/push-pull-async-iterable-iterator/-/push-pull-async-iterable-iterator-3.2.0.tgz#c15791112db68dd9315d329d652b7e797f737655"
   integrity sha512-3fkKj25kEjsfObL6IlKPAlHYPq/oYwUkkQ03zsTTiDjD7vg/RxjdiLeCydqtxHZP0JgsXL3D/X5oAkMGzuUp/Q==
 
+"@n1ru4l/use-async-effect@^1.2.4":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@n1ru4l/use-async-effect/-/use-async-effect-1.4.0.tgz#662824fd1a35fbe9bec70a350b26599039fc1a9b"
+  integrity sha512-gQcaM5n+Gb5ZibEWN4m8P3Tv+JCh5Llb2SNLMf0oY/1Gog40QcNYt4oEivMst1O1NXURY8OXIWHTosGzrGsP4Q==
+
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
   version "2.1.8-no-fsevents.3"
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/chokidar-2/-/chokidar-2-2.1.8-no-fsevents.3.tgz#323d72dd25103d0c4fbdce89dadf574a787b1f9b"
@@ -8879,6 +8884,11 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+ngl@2.0.0-dev.37:
+  version "2.0.0-dev.37"
+  resolved "https://registry.yarnpkg.com/ngl/-/ngl-2.0.0-dev.37.tgz#6c7052d2b2f9f7db0ee1c13eb0f8711ab3bb9de8"
+  integrity sha512-quGzzIoi0RK1s2Y+fvC3WiVj68ObNubKl0NIjrPM1GnHOcVqJnYcvh8PSMaN3CMhrrOkT7kjVWHxgl5UxHLS6Q==
+
 no-case@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-3.0.4.tgz#d361fd5c9800f558551a8369fc0dcd4662b6124d"
@@ -10281,6 +10291,15 @@ react-new-window@^1.0.1:
   integrity sha512-pLQlq5NzMxNocXKPIwkXfAxSOZmbpWSbP8QrxCbunpHcx4k249YChkk7l/7P4jjwxq3dI/xwL3nVHLp6h5zM3w==
   dependencies:
     prop-types "^15.7.2"
+
+react-ngl@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/react-ngl/-/react-ngl-0.2.3.tgz#580e35cbd131c455b07f8189137dd027f1ed3ccf"
+  integrity sha512-clo6Qy2k9k4oGrg6IEWp0GM1SxXNy6FFkbXG6AXvsycvv37H9jplczE+vlhDPuSlegvTdXOvUCtsE9QFdNv7YQ==
+  dependencies:
+    "@n1ru4l/use-async-effect" "^1.2.4"
+    ngl "2.0.0-dev.37"
+    three "^0.125.0"
 
 react-onclickoutside@^6.12.0:
   version "6.12.2"
@@ -11775,6 +11794,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==
+
+three@^0.125.0:
+  version "0.125.2"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.125.2.tgz#dcba12749a2eb41522e15212b919cd3fbf729b12"
+  integrity sha512-7rIRO23jVKWcAPFdW/HREU2NZMGWPBZ4XwEMt0Ak0jwLUKVJhcKM55eCBWyGZq/KiQbeo1IeuAoo/9l2dzhTXA==
 
 throat@^6.0.1:
   version "6.0.1"

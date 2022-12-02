@@ -59,6 +59,9 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        <Link to="/protein-viewer/">Protein Viewer</Link>
+      </li>
+      <li>
         <Link to="/mut-annot-viewer/">Mutation Annotation Viewer</Link>
         <ul>
           <li><Link to="/mut-annot-viewer/SARS2S/">SARS2 S</Link></li>

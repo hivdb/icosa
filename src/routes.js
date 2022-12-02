@@ -13,6 +13,7 @@ import MarkdownDebugger2 from './views/markdown-debugger2';
 import DebugRefDataLoader from './components/debug-ref-data-loader';
 import SeqReadsThresholdNomogramDebugger from
   './views/seqreads-threshold-nomogram-debugger';
+import ProteinViewerDev from './views/protein-viewer-dev';
 import config from './config';
 
 const routes = (
@@ -20,6 +21,7 @@ const routes = (
     <Route Component={Layout}>
       <Route Component={Home} />
       <Route Component={NGS2CodFreqDev} path="ngs2codfreq" />
+      <Route Component={ProteinViewerDev} path="protein-viewer" />
       <Route Component={MarkdownDebugger} path="markdown-debugger" />
       <Route Component={MarkdownDebugger2} path="markdown-debugger2" />
       <Route
