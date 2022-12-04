@@ -1,75 +1,90 @@
 [
   {
+    "pale": "#e5f7d5",
     "light": "#92d454",
     "med": "#ca6dd8",
     "dark": "#498f28"
   },
   {
+    "pale": "#f7efd0",
     "light": "#ddb93c",
     "med": "#c2ac33",
     "dark": "#d23b6f"
   },
   {
+    "pale": "#ffedfe",
     "light": "#e887e4",
     "med": "#89b137",
     "dark": "#5f68d1"
   },
   {
+    "pale": "#d0f7d9",
     "light": "#63dd7f",
     "med": "#8484e0",
     "dark": "#9b6033"
   },
   {
+    "pale": "#f7fad4",
     "light": "#cbd54d",
     "med": "#4fbb5a",
     "dark": "#9851bd"
   },
   {
+    "pale": "#f5edff",
     "light": "#c0a3ea",
     "med": "#e3579c",
     "dark": "#c53e9c"
   },
   {
+    "pale": "#e8fcf4",
     "light": "#6fdaac",
     "med": "#e85265",
     "dark": "#437d40"
   },
   {
+    "pale": "#effce3",
     "light": "#95be71",
     "med": "#75a966",
     "dark": "#a07824"
   },
   {
+    "pale": "#ffe6ef",
     "light": "#ee91b4",
     "med": "#cf88be",
     "dark": "#c35823"
   },
   {
+    "pale": "#f7fce6",
     "light": "#d4e996",
     "med": "#d98f3b",
     "dark": "#74782c"
   },
   {
+    "pale": "#e6f4ff",
     "light": "#69b6ec",
     "med": "#4bb9a2",
     "dark": "#2f8b71"
   },
   {
+    "pale": "#fff1e3",
     "light": "#ed993f",
     "med": "#e1683a",
     "dark": "#d03c3e"
   },
   {
+    "pale": "#e1fcfc",
     "light": "#5ad8d7",
     "med": "#61a6dc",
     "dark": "#a2578a"
   },
   {
+    "pale": "#fff7e6",
     "light": "#d6b872",
     "med": "#b19a56",
     "dark": "#5773b2"
   },
   {
+    "pale": "#ffeae3",
     "light": "#ee9578",
     "med": "#d98176",
     "dark": "#b15457"

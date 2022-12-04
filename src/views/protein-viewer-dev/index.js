@@ -1,4 +1,5 @@
 import React from 'react';
+import {Rotation} from 'react-ngl';
 import ProteinViewer from '../../components/protein-viewer';
 
 const POSITION_OFFSET = 19;
@@ -18,8 +19,14 @@ const POSITION_ANNOTS = [
   {pos: 496, desc: 'G496', color: 0xff0000},
   {pos: 501, desc: 'N501', color: 0xff0000},
   {pos: 856, desc: 'N856', color: 0xff0000},
-  {pos: 969, desc: 'N969', color: 0xff0000}
+  {pos: 969, desc: 'N969', color: 0xff0000},
+  {pos: 614, desc: 'D614', color: 0x00ff00}
 ];
+
+const PDB = '6VXX';
+const DEFAULT_CAMERA_STATE = {
+  rotation: new Rotation(-0.68, 0.11, 0.14, 0.70)
+};
 
 export default function ProteinViewerDev() {
   const residues = React.useMemo(
@@ -33,7 +40,9 @@ export default function ProteinViewerDev() {
 
   return (
     <ProteinViewer
-     pdb="6VXX"
+     verboseCameraController
+     pdb={PDB}
+     defaultCameraState={DEFAULT_CAMERA_STATE}
      residues={residues} />
   );
 }

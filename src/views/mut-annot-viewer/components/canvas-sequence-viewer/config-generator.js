@@ -1,4 +1,4 @@
-import COLORS from './colors.json';
+import {getColorHex} from '../../../../utils/colors';
 
 const BASE_SIZE_PIXEL_MAP = {
   large: 40,
@@ -482,8 +482,9 @@ export default class ConfigGenerator {
         continue;
       }
       const [, colorIdx, aas] = posDef;
-      const colorGrp = COLORS[colorIdx % COLORS.length];
-      const color = aminoAcidsOverrideColors[colorIdx] || colorGrp.dark;
+      const color =
+        aminoAcidsOverrideColors[colorIdx] ||
+        getColorHex(colorIdx, 'dark');
       for (let idx = 0; idx < aas.length; idx ++) {
         const aminoAcid = aas[idx];
         aaDefs.push({
@@ -507,7 +508,7 @@ export default class ConfigGenerator {
     const posDef = lookup[pos];
     if (posDef) {
       const [, colorIdx] = posDef;
-      return colorIdx % COLORS.length;
+      return colorIdx;
     }
   };
 
@@ -517,7 +518,7 @@ export default class ConfigGenerator {
       underscoreAnnotNames.indexOf(annotName) +
       underscoreAnnotColorIndexOffset
     );
-    return colorIdx % COLORS.length;
+    return colorIdx;
   };
 
   getStrokeColor = (pos, hovering, annotStyle) => {
@@ -527,7 +528,7 @@ export default class ConfigGenerator {
     else {
       const colorIdx = this.getColorIndex(pos, annotStyle);
       if (colorIdx !== undefined) {
-        return COLORS[colorIdx].dark;
+        return getColorHex(colorIdx, 'dark');
       }
       return this.strokeDefaultColor;
     }
@@ -556,7 +557,7 @@ export default class ConfigGenerator {
     else {
       const colorIdx = this.getColorIndex(pos, annotStyle);
       if (colorIdx !== undefined) {
-        return COLORS[colorIdx].light;
+        return getColorHex(colorIdx, 'light');
       }
       return this.backgroundDefaultColor;
     }
@@ -564,7 +565,7 @@ export default class ConfigGenerator {
 
   getUnderscoreAnnotColor = (annotName) => {
     const colorIdx = this.getUnderscoreAnnotColorIndex(annotName);
-    return COLORS[colorIdx].med;
+    return getColorHex(colorIdx, 'med');
   };
 
   updateLegendContext = ({onUpdate}) => {
@@ -575,10 +576,9 @@ export default class ConfigGenerator {
     }
     const colorBoxAnnotColorLookup = {};
     for (let [val, colorIdx] of Object.entries(colorBoxAnnotColorIdx)) {
-      colorIdx = colorIdx % COLORS.length;
       colorBoxAnnotColorLookup[val] = {
-        stroke: COLORS[colorIdx].dark,
-        bg: COLORS[colorIdx].light
+        stroke: getColorHex(colorIdx, 'dark'),
+        bg: getColorHex(colorIdx, 'light')
       };
     }
     const underscoreAnnotColorLookup = {};
@@ -594,7 +594,7 @@ export default class ConfigGenerator {
         .reduce((acc, name, idx) => {
           acc[name] = (
             aminoAcidsOverrideColors[idx] ||
-            COLORS[idx % COLORS.length].dark
+            getColorHex(idx, 'dark')
           );
           return acc;
         }, {})
