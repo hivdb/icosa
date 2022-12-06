@@ -5,21 +5,30 @@ import {
   useComponent
 } from 'react-ngl';
 
+import Select from '../select';
 import Button from '../button';
 
-import {cameraStateShape} from './prop-types';
+import {viewShape, cameraStateShape} from './prop-types';
 import style from './style.module.scss';
 
 
 CameraController.propTypes = {
+  sele: PropTypes.string,
   verbose: PropTypes.bool,
+  currentViewName: PropTypes.string.isRequired,
+  views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
+  setView: PropTypes.func.isRequired,
   cameraState: cameraStateShape,
   defaultCameraState: cameraStateShape,
   setCameraState: PropTypes.func.isRequired
 };
 
 export default function CameraController({
+  sele,
   verbose,
+  currentViewName,
+  views,
+  setView,
   cameraState,
   defaultCameraState,
   setCameraState
@@ -28,27 +37,27 @@ export default function CameraController({
   const initPosition = React.useMemo(
     () => (
       defaultCameraState?.position ||
-      component.getCenter().multiplyScalar(-1)
+      component.getCenter(sele).multiplyScalar(-1)
     ),
-    [defaultCameraState?.position, component]
+    [defaultCameraState?.position, component, sele]
   );
   const initRotation = React.useMemo(
     () => defaultCameraState?.rotation || new Rotation(0, 0, 0, 1),
     [defaultCameraState?.rotation]
   );
   const initDistance = React.useMemo(
-    () => defaultCameraState?.distance || component.getZoom(),
-    [defaultCameraState?.distance, component]
+    () => defaultCameraState?.distance || component.getZoom(sele),
+    [defaultCameraState?.distance, component, sele]
   );
   const positionBox = React.useMemo(
     () => {
-      const {min, max} = component.getBox();
+      const {min, max} = component.getBox(sele);
       return {
         min: max.multiplyScalar(-1),
         max: min.multiplyScalar(-1)
       };
     },
-    [component]
+    [component, sele]
   );
 
   const handleReset = React.useCallback(
@@ -79,6 +88,24 @@ export default function CameraController({
     [cameraState, setCameraState]
   );
 
+  const handleSelectView = React.useCallback(
+    ({value}) => setView(views.find(({name}) => name === value)),
+    [views, setView]
+  );
+
+  const viewOptions = React.useMemo(
+    () => views.map(({name, label}) => ({
+      value: name,
+      label: label || name
+    })),
+    [views]
+  );
+
+  const curViewOption = React.useMemo(
+    () => viewOptions.find(({value}) => value === currentViewName),
+    [viewOptions, currentViewName]
+  );
+
   React.useEffect(
     () => {
       handleReset();
@@ -90,6 +117,15 @@ export default function CameraController({
     () => <>
       <ul className={style['camera-controll']}>
         <li>
+          {viewOptions.length > 1 ?
+            <Select
+             classNamePrefix="view-select"
+             className={style['view-select']}
+             options={viewOptions}
+             name="view"
+             value={curViewOption}
+             onChange={handleSelectView} /> :
+            (viewOptions[0].label || viewOptions[0].name)}
           <Button onClick={handleReset} btnStyle="primary">
             Reset camera
           </Button>
@@ -155,6 +191,9 @@ export default function CameraController({
     </>,
     [
       verbose,
+      curViewOption,
+      handleSelectView,
+      viewOptions,
       positionBox,
       cameraState,
       handleReset,

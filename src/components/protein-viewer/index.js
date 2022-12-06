@@ -2,32 +2,34 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Stage,
-  Component
+  StructureComponent
 } from 'react-ngl';
 import * as NGL from 'ngl';
 
 import {getColorInt} from '../../utils/colors';
 
-import {residueAnnotShape, cameraStateShape} from './prop-types';
-import HoverController from './hover-controller';
+import {viewShape, residueAnnotShape} from './prop-types';
+import ResidueText from './residue-text';
 import CameraController from './camera-controller';
 
 
 ProteinViewer.propTypes = {
+  views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
   pdb: PropTypes.string.isRequired,
   residues: PropTypes.arrayOf(
     residueAnnotShape.isRequired
   ).isRequired,
-  defaultCameraState: cameraStateShape,
   verboseCameraController: PropTypes.bool
 };
 
 export default function ProteinViewer({
+  views,
   pdb,
   residues,
-  defaultCameraState,
   verboseCameraController
 }) {
+  const [view, setView] = React.useState(views[0]);
+  const {name: viewName, sele, defaultCameraState} = view;
   const [cameraState, setCameraState] = React.useState();
 
   const handleCameraMove = React.useCallback(
@@ -37,8 +39,8 @@ export default function ProteinViewer({
 
   const reprList = React.useMemo(() => {
     const hlAtom = residues.reduce(
-      (acc, {resno, color}) => {
-        acc[resno] = color;
+      (acc, {resno, bgColor}) => {
+        acc[resno] = bgColor;
         return acc;
       },
       {}
@@ -55,15 +57,28 @@ export default function ProteinViewer({
         };
       }
     );
+    const seleSuffix = sele ? `AND ${sele}` : '';
     return [{
+      type: 'tube',
+      params: {
+        sele,
+        radius: .1,
+        color: 'lightgray'
+      }
+    }, {
       type: 'spacefill',
-      params: {color: schemeId}
+      params: {
+        sele: `(${Object.keys(hlAtom).join(' OR ')}) AND .CA ${seleSuffix}`,
+        radius: 1.8,
+        color: schemeId
+      }
     }];
-  }, [residues]);
+  }, [residues, sele]);
 
   return React.useMemo(
     () => <>
       <Stage
+       key={`stage-${viewName}`}
        width={600}
        height={600}
        params={{
@@ -71,17 +86,28 @@ export default function ProteinViewer({
        }}
        cameraState={cameraState}
        onCameraMove={handleCameraMove}>
-        <Component path={`rcsb://${pdb}`} reprList={reprList}>
-          <HoverController hoverableResidues={residues} />
+        <StructureComponent
+         key={`component-${viewName}`}
+         path={`rcsb://${pdb}`}
+         reprList={reprList}>
+          <ResidueText sele={sele} residues={residues} />
           <CameraController
+           rock
+           sele={sele}
+           views={views}
+           currentViewName={viewName}
+           setView={setView}
            verbose={verboseCameraController}
            defaultCameraState={defaultCameraState}
            cameraState={cameraState}
            setCameraState={setCameraState} />
-        </Component>
+        </StructureComponent>
       </Stage>
     </>,
     [
+      sele,
+      viewName,
+      views,
       verboseCameraController,
       defaultCameraState,
       cameraState,

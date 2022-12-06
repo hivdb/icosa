@@ -17,6 +17,9 @@ export default function useHoverResidues(residues) {
   const onHover = React.useCallback(
     proxy => {
       const tooltip = tooltipRef.current;
+      if (!tooltip) {
+        return;
+      }
       if (proxy && (proxy.atom || proxy.bond)) {
         const atom = proxy.atom || proxy.closestBondAtom;
         const mp = proxy.mouse.position;

@@ -1,3 +1,4 @@
+@import '../../styles/select';
 .tooltip {
   display: none;
   position: fixed;
@@ -21,4 +22,11 @@ ul.camera-controll {
     }
   }
 
+}
+
+.view-select {
+  @include select('view-select');
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 1rem;
 }

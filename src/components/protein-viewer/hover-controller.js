@@ -23,6 +23,7 @@ export default function HoverController({hoverableResidues: residues}) {
       if (onHover) {
         stage.mouseControls.remove("hoverPick");
         stage.signals.hovered.add(onHover);
+        return () => stage.signals.hovered.remove(onHover);
       }
     },
     [stage, onHover]
