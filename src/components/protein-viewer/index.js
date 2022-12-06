@@ -8,32 +8,61 @@ import * as NGL from 'ngl';
 
 import {getColorInt} from '../../utils/colors';
 
-import {viewShape, residueAnnotShape} from './prop-types';
-import ResidueLabels from './residue-labels';
+import {viewShape, positionAnnotShape} from './prop-types';
+import ResidueLayer from './residue-layer';
 import CameraController from './camera-controller';
-import HoverController from './hover-controller';
 
+export {viewShape as proteinViewShape};
 
 ProteinViewer.propTypes = {
+  width: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired
+  ]).isRequired,
+  height: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired
+  ]).isRequired,
   views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
-  residues: PropTypes.arrayOf(
-    residueAnnotShape.isRequired
+  positions: PropTypes.arrayOf(
+    positionAnnotShape.isRequired
   ).isRequired,
   verboseCameraController: PropTypes.bool
 };
 
+ProteinViewer.defaultPropTypes = {
+  width: 600,
+  height: 600
+};
+
 export default function ProteinViewer({
+  width,
+  height,
   views,
-  residues,
+  positions,
   verboseCameraController
 }) {
   const [view, setView] = React.useState(views[0]);
-  const {name: viewName, pdb, sele, defaultCameraState} = view;
+  const {
+    name: viewName,
+    pdb,
+    sele,
+    positionOffset = 0,
+    defaultCameraState
+  } = view;
   const [cameraState, setCameraState] = React.useState();
 
   const handleCameraMove = React.useCallback(
     newCameraState => setCameraState({...cameraState, ...newCameraState}),
     [cameraState]
+  );
+
+  const residues = React.useMemo(
+    () => positions.map(({position, ...annot}) => ({
+      resno: position + positionOffset,
+      ...annot
+    })),
+    [positions, positionOffset]
   );
 
   const reprList = React.useMemo(() => {
@@ -57,29 +86,32 @@ export default function ProteinViewer({
       }
     );
     const seleSuffix = sele ? `AND ${sele}` : '';
-    return [{
-      type: 'tube',
-      params: {
-        sele,
-        radius: .1,
-        color: 'white'
-      }
-    }, {
-      type: 'spacefill',
-      params: {
-        sele: `(${Object.keys(hlAtom).join(' OR ')}) AND .CA ${seleSuffix}`,
-        radius: 1.8,
-        color: schemeId
-      }
-    }];
+    return [
+      {
+        type: 'tube',
+        params: {
+          sele,
+          radius: .1,
+          color: 'white'
+        }
+      },
+      ...(residues.length ? [{
+        type: 'spacefill',
+        params: {
+          sele: `(${Object.keys(hlAtom).join(' OR ')}) AND .CA ${seleSuffix}`,
+          radius: 1.8,
+          color: schemeId
+        }
+      }] : [])
+    ];
   }, [residues, sele]);
 
   return React.useMemo(
-    () => <>
+    () => (
       <Stage
        key={`stage-${viewName}`}
-       width={600}
-       height={600}
+       width={width}
+       height={height}
        params={{
          backgroundColor: '#fff'
        }}
@@ -89,8 +121,7 @@ export default function ProteinViewer({
          key={`component-${viewName}`}
          path={`rcsb://${pdb}`}
          reprList={reprList}>
-          <ResidueLabels sele={sele} residues={residues} />
-          <HoverController sele={sele} residues={residues} />
+          <ResidueLayer sele={sele} residues={residues} />
           <CameraController
            pdb={pdb}
            sele={sele}
@@ -103,11 +134,13 @@ export default function ProteinViewer({
            setCameraState={setCameraState} />
         </StructureComponent>
       </Stage>
-    </>,
+    ),
     [
       sele,
       viewName,
       views,
+      width,
+      height,
       verboseCameraController,
       defaultCameraState,
       cameraState,

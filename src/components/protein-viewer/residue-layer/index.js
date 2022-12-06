@@ -1,22 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {useComponent, useStage} from 'react-ngl';
-import {Shape, Selection, TextBuffer} from 'ngl';
+import {Selection, TextBuffer, Shape} from 'ngl';
 import {Color} from 'three';
 
-import {residueAnnotShape} from './prop-types';
+import {residueAnnotShape} from '../prop-types';
+import style from '../style.module.scss';
+
+import useHoverResidues from './use-hover-residues';
 
 
-ResidueLabels.propTypes = {
+ResidueLayer.propTypes = {
   sele: PropTypes.string,
   residues: PropTypes.arrayOf(
     residueAnnotShape.isRequired
   ).isRequired
 };
 
-export default function ResidueLabels({sele, residues}) {
+export default function ResidueLayer({sele, residues}) {
   const stage = useStage();
   const component = useComponent();
+
+  const {children, onHover, tooltipRef} = useHoverResidues(sele, residues);
 
   React.useEffect(
     () => {
@@ -28,11 +33,12 @@ export default function ResidueLabels({sele, residues}) {
         {}
       );
       const seleSuffix = sele ? `AND ${sele}` : '';
-      const shape = new Shape('residue-text', {
+      const posSele = residues.map(({resno}) => resno).join(' OR ');
+
+      const shape = new Shape('buffer-shape', {
         sphereDetail: 4,
         radialSegments: 100
       });
-      const posSele = residues.map(({resno}) => resno).join(' OR ');
       for (const idx of component.object.getAtomIndices(
         new Selection(`(${posSele}) AND .CA ${seleSuffix}`)
       )) {
@@ -53,10 +59,30 @@ export default function ResidueLabels({sele, residues}) {
       }
       const shapeComp = stage.addComponentFromObject(shape);
       shapeComp.addRepresentation("buffer");
-      return () => stage.removeComponent(shapeComp);
+      return () => {
+        stage.removeComponent(shapeComp);
+        shape.dispose();
+      };
     },
     [sele, stage, component, residues]
   );
 
-  return <></>;
+  React.useEffect(
+    () => {
+      if (onHover) {
+        stage.mouseControls.remove("hoverPick");
+        stage.signals.hovered.add(onHover);
+        return () => stage.signals.hovered.remove(onHover);
+      }
+    },
+    [stage, onHover]
+  );
+
+  return (
+    <div
+     ref={tooltipRef}
+     className={style.tooltip}>
+      {children}
+    </div>
+  );
 }

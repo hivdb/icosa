@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Rotation,
   useStage,
-  useComponent
+  useComponent,
+  Position,
+  Rotation
 } from 'react-ngl';
 
 import Select from '../select';
@@ -42,14 +43,29 @@ export default function CameraController({
   const component = useComponent();
   const mounted = useMounted();
   const initPosition = React.useMemo(
-    () => (
-      defaultCameraState?.position ||
-      component.getCenter(sele).multiplyScalar(-1)
-    ),
+    () => {
+      const defaultPosition = defaultCameraState?.position;
+      if (Array.isArray(defaultPosition)) {
+        return new Position(...defaultPosition);
+      }
+      else if (defaultPosition) {
+        return defaultPosition;
+      }
+      return component.getCenter(sele).multiplyScalar(-1);
+    },
     [defaultCameraState?.position, component, sele]
   );
   const initRotation = React.useMemo(
-    () => defaultCameraState?.rotation || new Rotation(0, 0, 0, 1),
+    () => {
+      const defaultRotation = defaultCameraState?.rotation;
+      if (Array.isArray(defaultRotation)) {
+        return new Rotation(...defaultRotation);
+      }
+      else if (defaultRotation) {
+        return defaultRotation;
+      }
+      return new Rotation(0, 0, 0, 1);
+    },
     [defaultCameraState?.rotation]
   );
   const initDistance = React.useMemo(
@@ -143,7 +159,9 @@ export default function CameraController({
            name="view"
            value={curViewOption}
            onChange={handleSelectView} /> :
-          (viewOptions[0].label || viewOptions[0].name)}
+          <label className={style['view-select']}>
+            {viewOptions[0].label || viewOptions[0].name}:
+          </label>}
         <Button onClick={handleDownload} btnStyle="primary">
           Save image
         </Button>

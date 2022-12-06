@@ -18,7 +18,7 @@ export default function FootnoteOpener({
 
   return (
     <div className={style['input-group']}>
-      <h3>Mutation comments:</h3>
+      <h3>3D view and mutation comments:</h3>
       <div className={style['inline-buttons']}>
         <Button
          data-no-blur

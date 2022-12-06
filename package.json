@@ -1,6 +1,6 @@
 {
   "name": "icosa",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "private": true,
   "resolutions": {
     "vfile": "^4.2.1",
@@ -66,7 +66,6 @@
     "react-ga": "^3.3.0",
     "react-konva": "^18.2.3",
     "react-markdown": "^4.3.1",
-    "react-new-window": "^1.0.1",
     "react-ngl": "^0.2.3",
     "react-progressbar": "^15.4.1",
     "react-scripts": "^5.0.1",

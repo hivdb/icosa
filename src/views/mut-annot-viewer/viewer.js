@@ -123,6 +123,7 @@ function MutAnnotViewerInner({
   refDataLoader,
   annotationData: {
     fragmentOptions,
+    proteinViews,
     annotCategories,
     annotations,
     positions,
@@ -210,7 +211,10 @@ function MutAnnotViewerInner({
     </section>
     {showFootnote ?
       <ViewerFooter
+       sequence={refSeq}
        refDataLoader={refDataLoader}
+       selectedPositions={selectedPositions}
+       proteinViews={proteinViews}
        onClose={closeFn}>
         {footnote}
       </ViewerFooter> : null}

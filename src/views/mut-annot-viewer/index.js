@@ -4,11 +4,13 @@ import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
 
 import CustomColors from '../../components/custom-colors';
+import {NewWindowRoute} from '../../components/new-window';
 
 import style from './style.module.scss';
 
 const PresetSelection = lazy(() => import('./preset-selection'));
 const MutAnnotViewer = lazy(() => import('./viewer'));
+const ViewerFooter = lazy(() => import('./components/viewer-footer'));
 
 
 export default function mutAnnotViewerRoutes({
@@ -36,7 +38,14 @@ export default function mutAnnotViewerRoutes({
           {...props}
           preset={{name, ...preset}}
           refDataLoader={refDataLoader} />
-       )} />
+       )}>
+      </Route>
+    ))}
+    {presets.map(({name}, idx) => (
+      <NewWindowRoute
+       key={idx}
+       pathPrefix={`${name}`}
+       Component={ViewerFooter} />
     ))}
   </Route>;
 
