@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default function useHoverResidues(residues) {
+export default function useHoverResidues(sele, residues) {
+  const [desc, setDesc] = React.useState();
 
   const tooltipRef = React.useRef();
   const tooltipDesc = React.useMemo(
@@ -23,13 +24,12 @@ export default function useHoverResidues(residues) {
       if (proxy && (proxy.atom || proxy.bond)) {
         const atom = proxy.atom || proxy.closestBondAtom;
         const mp = proxy.mouse.position;
-        if (atom.resno in tooltipDesc) {
-          const desc = tooltipDesc[atom.resno] || atom.qualifiedName();
-          const chainName = atom.chainname;
-          tooltip.innerText = `${desc} (Chain ${chainName})`;
+        const desc = tooltipDesc[atom.resno];
+        if (desc) {
           tooltip.style.bottom = window.innerHeight - mp.y + 3 + "px";
           tooltip.style.left = mp.x + 3 + "px";
           tooltip.style.display = "block";
+          setDesc(desc);
         }
         else {
           tooltip.style.display = 'none';
@@ -41,5 +41,5 @@ export default function useHoverResidues(residues) {
     [tooltipDesc]
   );
 
-  return {onHover, tooltipRef};
+  return {children: desc, onHover, tooltipRef};
 }

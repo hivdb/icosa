@@ -15,18 +15,22 @@ ul.camera-controll {
   padding-left: 0;
   > li {
     display: inline-block;
-    margin: 0 .5rem;
+    margin-right: .5rem;
 
     > label {
       display: block;
     }
   }
+}
 
+.camera-options {
+  > * {
+    margin-right: 1rem;
+  }
 }
 
 .view-select {
   @include select('view-select');
   vertical-align: middle;
   display: inline-block;
-  margin-right: 1rem;
 }

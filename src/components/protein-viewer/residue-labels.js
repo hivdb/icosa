@@ -7,22 +7,22 @@ import {Color} from 'three';
 import {residueAnnotShape} from './prop-types';
 
 
-ResidueText.propTypes = {
+ResidueLabels.propTypes = {
   sele: PropTypes.string,
   residues: PropTypes.arrayOf(
     residueAnnotShape.isRequired
   ).isRequired
 };
 
-export default function ResidueText({sele, residues}) {
+export default function ResidueLabels({sele, residues}) {
   const stage = useStage();
   const component = useComponent();
 
   React.useEffect(
     () => {
       const hlAtom = residues.reduce(
-        (acc, {resno, desc, color}) => {
-          acc[resno] = {desc, color};
+        (acc, {resno, label, color}) => {
+          acc[resno] = {label, color};
           return acc;
         },
         {}
@@ -37,13 +37,13 @@ export default function ResidueText({sele, residues}) {
         new Selection(`(${posSele}) AND .CA ${seleSuffix}`)
       )) {
         const atom = component.object.getAtomProxy(idx);
-        const {desc, color} = hlAtom[atom.resno] || {};
-        if (desc) {
+        const {label, color} = hlAtom[atom.resno] || {};
+        if (label) {
           const textBuffer = new TextBuffer({
             position: [atom.x, atom.y, atom.z],
             size: [3],
             color: new Color(color).toArray(),
-            text: [desc]
+            text: [label]
           }, {
             attachment: 'middle-center',
             zOffset: 2

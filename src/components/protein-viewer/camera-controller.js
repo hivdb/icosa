@@ -2,17 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Rotation,
+  useStage,
   useComponent
 } from 'react-ngl';
 
 import Select from '../select';
 import Button from '../button';
+import {makeDownload} from '../../utils/download';
+import useMounted from '../../utils/use-mounted';
 
 import {viewShape, cameraStateShape} from './prop-types';
 import style from './style.module.scss';
 
 
 CameraController.propTypes = {
+  pdb: PropTypes.string.isRequired,
   sele: PropTypes.string,
   verbose: PropTypes.bool,
   currentViewName: PropTypes.string.isRequired,
@@ -24,6 +28,7 @@ CameraController.propTypes = {
 };
 
 export default function CameraController({
+  pdb,
   sele,
   verbose,
   currentViewName,
@@ -33,7 +38,9 @@ export default function CameraController({
   defaultCameraState,
   setCameraState
 }) {
+  const stage = useStage();
   const component = useComponent();
+  const mounted = useMounted();
   const initPosition = React.useMemo(
     () => (
       defaultCameraState?.position ||
@@ -93,6 +100,18 @@ export default function CameraController({
     [views, setView]
   );
 
+  const handleDownload = React.useCallback(
+    () => {
+      stage.viewer.getImage().then(
+        blob => (
+          mounted() &&
+          makeDownload(`${pdb}.png`, 'image/png', blob, true)
+        )
+      );
+    },
+    [pdb, mounted, stage]
+  );
+
   const viewOptions = React.useMemo(
     () => views.map(({name, label}) => ({
       value: name,
@@ -115,22 +134,23 @@ export default function CameraController({
 
   return React.useMemo(
     () => <>
-      <ul className={style['camera-controll']}>
-        <li>
-          {viewOptions.length > 1 ?
-            <Select
-             classNamePrefix="view-select"
-             className={style['view-select']}
-             options={viewOptions}
-             name="view"
-             value={curViewOption}
-             onChange={handleSelectView} /> :
-            (viewOptions[0].label || viewOptions[0].name)}
-          <Button onClick={handleReset} btnStyle="primary">
-            Reset camera
-          </Button>
-        </li>
-      </ul>
+      <div className={style['camera-options']}>
+        {viewOptions.length > 1 ?
+          <Select
+           classNamePrefix="view-select"
+           className={style['view-select']}
+           options={viewOptions}
+           name="view"
+           value={curViewOption}
+           onChange={handleSelectView} /> :
+          (viewOptions[0].label || viewOptions[0].name)}
+        <Button onClick={handleDownload} btnStyle="primary">
+          Save image
+        </Button>
+        <Button onClick={handleReset} btnStyle="default">
+          Reset camera
+        </Button>
+      </div>
       {verbose ? <>
         {cameraState?.position ?
           <ul className={style['camera-controll']}>
@@ -197,6 +217,7 @@ export default function CameraController({
       positionBox,
       cameraState,
       handleReset,
+      handleDownload,
       handleChange,
       initDistance
     ]

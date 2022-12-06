@@ -9,8 +9,9 @@ import * as NGL from 'ngl';
 import {getColorInt} from '../../utils/colors';
 
 import {viewShape, residueAnnotShape} from './prop-types';
-import ResidueText from './residue-text';
+import ResidueLabels from './residue-labels';
 import CameraController from './camera-controller';
+import HoverController from './hover-controller';
 
 
 ProteinViewer.propTypes = {
@@ -63,7 +64,7 @@ export default function ProteinViewer({
       params: {
         sele,
         radius: .1,
-        color: 'lightgray'
+        color: 'white'
       }
     }, {
       type: 'spacefill',
@@ -90,9 +91,10 @@ export default function ProteinViewer({
          key={`component-${viewName}`}
          path={`rcsb://${pdb}`}
          reprList={reprList}>
-          <ResidueText sele={sele} residues={residues} />
+          <ResidueLabels sele={sele} residues={residues} />
+          <HoverController sele={sele} residues={residues} />
           <CameraController
-           rock
+           pdb={pdb}
            sele={sele}
            views={views}
            currentViewName={viewName}

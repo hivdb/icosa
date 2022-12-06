@@ -9,14 +9,15 @@ import style from './style.module.scss';
 
 
 HoverController.propTypes = {
-  hoverableResidues: PropTypes.arrayOf(
+  sele: PropTypes.string,
+  residues: PropTypes.arrayOf(
     residueAnnotShape.isRequired
   ).isRequired
 };
 
-export default function HoverController({hoverableResidues: residues}) {
+export default function HoverController({sele, residues}) {
   const stage = useStage();
-  const {onHover, tooltipRef} = useHoverResidues(residues);
+  const {children, onHover, tooltipRef} = useHoverResidues(sele, residues);
 
   React.useEffect(
     () => {
@@ -32,6 +33,8 @@ export default function HoverController({hoverableResidues: residues}) {
   return (
     <div
      ref={tooltipRef}
-     className={style.tooltip} />
+     className={style.tooltip}>
+      {children}
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 const residueAnnotShape = PropTypes.shape({
   resno: PropTypes.number.isRequired,
+  label: PropTypes.string,
   desc: PropTypes.string,
   bgColor: PropTypes.number.isRequired,
   color: PropTypes.number.isRequired
