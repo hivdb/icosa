@@ -2,11 +2,8 @@ import React from 'react';
 import {Rotation} from 'react-ngl';
 import ProteinViewer from '../../components/protein-viewer';
 
-const POSITION_OFFSET = 19;
-
 const POSITION_ANNOTS = [
-  // eslint-disable-next-line max-len
-  {pos: 346, label: 'R346', bgColor: 0xff0000, color: 0xffffff, desc: 'blah blah'},
+  {pos: 346, label: 'R346', bgColor: 0xff0000, color: 0xffffff},
   {pos: 371, label: 'S371', bgColor: 0xff0000, color: 0xffffff},
   {pos: 405, label: 'D405', bgColor: 0xff0000, color: 0xffffff},
   {pos: 417, label: 'K417', bgColor: 0xff0000, color: 0xffffff},
@@ -24,19 +21,19 @@ const POSITION_ANNOTS = [
   {pos: 614, label: 'D614', bgColor: 0x00ff00, color: 0x000000}
 ];
 
-const PDB = '6VXX';
 const VIEWS = [
   {
+    pdb: '6M0J',
     name: 'RBD (306-534)',
-    sele: '325-553 AND :A',
+    sele: '306-534 AND :E',
     defaultCameraState: {}
   },
   {
+    pdb: '6VXX',
     name: 'All (27-1147)',
-    sele: '46-1166 AND :A',
+    sele: '27-1147 AND :A',
     defaultCameraState: {
-      rotation: new Rotation(-0.62, 0.43, 0.34, 0.57),
-      distance: -214.0
+      rotation: new Rotation(-0.62, 0.43, 0.34, 0.57)
     }
   }
 ];
@@ -44,7 +41,7 @@ const VIEWS = [
 export default function ProteinViewerDev() {
   const residues = React.useMemo(
     () => POSITION_ANNOTS.map(({pos, ...annot}) => ({
-      resno: pos - POSITION_OFFSET,
+      resno: pos,
       ...annot
     })),
     []
@@ -53,7 +50,6 @@ export default function ProteinViewerDev() {
   return (
     <ProteinViewer
      verboseCameraController
-     pdb={PDB}
      views={VIEWS}
      residues={residues} />
   );

@@ -17,6 +17,7 @@ const cameraStateShape = PropTypes.shape({
 
 const viewShape = PropTypes.shape({
   name: PropTypes.string.isRequired,
+  pdb: PropTypes.string.isRequired,
   label: PropTypes.node,
   sele: PropTypes.string,
   defaultCameraState: cameraStateShape

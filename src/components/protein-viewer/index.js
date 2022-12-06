@@ -16,7 +16,6 @@ import HoverController from './hover-controller';
 
 ProteinViewer.propTypes = {
   views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
-  pdb: PropTypes.string.isRequired,
   residues: PropTypes.arrayOf(
     residueAnnotShape.isRequired
   ).isRequired,
@@ -25,12 +24,11 @@ ProteinViewer.propTypes = {
 
 export default function ProteinViewer({
   views,
-  pdb,
   residues,
   verboseCameraController
 }) {
   const [view, setView] = React.useState(views[0]);
-  const {name: viewName, sele, defaultCameraState} = view;
+  const {name: viewName, pdb, sele, defaultCameraState} = view;
   const [cameraState, setCameraState] = React.useState();
 
   const handleCameraMove = React.useCallback(

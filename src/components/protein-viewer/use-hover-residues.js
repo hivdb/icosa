@@ -24,8 +24,8 @@ export default function useHoverResidues(sele, residues) {
       if (proxy && (proxy.atom || proxy.bond)) {
         const atom = proxy.atom || proxy.closestBondAtom;
         const mp = proxy.mouse.position;
-        const desc = tooltipDesc[atom.resno];
-        if (desc) {
+        if (atom.resno in tooltipDesc) {
+          const desc = tooltipDesc[atom.resno] || atom.qualifiedName();
           tooltip.style.bottom = window.innerHeight - mp.y + 3 + "px";
           tooltip.style.left = mp.x + 3 + "px";
           tooltip.style.display = "block";
