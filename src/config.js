@@ -1,3 +1,4 @@
+import refDataLoader from './components/debug-ref-data-loader';
 /* async function popPrevalence(dataURI) {
   const resp = await fetch(dataURI);
   const data = await resp.json();
@@ -70,7 +71,8 @@ const mutAnnotViewerConfig = {
       display: "SARS-CoV-2 3C-like protease",
       annotationLoader: makeMutAnnotLoader('mutannot-3clpro')
     }
-  ]
+  ],
+  refDataLoader
 };
 
 

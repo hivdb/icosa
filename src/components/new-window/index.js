@@ -8,12 +8,23 @@ const READY_EVENT = '_newwindowready';
 
 NewWindowPropsProvider.propTypes = {
   routeProps: PropTypes.object.isRequired,
-  Component: PropTypes.func.isRequired
+  overrideProps: PropTypes.object,
+  Component: PropTypes.oneOfType([
+    PropTypes.func.isRequired,
+    PropTypes.object.isRequired
+  ]).isRequired
 };
 
-function NewWindowPropsProvider({routeProps, Component}) {
+function NewWindowPropsProvider({routeProps, overrideProps, Component}) {
+  const touched = React.useRef();
   const [props, setProps] = React.useState();
-  window.setProps = useMountedCallback(setProps, []);
+  window.setProps = useMountedCallback(
+    props => {
+      touched.current = true;
+      return setProps(props);
+    },
+    [setProps]
+  );
   React.useEffect(
     () => {
       window.dispatchEvent(new Event(READY_EVENT));
@@ -22,22 +33,25 @@ function NewWindowPropsProvider({routeProps, Component}) {
   );
 
   return <>
-    <Component {...routeProps} {...props} />
+    {touched.current ?
+      <Component {...routeProps} {...props} {...overrideProps} /> : null}
   </>;
 }
 
 
 export class NewWindowRoute extends Route {
-  constructor({pathPrefix, ...props}) {
+  constructor({pathPrefix, overrideProps, ...props}) {
     const path = pathPrefix ?
       pathPrefix.replace(/\/*$/, '/') + 'popup/' : 'popup/';
     super({...props, path});
+    this.overrideProps = overrideProps;
   }
 
   render({Component, props}) {
     return (
       <NewWindowPropsProvider
        routeProps={props}
+       overrideProps={this.overrideProps}
        Component={Component} />
     );
   }

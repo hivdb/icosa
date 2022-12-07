@@ -45,6 +45,7 @@ export default function mutAnnotViewerRoutes({
       <NewWindowRoute
        key={idx}
        pathPrefix={`${name}`}
+       overrideProps={{refDataLoader}}
        Component={ViewerFooter} />
     ))}
   </Route>;
