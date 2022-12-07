@@ -48,7 +48,10 @@
     height: max-content;
     > .protein-viewer {
       float: right;
-      margin: 1rem 0 1rem 2rem;
+      border: 1px solid color(dividing-line);
+      background-color: color(name-wildsand);
+      padding: 0 1rem 1rem;
+      margin: 2rem 1rem 1rem 2rem;
     }
     > :last-child {
       margin-bottom: 2rem;

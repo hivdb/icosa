@@ -18,21 +18,23 @@ ProteinViewer.propTypes = {
   width: PropTypes.oneOfType([
     PropTypes.string.isRequired,
     PropTypes.number.isRequired
-  ]).isRequired,
+  ]),
   height: PropTypes.oneOfType([
     PropTypes.string.isRequired,
     PropTypes.number.isRequired
-  ]).isRequired,
+  ]),
   views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
   positions: PropTypes.arrayOf(
     positionAnnotShape.isRequired
   ).isRequired,
+  backgroundColor: PropTypes.string,
   verboseCameraController: PropTypes.bool
 };
 
 ProteinViewer.defaultPropTypes = {
   width: 600,
-  height: 600
+  height: 600,
+  backgroundColor: '#fff'
 };
 
 export default function ProteinViewer({
@@ -40,6 +42,7 @@ export default function ProteinViewer({
   height,
   views,
   positions,
+  backgroundColor,
   verboseCameraController
 }) {
   const [view, setView] = React.useState(views[0]);
@@ -112,9 +115,7 @@ export default function ProteinViewer({
        key={`stage-${viewName}`}
        width={width}
        height={height}
-       params={{
-         backgroundColor: '#fff'
-       }}
+       params={{backgroundColor}}
        cameraState={cameraState}
        onCameraMove={handleCameraMove}>
         <StructureComponent
@@ -141,6 +142,7 @@ export default function ProteinViewer({
       views,
       width,
       height,
+      backgroundColor,
       verboseCameraController,
       defaultCameraState,
       cameraState,

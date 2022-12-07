@@ -118,6 +118,7 @@ export default function ViewerFooter(props) {
               <ProteinViewer
                width={400}
                height={400}
+               backgroundColor="#f4f4f4"
                views={proteinViews}
                positions={positionsForProteinViewer} />
             </div> : null}
