@@ -46,6 +46,7 @@
     overflow: auto;
     max-height: $max-height;
     height: max-content;
+    text-align: justify;
     > .protein-viewer {
       float: right;
       border: 1px solid color(dividing-line);
@@ -65,6 +66,13 @@
     }
     > section:first-of-type > h2[class*="heading-tag"] {
       margin-top: 1rem;
+    }
+
+    ul > li {
+      margin-top: .5rem;
+      &:first-child {
+        margin-top: 0;
+      }
     }
 
     > section:last-child {
