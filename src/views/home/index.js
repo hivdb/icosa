@@ -59,6 +59,15 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        Sudan Ebolavirus Analysis Program
+        <ul>
+          <li><Link to="/ebv/by-patterns/">By mutations</Link></li>
+          <li><Link to="/ebv/by-sequences/">By sequence</Link></li>
+          <li><Link to="/ebv/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/ebv/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
         <Link to="/protein-viewer/">Protein Viewer</Link>
       </li>
       <li>

@@ -1,6 +1,4 @@
-import seqSummary from './sars2-sequence-summary';
-import suscSummary from '../tabular-report/sars2-susc-summary';
-import mutComments from '../tabular-report/sars2-mutation-comments';
+import seqSummary from './ebv-sequence-summary';
 import unseqRegions from '../../../components/tabular-report/unseq-regions';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import prettyAlignments
@@ -12,8 +10,6 @@ const subOptions = [
   'Sequence summary',
   'Mutation list',
   'Unsequenced regions',
-  'Susceptibility summary',
-  'Mutation comments',
   'Pretty amino acid alignments',
   'Raw JSON report'
 ];
@@ -22,8 +18,6 @@ const subOptionProcessors = [
   seqSummary,
   mutationList,
   unseqRegions,
-  suscSummary,
-  mutComments,
   prettyAlignments,
   rawJSON
 ];

@@ -60,26 +60,18 @@ async function seqReadsSummary({
   patternsTo
 }) {
   const rows = [];
-  const {geneDisplay} = config;
+  const {allGenes, geneDisplay} = config;
   let header = [
     'Sequence Name',
     'Genes',
-    'Spike Mutations',
-    'Spike mAb-RMs',
-    '3CLpro Mutations',
-    '3CL-PI DRMs',
-    'RdRP Mutations',
-    'RdRPI DRMs',
-    'Other Mutations',
-    '# Mutations',
-    '# Unusual Mutations',
-    '# Spike Mutations',
-    '# Spike Unusual Mutations',
+    ...allGenes.reduce(
+      (acc, gene) => {
+        acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
+        return acc;
+      },
+      []
+    ),
     'Median Read Depth',
-    'PANGO Lineage',
-    'PANGO Version',
-    'Spike Variant',
-    'Permanent Link (Spike Only)',
     'Permanent Link',
     'Minimum Read Depth',
     'NA Mixture Threshold',
@@ -98,70 +90,30 @@ async function seqReadsSummary({
       mixtureRate,
       actualMinPrevalence,
       minPositionReads,
-      bestMatchingSubtype,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
     let {pangolin} = seqResult;
     if (!pangolin.loaded) {
       pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
     }
-    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}) => gene === 'S');
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      'Spike Mutations': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === 'S',
-        mutWithGene: false
-      }),
-      'Spike mAb-RMs': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === 'S',
-        mutFilter: m => m.isDRM,
-        mutWithGene: false
-      }),
-      '3CLpro Mutations': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === '_3CLpro',
-        mutWithGene: false
-      }),
-      '3CL-PI DRMs': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === '_3CLpro',
-        mutFilter: m => m.isDRM,
-        mutWithGene: false
-      }),
-      'RdRP Mutations': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === 'RdRP',
-        mutWithGene: false
-      }),
-      'RdRPI DRMs': getMutations({
-        geneSeqs,
-        geneFilter: gene => gene === 'RdRP',
-        mutFilter: m => m.isDRM,
-        mutWithGene: false
-      }),
-      'Other Mutations': getMutations({
-        geneSeqs,
-        geneFilter: (
-          gene => gene !== 'S' &&
-          gene !== '_3CLpro' &&
-          gene !== 'RdRP'
-        )
-      }),
-      '# Mutations': `${seqResult.mutationCount}`,
-      '# Unusual Mutations': `${seqResult.unusualMutationCount}`,
-      '# Spike Mutations': `${
-        spikeGeneSeq ? spikeGeneSeq.mutationCount : null
-      }`,
-      '# Spike Unusual Mutations': `${
-        spikeGeneSeq ? spikeGeneSeq.unusualMutationCount : null
-      }`,
+      ...allGenes.reduce(
+        (acc, gene) => {
+          acc[`${gene} Mutations`] = getMutations({
+            geneSeqs,
+            geneFilter: g => g === gene,
+            mutWithGene: false
+          });
+          acc[`# ${gene} Mutations`] = geneSeqs.find(
+            ({gene: {name}}) => name === gene
+          ).mutationCount;
+          return acc;
+        },
+        {}
+      ),
       'Median Read Depth': readDepthStats.median,
-      'PANGO Lineage': pangolin.lineage,
-      'PANGO Version': pangolin.version,
-      'Spike Variant': (bestMatchingSubtype || {}).display || null,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
       'NA Mixture - Actual':
@@ -169,12 +121,6 @@ async function seqReadsSummary({
       'Mut Detection - Actual':
       `${(actualMinPrevalence * 100).toFixed(1)}%`,
       'Minimum Read Depth': minPositionReads,
-      'Permanent Link (Spike Only)': getPermanentLink(
-        seqName,
-        geneSeqs,
-        patternsTo,
-        gene => gene === 'S'
-      ),
       'Permanent Link': getPermanentLink(
         seqName,
         geneSeqs,

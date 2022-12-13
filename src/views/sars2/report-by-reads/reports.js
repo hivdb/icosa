@@ -38,7 +38,6 @@ SeqReadsReports.propTypes = {
   cmtVersion: PropTypes.string,
   drdbLastUpdate: PropTypes.string,
   output: PropTypes.string.isRequired,
-  genes: PropTypes.array.isRequired,
   antibodies: PropTypes.array.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
@@ -50,13 +49,11 @@ SeqReadsReports.propTypes = {
 };
 
 SeqReadsReports.defaultProps = {
-  genes: [],
   antibodies: []
 };
 
 function SeqReadsReports({
   output,
-  genes,
   cmtVersion,
   antibodies,
   drdbLastUpdate,
@@ -128,8 +125,7 @@ function SeqReadsReports({
            name={inputSeqReads.name}
            index={idx}
            match={match}
-           router={router}
-           genes={genes} />
+           router={router} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

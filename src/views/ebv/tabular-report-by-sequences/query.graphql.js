@@ -1,38 +1,17 @@
 import gql from 'graphql-tag';
 import {
-  rootLevel,
-  seqLevelMutComments,
-  seqLevelSuscSummary,
-  geneSeqLevel,
-  pangolinQuery
+  geneSeqLevel
 } from '../common-query.graphql';
 
 
-export function getExtraParams(subOptions) {
-  const fetchMutComments = (
-    subOptions.includes('Mutation comments') ||
-    subOptions.includes('Raw JSON report')
-  );
-  const extraParams = ['$drdbVersion: String!'];
-  if (fetchMutComments) {
-    extraParams.push('$cmtVersion: String!');
-  }
-  return extraParams.join(', ');
+export function getExtraParams() {
+  return '';
 }
 
 
-export default function getQuery(subOptions) {
-  const fetchMutComments = (
-    subOptions.includes('Mutation comments') ||
-    subOptions.includes('Raw JSON report')
-  );
-  const fetchSuscSummary = (
-    subOptions.includes('Susceptibility summary') ||
-    subOptions.includes('Raw JSON report')
-  );
+export default function getQuery() {
   return gql`
     fragment TabularReportBySequences_Root on Root {
-      ${rootLevel}
       allGenes: genes {
         name
         refSequence
@@ -41,17 +20,9 @@ export default function getQuery(subOptions) {
     }
     fragment TabularReportBySequences on SequenceAnalysis {
       inputSequence { header }
-      bestMatchingSubtype {
-        display
-        referenceAccession
-      }
-      ${pangolinQuery()}
       availableGenes { name }
       mixtureRate
       mutationCount
-      unusualMutationCount
-      ${fetchMutComments ? seqLevelMutComments : ''}
-      ${fetchSuscSummary ? seqLevelSuscSummary : ''}
       alignedGeneSequences {
         firstAA
         lastAA
@@ -75,7 +46,6 @@ export default function getQuery(subOptions) {
           isAmbiguous
         }
         mutationCount
-        unusualMutationCount
         frameShifts {
           text
         }

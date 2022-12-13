@@ -36,7 +36,6 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 
 SeqReadsReports.propTypes = {
   output: PropTypes.string.isRequired,
-  genes: PropTypes.array.isRequired,
   match: matchShape.isRequired,
   router: routerShape.isRequired,
   loaded: PropTypes.bool.isRequired,
@@ -46,13 +45,8 @@ SeqReadsReports.propTypes = {
   fetchAnother: PropTypes.func.isRequired
 };
 
-SeqReadsReports.defaultProps = {
-  genes: []
-};
-
 function SeqReadsReports({
   output,
-  genes,
   match,
   router,
   loaded,
@@ -118,8 +112,7 @@ function SeqReadsReports({
            name={inputSeqReads.name}
            index={idx}
            match={match}
-           router={router}
-           genes={genes} />
+           router={router} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

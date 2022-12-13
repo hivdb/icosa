@@ -1,6 +1,4 @@
-import seqReadsSummary from './sars2-seqreads-summary';
-import suscSummary from '../tabular-report/sars2-susc-summary';
-import mutComments from '../tabular-report/sars2-mutation-comments';
+import seqReadsSummary from './ebv-seqreads-summary';
 import unseqRegions from '../../../components/tabular-report/unseq-regions';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import assembledConsensus
@@ -15,8 +13,6 @@ const subOptions = [
   'Consensus sequence (FASTA)',
   'Mutation list',
   'Unsequenced regions',
-  'Susceptibility summary',
-  'Mutation comments',
   'Pretty amino acid alignments',
   'Raw JSON report'
 ];
@@ -26,8 +22,6 @@ const subOptionProcessors = [
   assembledConsensus,
   mutationList,
   unseqRegions,
-  suscSummary,
-  mutComments,
   prettyAlignments,
   rawJSON
 ];

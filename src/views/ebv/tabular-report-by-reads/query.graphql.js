@@ -1,23 +1,9 @@
 import gql from 'graphql-tag';
-import {
-  rootLevel,
-  seqLevelMutComments,
-  seqLevelSuscSummary,
-  geneSeqLevel,
-  pangolinQuery
-} from '../common-query.graphql';
+import {geneSeqLevel} from '../common-query.graphql';
 
 
-export function getExtraParams(subOptions) {
-  const fetchMutComments = (
-    subOptions.includes('Mutation comments') ||
-    subOptions.includes('Raw JSON report')
-  );
-  const extraParams = ['$drdbVersion: String!'];
-  if (fetchMutComments) {
-    extraParams.push('$cmtVersion: String!');
-  }
-  return extraParams.join(', ');
+export function getExtraParams() {
+  return '';
 }
 
 
@@ -26,17 +12,8 @@ export default function getQuery(subOptions) {
     subOptions.includes('Consensus sequence (FASTA)') ||
     subOptions.includes('Raw JSON report')
   );
-  const fetchSuscSummary = (
-    subOptions.includes('Susceptibility summary') ||
-    subOptions.includes('Raw JSON report')
-  );
-  const fetchMutComments = (
-    subOptions.includes('Mutation comments') ||
-    subOptions.includes('Raw JSON report')
-  );
   return gql`
     fragment TabularReportBySeqReads_Root on Root {
-      ${rootLevel}
       allGenes: genes {
         name
         refSequence
@@ -45,13 +22,6 @@ export default function getQuery(subOptions) {
     }
     fragment TabularReportBySeqReads on SequenceReadsAnalysis {
       name
-      ${fetchMutComments ? seqLevelMutComments : ''}
-      ${fetchSuscSummary ? seqLevelSuscSummary : ''}
-      bestMatchingSubtype {
-        display
-        referenceAccession
-      }
-      ${pangolinQuery()}
       readDepthStats {
         median: percentile(p: 50)
       }
@@ -63,7 +33,6 @@ export default function getQuery(subOptions) {
       minCodonReads
       minPositionReads
       mutationCount
-      unusualMutationCount
       ${fetchConsensus ? `
         assembledConsensus
         assembledUnambiguousConsensus
@@ -91,7 +60,6 @@ export default function getQuery(subOptions) {
           isAmbiguous
         }
         mutationCount
-        unusualMutationCount
       }
     }
   `;
