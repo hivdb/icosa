@@ -138,6 +138,7 @@ export default function CoverageLayer({
     maxCov = Math.min(coverageUpperLimit, maxCov);
   }
   let [minPos, maxPos] = scaleX.domain();
+  const leftMostPos = minPos;
   minPos = Math.max(minPos, posStart);
   maxPos = Math.min(maxPos, posEnd);
   const scaleY = scaleLinear()
@@ -147,7 +148,7 @@ export default function CoverageLayer({
     <CovAxis
      tickWidth={tickWidth}
      tickFontSize={tickFontSize}
-     x={scaleX(minPos) - tickWidth - 20}
+     x={scaleX(leftMostPos) - tickWidth}
      scaleY={scaleY} />
     <path
      fill={fill}

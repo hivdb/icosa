@@ -1,8 +1,3 @@
-import {
-  fetchPangolinResult
-} from '../../../components/report/seq-summary/pango-lineage';
-
-
 function joinCols(row) {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
@@ -92,10 +87,6 @@ async function seqReadsSummary({
       minPositionReads,
       allGeneSequenceReads: geneSeqs
     } = seqResult;
-    let {pangolin} = seqResult;
-    if (!pangolin.loaded) {
-      pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
-    }
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
@@ -106,9 +97,9 @@ async function seqReadsSummary({
             geneFilter: g => g === gene,
             mutWithGene: false
           });
-          acc[`# ${gene} Mutations`] = geneSeqs.find(
+          acc[`# ${gene} Mutations`] = `${geneSeqs.find(
             ({gene: {name}}) => name === gene
-          ).mutationCount;
+          ).mutationCount}`;
           return acc;
         },
         {}

@@ -85,9 +85,9 @@ async function sequenceSummary({
             geneFilter: g => g === gene,
             mutWithGene: false
           });
-          acc[`# ${gene} Mutations`] = geneSeqs.find(
+          acc[`# ${gene} Mutations`] = `${geneSeqs.find(
             ({gene: {name}}) => name === gene
-          ).mutationCount;
+          ).mutationCount}`;
           return acc;
         },
         {}

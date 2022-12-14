@@ -6,7 +6,7 @@ import {
 export default gql`
   fragment ReportByPattern on MutationsAnalysis {
     name
-    validationResults() {
+    validationResults {
       level
       message
     }
