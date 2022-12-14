@@ -9,7 +9,10 @@ import {
 import createPersistedState from 'use-persisted-state/src';
 
 const usePersistedOptions = createPersistedState(
-  '--ngs2codfreq-persisted-settings'
+  '--ngs2codfreq-persisted-settings-' +
+  window.location.pathname
+    .replace(/(?:\/ngs2codfreq|\/by-reads).*$/, '')
+    .replaceAll('/', '-')
 );
 
 

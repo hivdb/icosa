@@ -6,7 +6,7 @@ const config = {
   graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/graphql' :
-      'http://localhost:8117/Sierra-EBV/graphql'),
+      'http://localhost:8111/Sierra-EBV/graphql'),
   cmsStages: {
     'hivdb.stanford.edu': 'cms.hivdb.org/prod',
     'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',

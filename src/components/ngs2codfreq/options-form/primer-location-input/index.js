@@ -17,6 +17,20 @@ import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
+function guess_strand(strand, name) {
+  if (strand === '+' || strand === '-') {
+    return strand;
+  }
+  else if (/forward|left|fwd|5-?end/i.test(name)) {
+    return '+';
+  }
+  else if (/backward|reverse|right|bwd|rev|rvs|3-?end/i.test(name)) {
+    return '-';
+  }
+  return '+';
+}
+
+
 PrimerLocationInput.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.arrayOf(
@@ -139,7 +153,7 @@ export default function PrimerLocationInput({
               name: name || `Primer-${autoIncr + 1}`,
               score: 60,
               // drop invalid strand
-              strand: strand === '+' || strand === '-' ? strand : '+'
+              strand: guess_strand(strand, name)
             });
           }
         }
