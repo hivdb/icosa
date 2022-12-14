@@ -220,13 +220,15 @@ function parseCodFreq(name, rows, geneValidator) {
     if (codonReads === 0) {
       continue;
     }
+    /*
+     * The backend now supports handling frameshift
     const delLen = (codon.match(/-/g) || []).length;
     if (delLen < 3) {
       codon = codon.replace(/-/g, '');
     }
     if (codon.length < 3) {
       continue;
-    }
+    } */
     if (dialect === 'general') {
       const gpKey = `${gene}$$##$$${aaPos}`;
       if (!(gpKey in gpMap)) {
@@ -240,6 +242,7 @@ function parseCodFreq(name, rows, geneValidator) {
       gpMap[gpKey].allCodonReads.push({codon, reads: codonReads});
     }
     else if (dialect === 'virolab') {
+      const delLen = (codon.match(/-/g) || []).length;
       const aaDelLen = Math.floor(delLen / 3);
       if (aaDelLen > 0) {
         if (codon.slice(-3) === '---') {

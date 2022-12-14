@@ -70,7 +70,7 @@ function SierraForms({
      match={match}
      router={router}
      ngsRunners={[{
-       profile: 'SARS2.json'
+       profile: 'SEV.json'
      }]}
      ngs2codfreqSide={<Markdown escapeHtml={false}>
        {config.messages['codfreq-example'] ||
