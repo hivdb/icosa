@@ -110,7 +110,7 @@ function SingleSeqReadsReport({
         </SeqSummary>
         <MutViewer {...{
           title: 'Sequence quality assessment',
-          coverageUpperLimit: Math.min(500, Math.floor(coverageUpperLimit)),
+          coverageUpperLimit: Math.min(1000, Math.floor(coverageUpperLimit)),
           allGeneSeqs: allGeneSequenceReads,
           defaultView: 'expansion',
           coverages,

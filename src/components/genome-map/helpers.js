@@ -18,26 +18,29 @@ export function getLongestPosLabelHeight(positions) {
 
 export function scaleMultipleLinears(domains, range) {
   const scales = [];
-  const [xStart, xEnd] = range;
-  const width = xEnd - xStart;
-  const totalRatio = domains.reduce((acc, {scaleRatio}) => scaleRatio + acc, 0);
-  let xOffset = xStart;
+  const [rangeStart, rangeEnd] = range;
+  const width = rangeEnd - rangeStart;
+  const totalRatio = domains.reduce(
+    (acc, [,, scaleRatio]) => scaleRatio + acc,
+    0
+  );
+  let rangeOffset = rangeStart;
   for (
-    const {posStart, posEnd, scaleRatio} of
-    sortBy(domains, ['posStart', 'posEnd'])
+    const [domainStart, domainEnd, scaleRatio] of
+    sortBy(domains, [0, 1])
   ) {
     const ratio = scaleRatio / totalRatio;
     const partWidth = Math.floor(width * ratio);
     scales.push(
       scaleLinear()
-        .domain([posStart, posEnd])
-        .range([xOffset, xOffset + partWidth])
+        .domain([domainStart, domainEnd])
+        .range([rangeOffset, rangeOffset + partWidth])
     );
-    xOffset += partWidth;
+    rangeOffset += partWidth;
   }
-  let [lastXStart, lastXEnd] = scales[scales.length - 1].range();
-  if (lastXEnd !== xEnd) {
-    scales[scales.length - 1].range([lastXStart, xEnd]);
+  let [lastrangeStart, lastrangeEnd] = scales[scales.length - 1].range();
+  if (lastrangeEnd !== rangeEnd) {
+    scales[scales.length - 1].range([lastrangeStart, rangeEnd]);
   }
   const domain = [
     scales[0].domain()[0],

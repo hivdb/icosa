@@ -17,6 +17,18 @@ import style from './style.module.scss';
 
 export {presetShape};
 
+
+function domainsToArray(domains) {
+  return domains.map(
+    ({posStart, posEnd, scaleRatio}) => [
+      posStart,
+      posEnd,
+      scaleRatio
+    ]
+  );
+}
+
+
 const MARGIN = 120;
 const POS_GROUP_MIN_HEIGHT = 75;
 const POS_AXIS_HEIGHT = 25;
@@ -53,7 +65,7 @@ export default function GenomeMap({
 
   const origScaleX = React.useMemo(
     () => scaleMultipleLinears(
-      domains,
+      domainsToArray(domains),
       [minPaddingLeft, minWidth - minPaddingRight]
     ),
     [domains, minPaddingLeft, minPaddingRight, minWidth]
@@ -97,7 +109,7 @@ export default function GenomeMap({
 
   const scaleX = React.useMemo(
     () => scaleMultipleLinears(
-      domains,
+      domainsToArray(domains),
       [paddingLeft, width - paddingRight]
     ),
     [domains, paddingLeft, paddingRight, width]

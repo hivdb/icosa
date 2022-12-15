@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {scaleLinear} from 'd3-scale';
+import {scaleMultipleLinears} from './helpers';
 
 
 function getMaxCov(coverages) {
@@ -9,11 +9,18 @@ function getMaxCov(coverages) {
 }
 
 
-function calcPath(coverages, scaleX, scaleY, minPos, maxPos) {
+function calcPath(
+  coverages,
+  scaleX,
+  scaleY,
+  minPos,
+  maxPos,
+  upperLimit = Number.POSITIVE_INFINITY
+) {
   coverages = coverages
     .reduce(
       (acc, {position, coverage}) => {
-        acc[position] = coverage;
+        acc[position] = Math.min(upperLimit, coverage);
         return acc;
       },
       []
@@ -27,22 +34,21 @@ function calcPath(coverages, scaleX, scaleY, minPos, maxPos) {
     const cov = coverages[pos] || 0;
     const curX = scaleX(pos);
     const curY = scaleY(cov);
-    pathData.push('l');
-    pathData.push(curX - prevX);
-    pathData.push(curY - prevY);
+    pathData.push('L');
+    pathData.push(curX);
+    pathData.push(curY);
     prevX = curX;
     prevY = curY;
     if (coverages[pos]) {
       pos += 2;
       const curX = scaleX(pos + 1);
-      pathData.push('h');
-      pathData.push(curX - prevX);
+      pathData.push('H');
+      pathData.push(curX);
       prevX = curX;
     }
   }
-  pathData.push('l');
-  pathData.push(0);
-  pathData.push(scaleY(0) - prevY);
+  pathData.push('V');
+  pathData.push(scaleY(0));
   pathData.push('Z');
   return pathData.join(' ');
 }
@@ -56,19 +62,30 @@ CovAxis.propTypes = {
 };
 
 function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
-  const [covStart, covEnd] = scaleY.domain();
+  const [[covStart, covEnd0], [, covEnd1]] = scaleY.domains();
   const yBottom = scaleY(covStart);
-  const yEnd = scaleY(covEnd);
+  const yEnd0 = scaleY(covEnd0);
+  const yEnd1 = scaleY(covEnd1);
   const strokeWidth = 2;
 
   const pathData = [
     'm',
     x + tickWidth,
-    yEnd + strokeWidth / 2,
+    yEnd1 + strokeWidth / 2,
     'h',
     - tickWidth,
-    'v',
-    yBottom - yEnd - strokeWidth,
+    'V',
+    yEnd0 - 4,
+    'l',
+    - tickWidth / 3,
+    4,
+    'h',
+    tickWidth / 3 * 2,
+    'l',
+    - tickWidth / 3,
+    4,
+    'V',
+    yBottom,
     'h',
     tickWidth
   ];
@@ -80,14 +97,21 @@ function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
      stroke="#000000"
      d={pathData.join(' ')} />
     <text
-     x={x - 5} y={yEnd - strokeWidth / 2 + tickFontSize / 2}
+     x={x - 6} y={yEnd1 - strokeWidth / 2 + tickFontSize / 2}
      fontSize={tickFontSize}
      fill="#000000"
      textAnchor="end">
-      {covEnd.toLocaleString('en-US')}
+      {covEnd1.toLocaleString('en-US')}
     </text>
     <text
-     x={x - 5} y={yBottom}
+     x={x - 6} y={yEnd0 - strokeWidth / 2 + tickFontSize / 2}
+     fontSize={tickFontSize}
+     fill="#000000"
+     textAnchor="end">
+      {covEnd0.toLocaleString('en-US')}
+    </text>
+    <text
+     x={x - 6} y={yBottom}
      fontSize={tickFontSize}
      fill="#000000"
      textAnchor="end">
@@ -106,7 +130,7 @@ CoverageLayer.propTypes = {
   posStart: PropTypes.number.isRequired,
   posEnd: PropTypes.number.isRequired,
   fill: PropTypes.string,
-  coverageUpperLimit: PropTypes.number,
+  coverageUpperLimit: PropTypes.number.isRequired,
   coverages: PropTypes.arrayOf(
     PropTypes.shape({
       position: PropTypes.number.isRequired,
@@ -117,8 +141,10 @@ CoverageLayer.propTypes = {
 
 
 CoverageLayer.defaultProps = {
+  coverageUpperLimit: 1000,
   tickWidth: 8,
-  tickFontSize: 12
+  tickFontSize: 12,
+  fill: '#cacaca'
 };
 
 export default function CoverageLayer({
@@ -129,21 +155,25 @@ export default function CoverageLayer({
   scaleX,
   posStart,
   posEnd,
-  fill = '#dadada',
+  fill,
   coverageUpperLimit,
   coverages
 }) {
   let maxCov = getMaxCov(coverages);
-  if (coverageUpperLimit) {
-    maxCov = Math.min(coverageUpperLimit, maxCov);
-  }
   let [minPos, maxPos] = scaleX.domain();
   const leftMostPos = minPos;
   minPos = Math.max(minPos, posStart);
   maxPos = Math.min(maxPos, posEnd);
-  const scaleY = scaleLinear()
-    .domain([0, maxCov])
-    .range([height + tickFontSize, tickFontSize]);
+  const scaleY = React.useMemo(
+    () => scaleMultipleLinears(
+      [
+        [0, coverageUpperLimit, .618],
+        [coverageUpperLimit, maxCov, .382]
+      ],
+      [height + tickFontSize, tickFontSize]
+    ),
+    [height, tickFontSize, coverageUpperLimit, maxCov]
+  );
   return <svg id="coverage-layer" y={offsetY - tickFontSize}>
     <CovAxis
      tickWidth={tickWidth}
@@ -151,7 +181,18 @@ export default function CoverageLayer({
      x={scaleX(leftMostPos) - tickWidth}
      scaleY={scaleY} />
     <path
-     fill={fill}
+     fill="none"
+     stroke={fill}
      d={calcPath(coverages, scaleX, scaleY, minPos, maxPos)} />
+    <path
+     fill={fill}
+     d={calcPath(
+       coverages,
+       scaleX,
+       scaleY,
+       minPos,
+       maxPos,
+       coverageUpperLimit
+     )} />
   </svg>;
 }
