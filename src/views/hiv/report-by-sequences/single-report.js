@@ -27,6 +27,7 @@ SingleSequenceReport.propTypes = {
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
+    displaySubtype: PropTypes.bool,
     displayDRInterpretation: PropTypes.bool,
     displayMutationPrevalence: PropTypes.bool,
     displayAlgComparison: PropTypes.bool,
@@ -43,6 +44,7 @@ function SingleSequenceReport({
   sequenceResult,
   subtypeStats,
   config: {
+    displaySubtype = true,
     displayDRInterpretation = true,
     displayMutationPrevalence = false,
     displayAlgComparison = false,
@@ -81,7 +83,7 @@ function SingleSequenceReport({
       {sequenceResult ? <>
         <SeqSummary {...sequenceResult} {...{output, strain, includeGenes}}>
           <SeqSummary.MultilineGeneRange />
-          <SeqSummary.Genotype />
+          {displaySubtype ? <SeqSummary.Genotype /> : null}
           <SeqSummary.PrettyPairwise />
           <SeqSummary.SDRMs />
         </SeqSummary>

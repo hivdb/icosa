@@ -40,6 +40,7 @@ SingleSeqReadsReport.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   config: PropTypes.shape({
+    displaySubtype: PropTypes.bool,
     displayDRInterpretation: PropTypes.bool,
     displayMutationPrevalence: PropTypes.bool,
     displayAlgComparison: PropTypes.bool,
@@ -57,6 +58,7 @@ function SingleSeqReadsReport({
   sequenceReadsResult,
   subtypeStats,
   config: {
+    displaySubtype = true,
     displayDRInterpretation = true,
     displayMutationPrevalence = false,
     displayAlgComparison = false,
@@ -101,7 +103,7 @@ function SingleSeqReadsReport({
           <SeqSummary.DownloadConsensus />
           <SeqSummary.MultilineGeneRange />
           <SeqSummary.MedianReadDepth />
-          <SeqSummary.Genotype />
+          {displaySubtype ? <SeqSummary.Subtype /> : null}
           <SeqSummary.MinPositionReads />
           <SeqSummary.MaxMixtureRate />
           <SeqSummary.MinPrevalence />
