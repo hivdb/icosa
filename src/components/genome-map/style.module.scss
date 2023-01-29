@@ -41,6 +41,11 @@
 
   .svg-container {
     overflow-x: auto;
+    @media only print {
+      > svg {
+        width: 100%;
+      }
+    }
   }
 
 }
