@@ -109,7 +109,9 @@ function SeqSummary(props) {
 
   const disableSDRMs = !availableGenes || availableGenes.length === 0;
   const disablePrettyPairwise = disableSDRMs;
-  const childArray = children instanceof Array ? children : [children];
+  const childArray = (
+    children instanceof Array ? children : [children]
+  ).filter(Boolean);
 
   const togglePrettyPairwise = React.useCallback(() => {
     setShowPrettyPairwise(!showPrettyPairwise);
