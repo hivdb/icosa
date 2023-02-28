@@ -14,9 +14,9 @@ import {
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import {
-  AbSuscSummary,
+  AbSuscSummary/*,
   CPSuscSummary,
-  VPSuscSummary
+  VPSuscSummary*/
 } from '../../../components/susc-summary';
 import {
   formatDate,
@@ -113,7 +113,7 @@ function SingleSequenceReport({
                {...sequenceResult}
                {...{output, strain}} />
             </ReportSection>
-            <ReportSection
+            {/*<ReportSection
              className={style['no-page-break']}
              titleAnnotation={<>
                Last updated on {formatDateTime(drdbLastUpdate)}
@@ -130,7 +130,7 @@ function SingleSequenceReport({
              title="Plasma from vaccinated persons susceptibility summary">
               <VPSuscSummary
                {...sequenceResult} {...{output}} />
-            </ReportSection>
+            </ReportSection>*/}
             <RefsSection />
           </>}
         </> : null}

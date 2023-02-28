@@ -107,79 +107,79 @@ const seqLevelSuscSummary = `
       }
     }
   }
-  convPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByVariantOrMutations {
-      variant {
-        name
-        asWildtype
-      }
-      mutations {
-        gene { name }
-        reference
-        position
-        isUnsequenced
-        isDRM
-        AAs
-        text
-      }
-      isolateMatchType
-      displayOrder
-      references {
-        refName
-        DOI
-        URL
-      }
-      cumulativeCount
-      cumulativeFold {
-        median: percentile(p: 50)
-      }
-      itemsByResistLevel {
-        resistanceLevel
-        cumulativeCount
-      }
-    }
-  }
-  vaccPlasmaSuscSummary(drdbVersion: $drdbVersion) {
-    itemsByVariantOrMutations {
-      variant {
-        name
-        asWildtype
-      }
-      mutations {
-        gene { name }
-        reference
-        position
-        isUnsequenced
-        isDRM
-        AAs
-        text
-      }
-      isolateMatchType
-      displayOrder
-      itemsByVaccine {
-        vaccineName
-        vaccinePriority
-        vaccineType
-        references {
-          refName
-          DOI
-          URL
-        }
-        cumulativeCount
-        cumulativeFold {
-          median: percentile(p: 50)
-        }
-        itemsByResistLevel {
-          resistanceLevel
-          cumulativeCount
-          itemsByVaccine {
-            vaccineName
-            cumulativeCount
-          }
-        }
-      }
-    }
-  }
+  # convPlasmaSuscSummary(drdbVersion: $drdbVersion) {
+  #   itemsByVariantOrMutations {
+  #     variant {
+  #       name
+  #       asWildtype
+  #     }
+  #     mutations {
+  #       gene { name }
+  #       reference
+  #       position
+  #       isUnsequenced
+  #       isDRM
+  #       AAs
+  #       text
+  #     }
+  #     isolateMatchType
+  #     displayOrder
+  #     references {
+  #       refName
+  #       DOI
+  #       URL
+  #     }
+  #     cumulativeCount
+  #     cumulativeFold {
+  #       median: percentile(p: 50)
+  #     }
+  #     itemsByResistLevel {
+  #       resistanceLevel
+  #       cumulativeCount
+  #     }
+  #   }
+  # }
+  # vaccPlasmaSuscSummary(drdbVersion: $drdbVersion) {
+  #   itemsByVariantOrMutations {
+  #     variant {
+  #       name
+  #       asWildtype
+  #     }
+  #     mutations {
+  #       gene { name }
+  #       reference
+  #       position
+  #       isUnsequenced
+  #       isDRM
+  #       AAs
+  #       text
+  #     }
+  #     isolateMatchType
+  #     displayOrder
+  #     itemsByVaccine {
+  #       vaccineName
+  #       vaccinePriority
+  #       vaccineType
+  #       references {
+  #         refName
+  #         DOI
+  #         URL
+  #       }
+  #       cumulativeCount
+  #       cumulativeFold {
+  #         median: percentile(p: 50)
+  #       }
+  #       itemsByResistLevel {
+  #         resistanceLevel
+  #         cumulativeCount
+  #         itemsByVaccine {
+  #           vaccineName
+  #           cumulativeCount
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
   drugResistance {
     algorithm {
       text
