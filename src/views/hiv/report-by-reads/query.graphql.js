@@ -56,6 +56,9 @@ export default gql`
       readDepthStats {
         median: percentile(p: 50)
       }
+      sdrms: mutations(filterOptions: [SDRM]) {
+        text
+      }
       unsequencedRegions {
         size
         regions {
