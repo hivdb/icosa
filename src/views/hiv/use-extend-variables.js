@@ -22,7 +22,7 @@ export default function useExtendVariables({
           getSubmitState ?
             await getSubmitState() :
             match.location?.state
-        );
+        ) || {};
         const {customAlgorithms} = submitState;
         if (mounted) {
           if (customAlgorithms) {
