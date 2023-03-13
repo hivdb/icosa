@@ -13,6 +13,7 @@ MutationSuggestOptions.propTypes = {
   gene: PropTypes.string.isRequired,
   mutations: PropTypes.array.isRequired,
   config: PropTypes.shape({
+    allowPositions: PropTypes.bool,
     geneReferences: PropTypes.object.isRequired,
     geneDisplay: PropTypes.object.isRequired,
     messages: PropTypes.objectOf(
@@ -27,6 +28,7 @@ function MutationSuggestOptions({
   gene,
   mutations,
   config: {
+    allowPositions = false,
     geneDisplay,
     geneReferences,
     messages
@@ -39,7 +41,9 @@ function MutationSuggestOptions({
     <section key={gene} className={style['gene-mutation-input']}>
       <h2 className={style.desc}>
         {messages[`pattern-analysis-suggest-options-label-${gene}`] ||
-         `Select ${geneDisplay[gene] || gene} mutations:`}
+         `Enter ${geneDisplay[gene] || gene} mutations${
+           allowPositions ? ' or positions' : ''
+         }:`}
       </h2>
       {children}
       <ul className={style['gene-mutation-suggest-options']}>
