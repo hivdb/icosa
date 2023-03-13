@@ -54,6 +54,7 @@ export function mutationCompare(mut1, mut2) {
 }
 
 export function sanitizeMutations(mutations, {
+  allowPositions,
   defaultGene,
   geneSynonyms,
   geneReferences,
@@ -67,18 +68,20 @@ export function sanitizeMutations(mutations, {
       canonGene, gene, ref, pos,
       aas, text, errors
     } = parseAndValidateMutation(mut, {
+      allowPositions,
       defaultGene,
       geneSynonyms,
       geneReferences,
       messages
     });
-    if (canonGene && pos && aas) {
+    if (canonGene && pos && (aas || allowPositions)) {
       const poskey = `${canonGene}${pos}`;
       const idx = poskey in posIndices ? posIndices[poskey] : merged.length;
       if (merged[idx]) {
         const newMut = parseAndValidateMutation(
           `${gene}:${ref}${pos}${merged[idx].aas}${aas}`,
           {
+            allowPositions,
             defaultGene,
             geneSynonyms,
             geneReferences,
@@ -114,6 +117,7 @@ function getMessage(key, messages) {
 
 
 export function parseAndValidateMutation(mut, {
+  allowPositions,
   defaultGene,
   geneSynonyms,
   geneReferences,
@@ -121,7 +125,10 @@ export function parseAndValidateMutation(mut, {
 }) {
   const errors = [];
   let [pos, aas,, gene] = parseMutation(mut, defaultGene);
-  if (pos === null || aas === null || gene === null) {
+  if (!allowPositions && aas === null) {
+    errors.push(getMessage('mut-input-error-invalid-mutation', messages));
+  }
+  if (pos === null || gene === null) {
     errors.push(getMessage('mut-input-error-invalid-mutation', messages));
     //   "invalid mutation. A mutation must format as Gene:RefPosAA. " +
     //   "For examples, PR:L10F, RT:M184V for HIV-1, or " +
@@ -182,7 +189,7 @@ export function parseAndValidateMutation(mut, {
     .replace(/[dD]el(e(t(i(o(n)?)?)?)?)?/g, '-')
     .toUpperCase();
   aas = uniq(aas.match(aaRegex) || []).join('');
-  if (aas.length === 0) {
+  if (!allowPositions && aas.length === 0) {
     errors.push("no valid amino acid was found");
     return {
       text: mut,

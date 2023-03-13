@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
 
-import {sanitizeMutations} from '../../utils/mutation';
-
 import {
   parseMutation,
+  sanitizeMutations,
   parseAndValidateMutation
 } from '../../utils/mutation';
 
@@ -16,6 +15,7 @@ import style from './style.module.scss';
 
 MutationsTagsInput.propTypes = {
   config: PropTypes.shape({
+    allowPositions: PropTypes.bool,
     mutationDefaultGene: PropTypes.string,
     geneSynonyms: PropTypes.objectOf(
       PropTypes.string.isRequired
@@ -41,6 +41,7 @@ export default function MutationsTagsInput({
   parentClassName
 }) {
   const {
+    allowPositions = false,
     mutationDefaultGene,
     geneSynonyms,
     geneReferences,
@@ -90,6 +91,7 @@ export default function MutationsTagsInput({
         resultMutations = filteredMutations;
       }
       const [sanitized, allErrors] = sanitizeMutations(resultMutations, {
+        allowPositions,
         defaultGene: mutationDefaultGene,
         geneSynonyms,
         geneReferences
@@ -100,6 +102,7 @@ export default function MutationsTagsInput({
     },
     [
       geneOnly,
+      allowPositions,
       geneReferences,
       geneSynonyms,
       mutationDefaultGene,
@@ -111,6 +114,7 @@ export default function MutationsTagsInput({
   const renderMutTag = React.useCallback(
     ({tag, key, onRemove, classNameRemove, className}) => {
       let {text, errors} = parseAndValidateMutation(tag, {
+        allowPositions,
         defaultGene: geneOnly || mutationDefaultGene,
         geneSynonyms,
         geneReferences
@@ -135,12 +139,19 @@ export default function MutationsTagsInput({
         </span>
       );
     },
-    [geneOnly, mutationDefaultGene, geneSynonyms, geneReferences]
+    [
+      geneOnly,
+      allowPositions,
+      mutationDefaultGene,
+      geneSynonyms,
+      geneReferences
+    ]
   );
 
   const labelText = messages['pattern-analysis-input-label'];
 
   const errorsElement = useMutationsErrors({
+    allowPositions,
     geneOnly,
     defaultGene: mutationDefaultGene,
     geneSynonyms,

@@ -77,6 +77,7 @@ function MutationsErrors({geneOnly, allErrors, onAutoClean, parentClassName}) {
 
 export default function useMutationErrors({
   geneOnly,
+  allowPositions,
   defaultGene,
   geneSynonyms,
   geneReferences,
@@ -89,12 +90,21 @@ export default function useMutationErrors({
 
   const [, allErrors] = React.useMemo(
     () => sanitizeMutations(mutations, {
+      allowPositions,
       defaultGene: geneOnly || defaultGene,
       geneSynonyms,
       geneReferences,
       messages
     }),
-    [defaultGene, geneOnly, geneReferences, geneSynonyms, messages, mutations]
+    [
+      allowPositions,
+      defaultGene,
+      geneOnly,
+      geneReferences,
+      geneSynonyms,
+      messages,
+      mutations
+    ]
   );
 
   React.useEffect(
@@ -110,6 +120,7 @@ export default function useMutationErrors({
     e => {
       e.preventDefault();
       const [sanitized] = sanitizeMutations(mutations, {
+        allowPositions,
         defaultGene: geneOnly || defaultGene,
         geneSynonyms,
         geneReferences,
@@ -117,7 +128,15 @@ export default function useMutationErrors({
       });
       onChange(sanitized);
     },
-    [defaultGene, geneOnly, geneReferences, geneSynonyms, mutations, onChange]
+    [
+      defaultGene,
+      allowPositions,
+      geneOnly,
+      geneReferences,
+      geneSynonyms,
+      mutations,
+      onChange
+    ]
   );
 
   return (
