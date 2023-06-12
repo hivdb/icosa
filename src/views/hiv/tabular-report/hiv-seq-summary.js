@@ -215,10 +215,10 @@ async function seqSummary({
       const {drugClasses} = allGenes.find(({name}) => geneText === name);
       for (const {name: dcText} of drugClasses) {
         row[`${dcText} SDRMs`] = getObjectTextNoGene(
-          sdrms.filter(({SDRMDrugClass: {name} = {}}) => dcText === name)
+          sdrms.filter(({SDRMDrugClass: dc}) => dcText === dc?.name)
         );
         row[`${dcText} TSMs`] = getObjectTextNoGene(
-          tsms.filter(({TSMDrugClass: {name} = {}}) => dcText === name)
+          tsms.filter(({TSMDrugClass: dc}) => dcText === dc?.name)
         );
       }
     }
