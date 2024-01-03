@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, {ReactNode} from 'react';
 
 import Select from '../select';
 
+import {IAlgorithmVersion, IConfig, IAlgVerSelectProps} from './types';
 import style from "./style.module.scss";
 
 
-function getEnumCompatValue(family, version) {
+function getEnumCompatValue(family: string, version: string): string {
   return (
     `${family}_${version}`
       .replace(/[^_0-9A-Za-z-]/g, '_')
@@ -16,12 +16,15 @@ function getEnumCompatValue(family, version) {
 }
 
 
-function getLabel(family, version) {
+function getLabel(family: string, version: string): string {
   return `${family} ${version}`;
 }
 
 
-export function getLatestVersion(family, config) {
+export function getLatestVersion(
+  family: string,
+  config: IConfig
+): IAlgorithmVersion {
   const {algorithmVersions: algVers} = config;
   const versions = algVers[family];
   const [
@@ -40,7 +43,7 @@ export function getLatestVersion(family, config) {
 }
 
 
-export function getLatestVersions(config) {
+export function getLatestVersions(config: IConfig): IAlgorithmVersion[] {
   const latestVers = [];
   const {algorithmVersions: algVers} = config;
   for (const family of Object.keys(algVers)) {
@@ -50,15 +53,6 @@ export function getLatestVersions(config) {
 }
 
 
-AlgVerSelect.propTypes = {
-  config: PropTypes.shape({
-    algorithmVersions: PropTypes.object.isRequired,
-    excludeAlgorithmVersions: PropTypes.array
-  }).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
-
 export default function AlgVerSelect({
   config: {
     algorithmVersions: algVers,
@@ -66,7 +60,7 @@ export default function AlgVerSelect({
   },
   onChange,
   ...props
-}) {
+}: IAlgVerSelectProps): ReactNode {
   const excludePatterns = React.useMemo(
     () => excludeVers.map(pattern => new RegExp(pattern)),
     [excludeVers]

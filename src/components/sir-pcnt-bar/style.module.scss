@@ -31,7 +31,7 @@ ul.sir-pcnt-bar {
     overflow: hidden;
     > .sir-pcnt {
       --available-pcnt: (var(--level-pcnt) - var(--min-display-pcnt));
-      width: calc(#{"max"}(0, var(--available-pcnt)) / var(--available-pcnt) * var(--pcnt-width));
+      width: calc(max(0, var(--available-pcnt)) / var(--available-pcnt) * var(--pcnt-width));
       display: inline-block;
       overflow: hidden;
     }

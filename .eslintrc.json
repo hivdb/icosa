@@ -18,6 +18,7 @@
     "__SERVER_RENDERING": true
   },
   "rules": {
+    "@typescript-eslint/explicit-function-return-type": "off",
     "indent": [
       "warn",
       2,
@@ -134,14 +135,6 @@
     ],
     "no-irregular-whitespace": "error",
     "no-multi-spaces": "warn",
-    "no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "args": "after-used",
-        "ignoreRestSiblings": false
-      }
-    ],
     "react/jsx-indent-props": ["warn", 1],
     "react/jsx-indent": ["warn", 2],
     "react/jsx-first-prop-new-line": [
@@ -158,5 +151,22 @@
       "warn",
       {"enableDangerousAutofixThisMayCauseInfiniteLoops": true}
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": false
+          }
+        ],
+        "@typescript-eslint/explicit-function-return-type": "error"
+      }
+    }
+  ]
 }

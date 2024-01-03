@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape} from 'found';
+import {useRouter} from 'found';
 
 import {
   useReportPaginator
@@ -31,18 +30,17 @@ function getPageTitle(sequenceAnalysis, output) {
   return pageTitle;
 }
 
-SequenceReports.propTypes = {
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  antibodies: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
+interface ISequenceReportsProps {
+  cmtVersion?: string
+  drdbLastUpdate?: string
+  output: string
+  loaded: boolean
+  sequences: any[]
+  currentSelected: Record<string, any>
+  antibodies: any[]
+  sequenceAnalysis: any[]
+  fetchAnother: () => any
+}
 
 SequenceReports.defaultProps = {
   antibodies: []
@@ -53,13 +51,13 @@ function SequenceReports({
   antibodies,
   cmtVersion,
   drdbLastUpdate,
-  match,
   loaded,
   sequences,
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}) {
+}: ISequenceReportsProps) {
+  const {match} = useRouter();
 
   const {
     onObserve,
@@ -103,8 +101,7 @@ function SequenceReports({
            onDisconnect={onDisconnect}
            output={output}
            header={header}
-           index={idx}
-           match={match} />
+           index={idx} />
           {idx + 1 < sequenceAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

@@ -35,7 +35,7 @@ const cmsPrefix = (
 );
 
 
-function makeCMSLoader(name) {
+function makeCMSLoader(name: string): () => Promise<any> {
   return async() => {
     const resp = await fetch(
       `${cmsPrefix}/${name}.json`
@@ -45,7 +45,7 @@ function makeCMSLoader(name) {
 }
 
 
-function makeMutAnnotLoader(name) {
+function makeMutAnnotLoader(name: string): () => Promise<any> {
   const cmsLoader = makeCMSLoader(name);
   return async() => {
     const {data, comments = []} = await cmsLoader();
@@ -78,13 +78,15 @@ const mutAnnotViewerConfig = {
 
 const genomeViewerConfig = {
   indexLoader: makeCMSLoader('mutation-viewer/index'),
-  makePresetLoader: name => makeCMSLoader(`mutation-viewer/${name}`)
+  makePresetLoader: (name: string): () => Promise<any> => (
+    makeCMSLoader(`mutation-viewer/${name}`)
+  )
 };
 
 
 const config = {
   graphqlURI: (
-    window.__NODE_ENV === 'production' ?
+    (window as any).__NODE_ENV === 'production' ?
       '/graphql' :
       'http://localhost:8113/Sierra-SARS2/graphql'),
   cmsStages: {
@@ -197,7 +199,7 @@ const config = {
       name: 'unusualSites',
       label: '# Other Mutations',
       query: 'unusualSites',
-      formatter: (count, total) => (
+      formatter: (count: number, total: number): string => (
         `${count} (${(count / total * 100).toFixed(1)}%)`
       )
     },
