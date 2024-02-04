@@ -277,6 +277,7 @@ export default function MutationViewerLoader(props) {
   return <ConfigContext.Consumer>
     {({
       regionPresets,
+      hideMutationViewToggler: hideViewToggler,
       highlightUnusualMutation,
       highlightDRM
     }) => (
@@ -284,6 +285,7 @@ export default function MutationViewerLoader(props) {
        {...props}
        {...{
          regionPresets,
+         hideViewToggler,
          highlightUnusualMutation,
          highlightDRM
        }} />

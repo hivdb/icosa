@@ -56,9 +56,6 @@ function ReportByPatternsContainer({
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
-   extraParams={`
-     $includeGenes: [EnumGene!]!
-   `}
    onExtendVariables={onExtendVariables}>
     {props => (
       <PatternReports

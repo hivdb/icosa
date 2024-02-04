@@ -62,7 +62,6 @@ function SingleSequenceReport({
           </SeqSummary>
           <MutViewer {...{
             title: 'Mutation map & quality assessment',
-            hideViewToggler: true,
             defaultView: 'expansion',
             allGeneSeqs: alignedGeneSequences,
             output,
