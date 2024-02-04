@@ -68,6 +68,15 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        Hepatitis B Virus Analysis Program
+        <ul>
+          <li><Link to="/hbv/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hbv/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hbv/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/hbv/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
         <Link to="/protein-viewer/">Protein Viewer</Link>
       </li>
       <li>

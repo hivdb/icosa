@@ -1,0 +1,14 @@
+@import "~flexbox-grid-mixins";
+@import "../../../styles";
+
+.analysis-options {
+  @extend %fieldset-highlight;
+
+  > legend {
+    @extend %legend-highlight;
+  }
+}
+
+fieldset p.first-para {
+  @extend %first-para;
+}

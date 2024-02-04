@@ -1,104 +1,104 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
+import {routerShape, matchShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
-import PatternLoader from '../../../components/pattern-loader';
-import PatternAnalysisLayout from
-  '../../../components/pattern-analysis-layout';
+import SeqReadsLoader, {
+  useWhenNoSeqReads
+} from '../../../components/seqreads-loader';
+import SeqReadsAnalysisLayout from
+  '../../../components/seqreads-analysis-layout';
 
 import query from './query.graphql';
-import PatternReports from './reports';
+import SeqReadsReports from './reports';
 
 
-ReportByPatternsContainer.propTypes = {
+ReportByReadsContainer.propTypes = {
   config: PropTypes.object,
   lazyLoad: PropTypes.bool.isRequired,
   output: PropTypes.string,
-  match: matchShape.isRequired,
   router: routerShape.isRequired,
-  isPending: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
+  match: matchShape.isRequired,
+  allSequenceReads: PropTypes.array.isRequired,
   currentSelected: PropTypes.object
 };
 
-function ReportByPatternsContainer({
+function ReportByReadsContainer({
   config,
   router,
   match,
   lazyLoad,
   output,
-  isPending,
-  patterns,
+  allSequenceReads,
   currentSelected
 }) {
-
-  if (!isPending && patterns.length === 0) {
-    router.replace({
-      pathname: match.location.pathname.replace(/report[/]*$/, '')
-    });
-  }
-
   const client = useApolloClient({
-    payload: patterns,
+    payload: allSequenceReads,
     config
   });
-  const [onExtendVariables, isVarsPending] = useExtendVariables({
-    config
+  const onExtendVariables = useExtendVariables({
+    config,
+    match
   });
-  return isVarsPending ? null : <PatternAnalysisLayout
+
+  return <SeqReadsAnalysisLayout
    query={query}
    client={client}
-   patterns={patterns}
+   allSequenceReads={allSequenceReads}
    currentSelected={currentSelected}
    renderPartialResults={output !== 'printable'}
    lazyLoad={lazyLoad}
    extraParams={`
-     $includeGenes: [EnumGene!]!,
-     $algorithms: [ASIAlgorithm!],
-     $customAlgorithms: [CustomASIAlgorithm!]
+     $includeGenes: [EnumGene!]!
    `}
    onExtendVariables={onExtendVariables}>
     {props => (
-      <PatternReports
-       config={config}
+      <SeqReadsReports
+       cmtVersion={config.cmtVersion}
        output={output}
        match={match}
        router={router}
        {...props} />
     )}
-  </PatternAnalysisLayout>;
+  </SeqReadsAnalysisLayout>;
 
 }
 
-ReportByPatternsContainerWrapper.propTypes = {
+
+ReportByReadsContainerWrapper.propTypes = {
+  router: routerShape.isRequired,
   match: matchShape.isRequired
 };
 
-export default function ReportByPatternsContainerWrapper(props) {
+export default function ReportByReadsContainerWrapper(props) {
   const {
     location: {
+      pathname,
       query: {output = 'default'} = {}
     } = {}
   } = props.match;
   const lazyLoad = output !== 'printable';
+
+  useWhenNoSeqReads(() => props.router.replace({
+    pathname: pathname.replace(/report\/*$/, '')
+  }));
+
   return (
     <ConfigContext.Consumer>
       {config => (
-        <PatternLoader lazyLoad={lazyLoad}>
-          {({patterns, isPending, currentSelected}) => (
-            <ReportByPatternsContainer
+        <SeqReadsLoader lazyLoad={lazyLoad}>
+          {({allSequenceReads, currentSelected}) => (
+            <ReportByReadsContainer
              {...props}
              output={output}
              lazyLoad={lazyLoad}
-             isPending={isPending}
-             patterns={patterns}
+             allSequenceReads={allSequenceReads}
              currentSelected={currentSelected}
              config={config} />
           )}
-        </PatternLoader>
+        </SeqReadsLoader>
       )}
     </ConfigContext.Consumer>
   );

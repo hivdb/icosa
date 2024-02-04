@@ -30,6 +30,7 @@ MutationViewer.propTypes = {
   output: PropTypes.string,
   children: PropTypes.node,
   defaultView: PropTypes.oneOf(['collapse', 'expansion']).isRequired,
+  hideViewToggler: PropTypes.bool,
   viewCheckboxLabel: PropTypes.string.isRequired,
   noUnseqRegions: PropTypes.bool.isRequired,
   regionPresets: PropTypes.object.isRequired,
@@ -66,6 +67,7 @@ MutationViewer.defaultProps = {
   title: 'Mutation map',
   noUnseqRegions: false,
   defaultView: 'collapse',
+  hideViewToggler: false,
   viewCheckboxLabel: 'Collapse mutation maps',
   defaultPresetIndex: 0,
   highlightUnusualMutation: true,
@@ -77,6 +79,7 @@ function MutationViewer({
   title,
   children,
   defaultView,
+  hideViewToggler,
   viewCheckboxLabel,
   strain,
   output,
@@ -211,7 +214,7 @@ function MutationViewer({
   return (
     <ReportSection
      title={title}
-     titleAnnotation={output === 'printable' ?
+     titleAnnotation={output === 'printable' || hideViewToggler ?
        null :
        <CheckboxInput
         id="genome-map-view"

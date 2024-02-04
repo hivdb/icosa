@@ -6,6 +6,7 @@ import Home from './views/home';
 import SARS2Routes from './views/sars2';
 import HIVRoutes from './views/hiv';
 import EBVRoutes from './views/ebv';
+import HBVRoutes from './views/hbv';
 import MutAnnotViewerRoutes from './views/mut-annot-viewer';
 import GenomeViewerRoutes from './views/genome-viewer';
 import NGS2CodFreqDev from './views/ngs2codfreq-dev';
@@ -77,6 +78,9 @@ const routes = (
         }
       })}
       {EBVRoutes({
+        config: {refDataLoader: DebugRefDataLoader}
+      })}
+      {HBVRoutes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}
