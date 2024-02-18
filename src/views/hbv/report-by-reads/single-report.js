@@ -77,6 +77,7 @@ function SingleSeqReadsReport({
             <SeqSummary.DownloadConsensus />
             <SeqSummary.InlineGeneRange />
             <SeqSummary.MedianReadDepth />
+            <SeqSummary.Genotype />
             <SeqSummary.MinPositionReads />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />

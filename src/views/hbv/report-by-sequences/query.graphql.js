@@ -8,6 +8,18 @@ export default gql`
     inputSequence { header }
     strain { name display }
     availableGenes { name }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes: subtypesV2(first: 10) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
     validationResults(includeGenes: $includeGenes) {
       level
       message

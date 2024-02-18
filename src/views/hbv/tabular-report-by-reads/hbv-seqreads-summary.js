@@ -59,6 +59,7 @@ async function seqReadsSummary({
   let header = [
     'Sequence Name',
     'Genes',
+    'Genotype',
     ...allGenes.reduce(
       (acc, gene) => {
         acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
@@ -85,11 +86,13 @@ async function seqReadsSummary({
       mixtureRate,
       actualMinPrevalence,
       minPositionReads,
+      bestMatchingSubtype: {display: genotype},
       allGeneSequenceReads: geneSeqs
     } = seqResult;
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
+      'Genotype': genotype,
       ...allGenes.reduce(
         (acc, gene) => {
           acc[`${gene} Mutations`] = getMutations({

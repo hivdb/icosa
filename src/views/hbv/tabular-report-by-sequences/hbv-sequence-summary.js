@@ -59,6 +59,7 @@ async function sequenceSummary({
   let header = [
     'Sequence Name',
     'Genes',
+    'Genotype',
     ...allGenes.reduce(
       (acc, gene) => {
         acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
@@ -73,11 +74,13 @@ async function sequenceSummary({
     const {
       inputSequence: {header: seqName},
       availableGenes: genes,
+      bestMatchingSubtype: {display: genotype},
       alignedGeneSequences: geneSeqs
     } = seqResult;
     let row = {
       'Sequence Name': seqName,
       'Genes': genes.map(({name}) => geneDisplay[name] || name),
+      'Genotype': genotype,
       ...allGenes.reduce(
         (acc, gene) => {
           acc[`${gene} Mutations`] = getMutations({

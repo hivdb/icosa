@@ -9,7 +9,7 @@ import SeqReadsAnalysisLayout from
 import useExtendVariables from '../use-extend-variables';
 import useAddParams from '../../../components/seqreads-loader/use-add-params';
 
-import getQuery, {getExtraParams} from './query.graphql';
+import getQuery from './query.graphql';
 import SeqTabularReports from './reports';
 
 import {subOptions} from './sub-options';
@@ -67,7 +67,9 @@ export default function TabularReportByReadsContainer({
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams={getExtraParams(curSubOptions)}
+   extraParams={`
+     $includeGenes: [EnumGene!]!
+   `}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

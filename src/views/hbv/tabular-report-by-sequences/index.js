@@ -61,7 +61,9 @@ export default function TabularReportBySequencesContainer({
    currentSelected={{index: 0}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams={getExtraParams(curSubOptions)}
+   extraParams={`
+     $includeGenes: [EnumGene!]!
+   `}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports

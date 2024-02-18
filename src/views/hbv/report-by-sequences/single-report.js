@@ -58,6 +58,7 @@ function SingleSequenceReport({
         {sequenceResult ? <>
           <SeqSummary {...sequenceResult} {...{output, strain}}>
             <SeqSummary.InlineGeneRange />
+            <SeqSummary.Genotype />
             <SeqSummary.PrettyPairwise />
           </SeqSummary>
           <MutViewer {...{

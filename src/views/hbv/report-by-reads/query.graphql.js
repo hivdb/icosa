@@ -22,6 +22,18 @@ export default gql`
       level
       message
     }
+    bestMatchingSubtype {
+      display
+      referenceAccession
+    }
+    subtypes: subtypes(first: 10) {
+      displayWithoutDistance
+      subtype { displayName }
+      distancePcnt
+      referenceAccession
+      referenceCountry
+      referenceYear
+    }
     availableGenes { name }
     mixtureRate
     maxMixtureRate

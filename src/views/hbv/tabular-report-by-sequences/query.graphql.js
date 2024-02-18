@@ -23,6 +23,9 @@ export default function getQuery() {
       availableGenes { name }
       mixtureRate
       mutationCount
+      bestMatchingSubtype {
+        display
+      }
       alignedGeneSequences(includeGenes: $includeGenes) {
         firstAA
         lastAA

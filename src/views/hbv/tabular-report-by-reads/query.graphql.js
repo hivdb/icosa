@@ -26,6 +26,9 @@ export default function getQuery(subOptions) {
         median: percentile(p: 50)
       }
       availableGenes { name }
+      bestMatchingSubtype {
+        display
+      }
       mixtureRate
       maxMixtureRate
       actualMinPrevalence
