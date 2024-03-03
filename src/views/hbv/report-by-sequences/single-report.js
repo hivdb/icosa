@@ -6,8 +6,8 @@ import {
   ValidationReport,
   SeqSummary,
   MutationViewer as MutViewer,
-  ReportSection,
-  MutationList as MutList,
+  DRInterpretation,
+  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -36,6 +36,7 @@ function SingleSequenceReport({
 
   const {
     alignedGeneSequences,
+    drugResistance,
     strain: {name: strain} = {},
     validationResults
   } = sequenceResult || {};
@@ -70,13 +71,13 @@ function SingleSequenceReport({
           }}>
             <ValidationReport {...sequenceResult} {...{output, strain}} />
           </MutViewer>
-          {isCritical ? null : <>
-            <ReportSection
-             className={style['no-page-break']}
-             title="Mutation list">
-              <MutList {...sequenceResult} {...{output, strain}} />
-            </ReportSection>
-          </>}
+          {isCritical ? null :
+            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+              <DRInterpretation
+               suppressLevels
+               {...{geneDR, output, strain}} />
+            </React.Fragment>)}
+          <RefsSection />
         </> : null}
       </RefContextWrapper>
     </article>

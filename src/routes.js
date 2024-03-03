@@ -80,9 +80,7 @@ const routes = (
       {EBVRoutes({
         config: {refDataLoader: DebugRefDataLoader}
       })}
-      {HBVRoutes({
-        config: {refDataLoader: DebugRefDataLoader}
-      })}
+      {HBVRoutes()}
       {MutAnnotViewerRoutes(config.mutAnnotViewer)}
       {GenomeViewerRoutes(config.genomeViewer)}
     </Route>

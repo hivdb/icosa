@@ -6,7 +6,8 @@ import {
   ValidationReport,
   ReportHeader,
   ReportSection,
-  MutationList as MutList,
+  DRInterpretation,
+  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -33,7 +34,8 @@ function SinglePatternReport({
 }) {
   const {
     allGeneMutations,
-    validationResults
+    validationResults,
+    drugResistance
   } = patternResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
@@ -62,13 +64,13 @@ function SinglePatternReport({
            output={output}>
             <ValidationReport {...patternResult} {...{output, strain}} />
           </MutViewer>
-          {isCritical ? null : <>
-            <ReportSection
-             className={style['no-page-break']}
-             title="Mutation list">
-              <MutList {...patternResult} {...{output}} />
-            </ReportSection>
-          </>}
+          {isCritical ? null :
+            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+              <DRInterpretation
+               suppressLevels
+               {...{geneDR, output, strain}} />
+            </React.Fragment>)}
+          <RefsSection />
         </RefContextWrapper>
       </> : null}
     </article>

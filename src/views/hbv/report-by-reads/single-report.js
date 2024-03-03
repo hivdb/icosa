@@ -7,8 +7,8 @@ import {
   MutationViewer as MutViewer,
   ValidationReport,
   ReportHeader,
-  ReportSection,
-  MutationList as MutList,
+  DRInterpretation,
+  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -52,6 +52,7 @@ function SingleSeqReadsReport({
     strain: {display: strain} = {},
     readDepthStats: {p95: coverageUpperLimit} = {},
     allGeneSequenceReads,
+    drugResistance,
     validationResults
   } = sequenceReadsResult || {};
 
@@ -93,13 +94,13 @@ function SingleSeqReadsReport({
           }}>
             <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
           </MutViewer>
-          {isCritical ? null : <>
-            <ReportSection
-             className={style['no-page-break']}
-             title="Mutation list">
-              <MutList {...sequenceReadsResult} {...{output, strain}} />
-            </ReportSection>
-          </>}
+          {isCritical ? null :
+            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+              <DRInterpretation
+               suppressLevels
+               {...{geneDR, output, strain}} />
+            </React.Fragment>)}
+          <RefsSection />
         </RefContextWrapper>
       </> : null}
     </article>

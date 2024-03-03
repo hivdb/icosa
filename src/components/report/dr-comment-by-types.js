@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import reEscape from 'escape-string-regexp';
 
+import Markdown from '../markdown';
 import ConfigContext from '../../utils/config-context';
 
 import style from './style.module.scss';
@@ -13,21 +14,8 @@ function highlight(key, comment, highlightText) {
     hl = hl.replace(/^([A-Z])(\d+)([A-Z]+)$/, '\\b$1$2\\S*[$3]\\S*\\b');
     return hl;
   }).join('|');
-  hls = new RegExp(hls, 'g');
-  let match, lastIndex, j = 0;
-  const rcomment = [];
-  do {
-    match = hls.exec(comment);
-    if (match) {
-      let idx = match.index;
-      match = match[0];
-      rcomment.push(comment.slice(lastIndex, idx));
-      rcomment.push(<strong key={`${key}-${j++}`}>{match}</strong>);
-      lastIndex = hls.lastIndex;
-    }
-  } while (match);
-  rcomment.push(comment.slice(lastIndex));
-  return rcomment;
+  hls = new RegExp(`(${hls})`, 'g');
+  return comment.replaceAll(hls, '**$1**');
 }
 
 
@@ -70,14 +58,15 @@ export default function DRCommentByTypes({
                ))
               ))
               .map(({commentType, comments}, idx) => [
-                <dt key={`label-${idx}`}>
-                  {mutationTypesByGenes[gene.name][commentType]}
+                <dt key={`label-${commentType}`}>
+                  {mutationTypesByGenes?.[gene.name]?.[commentType] ?? commentType}
                 </dt>,
-                <dd key={`list-${idx}`}>
+                <dd key={`list-${commentType}`}>
                   <ul>
                     {(() => {
                       let commentsByText = {};
                       for (const cmt of comments) {
+                        // regroup mutations by same comment text
                         if (
                           displayTPV &&
                           cmt.name.startsWith('DRVHighAndTPV')
@@ -92,13 +81,15 @@ export default function DRCommentByTypes({
                       commentsByText = Object.values(commentsByText);
                       return commentsByText.map((cmts, idx) => (
                         <li key={idx}>
-                          {highlight(
-                            idx,
-                            cmts[0].text,
-                            cmts.reduce((l, cmt) => (
-                              l.concat(cmt.highlightText)
-                            ), [])
-                          )}
+                          <Markdown inline escapeHtml={false} displayReferences={false}>
+                            {highlight(
+                              idx,
+                              cmts[0].text,
+                              cmts.reduce((l, cmt) => (
+                                l.concat(cmt.highlightText)
+                              ), [])
+                            )}
+                          </Markdown>
                         </li>
                       ));
                     })()}

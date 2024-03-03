@@ -1,3 +1,57 @@
+const seqLevel = `
+  drugResistance {
+    algorithm {
+      text
+      family
+      version
+      publishDate
+    }
+    gene {
+       name
+       drugClasses { name fullName }
+    }
+    levels: drugScores {
+      drugClass { name }
+      drug { name displayAbbr fullName }
+      text
+    }
+    mutationsByTypes {
+      drugClass { name }
+      mutationType
+      mutations {
+        text
+        AAs
+        reference
+        position
+        isUnusual
+        isApobecMutation
+        isApobecDRM
+        isDRM
+        DRMDrugClass {
+          name
+          fullName
+        }
+        isUnsequenced
+        totalReads
+        allAAReads {
+          aminoAcid
+          numReads
+          percent
+        }
+      }
+    }
+    commentsByTypes {
+      commentType
+      comments {
+        name
+        text
+        highlightText
+        boundMutation { position text }
+      }
+    }
+  }
+`;
+
 const geneSeqLevel = `
   gene { name length }
   mutations {
@@ -28,5 +82,6 @@ const geneSeqLevel = `
 `;
 
 export {
+  seqLevel,
   geneSeqLevel
 };

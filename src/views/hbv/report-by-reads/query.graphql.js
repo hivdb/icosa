@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import {
+  seqLevel,
   geneSeqLevel
 } from '../common-query.graphql';
 
@@ -42,6 +43,7 @@ export default gql`
     minCodonReads
     minPositionReads
     assembledConsensus
+    ${seqLevel}
     allGeneSequenceReads(includeGenes: $includeGenes) {
       firstAA
       lastAA
