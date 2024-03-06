@@ -7,7 +7,6 @@ import {
   SeqSummary,
   MutationViewer as MutViewer,
   DRInterpretation,
-  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -77,7 +76,6 @@ function SingleSequenceReport({
                suppressLevels
                {...{geneDR, output, strain}} />
             </React.Fragment>)}
-          <RefsSection />
         </> : null}
       </RefContextWrapper>
     </article>

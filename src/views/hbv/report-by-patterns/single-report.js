@@ -7,7 +7,6 @@ import {
   ReportHeader,
   ReportSection,
   DRInterpretation,
-  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -70,7 +69,6 @@ function SinglePatternReport({
                suppressLevels
                {...{geneDR, output, strain}} />
             </React.Fragment>)}
-          <RefsSection />
         </RefContextWrapper>
       </> : null}
     </article>

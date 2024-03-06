@@ -8,7 +8,6 @@ import {
   ValidationReport,
   ReportHeader,
   DRInterpretation,
-  RefsSection,
   RefContextWrapper
 } from '../../../components/report';
 
@@ -100,7 +99,6 @@ function SingleSeqReadsReport({
                suppressLevels
                {...{geneDR, output, strain}} />
             </React.Fragment>)}
-          <RefsSection />
         </RefContextWrapper>
       </> : null}
     </article>

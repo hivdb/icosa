@@ -12,7 +12,6 @@ import ConfigContext, {
 } from '../../utils/config-context';
 import CustomColors from '../../components/custom-colors';
 
-import HBVRefDataLoader from './ref-data-loader';
 const SeqAnaForms = lazy(() => import('./forms'));
 const ReportByPatterns = lazy(() => import('./report-by-patterns'));
 const ReportBySequences = lazy(() => import('./report-by-sequences'));
@@ -42,8 +41,7 @@ function Layout({
   const combinedConfig = React.useMemo(
     () => ({
       ...defaultConfig,
-      ...config,
-      refDataLoader: HBVRefDataLoader
+      ...config
     }),
     [defaultConfig, config]
   );
