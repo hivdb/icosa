@@ -33,6 +33,14 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        HIV-1 Envelope Analysis Program
+        <ul>
+          <li><Link to="/hivenv/by-sequences/">By sequence</Link></li>
+          <li><Link to="/hivenv/by-reads/">By NGS reads</Link></li>
+          <li><Link to="/hivenv/ngs2codfreq/">FASTQ-to-CodFreq</Link></li>
+        </ul>
+      </li>
+      <li>
         HIVseq Analysis Program
         <ul>
           <li><Link to="/hivseq/by-patterns/">By mutations</Link></li>

@@ -47,6 +47,17 @@ const routes = (
         }
       })}
       {HIVRoutes({
+        defaultForm: 'by-sequences/',
+        pathPrefix: 'hivenv/',
+        config: {
+          configFromURL: (
+            'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
+            'pages/sierra-hivenv.json'
+          ),
+          refDataLoader: DebugRefDataLoader
+        }
+      })}
+      {HIVRoutes({
         pathPrefix: 'hivseq/',
         config: {
           configFromURL: (

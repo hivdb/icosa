@@ -106,7 +106,10 @@ export function trimOverlaps(posGroup, scaleX) {
     extendedRight = extendedRight.filter(({pos}) => pos !== posMiddle);
   }
   const extended = [...extendedLeft.reverse(), ...extendedRight];
-  for (const {turns} of extended) {
+  for (const {pos, turns, hideText} of extended) {
+    if (hideText) {
+      continue;
+    }
     if (turns.length === 1) {
       turns[0][1] = maxOffsetY;
     }
@@ -122,13 +125,13 @@ export function trimOverlaps(posGroup, scaleX) {
 
   function extposEnditions(positions, direction, halfFunc, shouldTurn) {
     const extended = [];
-    for (const {pos, ...posData} of positions) {
+    for (const {pos, hideText, ...posData} of positions) {
       if (!halfFunc(pos)) {
         continue;
       }
       let x = scaleX(pos);
       const turns = [[x, 0, direction]];
-      if (typeof prevX !== 'undefined' && shouldTurn(x - prevX)) {
+      if (!hideText && typeof prevX !== 'undefined' && shouldTurn(x - prevX)) {
         if (direction > 0) {
           x = Math.max(x, prevX) + hGap;
         }
@@ -137,8 +140,10 @@ export function trimOverlaps(posGroup, scaleX) {
         }
         turns.push([x, 0, direction]);
       }
-      prevX = x;
-      extended.push({pos, turns, ...posData});
+      if (!hideText) {
+        prevX = x;
+      }
+      extended.push({pos, turns, hideText, ...posData});
     }
     let offsetY = 0;
     for (let i = extended.length - 1; i > -1; i --) {

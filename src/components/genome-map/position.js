@@ -40,7 +40,7 @@ export default function Position({
   const pathData = React.useMemo(
     () => {
       /* eslint-disable array-element-newline */
-      const {turns} = position;
+      const {turns, hideText} = position;
 
       const x = turns[0][0];
       const y = offsetY + labelFontSize * 1.5 - 3;
@@ -53,6 +53,7 @@ export default function Position({
       ];
 
       if (turns.length > 1) {
+        console.log(position.pos, turns);
         const cr = 5; // corner radius
         pathData = [
           ...pathData,
@@ -66,7 +67,7 @@ export default function Position({
       else {
         pathData = [
           ...pathData,
-          'v', height + extendSize + turns[0][1]
+          'v', height + (hideText ? 0 : extendSize) + turns[0][1]
         ];
       }
       return pathData.join(' ');
@@ -131,10 +132,8 @@ export default function Position({
      stroke={stroke || '#000000'}
      fill="none"
      strokeWidth={strokeWidth || 1} />
-    {arrowPropsList.map((props, idx) => (
-      <path key={idx} {...props} />
-    ))}
-    <text {...textProps}>{labelText}</text>
+    {arrowPropsList.map((props, idx) => <path key={idx} {...props} />)}
+    {position.hideText ? null : <text {...textProps}>{labelText}</text>}
   </g>;
 
 }

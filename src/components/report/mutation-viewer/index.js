@@ -71,7 +71,8 @@ MutationViewer.defaultProps = {
   viewCheckboxLabel: 'Collapse mutation maps',
   defaultPresetIndex: 0,
   highlightUnusualMutation: true,
-  highlightDRM: true
+  highlightDRM: true,
+  displayDRMOnly: false
 };
 
 
@@ -90,7 +91,8 @@ function MutationViewer({
   coverages,
   coverageUpperLimit,
   highlightUnusualMutation,
-  highlightDRM
+  highlightDRM,
+  displayDRMOnly
 }) {
   const {presets: origPresets, genes} = regionPresets;
   const [selectedIndex, setSelectedIndex] = useState(defaultPresetIndex);
@@ -132,6 +134,7 @@ function MutationViewer({
         highlightGenes,
         highlightUnusualMutation,
         highlightDRM,
+        displayDRMOnly,
         minPos: presetPosStart,
         maxPos: presetPosEnd
       });
@@ -279,7 +282,8 @@ export default function MutationViewerLoader(props) {
       regionPresets,
       hideMutationViewToggler: hideViewToggler,
       highlightUnusualMutation,
-      highlightDRM
+      highlightDRM,
+      mutationViewerDisplayDRMOnly
     }) => (
       <MutationViewer
        {...props}
@@ -287,7 +291,8 @@ export default function MutationViewerLoader(props) {
          regionPresets,
          hideViewToggler,
          highlightUnusualMutation,
-         highlightDRM
+         highlightDRM,
+         displayDRMOnly: mutationViewerDisplayDRMOnly
        }} />
     )}
   </ConfigContext.Consumer>;

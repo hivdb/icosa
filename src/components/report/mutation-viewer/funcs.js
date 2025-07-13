@@ -109,7 +109,8 @@ export function getGenomeMapPositions({
   minPos,
   maxPos,
   highlightUnusualMutation: hlUM,
-  highlightDRM: hlDRM
+  highlightDRM: hlDRM,
+  displayDRMOnly: onlyDRM
 }) {
   geneDefs = geneDefs.reduce((acc, geneDef) => {
     acc[geneDef.gene] = geneDef;
@@ -144,12 +145,15 @@ export function getGenomeMapPositions({
       resultPositions.push({
         gene: displayGene,
         name: highlight ? text : `${displayGene}:${text}`,
+        hideText: onlyDRM && !isDRM,
         pos: absNAPos,
         ...(highlight ? {
           strokeWidth: hlDRM && isDRM ? 3 : (hlUM && isUnusual ? 1.5 : 1),
           fontWeight: hlDRM && isDRM ? 600 : 400,
           stroke: hlUM && isUnusual ? '#e13333' : (
-            hlDRM && isDRM ? '#1b8ecc' : '#000000'
+            hlDRM && isDRM ? '#1b8ecc' : (
+              onlyDRM ? '#a0a0a0' : '#000000'
+            )
           ),
           color: hlUM && isUnusual ? '#e13333' : (
             hlDRM && isDRM ? '#1b8ecc' : '#000000'

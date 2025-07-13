@@ -203,7 +203,7 @@ function Mutation({
               ).map(({aminoAcid, percent}, idx) => (
                 <li key={idx} className={style['aa-percent-item']}>
                   <span className={style['amino-acid']}>
-                    {aminoAcid.replace('-', 'Δ')}{': '}
+                    {aminoAcid.replace('-', 'Δ').replace('_', 'ins')}{': '}
                   </span>
                   {formatPercent(percent)}
                 </li>
