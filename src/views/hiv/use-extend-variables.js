@@ -9,7 +9,7 @@ export default function useExtendVariables({
   getSubmitState,
   config
 }) {
-  const {allGenes} = config;
+  const {allGenes, defaultAlgorithm} = config;
   const [extendVars, setExtendVars] = React.useState(null);
   const {match} = useRouter();
 
@@ -50,6 +50,7 @@ export default function useExtendVariables({
           }
         }
         vars.includeGenes = allGenes;
+        vars.drmAlgorithm = defaultAlgorithm;
         return vars;
       },
       [extendVars, allGenes]

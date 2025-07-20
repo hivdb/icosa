@@ -58,7 +58,7 @@ const seqLevel = `
     }
   }
 
-  drugResistance(includeGenes: $includeGenes) {
+  drugResistance(algorithm: $drmAlgorithm, includeGenes: $includeGenes) {
     algorithm {
       text
       family

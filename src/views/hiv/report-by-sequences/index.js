@@ -59,6 +59,7 @@ function ReportBySequencesContainer({
    lazyLoad={lazyLoad}
    extraParams={`
      $includeGenes: [EnumGene!]!,
+     $drmAlgorithm: ASIAlgorithm,
      $algorithms: [ASIAlgorithm!],
      $customAlgorithms: [CustomASIAlgorithm!]
    `}

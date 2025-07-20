@@ -9,6 +9,7 @@ import {
 export function getExtraParams(/* subOptions */) {
   return `
     $includeGenes: [EnumGene!]!,
+    $drmAlgorithm: ASIAlgorithm,
     $algorithms: [ASIAlgorithm!],
     $customAlgorithms: [CustomASIAlgorithm!]
   `;
