@@ -55,6 +55,11 @@ export default gql`
         isInsertion
         isDeletion
       }
+      nGlycoSites: motifMatches(pattern: "N-~P-[ST]") {
+        firstAA
+        lastAA
+        matched
+      }
     }
   }
 `;

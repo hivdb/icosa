@@ -118,7 +118,7 @@ export function getGenomeMapPositions({
   }, {});
   const resultPositions = [];
   for (const geneSeq of allGeneSeqs) {
-    const {gene: {name: geneName}, mutations, frameShifts} = geneSeq;
+    const {gene: {name: geneName}, mutations, frameShifts, nGlycoSites} = geneSeq;
     if (!(geneName in geneDefs)) {
       continue;
     }
@@ -138,6 +138,9 @@ export function getGenomeMapPositions({
       if (isUnsequenced) {
         continue;
       }
+      if (onlyDRM && !isDRM) {
+        continue;
+      }
       const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);
       if (absNAPos < minPos || absNAPos > maxPos) {
         continue;
@@ -145,7 +148,6 @@ export function getGenomeMapPositions({
       resultPositions.push({
         gene: displayGene,
         name: highlight ? text : `${displayGene}:${text}`,
-        hideText: onlyDRM && !isDRM,
         pos: absNAPos,
         ...(highlight ? {
           strokeWidth: hlDRM && isDRM ? 3 : (hlUM && isUnusual ? 1.5 : 1),
@@ -181,6 +183,28 @@ export function getGenomeMapPositions({
         fontWeight: 400,
         stroke: '#e13333',
         color: '#e13333'
+      });
+    }
+
+    for (const {
+      firstAA, matched
+    } of nGlycoSites || []) {
+      const absNAPos = convertAAPosToAbsNAPos(firstAA, range[0], readingFrame);
+      if (absNAPos < minPos || absNAPos > maxPos) {
+        continue;
+      }
+      resultPositions.push({
+        gene: displayGene,
+        name: `${firstAA}:${matched}`,
+        hideText: true,
+        hoverText: true,
+        pos: absNAPos,
+        strokeWidth: 1,
+        fontSize: 16,
+        fill: '#00BCD4',
+        stroke: '#004D56',
+        color: '#002463',
+        pathStyle: 'circle'
       });
     }
   }

@@ -262,7 +262,7 @@ function MutationViewer({
            key={`section=${name}`}
            data-hide={!showAll && !payloads[idx].hasCoverage}
            className={style['genome-map-expanded']}>
-            <H3 disableAnchor>{label} ({name})</H3>
+            <H3 disableAnchor>{label}{name === label ? null : <> ({name})</>}</H3>
             <GenomeMap
              key={`genome-map-${name}`}
              preset={payloads[idx]}

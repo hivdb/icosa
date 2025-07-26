@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {positionShape} from './prop-types';
+import style from './style.module.scss';
 
 
 Position.propTypes = {
@@ -40,20 +41,30 @@ export default function Position({
   const pathData = React.useMemo(
     () => {
       /* eslint-disable array-element-newline */
-      const {turns, hideText} = position;
+      const {turns, hideText, pathStyle} = position;
 
       const x = turns[0][0];
       const y = offsetY + labelFontSize * 1.5 - 3;
       const di = turns[0][2]; // direction
-      let pathData = [
-        'm', x - 4, y,
-        'l', 4, 4,
-        'l', 4, -4,
-        'm', -4, 4
-      ];
+      let pathData = [];
+      if (pathStyle === 'circle') {
+        const r = 6;
+        pathData.push(...[
+          'm', x, y + 2 * r,
+          'a', r, r, 0, 1, 0, 0, -(r * 2),
+          'a', r, r, 0, 1, 0, 0, (r * 2)
+        ]);
+      }
+      else {
+        pathData.push(...[
+          'm', x - 4, y,
+          'l', 4, 4,
+          'l', 4, -4,
+          'm', -4, 4
+        ]);
+      }
 
       if (turns.length > 1) {
-        console.log(position.pos, turns);
         const cr = 5; // corner radius
         pathData = [
           ...pathData,
@@ -64,10 +75,10 @@ export default function Position({
           'v', turns[2][1] - turns[1][1] - cr
         ];
       }
-      else {
+      else if (!hideText) {
         pathData = [
           ...pathData,
-          'v', height + (hideText ? 0 : extendSize) + turns[0][1]
+          'v', height + extendSize + turns[0][1]
         ];
       }
       return pathData.join(' ');
@@ -105,7 +116,10 @@ export default function Position({
 
   const textProps = React.useMemo(
     () => {
-      const {turns, color, arrows = [], fontWeight} = position;
+      const {turns, hideText, color, arrows = [], fontWeight} = position;
+      if (hideText) {
+        return null;
+      }
       let [x, y] = turns[turns.length - 1];
 
       y += (
@@ -114,7 +128,7 @@ export default function Position({
       );
       return {
         transform: `translate(${x}, ${y}) rotate(-60)`,
-        fill: color || '#000000',
+        fill: color ?? '#000000',
         fontWeight,
         dominantBaseline: 'central',
         textAnchor: 'end',
@@ -124,16 +138,42 @@ export default function Position({
     [height, extendSize, labelFontSize, offsetY, position]
   );
 
-  const {stroke, strokeWidth} = position;
+  const hoverTextProps = React.useMemo(
+    () => {
+      const {turns, hoverText, color, fontSize, fontWeight} = position;
+      if (!hoverText) {
+        return null;
+      }
+      const offset = 10;
+      const x = turns[0][0];
+      const y = offsetY + labelFontSize * 1.5 - 3 - offset;
+      return {
+        transform: `translate(${x}, ${y})`,
+        fill: color ?? '#000000',
+        fontWeight,
+        fontSize,
+        dominantBaseline: 'central',
+        textAnchor: 'start',
+        fontFamily: 'Arial Narrow'
+      };
+    },
+    [labelFontSize, offsetY, position]
+  );
 
-  return <g>
+  const {stroke, fill, strokeWidth, hideText, hoverText} = position;
+
+  return <g className={style.position}>
     <path
      d={pathData}
-     stroke={stroke || '#000000'}
-     fill="none"
-     strokeWidth={strokeWidth || 1} />
+     stroke={stroke ?? '#000000'}
+     fill={fill ?? 'none'}
+     strokeWidth={strokeWidth ?? 1} />
     {arrowPropsList.map((props, idx) => <path key={idx} {...props} />)}
-    {position.hideText ? null : <text {...textProps}>{labelText}</text>}
+    {hideText ? null : <text {...textProps}>{labelText}</text>}
+    {hoverText ? <text className={style['hover-text']} {...hoverTextProps}>
+      {labelText}
+    </text> : null}
+
   </g>;
 
 }

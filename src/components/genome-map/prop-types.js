@@ -22,11 +22,19 @@ const positionShape = PropTypes.shape({
   stroke: PropTypes.string,
   strokeWidth: PropTypes.number,
   color: PropTypes.string,
+  fill: PropTypes.string,
   fontWeight: PropTypes.oneOfType([
     PropTypes.string.isRequired,
     PropTypes.number.isRequired
   ]),
-  arrows: PropTypes.arrayOf(PropTypes.string.isRequired)
+  fontSize: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired
+  ]),
+  arrows: PropTypes.arrayOf(PropTypes.string.isRequired),
+  hideText: PropTypes.bool,
+  hoverText: PropTypes.bool,
+  pathStyle: PropTypes.oneOf(['circle', 'arrow']).isRequired
 });
 
 

@@ -48,4 +48,14 @@
     }
   }
 
+  .position {
+    .hover-text {
+      display: none;
+    }
+
+    &:hover .hover-text {
+      display: block;
+    }
+  }
+
 }

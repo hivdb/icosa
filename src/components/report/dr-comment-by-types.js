@@ -36,6 +36,8 @@ export default function DRCommentByTypes({
   commentsByTypes,
   disabledDrugs
 }) {
+  const [config] = ConfigContext.use();
+  const {geneDisplay} = config ?? {};
   if (commentsByTypes.every(({comments}) => comments.length === 0)) {
     return null;
   }
@@ -46,7 +48,7 @@ export default function DRCommentByTypes({
       {({mutationTypesByGenes}) => (
         <div className={style['dr-report-comment-by-types']}>
           <div className={style.title}>
-            {gene.name} comments
+            {geneDisplay[gene.name] ?? gene.name} comments
           </div>
           <dl>
             {commentsByTypes
