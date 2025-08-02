@@ -1,42 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ReactJSPopup from 'reactjs-popup';
 
 import style from './style.module.scss';
 
 
-const POSITION_NEXT = {
-  'top': 'right',
-  'right': 'bottom',
-  'bottom': 'left',
-  'left': 'top'
+const POSITION_NEXT: Record<'top' | 'right' | 'bottom' | 'left', 'top' | 'right' | 'bottom' | 'left'> = {
+  top: 'right',
+  right: 'bottom',
+  bottom: 'left',
+  left: 'top'
 };
-
-
-HoverPopup.propTypes = {
-  noUnderline: PropTypes.bool,
-  children: PropTypes.node.isRequired,
-  message: PropTypes.node,
-  delay: PropTypes.number,
-  position: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
-  className: PropTypes.string
-};
-
-HoverPopup.defaultProps = {
-  noUnderline: false,
-  delay: 100,
-  position: 'top'
-};
+export interface HoverPopupProps {
+  noUnderline?: boolean;
+  children: React.ReactNode;
+  message?: React.ReactNode;
+  delay?: number;
+  position?: 'top' | 'right' | 'bottom' | 'left';
+  className?: string;
+}
 
 export function HoverPopup({
-  noUnderline,
+  noUnderline = false,
   children,
-  delay,
-  position,
+  delay = 100,
+  position = 'top',
   message,
   className
-}) {
+}: HoverPopupProps) {
   const classNameArr = className ? className.split(/\s+/) : [];
   classNameArr.push(style['icosa-popup']);
 

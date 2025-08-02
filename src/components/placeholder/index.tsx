@@ -2,7 +2,6 @@ import React from 'react';
 
 import style from './style.module.scss';
 
-
 export default function Placeholder() {
   return (
     <div className={style['ph-item']}>
@@ -22,3 +21,4 @@ export default function Placeholder() {
     </div>
   );
 }
+

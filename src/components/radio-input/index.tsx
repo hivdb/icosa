@@ -1,27 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import style from './style.module.scss';
 
-
-RadioInput.propTypes = {
-  id: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  name: PropTypes.string.isRequired,
-  value: PropTypes.any.isRequired,
-  title: PropTypes.string,
-  children: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  checked: PropTypes.bool.isRequired,
-  disabled: PropTypes.bool,
-  style: PropTypes.object
-};
-
-RadioInput.defaultProps = {
-  style: {},
-  disabled: false
-};
-
+export interface RadioInputProps {
+  id: string;
+  className?: string;
+  name: string;
+  value: any;
+  title?: string;
+  children: React.ReactNode;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  checked: boolean;
+  disabled?: boolean;
+  style?: React.CSSProperties;
+}
 
 export default function RadioInput({
   id,
@@ -31,10 +23,10 @@ export default function RadioInput({
   title,
   onChange,
   checked,
-  disabled,
+  disabled = false,
   children,
-  style: userStyle
-}) {
+  style: userStyle = {}
+}: RadioInputProps) {
   return (
     <span
      title={title}
