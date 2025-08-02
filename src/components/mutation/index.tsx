@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import round from 'lodash/round';
 import orderBy from 'lodash/orderBy';
 
@@ -9,64 +8,43 @@ import useMessages from '../../utils/use-messages';
 
 import style from './style.module.scss';
 
-
-function formatPercent(percent) {
+function formatPercent(percent: number) {
   return round(percent, percent >= 10 ? 0 : 1) + '%';
 }
 
-
-function execTemplate(template, options) {
+function execTemplate(template: string, options: Record<string, any>) {
   let msg = template;
   for (const [key, val] of Object.entries(options)) {
-    msg = msg.replaceAll(`\${${key}}`, val);
+    const pattern = new RegExp(`\\\\\$\\{${key}\\}`, 'g');
+    msg = msg.replace(pattern, String(val));
   }
   return msg.trim();
 }
 
+export interface MutationProps {
+  as?: React.ElementType;
+  gene: string;
+  text: string;
+  isUnusual?: boolean;
+  isDRM?: boolean;
+  DRMDrugClass?: {name: string; fullName: string};
+  isApobecMutation?: boolean;
+  isApobecDRM?: boolean;
+  isUnsequenced: boolean;
+  totalReads?: number;
+  allAAReads?: {aminoAcid: string; percent: number}[];
+  config: {
+    highlightUnusualMutation?: boolean;
+    highlightDRM?: boolean;
+    highlightApobecMutation?: boolean;
+    highlightApobecDRM?: boolean;
+    geneDisplay: Record<string, string>;
+    messages: Record<string, string>;
+  };
+}
 
-Mutation.propTypes = {
-  as: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.func.isRequired
-  ]).isRequired,
-  gene: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  isUnusual: PropTypes.bool,
-  isDRM: PropTypes.bool,
-  DRMDrugClass: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    fullName: PropTypes.string.isRequired
-  }),
-  isApobecMutation: PropTypes.bool,
-  isApobecDRM: PropTypes.bool,
-  isUnsequenced: PropTypes.bool.isRequired,
-  totalReads: PropTypes.number,
-  allAAReads: PropTypes.arrayOf(
-    PropTypes.shape({
-      aminoAcid: PropTypes.string.isRequired,
-      percent: PropTypes.number.isRequired
-    }).isRequired
-  ),
-  config: PropTypes.shape({
-    highlightUnusualMutation: PropTypes.bool,
-    highlightDRM: PropTypes.bool,
-    highlightApobecMutation: PropTypes.bool,
-    highlightApobecDRM: PropTypes.bool,
-    geneDisplay: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    messages: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  })
-};
-
-Mutation.defaultProps = {
-  as: 'li'
-};
-
-function Mutation({
-  as,
+export default function Mutation({
+  as: Component = 'li',
   gene,
   text,
   config: {
@@ -85,13 +63,10 @@ function Mutation({
   isUnsequenced,
   totalReads,
   allAAReads
-}) {
-  const hasTotalReads = totalReads && totalReads > 0;
-  const hasAAReads = allAAReads && allAAReads.length > 0;
-  const {
-    name: dcName,
-    fullName: dcFullName
-  } = DRMDrugClass || {};
+}: MutationProps) {
+  const hasTotalReads = !!(totalReads && totalReads > 0);
+  const hasAAReads = !!(allAAReads && allAAReads.length > 0);
+  const {name: dcName, fullName: dcFullName} = DRMDrugClass || {} as any;
   const [
     msgTpl,
     msgTplIsUnusual,
@@ -114,13 +89,13 @@ function Mutation({
   const message = React.useMemo(
     () => {
       const geneText = geneDisplay[gene] || gene;
-      const msgOptions = {
+      const msgOptions: Record<string, any> = {
         mutation: text,
         uriMutation: encodeURIComponent(text),
         gene: geneText,
         uriGene: encodeURIComponent(geneText),
         drugClass: dcName,
-        uriDrugClass: encodeURIComponent(dcName),
+        uriDrugClass: encodeURIComponent(dcName || ''),
         drugClassFullName: dcFullName
       };
 
@@ -171,7 +146,7 @@ function Mutation({
   );
 
   return React.createElement(
-    as,
+    Component,
     {
       className: style['mutation-item'],
       'data-unsequenced': isUnsequenced,
@@ -183,10 +158,10 @@ function Mutation({
     <>
       {message && !isUnsequenced ? (
         <HoverPopup
-         noUnderline
-         position="bottom"
-         delay={300}
-         message={<Markdown escapeHtml={false}>{message}</Markdown>}>
+          noUnderline
+          position="bottom"
+          delay={300}
+          message={<Markdown escapeHtml={false}>{message}</Markdown>}>
           <span className={style['mut-text']}>{text}</span>
         </HoverPopup>
       ) : <span className={style['mut-text']}>{text}</span>}
@@ -194,8 +169,8 @@ function Mutation({
         <div className={style['annotations']}>
           {allAAReads && allAAReads.length > 0 ? (
             <ul
-             data-hide-aa={allAAReads.length === 1}
-             className={style['aa-percent-list']}>
+              data-hide-aa={allAAReads.length === 1}
+              className={style['aa-percent-list']}>
               {orderBy(
                 allAAReads,
                 ['percent'],
@@ -221,5 +196,3 @@ function Mutation({
     </>
   );
 }
-
-export default Mutation;
