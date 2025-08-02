@@ -99,6 +99,7 @@
   },
   "devDependencies": {
     "jsdom": "26.1.0",
+    "sass-embedded": "^1.89.2",
     "vitest": "3.2.4"
   },
   "exports": {
