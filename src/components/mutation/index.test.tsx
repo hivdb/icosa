@@ -6,6 +6,11 @@ vi.mock('../../utils/use-messages', () => ({
   default: () => ['<mutation-popup>', '', '', '', '', '']
 }));
 
+vi.mock('../markdown', () => ({
+  __esModule: true,
+  default: ({children}: any) => <div>{children}</div>
+}));
+
 import Mutation from './index';
 
 describe('Mutation', () => {
