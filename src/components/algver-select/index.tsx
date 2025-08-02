@@ -1,12 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import Select from '../select';
+import style from './style.module.scss';
 
-import style from "./style.module.scss";
-
-
-function getEnumCompatValue(family, version) {
+function getEnumCompatValue(family: string, version: string) {
   return (
     `${family}_${version}`
       .replace(/[^_0-9A-Za-z-]/g, '_')
@@ -15,13 +11,11 @@ function getEnumCompatValue(family, version) {
   );
 }
 
-
-function getLabel(family, version) {
+function getLabel(family: string, version: string) {
   return `${family} ${version}`;
 }
 
-
-export function getLatestVersion(family, config) {
+export function getLatestVersion(family: string, config: any) {
   const {algorithmVersions: algVers} = config;
   const versions = algVers[family];
   const [
@@ -39,9 +33,8 @@ export function getLatestVersion(family, config) {
   };
 }
 
-
-export function getLatestVersions(config) {
-  const latestVers = [];
+export function getLatestVersions(config: any) {
+  const latestVers = [] as any[];
   const {algorithmVersions: algVers} = config;
   for (const family of Object.keys(algVers)) {
     latestVers.push(getLatestVersion(family, config));
@@ -49,15 +42,14 @@ export function getLatestVersions(config) {
   return latestVers;
 }
 
-
-AlgVerSelect.propTypes = {
-  config: PropTypes.shape({
-    algorithmVersions: PropTypes.object.isRequired,
-    excludeAlgorithmVersions: PropTypes.array
-  }).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+export interface AlgVerSelectProps {
+  config: {
+    algorithmVersions: Record<string, any[]>;
+    excludeAlgorithmVersions: string[];
+  };
+  onChange: (value: any) => void;
+  [key: string]: any;
+}
 
 export default function AlgVerSelect({
   config: {
@@ -66,7 +58,7 @@ export default function AlgVerSelect({
   },
   onChange,
   ...props
-}) {
+}: AlgVerSelectProps) {
   const excludePatterns = React.useMemo(
     () => excludeVers.map(pattern => new RegExp(pattern)),
     [excludeVers]
@@ -74,13 +66,13 @@ export default function AlgVerSelect({
 
   const options = React.useMemo(
     () => {
-      const options = [];
-      for (let [family, versions] of Object.entries(algVers)) {
-        const group = {
+      const options: any[] = [];
+      for (const [family, versions] of Object.entries(algVers)) {
+        const group: any = {
           label: family,
-          options: []
+          options: [] as any[]
         };
-        for (const [ver] of versions) {
+        for (const [ver] of versions as any[]) {
           const value = getEnumCompatValue(family, ver);
           let skip = false;
           for (const pattern of excludePatterns) {
@@ -97,7 +89,7 @@ export default function AlgVerSelect({
             value
           });
         }
-        group.options.reverse();
+        (group.options as any).reverse();
         options.push(group);
       }
       return options;
@@ -107,12 +99,12 @@ export default function AlgVerSelect({
 
   return (
     <Select
-     {...props}
-     options={options}
-     className={style['algver-select']}
-     classNamePrefix="algver-select"
-     placeholder="Select an algorithm..."
-     onChange={onChange} />
+      {...props}
+      options={options}
+      className={style['algver-select']}
+      classNamePrefix="algver-select"
+      placeholder="Select an algorithm..."
+      onChange={onChange}
+    />
   );
-
 }

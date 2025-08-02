@@ -1,14 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Link from '../link';
 
 import style from './style.module.scss';
 
-
-let _isPositionStickySupported;
+let _isPositionStickySupported: boolean | undefined;
 
 function isPositionStickySupported() {
-  if (window.__SERVER_RENDERING) {
+  if ((window as any).__SERVER_RENDERING) {
     return true;
   }
   if (typeof _isPositionStickySupported === 'undefined') {
@@ -27,14 +25,13 @@ function isPositionStickySupported() {
   return _isPositionStickySupported;
 }
 
-
-ItemLink.propTypes = {
-  href: PropTypes.string,
-  to: PropTypes.string,
-  className: PropTypes.string,
-  onClick: PropTypes.func,
-  children: PropTypes.node.isRequired
-};
+interface ItemLinkProps {
+  href?: string;
+  to?: string;
+  className?: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}
 
 function ItemLink({
   href,
@@ -42,17 +39,16 @@ function ItemLink({
   className,
   onClick,
   children
-}) {
-  let title = children;
-
+}: ItemLinkProps) {
+  const title = children as any;
   return (
     <Link
-     noDefaultStyle
-     className={className}
-     to={to}
-     href={href}
-     onClick={onClick}>
-      <span title={title}>
+      noDefaultStyle
+      className={className}
+      to={to}
+      href={href}
+      onClick={onClick}>
+      <span title={title as string}>
         {children}
       </span>
     </Link>
@@ -61,22 +57,18 @@ function ItemLink({
 
 export function SidebarItem() { return null; }
 
-Sidebar.propTypes = {
-  title: PropTypes.node.isRequired,
-  currentSelected: PropTypes.string,
-  children: PropTypes.node.isRequired
-};
+interface SidebarProps {
+  title: React.ReactNode;
+  currentSelected?: string;
+  children: React.ReactNode;
+}
 
 export default function Sidebar({
   title,
   currentSelected,
   children
-}) {
-
-  if (!(children instanceof Array)) {
-    children = [children];
-  }
-
+}: SidebarProps) {
+  const items = Array.isArray(children) ? children : [children];
   return <div className={
     isPositionStickySupported() ?
       style['sidebar-sticky-container'] :
@@ -86,22 +78,18 @@ export default function Sidebar({
       <nav className={style['sidebar-general']}>
         <div className={style['sidebar-title']}>{title}</div>
         <ul>
-          {children
-            .map((item, idx) => (
-              <li key={idx}>
-                <ItemLink
-                 key={idx}
-                 className={
-                    item.props.name === currentSelected ?
-                      style.current : null
-                  }
-                 to={item.props.to}
-                 href={item.props.href}
-                 onClick={item.props.onClick}>
-                  {item.props.children}
-                </ItemLink>
-              </li>
-            ))}
+          {items.map((item: any, idx: number) => (
+            <li key={idx}>
+              <ItemLink
+                className={item.props.name === currentSelected ? style.current : undefined}
+                to={item.props.to}
+                href={item.props.href}
+                onClick={item.props.onClick}
+              >
+                {item.props.children}
+              </ItemLink>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>
