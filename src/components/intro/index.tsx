@@ -1,27 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
 
+const ClassNameContext = React.createContext<string | null>(null);
 
-const ClassNameContext = React.createContext(null);
+export interface IntroHeaderProps {
+  children: React.ReactNode;
+}
 
-
-IntroHeader.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-export function IntroHeader({children}) {
+export function IntroHeader({children}: IntroHeaderProps) {
   return <header>{children}</header>;
 }
 
+export interface IntroHeaderSupplementProps {
+  children: React.ReactNode;
+}
 
-IntroHeaderSupplement.propTypes = {
-  children: PropTypes.node.isRequired
-};
-
-export function IntroHeaderSupplement({children}) {
+export function IntroHeaderSupplement({children}: IntroHeaderSupplementProps) {
   const parentClassName = React.useContext(ClassNameContext);
   const className = classNames(
     style.supplement,
@@ -31,20 +27,19 @@ export function IntroHeaderSupplement({children}) {
   return <div className={className}>{children}</div>;
 }
 
+export interface IntroProps {
+  className?: string;
+  children: React.ReactNode | React.ReactNode[];
+}
 
-Intro.propTypes = {
-  className: PropTypes.string,
-  children: PropTypes.node.isRequired
-};
-
-export default function Intro({className, children}) {
-  let header = null;
-  let body = [];
+export default function Intro({className, children}: IntroProps) {
+  let header: React.ReactNode = null;
+  let body: React.ReactNode[] = [];
   if (!(children instanceof Array)) {
     children = [children];
   }
   for (const element of children) {
-    if (element && element.type === IntroHeader) {
+    if (element && (element as any).type === IntroHeader) {
       header = element;
     }
     else {
@@ -63,3 +58,4 @@ export default function Intro({className, children}) {
     </div>
   </ClassNameContext.Provider>;
 }
+
