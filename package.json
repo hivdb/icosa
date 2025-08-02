@@ -4,7 +4,7 @@
   "private": true,
   "resolutions": {
     "vfile": "^4.2.1",
-    "react": "^18.2.0",
+    "react": "next",
     "prop-types": "^15.8.1",
     "react-input-autosize": "^3.0.0"
   },
@@ -17,14 +17,15 @@
     "@babel/plugin-transform-react-jsx": "^7.14.9",
     "@babel/preset-env": "^7.18.2",
     "@babel/runtime": "^7.17.9",
-    "@craco/craco": "^6.4.5",
     "@monaco-editor/react": "^4.4.5",
     "@react-icons/all-files": "^4.1.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^14.1.1",
-    "@types/react": "^18.0.9",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.0.0",
     "@vx/axis": "^0.0.199",
     "@vx/bounds": "^0.0.199",
     "@vx/group": "^0.0.199",
@@ -57,11 +58,11 @@
     "prop-types": "^15.8.1",
     "query-string": "^7.1.1",
     "raw-loader": "^4.0.2",
-    "react": "^18.2.0",
+    "react": "next",
     "react-async": "^10.0.1",
     "react-children-utilities": "^2.8.0",
     "react-datepicker": "^4.8.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "next",
     "react-dropdown": "^1.10.0",
     "react-dropzone": "^14.2.1",
     "react-ga": "^3.3.0",
@@ -69,7 +70,6 @@
     "react-markdown": "^4.3.1",
     "react-ngl": "^0.2.3",
     "react-progressbar": "^15.4.1",
-    "react-scripts": "^5.0.1",
     "react-select": "^5.3.2",
     "react-slick": "^0.29.0",
     "react-tabs": "^5.1.0",
@@ -88,26 +88,27 @@
     "sql.js": "^1.7.0",
     "svg-crowbar": "^0.7.0",
     "typeface-source-sans-pro": "^1.1.13",
-    "typescript": "^3.9.5",
+    "typescript": "^5.4.0",
     "use-persisted-state": "hivdb/use-persisted-state#61bfffd",
     "uuid": "^8.3.2",
+    "vite": "^5.0.0",
     "web-vitals": "^2.1.4",
-    "webpack": "^5.72.0",
-    "worker-loader": "^3.0.8",
     "xlsx": "^0.18.5",
     "xmlbuilder2": "^3.0.2",
     "youtube-url": "^0.5.0"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "vitest": "^1.0.0"
   },
   "exports": {
     "./": "./dist/"
   },
   "scripts": {
-    "start": "PORT=3009 craco start",
-    "dist": "rm -rf dist/ && NODE_ENV=production npx babel src --out-dir dist --copy-files",
-    "build": "yarn dist",
-    "postinstall": "yarn dist",
-    "test": "craco test",
-    "eject": "craco eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "eslintConfig": {
     "extends": [

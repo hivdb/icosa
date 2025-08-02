@@ -34,11 +34,9 @@ const Router = createFarceRouter({
  * us locate problems. Don't disable it permanently!
  *
  */
-const container = document.getElementById('root');
+const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
-root.render(
-  <Router resolver={resolver} />
-);
+root.render(<Router resolver={resolver} />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -1,0 +1,77 @@
+import React from 'react';
+import makeClassNames from 'classnames';
+
+import Link from '../link';
+import ExtLink from '../link/external';
+
+import style from './style.module.scss';
+
+export type ButtonStyle = 'default' | 'info' | 'primary' | 'light' | 'link';
+export type ButtonSize = 'xlarge' | 'large' | 'normal' | 'small';
+
+export interface ButtonProps {
+  onClick?: React.MouseEventHandler<HTMLElement>;
+  name?: string;
+  btnStyle?: ButtonStyle;
+  btnSize?: ButtonSize;
+  btnHeight?: number;
+  disabled?: boolean;
+  className?: string;
+  value?: string | number;
+  href?: string;
+  to?: string;
+  type?: 'button' | 'submit' | 'reset';
+  children: React.ReactNode;
+}
+
+const Button: React.FC<ButtonProps> = ({
+  btnStyle = 'default',
+  btnSize = 'normal',
+  disabled = false,
+  className = '',
+  type = 'button',
+  btnHeight,
+  children,
+  href,
+  to,
+  ...props
+}) => {
+  const classNames = [
+    className,
+    style.btn,
+    style[`btn-${btnSize}`],
+    style[`btn-style-${btnStyle}`]
+  ];
+
+  if (btnHeight) {
+    classNames.push(style[`btn-height-${btnHeight}`]);
+  }
+
+  const combinedClassName = makeClassNames(...classNames);
+
+  let Component: React.ElementType = 'button';
+  const componentProps: Record<string, unknown> = { ...props };
+
+  if (href || to) {
+    Component = to ? Link : ExtLink;
+    (componentProps as any).noDefaultStyle = true;
+    delete (componentProps as any).type;
+  } else {
+    (componentProps as any).type = type;
+  }
+
+  return (
+    <Component
+      className={combinedClassName}
+      href={href}
+      to={to}
+      disabled={disabled}
+      role="button"
+      {...componentProps}
+    >
+      <span>{children}</span>
+    </Component>
+  );
+};
+
+export default Button;
