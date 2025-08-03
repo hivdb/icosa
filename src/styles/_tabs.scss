@@ -1,8 +1,8 @@
+@use "~react-tabs/style/react-tabs.scss";
 @use "./colors" as *;
 
 %react-tabs-container {
   :global {
-    @import "~react-tabs/style/react-tabs.scss";
     .react-tabs [role=tablist] {
       border-bottom: 1px solid color(dividing-line);
       background-color: color(tab-bar-bg);
