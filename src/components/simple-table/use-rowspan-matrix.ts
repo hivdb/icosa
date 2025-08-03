@@ -1,11 +1,15 @@
 import React from 'react';
 import nestGet from 'lodash/get';
 
+type KeyGetter = (row: any) => any;
 
-function countGroups(rows, rowSpanKeyGetter) {
+/**
+ * Count how many groups exist based on the given key getter.
+ */
+function countGroups(rows: any[], rowSpanKeyGetter: KeyGetter) {
   let numGroups = 0;
-  let prevRow;
-  let prevName;
+  let prevRow: any;
+  let prevName: any;
   for (const row of rows) {
     let curName;
     if (prevRow && rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)) {
@@ -21,20 +25,39 @@ function countGroups(rows, rowSpanKeyGetter) {
   return numGroups;
 }
 
+interface RowSpanColumn {
+  name: string;
+  rowSpanKeyGetter: KeyGetter;
+  idx: number;
+  allNumRows?: number[];
+  subGroups?: RowSpanGroup[];
+}
 
-function groupByColumns(rows, columns, rowIdxOffset = 0) {
-  const {name, rowSpanKeyGetter, idx} = columns.shift();
-  const groups = [];
-  let prevRow;
-  let prevGroup;
+interface RowSpanGroup {
+  colName: string;
+  colIdx: number;
+  rowIdxOffset: number;
+  allNumRows: number[];
+  subGroups?: RowSpanGroup[];
+}
+
+function groupByColumns(
+  rows: any[],
+  columns: RowSpanColumn[],
+  rowIdxOffset = 0
+): RowSpanGroup {
+  const {name, rowSpanKeyGetter, idx} = columns.shift()!;
+  const groups: any[][] = [];
+  let prevRow: any;
+  let prevGroup: any[] | undefined;
   for (const row of rows) {
-    let curGroup;
+    let curGroup: any[];
     if (
       prevRow &&
       rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)
     ) {
-      prevGroup.push(row);
-      curGroup = prevGroup;
+      prevGroup!.push(row);
+      curGroup = prevGroup!;
     }
     else {
       curGroup = [row];
@@ -52,7 +75,7 @@ function groupByColumns(rows, columns, rowIdxOffset = 0) {
     };
   }
   else {
-    const subGroups = [];
+    const subGroups: RowSpanGroup[] = [];
     let subGroupRowIdxOffset = rowIdxOffset;
     for (const subRows of groups) {
       subGroups.push(groupByColumns(
@@ -74,18 +97,27 @@ function groupByColumns(rows, columns, rowIdxOffset = 0) {
   }
 }
 
+interface UseRowSpanMatrixArgs {
+  columnDefs: Array<{
+    name: string;
+    rowSpanKey?: string;
+    rowSpanKeyGetter?: KeyGetter;
+    multiCells?: boolean;
+  }>;
+  data: any[];
+}
 
+/**
+ * Calculate a rowspan matrix used to merge neighbouring cells.
+ */
 export default function useRowSpanMatrix({
   columnDefs,
   data
-}) {
-
-  return React.useMemo(
+}: UseRowSpanMatrixArgs) {
+  return React.useMemo<number[][]>(
     () => {
       const matrix = new Array(data.length).fill(1)
-        .map(
-          () => new Array(columnDefs.length).fill(1)
-        );
+        .map(() => new Array(columnDefs.length).fill(1));
 
       const rowSpanColumns = columnDefs
         .map(({
@@ -94,17 +126,16 @@ export default function useRowSpanMatrix({
           rowSpanKeyGetter,
           multiCells
         }, idx) => {
-          rowSpanKeyGetter = rowSpanKeyGetter ? rowSpanKeyGetter : (
+          const getter: KeyGetter = rowSpanKeyGetter ? rowSpanKeyGetter : (
             rowSpanKey ?
-              row => nestGet(row, rowSpanKey) :
-              row => nestGet(row, name)
+              (row: any) => nestGet(row, rowSpanKey) :
+              (row: any) => nestGet(row, name)
           );
           return {
             name,
-            rowSpanKey,
-            rowSpanKeyGetter,
+            rowSpanKeyGetter: getter,
             multiCells,
-            numGroups: countGroups(data, rowSpanKeyGetter),
+            numGroups: countGroups(data, getter),
             idx
           };
         })
@@ -115,16 +146,16 @@ export default function useRowSpanMatrix({
         return matrix;
       }
 
-      let curGroup = groupByColumns(data, rowSpanColumns);
-      const groupStack = [];
+      let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns as any);
+      const groupStack: RowSpanGroup[] = [];
       do {
-        const {subGroups} = curGroup;
+        const {subGroups} = curGroup!;
         if (subGroups && subGroups.length > 0) {
-          groupStack.push(curGroup);
-          curGroup = subGroups.shift();
+          groupStack.push(curGroup!);
+          curGroup = subGroups.shift()!;
         }
         else {
-          const {colIdx, rowIdxOffset, allNumRows} = curGroup;
+          const {colIdx, rowIdxOffset, allNumRows} = curGroup!;
           let curRowIdx = rowIdxOffset;
           for (const numRows of allNumRows) {
             matrix[curRowIdx][colIdx] = numRows;
@@ -134,7 +165,7 @@ export default function useRowSpanMatrix({
             curRowIdx += numRows;
           }
           if (groupStack.length > 0) {
-            curGroup = groupStack.pop();
+            curGroup = groupStack.pop()!;
           }
           else {
             curGroup = null;
@@ -145,5 +176,4 @@ export default function useRowSpanMatrix({
     },
     [columnDefs, data]
   );
-
 }

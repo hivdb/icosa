@@ -1,71 +1,55 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import useDownloadButton from './use-download-button';
 import SimpleTableTable from './table';
 import style from './style.module.scss';
 import ColumnDef from './column-def';
-import {columnDefShape} from './prop-types';
 
 export {ColumnDef};
 
+interface Props {
+  windowScroll?: boolean;
+  compact?: boolean;
+  lastCompact?: boolean;
+  noHeaderOverlapping?: boolean;
+  color?: string;
+  data: any[];
+  cacheKey?: string;
+  columnDefs: ColumnDef[];
+  sheetName?: string;
+  onRowClick?: (row: any, idx: number, e: React.MouseEvent<HTMLTableRowElement>) => void;
+  getRowKey?: (row: any) => string | number | null;
+  className?: string;
+  tableScrollStyle?: React.CSSProperties;
+  tableStyle?: React.CSSProperties;
+  afterTable?: React.ReactNode;
+  disableCopy?: boolean;
+}
 
-SimpleTable.propTypes = {
-  windowScroll: PropTypes.bool.isRequired,
-  compact: PropTypes.bool.isRequired,
-  lastCompact: PropTypes.bool.isRequired,
-  noHeaderOverlapping: PropTypes.bool.isRequired,
-  color: PropTypes.string,
-  data: PropTypes.arrayOf(
-    PropTypes.object.isRequired
-  ).isRequired,
-  cacheKey: PropTypes.string,
-  columnDefs: PropTypes.arrayOf(
-    columnDefShape.isRequired
-  ).isRequired,
-  sheetName: PropTypes.string.isRequired,
-  onRowClick: PropTypes.func,
-  getRowKey: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  tableScrollStyle: PropTypes.object.isRequired,
-  tableStyle: PropTypes.object.isRequired,
-  afterTable: PropTypes.node,
-  disableCopy: PropTypes.bool.isRequired
-};
-
-SimpleTable.defaultProps = {
-  windowScroll: false,
-  compact: false,
-  lastCompact: false,
-  noHeaderOverlapping: false,
-  disableCopy: false,
-  sheetName: 'Sheet1',
-  tableScrollStyle: {},
-  tableStyle: {},
-  getRowKey: () => null
-};
-
+/**
+ * Container component for rendering a sortable and downloadable table.
+ */
 export default function SimpleTable({
-  windowScroll,
-  compact,
-  lastCompact,
-  noHeaderOverlapping,
+  windowScroll = false,
+  compact = false,
+  lastCompact = false,
+  noHeaderOverlapping = false,
   color,
   data,
   cacheKey,
   columnDefs,
-  sheetName,
+  sheetName = 'Sheet1',
   onRowClick,
-  getRowKey,
+  getRowKey = () => null,
   className,
-  tableScrollStyle,
-  tableStyle,
+  tableScrollStyle = {},
+  tableStyle = {},
   afterTable,
-  disableCopy
-}) {
+  disableCopy = false
+}: Props) {
 
-  const tableRef = React.useRef();
+  const tableRef = React.useRef<HTMLDivElement>(null);
   const [mobileLabelWidth, setMobileLabelWidth] = React.useState('auto');
   const [sorting, setSorting] = React.useState(false);
   const [enableRowSpan, setEnableRowSpan] = React.useState(true);
