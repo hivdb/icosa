@@ -1,8 +1,29 @@
 import {consecutiveGroupsBy} from './array-groups';
 
+interface Mutation {
+  AAs: string;
+  text: string;
+  reference: string;
+  position: number;
+  isUnsequenced: boolean;
+  [key: string]: any;
+}
 
-export default function shortenMutationList(mutations) {
-  const merged = [];
+interface MergedMutation extends Mutation {
+  posStart: number;
+  posEnd: number;
+}
+
+/**
+ * Merge consecutive deletion mutations into ranges.
+ *
+ * @param mutations - Array of mutation objects.
+ * @returns Array with merged mutation descriptions.
+ */
+export default function shortenMutationList(
+  mutations: Mutation[]
+): MergedMutation[] {
+  const merged: MergedMutation[] = [];
   const groups = consecutiveGroupsBy(
     mutations,
     (left, right) => {
@@ -23,25 +44,28 @@ export default function shortenMutationList(mutations) {
           }
         }
       }
-      return !left.isUnsequenced &&
-      !right.isUnsequenced &&
-      left.AAs === right.AAs &&
-      left.AAs === '-' &&
-      left.position === right.position - 1;
+      return (
+        !left.isUnsequenced &&
+        !right.isUnsequenced &&
+        left.AAs === right.AAs &&
+        left.AAs === '-' &&
+        left.position === right.position - 1
+      );
     }
   );
   for (const group of groups) {
     if (group.length === 1) {
       const [{text, AAs, position, ...mut}] = group;
       merged.push({
-        ...mut,
+        ...(mut as Mutation),
         position,
         AAs,
         posStart: position,
         posEnd: position,
-        text: AAs === '-' ? `Δ${position}` : (
-          text.replace('-', 'Δ').replace('Insertion', 'ins')
-        )
+        text:
+          AAs === '-'
+            ? `Δ${position}`
+            : text.replace('-', 'Δ').replace('Insertion', 'ins')
       });
     }
     else {
@@ -51,7 +75,7 @@ export default function shortenMutationList(mutations) {
       const {position: posEnd} = rightest;
       const reference = group.map(({reference}) => reference).join('');
       merged.push({
-        ...mut,
+        ...(mut as Mutation),
         text: `Δ${posStart}-${posEnd}`,
         reference,
         position: posStart,
