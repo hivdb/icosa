@@ -1,9 +1,26 @@
+import type React from 'react';
 import sortBy from 'lodash/sortBy';
 import nestedGet from 'lodash/get';
 import startCase from 'lodash/startCase';
 
-
-export function createUnsafeRenderFromTpl(tpl, escapeHtml = false) {
+/**
+ * Create a renderer function from a template string.
+ *
+ * @param tpl - JavaScript template string used to render a cell.
+ * @param escapeHtml - When true the generated function will escape HTML
+ *   entities in the output to avoid XSS risks.
+ * @returns A function that takes four arguments: cellData, rowData,
+ *   rowContext and renderConfig and returns a string.
+ */
+export function createUnsafeRenderFromTpl(
+  tpl: string,
+  escapeHtml = false
+): (
+  cellData: unknown,
+  rowData: unknown,
+  rowContext: unknown,
+  renderConfig: unknown
+) => string {
   // Note: never allow ColumnDef from UGC data
   if (escapeHtml) {
     /* eslint-disable-next-line no-new-func */
@@ -49,9 +66,20 @@ export function createUnsafeRenderFromTpl(tpl, escapeHtml = false) {
   }
 }
 
+interface CoerceRenderOptions {
+  render?: ColumnRender;
+  decorator?: Decorator;
+  renderTpl?: string;
+  none?: string;
+}
 
-function coerceRender({render, decorator, renderTpl, none}) {
-  let myRender;
+function coerceRender({
+  render,
+  decorator,
+  renderTpl,
+  none
+}: CoerceRenderOptions): ColumnRender {
+  let myRender: ColumnRender;
   if (render) {
     myRender = render;
   }
@@ -60,65 +88,120 @@ function coerceRender({render, decorator, renderTpl, none}) {
   }
   else {
     myRender = cellData => (
-      (cellData === undefined ||
+      cellData === undefined ||
       cellData === null ||
-      cellData === '') ? none : cellData
-    );
+      cellData === ''
+        ? none
+        : cellData
+    ) as unknown as React.ReactNode;
   }
   if (decorator) {
-    return (cellData, ...args) => (
-      myRender(decorator(cellData, ...args), ...args)
-    );
+    return (cellData, ...args) =>
+      myRender(decorator(cellData, ...args), ...args);
   }
-  else {
-    return myRender;
-  }
+  return myRender;
 }
 
+interface CoerceExportCellOptions {
+  exportCell?: ColumnExportCell;
+  exportRaw?: boolean;
+  decorator?: Decorator;
+}
 
-function coerceExportCell({exportCell, exportRaw, decorator}) {
+function coerceExportCell({
+  exportCell,
+  exportRaw,
+  decorator
+}: CoerceExportCellOptions): ColumnExportCell | undefined {
   let myExportCell = exportCell;
   if (!exportCell && exportRaw) {
     myExportCell = cellData => cellData;
   }
   if (decorator && myExportCell) {
-    return (cellData, ...args) => (
-      myExportCell(decorator(cellData, ...args), ...args)
-    );
+    return (cellData, ...args) =>
+      myExportCell!(decorator(cellData, ...args), ...args);
   }
-  else {
-    return myExportCell;
-  }
+  return myExportCell;
 }
 
+interface CoerceSortOptions {
+  sort?: ColumnSort | Array<string | ColumnSort>;
+  decorator?: Decorator;
+  name: string;
+}
 
-function coerceSort({sort, decorator, name}) {
-  let mySort = sort;
+function coerceSort({
+  sort,
+  decorator,
+  name
+}: CoerceSortOptions): ColumnSort {
+  let mySort: ColumnSort | Array<string | ColumnSort> | undefined = sort;
   if (!sort && decorator) {
-    mySort = rows => sortBy(rows, row => decorator(
-      nestedGet(row, name),
-      row
-    ));
+    mySort = rows =>
+      sortBy(rows, row => decorator(nestedGet(row, name), row));
   }
   else if (!sort) {
     mySort = rows => sortBy(rows, [name]);
   }
   else if (sort && typeof sort !== 'function') {
-    const sortKeys = mySort.map(key => (
-      key instanceof Function ?
-        key :
-        // prepend name to string key
-        row => nestedGet(row, `${name}.${key}`) || ''
-    ));
-    mySort = rows => sortBy(rows, sortKeys);
-  }
-  else {
+    const sortKeys = mySort.map(key =>
+      key instanceof Function
+        ? key
+        : (row: any) => nestedGet(row, `${name}.${key}`) || ''
+    );
+    mySort = (rows: any[]) => sortBy(rows, sortKeys);
+  } else {
     mySort = sort;
   }
-  return mySort;
+  return mySort as ColumnSort;
 }
 
+export type Decorator = (
+  cellData: any,
+  rowData: any,
+  rowContext?: any
+) => any;
 
+export type ColumnRender = (
+  cellData: any,
+  rowData: any,
+  rowContext: any,
+  renderConfig: any
+) => React.ReactNode;
+
+export type ColumnExportCell = (
+  cellData: any,
+  rowData: any
+) => any;
+
+export type ColumnSort = (rows: any[], name: string) => any[];
+
+export interface ColumnDefOptions {
+  name: string;
+  label?: React.ReactNode;
+  exportLabel?: string;
+  decorator?: Decorator;
+  render?: ColumnRender;
+  renderTpl?: string;
+  renderConfig?: any;
+  exportCell?: ColumnExportCell;
+  exportRaw?: boolean;
+  sort?: ColumnSort | Array<string | ColumnSort>;
+  sortable?: boolean;
+  textAlign?: string;
+  nullsLast?: boolean;
+  none?: string;
+  multiCells?: boolean;
+  rowSpanKey?: string;
+  rowSpanKeyGetter?: (row: any) => any;
+  headCellStyle?: React.CSSProperties;
+  bodyCellStyle?: React.CSSProperties;
+  bodyCellColSpan?: number;
+}
+
+/**
+ * Definition for a table column used by {@link SimpleTable}.
+ */
 export default class ColumnDef {
 
   /** Create a ColumnDef object
@@ -191,7 +274,7 @@ export default class ColumnDef {
     headCellStyle = {},
     bodyCellStyle = {},
     bodyCellColSpan = 1
-  }) {
+  }: ColumnDefOptions) {
     this.name = name;
     this.label = label ? label : startCase(name);
     this.exportLabel = exportLabel;

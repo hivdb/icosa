@@ -1,40 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Loader from '../loader';
 
 import style from './style.module.scss';
-import {columnDefShape} from './prop-types';
 import useRowSpanMatrix from './use-rowspan-matrix';
 import useSortState from './use-sort-state';
 import CellTh from './cell-th';
 import CellTd from './cell-td';
+import type ColumnDef from './column-def';
+import type {SortState} from './types';
 
+interface Props {
+  data: any[];
+  onRowClick?: (row: any, idx: number, e: React.MouseEvent<HTMLTableRowElement>) => void;
+  onBeforeSort?: (state: SortState) => void;
+  onSort?: (state: SortState) => void;
+  columnDefs: ColumnDef[];
+  color?: string;
+  getRowKey?: (row: any) => string | number | null;
+  className?: string;
+  tableStyle?: React.CSSProperties;
+  enableRowSpan?: boolean;
+}
 
-SimpleTableTable.propTypes = {
-  color: PropTypes.string,
-  className: PropTypes.string,
-  columnDefs: PropTypes.arrayOf(
-    columnDefShape.isRequired
-  ).isRequired,
-  getRowKey: PropTypes.func.isRequired,
-  data: PropTypes.arrayOf(
-    PropTypes.object.isRequired
-  ).isRequired,
-  tableStyle: PropTypes.object.isRequired,
-  enableRowSpan: PropTypes.bool.isRequired,
-  onBeforeSort: PropTypes.func,
-  onSort: PropTypes.func,
-  onRowClick: PropTypes.func
-};
-
-SimpleTableTable.defaultProps = {
-  tableStyle: {},
-  getRowKey: () => null,
-  enableRowSpan: true
-};
-
+/**
+ * Render the inner table of {@link SimpleTable}.
+ */
 export default function SimpleTableTable({
   data,
   onRowClick,
@@ -42,11 +34,11 @@ export default function SimpleTableTable({
   onSort,
   columnDefs,
   color,
-  getRowKey,
+  getRowKey = () => null,
   className,
-  tableStyle,
-  enableRowSpan
-}) {
+  tableStyle = {},
+  enableRowSpan = true
+}: Props) {
 
   const [
     sortState,
@@ -54,9 +46,9 @@ export default function SimpleTableTable({
   ] = useSortState(data);
 
   const handleSort = React.useCallback(
-    sortState => {
+    (sortState: SortState) => {
       setSortState(sortState);
-      onSort(sortState);
+      onSort && onSort(sortState);
     },
     [setSortState, onSort]
   );
@@ -67,7 +59,7 @@ export default function SimpleTableTable({
 
   return React.useMemo(
     () => {
-      const context = columnDefs.reduce((acc, {name}) => {
+      const context = columnDefs.reduce<Record<string, any>>((acc, {name}) => {
         acc[name] = {};
         return acc;
       }, {});
