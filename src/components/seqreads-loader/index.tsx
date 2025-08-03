@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import Loader from '../loader';
@@ -10,11 +9,14 @@ import useAllSeqReads, {useWhenNoSeqReads} from './use-all-seq-reads';
 
 export {useWhenNoSeqReads};
 
+interface SeqRead {name: string; [key: string]: any;}
+
+interface CurrentSelected {index: number; name: string;}
 
 function useCurrentSelected({
   lazyLoad,
   allSequenceReads
-}) {
+}: {lazyLoad: boolean; allSequenceReads: SeqRead[]}) {
   const {
     match: {location = {query: {}}}
   } = useRouter();
@@ -24,7 +26,7 @@ function useCurrentSelected({
       if (!allSequenceReads || allSequenceReads.length === 0) { return {}; }
       if (!lazyLoad) { return allSequenceReads[0]; }
 
-      const name = location.query.name;
+      const name = (location as any).query.name;
       if (!name) {
         return {index: 0, name: allSequenceReads[0].name};
       }
@@ -34,21 +36,32 @@ function useCurrentSelected({
       );
       return {index, name: allSequenceReads[index].name};
     },
-    [lazyLoad, allSequenceReads, location.query.name]
+    [lazyLoad, allSequenceReads, (location as any).query.name]
   );
 }
 
+/**
+ * Load sequence reads and pass them to a render prop child.
+ */
+interface SeqReadsLoaderProps {
+  lazyLoad: boolean;
+  defaultParams: Record<string, unknown>;
+  childProps?: Record<string, unknown>;
+  children: (args: {
+    allSequenceReads: SeqRead[];
+    currentSelected: CurrentSelected;
+  }) => React.ReactElement;
+}
 
-function SeqReadsLoader(props) {
-  const {
-    lazyLoad,
-    defaultParams,
-    childProps = {},
-    children
-  } = props;
+function SeqReadsLoader({
+  lazyLoad,
+  defaultParams,
+  childProps = {},
+  children
+}: SeqReadsLoaderProps) {
   const [allSequenceReads, isPending] = useAllSeqReads({
     defaultParams
-  });
+  }) as [SeqRead[], boolean];
   const currentSelected = useCurrentSelected({
     lazyLoad, allSequenceReads
   });
@@ -64,10 +77,13 @@ function SeqReadsLoader(props) {
   }
 }
 
+/**
+ * Wrapper that reads configuration before loading sequence reads.
+ */
+interface SeqReadsLoaderWrapperProps extends Omit<SeqReadsLoaderProps, 'defaultParams'> {}
 
-function SeqReadsLoaderWrapper(props) {
-
-  const [config, isPending] = ConfigContext.use();
+function SeqReadsLoaderWrapper(props: SeqReadsLoaderWrapperProps) {
+  const [config, isPending] = ConfigContext.use() as any;
 
   if (isPending) {
     return <Loader modal />;
@@ -78,14 +94,9 @@ function SeqReadsLoaderWrapper(props) {
   return (
     <SeqReadsLoader
      {...props}
-     {...{defaultParams}} />
+     defaultParams={defaultParams}
+    />
   );
 }
-
-SeqReadsLoaderWrapper.propTypes = {
-  children: PropTypes.func.isRequired,
-  lazyLoad: PropTypes.bool.isRequired,
-  childProps: PropTypes.object
-};
 
 export default SeqReadsLoaderWrapper;

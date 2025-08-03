@@ -1,6 +1,13 @@
 import React from 'react';
 import {useRouter} from 'found';
 
+interface Params {
+  strain: string;
+  maxMixtureRate: number;
+  minPrevalence: number;
+  minCodonReads: number;
+  minPositionReads: number;
+}
 
 export default function useAddParams({
   allSequenceReads,
@@ -12,6 +19,10 @@ export default function useAddParams({
     minPositionReads
   },
   skip
+}: {
+  allSequenceReads: any[];
+  defaultParams: Params;
+  skip: boolean;
 }) {
   const {match} = useRouter();
   let {
@@ -23,7 +34,7 @@ export default function useAddParams({
         posreads
       } = {}
     } = {}
-  } = match;
+  } = match as any;
   mixRate = parseFloat(mixRate);
   if (!isNaN(mixRate)) {
     maxMixtureRate = mixRate;
@@ -45,7 +56,7 @@ export default function useAddParams({
   return React.useMemo(
     () => {
       if (skip) {
-        return [undefined, true];
+        return [undefined, true] as [undefined, boolean];
       }
       else {
         return [
@@ -58,7 +69,7 @@ export default function useAddParams({
             minPositionReads
           })),
           false
-        ];
+        ] as [any[], boolean];
       }
     },
     [

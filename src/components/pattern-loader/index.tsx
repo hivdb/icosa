@@ -1,6 +1,4 @@
 import React from 'react';
-import {v5 as uuidv5} from 'uuid';
-import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import ConfigContext from '../../utils/config-context';
@@ -8,24 +6,35 @@ import ConfigContext from '../../utils/config-context';
 import {
   sanitizeMutations
 } from '../../utils/mutation';
+import {v5 as uuidv5} from 'uuid';
 
 const UUID_NAMESPACE = '14ee7f0c-7b10-425e-a4b1-b9f0a03ab5a9';
 
+interface Pattern {
+  uuid: string;
+  name: string;
+  mutations: string[];
+}
+
+interface CurrentSelected {
+  index: number;
+  name: string;
+}
 
 function useCurrentSelected({
   lazyLoad,
   patterns
-}) {
+}: {lazyLoad: boolean; patterns: Pattern[]}) {
   const {
     match: {location = {query: {}}}
   } = useRouter();
 
-  return React.useMemo(
+  return React.useMemo<CurrentSelected | Record<string, never>>(
     () => {
       if (!patterns || patterns.length === 0) { return {}; }
       if (!lazyLoad) { return patterns[0]; }
 
-      const name = location.query.name;
+      const name = (location as any).query.name;
       if (!name) {
         return {index: 0, name: patterns[0].name};
       }
@@ -35,19 +44,18 @@ function useCurrentSelected({
       );
       return {index, name: patterns[index].name};
     },
-    [lazyLoad, patterns, location.query.name]
+    [lazyLoad, patterns, (location as any).query.name]
   );
 }
-
 
 function usePatterns() {
   const {
     match: {location: loc}
   } = useRouter();
-  const [config, isConfigPending] = ConfigContext.use();
+  const [config, isConfigPending] = ConfigContext.use() as any;
 
-  const statePatterns = JSON.stringify(loc.state?.patterns || []);
-  const {name: queryName, mutations: queryMuts} = loc.query || {};
+  const statePatterns = JSON.stringify((loc as any).state?.patterns || []);
+  const {name: queryName, mutations: queryMuts} = (loc as any).query || {};
 
   const {
     defaultGene,
@@ -56,14 +64,14 @@ function usePatterns() {
     messages
   } = config || {};
 
-  const patterns = React.useMemo(
+  const patterns = React.useMemo<Pattern[]>(
     () => {
-      let patterns = JSON.parse(statePatterns);
+      let patterns: Pattern[] = JSON.parse(statePatterns);
       if (!isConfigPending && queryMuts) {
         let name = queryName;
         let mutations = queryMuts
           .split(/\s*[,+]\s*/g)
-          .filter(mut => mut);
+          .filter((mut: string) => mut);
         [mutations] = sanitizeMutations(mutations, {
           defaultGene,
           geneSynonyms,
@@ -93,19 +101,31 @@ function usePatterns() {
       messages
     ]
   );
-  return [patterns, isConfigPending];
+  return [patterns, isConfigPending] as [Pattern[], boolean];
 }
 
+interface PatternLoaderProps {
+  children: (args: {
+    patterns: Pattern[];
+    isPending: boolean;
+    currentSelected: CurrentSelected;
+  }) => React.ReactElement;
+  childProps?: Record<string, unknown>;
+  lazyLoad: boolean;
+}
 
+/**
+ * Load mutation patterns and pass them to a render prop child.
+ */
 function PatternLoader({
   children,
   childProps = {},
   lazyLoad
-}) {
+}: PatternLoaderProps) {
   const [patterns, isPending] = usePatterns();
   const currentSelected = useCurrentSelected({
     lazyLoad, patterns
-  });
+  }) as CurrentSelected;
 
   return children({
     ...childProps,
@@ -114,11 +134,5 @@ function PatternLoader({
     currentSelected
   });
 }
-
-PatternLoader.propTypes = {
-  children: PropTypes.func.isRequired,
-  childProps: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired
-};
 
 export default PatternLoader;

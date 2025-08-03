@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Markdown from '../markdown';
 import shortenMutList from '../../utils/shorten-mutation-list';
 import createPersistedReducer from '../../utils/use-persisted-reducer';
@@ -8,26 +7,25 @@ import CheckboxInput from '../checkbox-input';
 
 import style from './style.module.scss';
 
-
 const useDisplayRefLink = createPersistedReducer(
   '--sierra-report-display-reflink-opt'
 );
 
+interface TriggeredMutation {
+  gene: {name: string};
+  text: string;
+}
 
-MutationComment.propTypes = {
-  triggeredMutations: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      text: PropTypes.string.isRequired
-    }).isRequired
-  ).isRequired,
-  comment: PropTypes.string.isRequired
-};
+interface MutationCommentProps {
+  triggeredMutations: TriggeredMutation[];
+  comment: string;
+}
 
-function MutationComment({triggeredMutations, comment}) {
-  const [config, loading] = ConfigContext.use();
+/**
+ * Render a single mutation comment item.
+ */
+function MutationComment({triggeredMutations, comment}: MutationCommentProps) {
+  const [config, loading] = ConfigContext.use() as any;
   const geneDisplay = loading ? {} : config.geneDisplay;
   const muts = shortenMutList(triggeredMutations).map(({
     gene: {name: geneName},
@@ -50,18 +48,18 @@ function MutationComment({triggeredMutations, comment}) {
   </li>;
 }
 
+interface SARS2MutationCommentsProps {
+  mutationComments: MutationCommentProps[];
+}
 
-SARS2MutationComments.propTypes = {
-  mutationComments: PropTypes.arrayOf(
-    PropTypes.shape(MutationComment.propTypes).isRequired
-  ).isRequired
-};
-
-function SARS2MutationComments({mutationComments}) {
+/**
+ * Display SARS2 mutation comments with optional reference links toggle.
+ */
+function SARS2MutationComments({mutationComments}: SARS2MutationCommentsProps) {
   const [
     displayRefLink,
     toggleDisplayRefLink
-  ] = useDisplayRefLink(display => !display, true);
+  ] = useDisplayRefLink((display: boolean) => !display, true);
   if (mutationComments.length > 0) {
     return <div className={style['mutation-comments-container']}>
       <ul
@@ -87,14 +85,5 @@ function SARS2MutationComments({mutationComments}) {
     return "No comment are available.";
   }
 }
-
-SARS2MutationComments.propTypes = {
-  mutationComments: PropTypes.arrayOf(
-    PropTypes.shape({
-      triggeredMutations: PropTypes.array.isRequired,
-      comment: PropTypes.string.isRequired
-    }).isRequired
-  ).isRequired
-};
 
 export default React.memo(SARS2MutationComments);
