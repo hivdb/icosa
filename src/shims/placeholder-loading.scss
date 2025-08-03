@@ -1,0 +1,17 @@
+/**
+ * Lightweight stand-in for the third-party placeholder-loading styles.
+ * Only defines the class names referenced in our components.
+ */
+
+.ph-item {}
+.ph-col-12 {}
+.ph-picture {}
+.ph-row {}
+
+:global(.ph-col-6) {}
+:global(.ph-col-4) {}
+:global(.ph-col-2) {}
+:global(.ph-col-8) {}
+:global(.big) {}
+:global(.empty) {}
+

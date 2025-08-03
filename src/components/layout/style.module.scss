@@ -1,4 +1,4 @@
-@import "~flexbox-grid-mixins";
+@use "flexbox-grid-mixins" as *;
 @use "../../styles" as *;
 
 [data-reactroot] {

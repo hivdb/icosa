@@ -1,4 +1,4 @@
-@import "~normalize-scss";
+@use "normalize-scss/sass/normalize" as *;
 @use "./colors" as *;
 @use "./constants" as *;
 

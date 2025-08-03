@@ -1,18 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import style from './style.module.scss';
 
-
-Button.propTypes = {
-  onClick: PropTypes.func,
-  children: PropTypes.node
-};
+export interface ButtonProps {
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  children?: React.ReactNode;
+}
 
 export default function Button({
   onClick,
   children
-}) {
+}: ButtonProps) {
   return (
     <button
      className={style['navbar-button']}

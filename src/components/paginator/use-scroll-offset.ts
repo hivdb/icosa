@@ -1,12 +1,17 @@
 import React from 'react';
-import {getIndex} from './funcs';
+import { getIndex, PaginatorChildItem } from './funcs';
 
+interface UseScrollOffsetProps {
+  currentSelected: string;
+  childItems: PaginatorChildItem[];
+  displayNums: number;
+}
 
 function calcInitScrollOffset({
   currentSelected,
   childItems,
   displayNums
-}) {
+}: UseScrollOffsetProps): number {
   const itemNums = childItems.length;
   let scrollOffset = 0;
   if (itemNums > displayNums) {
@@ -15,7 +20,7 @@ function calcInitScrollOffset({
         getIndex(
           currentSelected,
           childItems
-        ) - parseInt(displayNums / 2) + 1,
+        ) - Math.floor(displayNums / 2) + 1,
         0
       ),
       itemNums - displayNums
@@ -24,12 +29,11 @@ function calcInitScrollOffset({
   return scrollOffset;
 }
 
-
 export default function useScrollOffset({
   currentSelected,
   childItems,
   displayNums
-}) {
+}: UseScrollOffsetProps) {
   const initScrollOffset = React.useMemo(
     () => calcInitScrollOffset({
       currentSelected,
@@ -58,7 +62,7 @@ export default function useScrollOffset({
   );
 
   const onScroll = React.useCallback(
-    direction => {
+    (direction: number) => {
       let newScrollOffset = scrollOffset;
       if (childItems.length <= displayNums) {
         return false;
@@ -66,11 +70,11 @@ export default function useScrollOffset({
       newScrollOffset += direction;
       let acceptFlag = true;
       const maxOffset = childItems.length - displayNums;
-      if (scrollOffset < 0) {
+      if (newScrollOffset < 0) {
         newScrollOffset = 0;
         acceptFlag = false;
       }
-      else if (scrollOffset > maxOffset) {
+      else if (newScrollOffset > maxOffset) {
         newScrollOffset = maxOffset;
         acceptFlag = false;
       }
@@ -91,5 +95,4 @@ export default function useScrollOffset({
     resetScrollOffset,
     onScroll
   };
-
 }

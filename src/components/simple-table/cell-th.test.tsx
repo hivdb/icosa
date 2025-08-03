@@ -2,7 +2,6 @@ import {render, fireEvent, waitFor} from '@testing-library/react';
 import {describe, it, expect, vi} from 'vitest';
 import '@testing-library/jest-dom';
 
-vi.mock('./style.module.scss', () => ({default: {'th-container': 'th-container', label: 'label', 'sort-icon': 'sort-icon'}}));
 vi.mock('sleep-promise', () => ({default: () => Promise.resolve()}));
 
 import SimpleTableCellTh from './cell-th';
