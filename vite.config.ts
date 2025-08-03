@@ -14,20 +14,30 @@ export default defineConfig({
   resolve: {
     alias: {
       // Ramda's ESM build does not expose "src" to the exports
-      // field. Provide a shim so dependencies requesting
-      // "ramda/src/forEach" continue to work under vitest.
-      'ramda/src/forEach': path.resolve(__dirname, 'src/shims/ramda-src-forEach.js')
+      // field. Provide shims so dependencies requesting
+      // "ramda/src/*" continue to work under vitest.
+      'ramda/src': path.resolve(__dirname, 'src/shims/ramda-src')
     }
   },
   test: {
     globals: true,
     environment: 'jsdom',
-    css: true,
+    css: {
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true
+        }
+      }
+    },
     alias: {
       'flexbox-grid-mixins': path.resolve(__dirname, 'src/shims/flexbox-grid-mixins.scss'),
       'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss'),
-      'ramda/src/forEach': path.resolve(__dirname, 'src/shims/ramda-src-forEach.js'),
-      '~react-dropdown/style': path.resolve(__dirname, 'src/shims/react-dropdown-style.scss')
+      'ramda/src': path.resolve(__dirname, 'src/shims/ramda-src'),
+      '~react-dropdown/style': path.resolve(__dirname, 'src/shims/react-dropdown-style.scss'),
+      '~react-tabs/style/react-tabs.scss': path.resolve(
+        __dirname,
+        'src/shims/react-tabs-style.scss'
+      )
     }
   }
 });
