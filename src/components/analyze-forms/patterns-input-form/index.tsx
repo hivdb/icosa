@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {v4 as uuidv4} from 'uuid';
 
 import CheckboxInput from '../../checkbox-input';
@@ -14,90 +13,103 @@ import parentStyle from '../style.module.scss';
 
 import style from './style.module.scss';
 
-
 const KEY_RETAIN_INPUT_OPT = '--analyze-form-retain-input-opt';
 
-
+/**
+ * Create a new empty pattern object used by the form.
+ *
+ * @returns Fresh pattern object with unique identifier.
+ */
 function newPatternObj() {
   const uuid = uuidv4();
   return {
     uuid,
     name: uuid,
-    mutations: []
+    mutations: [] as string[]
   };
 }
-
 
 const useRetainInputOpt = createPersistedReducer(KEY_RETAIN_INPUT_OPT);
 const usePatterns = createLocationState('patterns');
 
+export interface PatternsInputFormProps {
+  children?: React.ReactNode;
+  to?: string;
+  onSubmit?(e: React.SyntheticEvent, payload: any): Promise<any>;
+}
 
-function PatternsInputForm({children, to, onSubmit}) {
-
-  const [
-    retainInputOpt,
-    toggleRetainInputOpt
-  ] = useRetainInputOpt(flag => !flag, true);
+/**
+ * Form allowing users to input mutation patterns for analysis.
+ *
+ * @param props - {@link PatternsInputFormProps} controlling behaviour.
+ * @returns Wrapper element containing mutations input UI.
+ */
+export default function PatternsInputForm({
+  children,
+  to,
+  onSubmit
+}: PatternsInputFormProps): JSX.Element {
+  const [retainInputOpt, toggleRetainInputOpt] = useRetainInputOpt(
+    (flag: boolean) => !flag,
+    true
+  );
 
   const [config, isConfigPending] = ConfigContext.use();
-  const [
-    patterns,
-    setPatterns
-  ] = usePatterns([newPatternObj()], () => retainInputOpt);
+  const [patterns, setPatterns] = usePatterns([newPatternObj()], () => retainInputOpt);
 
-  const disabled = patterns.every(pat => pat.length === 0);
-  const [
-    submitDisabled,
-    setSubmitDisabled
-  ] = React.useState(disabled);
+  const disabled = patterns.every((pat: any) => pat.length === 0);
+  const [submitDisabled, setSubmitDisabled] = React.useState(disabled);
 
   const handleSubmit = React.useCallback(
-    async (e) => {
+    async (e: React.SyntheticEvent) => {
       const payload = {
-        patterns: patterns.map(({uuid, name, mutations, ...pattern}) => ({
+        patterns: patterns.map(({uuid, name, mutations, ...pattern}: any) => ({
           ...pattern,
-          name: (!name || name === uuid) ? mutations.join('+') : name,
+          name: !name || name === uuid ? mutations.join('+') : name,
           mutations
         }))
       };
       let validated = true;
-      let state = {};
+      let state: Record<string, any> = {};
       if (onSubmit) {
         [validated, state] = await onSubmit(e, payload);
       }
       if (validated) {
         state = {...state, ...payload};
       }
-      return [validated, state, {
-        name: payload.patterns[0].name,
-        mutations: payload.patterns[0].mutations.join(',')
-      }];
+      return [
+        validated,
+        state,
+        {
+          name: payload.patterns[0].name,
+          mutations: payload.patterns[0].mutations.join(',')
+        }
+      ];
     },
     [onSubmit, patterns]
   );
 
   const handleChange = React.useCallback(
-    ({uuid, name, mutations}, preventSubmit) => {
+    (
+      {uuid, name, mutations}: any,
+      preventSubmit: boolean
+    ) => {
       if (uuid) {
-        const patternObj = patterns.find(({uuid: myUUID}) => myUUID === uuid);
+        const patternObj = patterns.find(({uuid: myUUID}: any) => myUUID === uuid);
         patternObj.name = name;
         patternObj.mutations = mutations;
         setPatterns([...patterns]);
       }
       if (preventSubmit) {
         submitDisabled || setSubmitDisabled(true);
-      }
-      else if (submitDisabled && !disabled) {
+      } else if (submitDisabled && !disabled) {
         submitDisabled && setSubmitDisabled(false);
       }
     },
     [disabled, patterns, setPatterns, submitDisabled]
   );
 
-  const handleReset = React.useCallback(
-    () => setPatterns([newPatternObj()]),
-    [setPatterns]
-  );
+  const handleReset = React.useCallback(() => setPatterns([newPatternObj()]), [setPatterns]);
 
   return (
     <BaseForm
@@ -105,13 +117,15 @@ function PatternsInputForm({children, to, onSubmit}) {
      retainInputLabel="Save input mutations in my browser for future use"
      resetDisabled={disabled}
      submitDisabled={submitDisabled}
-     to={to}
+     to={to as string}
      onSubmit={handleSubmit}
      onReset={handleReset}>
       {children}
       <div className={style['patterns-input-container']}>
-        {isConfigPending ? <Loader inline /> :
-          patterns.map(({uuid, name, mutations}) => (
+        {isConfigPending ? (
+          <Loader inline />
+        ) : (
+          patterns.map(({uuid, name, mutations}: any) => (
             <MutationsInput
              key={uuid}
              uuid={uuid}
@@ -119,8 +133,10 @@ function PatternsInputForm({children, to, onSubmit}) {
              config={config}
              mutations={mutations}
              onChange={handleChange}
-             isActive={true} />
-          ))}
+             isActive={true}
+            />
+          ))
+        )}
       </div>
       <div className={parentStyle['analyze-base-form-submit-options']}>
         <CheckboxInput
@@ -134,15 +150,7 @@ function PatternsInputForm({children, to, onSubmit}) {
       </div>
     </BaseForm>
   );
-
 }
 
+export {newPatternObj};
 
-PatternsInputForm.propTypes = {
-  children: PropTypes.node,
-  to: PropTypes.string,
-  onSubmit: PropTypes.func
-};
-
-
-export default PatternsInputForm;
