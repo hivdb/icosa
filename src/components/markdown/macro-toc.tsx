@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import macroPlugin from './macro-plugin';
@@ -10,17 +9,23 @@ macroPlugin.addMacro('toc', (content, props, {transformer, eat}) => {
     type: 'TOCNode',
     props,
     children: transformer.tokenizeBlock(content, eat.now())
-  };
+  } as const;
 });
 
+interface TOCNodeWrapperProps {
+  className?: string;
+}
 
-TOCNodeWrapper.propTypes = {
-  className: PropTypes.string
-};
+interface TOCNodeProps {
+  children?: React.ReactNode;
+  props: {
+    className?: string;
+    [key: string]: unknown;
+  };
+}
 
-export default function TOCNodeWrapper({className: globalClassName}) {
-  // eslint-disable-next-line react/prop-types
-  return ({children, props: {className, ...props}}) => (
+export default function TOCNodeWrapper({className: globalClassName}: TOCNodeWrapperProps) {
+  return ({children, props: {className, ...props}}: TOCNodeProps) => (
     <BasicTOC
      {...props}
      className={classNames(className, globalClassName)}>

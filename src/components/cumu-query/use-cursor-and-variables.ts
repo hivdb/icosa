@@ -1,21 +1,46 @@
 import React from 'react';
 import nestGet from 'lodash/get';
 
+interface Cursor {
+  loadFirstIndex?: number;
+  offset: number;
+  limit: number;
+}
 
+interface UseCursorArgs {
+  initOffset: number;
+  initLimit: number;
+  isCached: (key: any) => boolean;
+  inputObjs: any[];
+  currentSelected: {index: number};
+  inputUniqKeyName: string;
+  mainInputName: string;
+  maxPerRequest: number;
+  onExtendVariables: (vars: Record<string, any>) => Record<string, any>;
+}
+
+interface CursorVariables {
+  variables: Record<string, any>;
+  isEmptyQuery: boolean;
+  fetchedCount: number;
+  fetchingCount: number;
+}
+
+/**
+ * Manage the query cursor and derive query variables for batched requests.
+ */
 export default function useCursorAndVariables({
   initOffset,
   initLimit,
   isCached,
   inputObjs,
-  currentSelected: {
-    index: loadFirstIndex
-  },
+  currentSelected: {index: loadFirstIndex},
   inputUniqKeyName,
   mainInputName,
   maxPerRequest,
   onExtendVariables
-}) {
-  const [cursor, setCursor] = React.useState({
+}: UseCursorArgs) {
+  const [cursor, setCursor] = React.useState<Cursor>({
     loadFirstIndex,
     offset: initOffset,
     limit: initLimit
@@ -26,9 +51,9 @@ export default function useCursorAndVariables({
       loadFirstIndex,
       offset,
       limit
-    }) => {
+    }: Cursor): CursorVariables => {
       const end = offset + limit;
-      const queryObjs = [];
+      const queryObjs: any[] = [];
       let fetchedCount = 0;
       let fetchingCount = 0;
 
@@ -46,20 +71,20 @@ export default function useCursorAndVariables({
         }
       }
 
-      for (let idx = idxStart; idx < end; idx ++) {
+      for (let idx = idxStart; idx < end; idx++) {
         const inputObj = inputObjs[idx];
         if (!inputObj) {
           break;
         }
         if (isCached(nestGet(inputObj, inputUniqKeyName))) {
-          fetchedCount ++;
+          fetchedCount++;
         }
         else if (fetchingCount < maxPerRequest) {
-          fetchingCount ++;
+          fetchingCount++;
           queryObjs.push(inputObj);
         }
       }
-      const variables = {};
+      const variables: Record<string, any> = {};
       variables[mainInputName] = queryObjs;
 
       return {
@@ -81,8 +106,7 @@ export default function useCursorAndVariables({
 
   const isCursorFulfilled = React.useCallback(
     () => {
-      const offset = cursor.offset;
-      const limit = cursor.limit;
+      const {offset, limit} = cursor;
       const end = offset + limit;
       return inputObjs.slice(offset, end).every(
         inputObj => isCached(nestGet(inputObj, inputUniqKeyName))
@@ -115,3 +139,4 @@ export default function useCursorAndVariables({
     setCursor
   };
 }
+

@@ -1,10 +1,12 @@
 import React from 'react';
 import {Link} from 'found';
-import PropTypes from 'prop-types';
 
+interface MarkdownLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+  href: string;
+}
 
-function getTarget(href, props) {
-  let {target} = props;
+function getTarget(href: string, props: MarkdownLinkProps): string | null {
+  const {target} = props;
   if (target) {
     return target;
   }
@@ -14,11 +16,11 @@ function getTarget(href, props) {
   return null;
 }
 
-function renderLink(href, props) {
+function renderLink(href: string, props: MarkdownLinkProps) {
   const {children, ...others} = props;
   const target = getTarget(href, props);
   if (!href.startsWith('#') && target == null) {
-    return <Link to={href} {...props} />;
+    return <Link to={href} {...(props as React.ComponentProps<typeof Link>)} />;
   }
   else {
     return (
@@ -33,7 +35,7 @@ function renderLink(href, props) {
   }
 }
 
-function MarkdownLink({href, ...props}) {
+export default function MarkdownLink({href, ...props}: MarkdownLinkProps) {
   let type = 'link';
   if (href.startsWith('!')) {
     [type, href] = href.split(/:/);
@@ -48,9 +50,3 @@ function MarkdownLink({href, ...props}) {
       return renderLink(href, props);
   }
 }
-
-MarkdownLink.propTypes = {
-  href: PropTypes.string.isRequired
-};
-
-export default MarkdownLink;
