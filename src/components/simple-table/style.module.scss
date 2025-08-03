@@ -15,10 +15,10 @@ $padding-h: .7rem;
 $padding-v: .7rem;
 
 .simple-table-container[data-window-scroll="true"] .simple-table-scroll {
+  max-height: max-content;
   @media only screen {
     overflow: visible;
   }
-  max-height: max-content;
   @media only screen and (min-width: 768px) {
     max-height: max-content;
   }
@@ -96,9 +96,6 @@ table.simple-table {
     > tr {
       > th {
         position: sticky;
-        @media print {
-          position: static;
-        }
         padding: $padding-v $padding-h;
         text-align: center;
         background-color: $header-bgcolor;
@@ -106,6 +103,9 @@ table.simple-table {
         top: 0;
         z-index: 10;
         cursor: pointer;
+        @media print {
+          position: static;
+        }
         &:hover {
           background-color: $header-bgcolor-hover;
         }
@@ -350,10 +350,10 @@ table.simple-table {
     &[data-nocopy="false"] {
       margin-top: 3rem;
     }
+    margin-right: 4rem;
     @media print {
       margin-top: 1rem;
     }
-    margin-right: 4rem;
     &[data-last-compact="true"] + .clearfix {
       clear: left;
     }
@@ -384,15 +384,15 @@ table.simple-table {
 .download-options {
   $button-radius: 0;
 
-  @media print {
-    display: none;
-  }
   top: -2.5rem;
   right: 0;
   position: absolute;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  @media print {
+    display: none;
+  }
   
   .download-button-group {
     $line-height: 1rem;

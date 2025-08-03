@@ -1,39 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import PseudoItem from './pseudo-item';
+import PseudoItem, { PseudoItemProps } from './pseudo-item';
 import usePaginatorList from './paginator-list';
 import usePaginatorArrow from './paginator-arrow';
 import ScrollBar from './scroll-bar';
 import useScrollOffset from './use-scroll-offset';
 import useWheelEvent from './use-wheel-event';
 import style from './style.module.scss';
-import {getIndex} from './funcs';
+import { getIndex, PaginatorChildItem } from './funcs';
 
-
-function useChildItems(children) {
+function useChildItems(children: React.ReactNode): PaginatorChildItem[] {
   return React.useMemo(
     () => {
-      let childArr = children;
-      if (!(children instanceof Array)) {
-        childArr = [children];
-      }
+      const childArr = React.Children.toArray(children) as React.ReactElement<PseudoItemProps>[];
       const childItems = childArr.map(node => node.props);
-      return childItems;
+      return childItems as PaginatorChildItem[];
     },
     [children]
   );
 }
 
-
 function calcDisplayOffsets({
   currentSelected,
   currentHovering,
   childItems
+}: {
+  currentSelected?: string;
+  currentHovering: string | null;
+  childItems: PaginatorChildItem[];
 }) {
-  const currentSelectedIndex = getIndex(currentSelected, childItems);
-  const currentHoveringIndex = getIndex(currentHovering, childItems);
+  const currentSelectedIndex = getIndex(currentSelected || '', childItems);
+  const currentHoveringIndex = getIndex(currentHovering || '', childItems);
 
   const selectedOffset = currentSelectedIndex;
   let descOffset = currentSelectedIndex;
@@ -52,6 +50,13 @@ function calcDisplayOffsets({
   return {selectedOffset, hoverOffset, descOffset};
 }
 
+export interface PaginatorProps {
+  inverseColor?: boolean;
+  footnote?: React.ReactNode;
+  currentSelected?: string;
+  className?: string;
+  children: React.ReactNode;
+}
 
 function Paginator({
   inverseColor,
@@ -59,12 +64,12 @@ function Paginator({
   currentSelected,
   className,
   children
-}) {
-  if (process.env.NODE_ENV !== "production") {
+}: PaginatorProps) {
+  if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.debug(
       `render Paginator`,
-      (new Date()).getTime()
+      new Date().getTime()
     );
   }
 
@@ -75,7 +80,7 @@ function Paginator({
     paginatorList,
     currentHovering
   } = usePaginatorList({
-    currentSelected,
+    currentSelected: currentSelected || '',
     childItems
   });
 
@@ -84,7 +89,7 @@ function Paginator({
     resetScrollOffset,
     onScroll
   } = useScrollOffset({
-    currentSelected,
+    currentSelected: currentSelected || '',
     childItems,
     displayNums
   });
@@ -92,7 +97,7 @@ function Paginator({
   const navRef = useWheelEvent({
     childItems,
     displayNums,
-    currentSelected,
+    currentSelected: currentSelected || '',
     resetScrollOffset,
     onScroll
   });
@@ -101,7 +106,7 @@ function Paginator({
     backwardArrow,
     forwardArrow
   } = usePaginatorArrow({
-    currentSelected,
+    currentSelected: currentSelected || '',
     childItems,
     onScroll
   });
@@ -111,21 +116,21 @@ function Paginator({
     hoverOffset,
     descOffset
   } = calcDisplayOffsets({
-    currentSelected,
+    currentSelected: currentSelected || '',
     currentHovering,
     childItems
   });
 
   return (
     <nav
-     ref={navRef}
+     ref={navRef as React.RefObject<HTMLElement>}
      style={{
        '--offset': selectedOffset - scrollOffset,
        '--hover-offset': hoverOffset,
        '--scroll-offset': scrollOffset,
        '--total': childItems.length,
        '--display-nums': displayNums
-     }}
+     } as React.CSSProperties}
      className={classNames(
        className,
        style['paginator-container'],
@@ -150,18 +155,9 @@ function Paginator({
       ) : null}
     </nav>
   );
-
 }
 
+const PaginatorComponent = Paginator as React.FC<PaginatorProps> & { Item: React.FC<PseudoItemProps>; };
+PaginatorComponent.Item = PseudoItem;
 
-Paginator.propTypes = {
-  inverseColor: PropTypes.bool,
-  footnote: PropTypes.node,
-  currentSelected: PropTypes.string,
-  className: PropTypes.string,
-  children: PropTypes.node.isRequired
-};
-
-Paginator.Item = PseudoItem;
-
-export default Paginator;
+export default PaginatorComponent;

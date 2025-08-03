@@ -1,14 +1,17 @@
 import React from 'react';
-
-import PaginatorItem from './paginator-item';
+import PaginatorItem, { PaginatorItemProps } from './paginator-item';
 import style from './style.module.scss';
 
+export interface UsePaginatorListProps {
+  currentSelected: string;
+  childItems: PaginatorItemProps[];
+}
 
 export default function usePaginatorList({
   currentSelected,
   childItems
-}) {
-  const [currentHovering, setCurrentHovering] = React.useState(null);
+}: UsePaginatorListProps) {
+  const [currentHovering, setCurrentHovering] = React.useState<string | null>(null);
 
   return {
     paginatorList: (
@@ -29,5 +32,4 @@ export default function usePaginatorList({
     ),
     currentHovering
   };
-
 }

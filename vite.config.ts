@@ -22,6 +22,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    css: true
+    css: true,
+    alias: {
+      'flexbox-grid-mixins': path.resolve(__dirname, 'src/shims/flexbox-grid-mixins.scss'),
+      'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss')
+    }
   }
 });

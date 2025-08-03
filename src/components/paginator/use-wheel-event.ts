@@ -1,16 +1,26 @@
 import React from 'react';
 
+interface UseWheelEventProps {
+  childItems: unknown[];
+  displayNums: number;
+  resetScrollOffset: () => void;
+  onScroll: (steps: number) => void;
+}
+
 export default function useWheelEvent({
   childItems,
   displayNums,
   resetScrollOffset,
   onScroll
-}) {
-  const navRef = React.useRef();
+}: UseWheelEventProps) {
+  const navRef = React.useRef<HTMLElement | null>(null);
   const {current: wheelAccum} = React.useRef({x: 0, y: 0});
   React.useEffect(
     () => {
       const {current: elem} = navRef;
+      if (!elem) {
+        return;
+      }
       elem.addEventListener(
         'wheel',
         handleWheel,
@@ -34,14 +44,14 @@ export default function useWheelEvent({
         );
       };
 
-      function handleWheel(event) {
+      function handleWheel(event: WheelEvent & { wheelDeltaX?: number; wheelDeltaY?: number; }) {
         if (childItems.length <= displayNums) {
           return;
         }
         event.preventDefault();
         const wheelStepWidth = 40;
-        const localWheelAccumX = wheelAccum.x + event.wheelDeltaX;
-        const localWheelAccumY = wheelAccum.y + event.wheelDeltaY;
+        const localWheelAccumX = wheelAccum.x + (event.wheelDeltaX || 0);
+        const localWheelAccumY = wheelAccum.y + (event.wheelDeltaY || event.deltaY);
         const localWheelAccum = Math.sqrt(
           Math.pow(localWheelAccumX, 2) + Math.pow(localWheelAccumY, 2)
         );

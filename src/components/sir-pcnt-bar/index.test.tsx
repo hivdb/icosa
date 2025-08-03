@@ -1,8 +1,6 @@
 import {render, screen} from '@testing-library/react';
-import {describe, it, expect, vi} from 'vitest';
+import {describe, it, expect} from 'vitest';
 import '@testing-library/jest-dom';
-
-vi.mock('./style.module.scss', () => ({default: {}}), {virtual: true});
 
 import SIRPcntBar from './index';
 

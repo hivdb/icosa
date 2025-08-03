@@ -1,8 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import style from './style.module.scss';
 
+export interface PaginatorItemProps {
+  index: number;
+  name: string;
+  href?: string;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  children: React.ReactNode;
+  isSelected: boolean;
+  isHovering?: boolean;
+  setCurrentHovering: (name: string | null) => void;
+}
 
 function PaginatorItem({
   index,
@@ -13,12 +21,12 @@ function PaginatorItem({
   isSelected,
   isHovering,
   setCurrentHovering
-}) {
-  if (process.env.NODE_ENV !== "production") {
+}: PaginatorItemProps) {
+  if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.debug(
       `render PaginatorItem ${index}`,
-      (new Date()).getTime()
+      new Date().getTime()
     );
   }
 
@@ -53,19 +61,7 @@ function PaginatorItem({
       </a>
     </li>
   );
-
 }
-
-PaginatorItem.propTypes = {
-  index: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  onClick: PropTypes.func,
-  href: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  isHovering: PropTypes.bool,
-  setCurrentHovering: PropTypes.func.isRequired
-};
 
 export default React.memo(
   PaginatorItem,

@@ -1,8 +1,6 @@
 import {render} from '@testing-library/react';
 import {describe, it, expect, vi} from 'vitest';
 import '@testing-library/jest-dom';
-
-vi.mock('./style.module.scss', () => ({default: {}}));
 vi.mock('../markdown', () => ({default: ({children}: any) => <div>{children}</div>}));
 vi.mock('../checkbox-input', () => ({default: ({children}: any) => <div>{children}</div>}));
 vi.mock('../../utils/config-context', () => ({default: {use: () => [{geneDisplay: {}}, false]}}));
