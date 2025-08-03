@@ -1,11 +1,36 @@
-function prettyAlignments({
+export interface PrettyAlignmentsParams {
+  /** collection of gene definitions */
+  allGenes: any[];
+  /** per-sequence analysis results */
+  sequenceAnalysis?: any[];
+  /** per-sequence read analysis results */
+  sequenceReadsAnalysis?: any[];
+  /** configuration object containing gene display names */
+  config: { geneDisplay: Record<string, string> };
+}
+
+export interface PrettyAlignmentTable {
+  folder: string;
+  tableName: string;
+  header: string[];
+  rows: Record<string, unknown>[];
+  missing: string;
+}
+
+/**
+ * Generate "pretty" amino-acid alignment tables for each gene.
+ *
+ * @param params - {@link PrettyAlignmentsParams} including analysis results and gene metadata.
+ * @returns Array of {@link PrettyAlignmentTable} objects describing alignments.
+ */
+export default function prettyAlignments({
   allGenes,
   sequenceAnalysis,
   sequenceReadsAnalysis,
   config
-}) {
+}: PrettyAlignmentsParams): PrettyAlignmentTable[] {
   const {geneDisplay} = config;
-  const tables = [];
+  const tables: PrettyAlignmentTable[] = [];
   for (const geneObj of allGenes) {
     const {
       name: geneKey,
@@ -17,7 +42,7 @@ function prettyAlignments({
       'Sequence Name',
       ...refAAs.map((_, pos0) => `${pos0 + 1}`)
     ];
-    const rows = [
+    const rows: Record<string, string>[] = [
       {
         'Sequence Name': 'Ref Sequence',
         ...refAAs.reduce((acc, aa, pos0) => {
@@ -26,10 +51,10 @@ function prettyAlignments({
         }, {})
       }
     ];
-    const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+    const seqResults = (sequenceAnalysis || sequenceReadsAnalysis) as any[];
     for (const seqResult of seqResults) {
       const seqName = seqResult.name || seqResult.inputSequence.header;
-      const row = {
+      const row: Record<string, string> = {
         'Sequence Name': seqName
       };
       const geneSeq = (
@@ -77,5 +102,3 @@ function prettyAlignments({
   }
   return tables;
 }
-
-export default prettyAlignments;
