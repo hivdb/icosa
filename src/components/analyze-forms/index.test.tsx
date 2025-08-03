@@ -1,14 +1,14 @@
-/*
+import {renderHook} from '@testing-library/react';
 import {useBasePath} from './index';
 
-// Test disabled due to heavy dependencies in analyze forms index.
-it('computes base path from location', () => {
-  const base = useBasePath({pathname: '/foo/bar/'} as any);
-  expect(base).toBe('/foo');
+describe('useBasePath', () => {
+  /**
+   * Ensure base path is derived by removing the trailing segment.
+   */
+  it('computes base path from location', () => {
+    const {result} = renderHook(() =>
+      useBasePath({pathname: '/foo/bar/'} as any)
+    );
+    expect(result.current).toBe('/foo');
+  });
 });
-*/
-
-it('placeholder', () => {
-  expect(true).toBe(true);
-});
-

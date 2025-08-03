@@ -11,7 +11,36 @@ import style from '../style.module.scss';
 
 const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
 
-function reformCodFreqs(allSequenceReads: any[], geneValidator: (g: string, p: number) => [string, number]) {
+interface RawCodonRead {
+  codon: string;
+  reads: number;
+  [key: string]: any;
+}
+
+interface RawRead {
+  allCodonReads: RawCodonRead[];
+  gene: string;
+  position: number;
+  [key: string]: any;
+}
+
+interface RawCodFreq {
+  name: string;
+  allReads: RawRead[];
+  [key: string]: any;
+}
+
+/**
+ * Reform raw codfreq entries into a minimal structure.
+ *
+ * @param allSequenceReads - Original codfreq records with extraneous fields.
+ * @param geneValidator - Normalizer returning canonical gene name and position.
+ * @returns Cleaned codfreq records suitable for downstream analysis.
+ */
+function reformCodFreqs(
+  allSequenceReads: RawCodFreq[],
+  geneValidator: (g: string, p: number) => [string, number]
+) {
   return allSequenceReads.map(({allReads, name, ...seqReads}) => ({
     name: name.replace(SUFFIX_PATTERN, ''),
     allReads: allReads.map(({allCodonReads, gene, position, ...read}: any) => {
