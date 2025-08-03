@@ -1,51 +1,53 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Markdown from '../markdown';
 import DownloadSVG from '../download-svg';
 
-import {presetShape} from './prop-types';
 import RegionGroup from './region-group';
 import {
   getLongestPosLabelHeight,
   scaleMultipleLinears,
   trimOverlaps
 } from './helpers';
+import type {Preset} from './types';
 
 import style from './style.module.scss';
 
-export {presetShape};
+export type {Preset};
 
-
-function domainsToArray(domains) {
+function domainsToArray(domains: Preset['domains']) {
   return domains.map(
     ({posStart, posEnd, scaleRatio}) => [
       posStart,
       posEnd,
       scaleRatio
-    ]
+    ] as [number, number, number]
   );
 }
-
 
 const MARGIN = 120;
 const POS_GROUP_MIN_HEIGHT = 75;
 const POS_AXIS_HEIGHT = 25;
 
-GenomeMap.propTypes = {
-  className: PropTypes.string,
-  extraButtons: PropTypes.node,
-  preset: presetShape.isRequired
-};
+export interface GenomeMapProps {
+  /** Optional class name for the container. */
+  className?: string;
+  /** Extra buttons rendered next to download button. */
+  extraButtons?: React.ReactNode;
+  /** Preset configuration describing the genome map. */
+  preset: Preset;
+}
 
+/**
+ * Render a genome map with positions, regions and optional coverage layer.
+ */
 export default function GenomeMap({
   className,
   extraButtons,
   preset
-}) {
-
-  const svgRef = React.useRef();
+}: GenomeMapProps) {
+  const svgRef = React.useRef<SVGSVGElement>(null);
   const {
     name,
     paddingTop,
@@ -84,7 +86,7 @@ export default function GenomeMap({
       let minX = 0;
       let maxX = minWidth;
       for (const {positions} of origTrimmedPosGroups) {
-        for (const {pos, turns} of positions) {
+        for (const {pos, turns = []} of positions) {
           if (pos < posStart || pos > posEnd) {
             continue;
           }
@@ -137,7 +139,7 @@ export default function GenomeMap({
 
       for (const posGroup of trimmedPosGroups) {
         height += (
-          posGroup.addOffsetY +
+          (posGroup.addOffsetY || 0) +
           getLongestPosLabelHeight(posGroup.positions) +
           POS_GROUP_MIN_HEIGHT
         );
