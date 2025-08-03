@@ -1,62 +1,71 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import constants from './constants';
 
-
-ThresholdLine.propTypes = {
-  direction: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
-  scaleX: PropTypes.func.isRequired,
-  scaleY: PropTypes.func.isRequired,
-  threshold: PropTypes.number.isRequired,
-  thresholdCmp: PropTypes.oneOf(['>', '<']).isRequired,
-  strokeDasharray: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired
+/** Type representing a d3-like scale function used for axes. */
+type ScaleFunc = ((value: number) => number) & {
+  range: () => number[];
 };
 
+interface ThresholdLineProps {
+  /** Orientation of the threshold line. */
+  direction: 'horizontal' | 'vertical';
+  /** X-axis scale used to position the line. */
+  scaleX: ScaleFunc;
+  /** Y-axis scale used to position the line. */
+  scaleY: ScaleFunc;
+  /** Numeric threshold value. */
+  threshold: number;
+  /** Comparison operator indicating shaded region. */
+  thresholdCmp: '>' | '<';
+  /** Pattern for the dashed line. */
+  strokeDasharray?: string;
+  /** Color of the line and shading. */
+  color: string;
+}
 
-ThresholdLine.defaultProps = {
-  strokeDasharray: '5,5'
-};
-
-
+/**
+ * Draw a threshold line with a translucent shaded region on one side.
+ *
+ * @returns SVG group containing the line, a gradient and the shaded area.
+ */
 export default function ThresholdLine({
   direction,
   scaleX,
   scaleY,
   threshold,
   thresholdCmp,
-  strokeDasharray,
+  strokeDasharray = '5,5',
   color
-}) {
+}: ThresholdLineProps) {
   const uniqId = `threshold-${direction}-${thresholdCmp}${threshold}`;
-  const lineProps = {
+  const lineProps: Record<string, unknown> = {
     strokeDasharray,
     stroke: color,
     strokeWidth: constants.strokeWidth
   };
-  const rectProps = {
+  const rectProps: Record<string, unknown> = {
     fill: `url(#${uniqId})`,
-    opacity: .2
+    opacity: 0.2
   };
-  const gradientProps = {id: uniqId};
+  const gradientProps: Record<string, unknown> = {id: uniqId};
   if (direction === 'horizontal') {
     lineProps.y1 = scaleY(threshold);
     lineProps.y2 = lineProps.y1;
     [lineProps.x1, lineProps.x2] = scaleX.range();
     rectProps.x = lineProps.x1;
-    rectProps.width = lineProps.x2 - lineProps.x1;
+    rectProps.width = (lineProps.x2 as number) - (lineProps.x1 as number);
     gradientProps.x1 = 0;
     gradientProps.x2 = 0;
     if (thresholdCmp === '>') {
       rectProps.y = scaleY.range()[1];
-      rectProps.height = lineProps.y1 - rectProps.y;
+      rectProps.height = (lineProps.y1 as number) - (rectProps.y as number);
       gradientProps.y1 = 1;
       gradientProps.y2 = 0;
     }
     else {
       rectProps.y = lineProps.y1;
-      rectProps.height = scaleY.range()[0] - rectProps.y;
+      rectProps.height = scaleY.range()[0] - (rectProps.y as number);
       gradientProps.y1 = 0;
       gradientProps.y2 = 1;
     }
@@ -66,18 +75,18 @@ export default function ThresholdLine({
     lineProps.x2 = lineProps.x1;
     [lineProps.y1, lineProps.y2] = scaleY.range();
     rectProps.y = lineProps.y2;
-    rectProps.height = lineProps.y1 - lineProps.y2;
+    rectProps.height = (lineProps.y1 as number) - (lineProps.y2 as number);
     gradientProps.y1 = 0;
     gradientProps.y2 = 0;
     if (thresholdCmp === '>') {
       rectProps.x = lineProps.x1;
-      rectProps.width = scaleX.range()[1] - rectProps.x;
+      rectProps.width = scaleX.range()[1] - (rectProps.x as number);
       gradientProps.x1 = 0;
       gradientProps.x2 = 1;
     }
     else {
       rectProps.x = scaleX.range()[0];
-      rectProps.width = lineProps.x1 - rectProps.x;
+      rectProps.width = (lineProps.x1 as number) - (rectProps.x as number);
       gradientProps.x2 = 0;
       gradientProps.x1 = 1;
     }

@@ -1,12 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import Nomogram, {CutoffKeyPoint} from '../../seqreads-threshold-nomogram';
+import Nomogram from '../../seqreads-threshold-nomogram';
 
 import style from './style.module.scss';
 
-
-function inferMixtureRateTicks(mixtureRateThreshold) {
+/**
+ * Infer tick marks for the mixture rate axis based on the threshold.
+ * @param mixtureRateThreshold - User selected mixture rate threshold.
+ * @returns Array of tick values.
+ */
+function inferMixtureRateTicks(mixtureRateThreshold: number): number[] {
   if (mixtureRateThreshold === 0) {
     return [0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1];
   }
@@ -42,11 +45,19 @@ function inferMixtureRateTicks(mixtureRateThreshold) {
   return ticks.map(tick => tick * level);
 }
 
-
+interface InferMinPrevArgs {
+  minPrevalenceActual: number;
+  minPrevalenceThreshold: number;
+}
+/**
+ * Determine tick marks for the minimum prevalence axis.
+ * @param args - Actual and threshold prevalence values.
+ * @returns Array of tick values.
+ */
 function inferMinPrevalenceTicks({
   minPrevalenceActual,
   minPrevalenceThreshold
-}) {
+}: InferMinPrevArgs): number[] {
   let highPrevalence = 0.3;
   let lowPrevalence = 0;
   if (minPrevalenceActual > 0.2) {
@@ -59,7 +70,7 @@ function inferMinPrevalenceTicks({
       0.1 * Math.ceil((minPrevalenceThreshold - 0.4) / 0.1)
     );
   }
-  const ticks = [];
+  const ticks: number[] = [];
   let step = 0.05;
   if (highPrevalence - lowPrevalence > 0.7) {
     step = 0.2;
@@ -71,35 +82,37 @@ function inferMinPrevalenceTicks({
     ticks.push(i);
   }
   return ticks;
-
 }
 
+interface NomogramContainerProps {
+  cutoffKeyPoints: unknown[]; // detailed type not required here
+  maxMixtureRate: number;
+  minPrevalence: number;
+  mixtureRate: number;
+  actualMinPrevalence: number;
+}
 
-NomogramContainer.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(CutoffKeyPoint.isRequired).isRequired,
-  maxMixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired,
-  mixtureRate: PropTypes.number.isRequired,
-  actualMinPrevalence: PropTypes.number.isRequired
-};
-
-
+/**
+ * Wrapper that configures and renders the {@link Nomogram} component
+ * for sequence summary reports.
+ */
 export default function NomogramContainer({
   cutoffKeyPoints,
   maxMixtureRate: mixtureRateThreshold,
   minPrevalence: minPrevalenceThreshold,
   mixtureRate: mixtureRateActual,
   actualMinPrevalence: minPrevalenceActual
-}) {
+}: NomogramContainerProps) {
   const mixtureRateTicks = React.useMemo(
     () => inferMixtureRateTicks(mixtureRateThreshold),
     [mixtureRateThreshold]
   );
   const minPrevalenceTicks = React.useMemo(
-    () => inferMinPrevalenceTicks({
-      minPrevalenceActual,
-      minPrevalenceThreshold
-    }),
+    () =>
+      inferMinPrevalenceTicks({
+        minPrevalenceActual,
+        minPrevalenceThreshold
+      }),
     [minPrevalenceActual, minPrevalenceThreshold]
   );
 
@@ -118,5 +131,4 @@ export default function NomogramContainer({
      height={400}
     />
   </div>;
-
 }

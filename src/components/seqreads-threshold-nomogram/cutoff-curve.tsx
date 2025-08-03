@@ -1,43 +1,64 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import {line, /*curveMonotoneX, */curveStepBefore} from 'd3-shape';
+import {line, /* curveMonotoneX, */ curveStepBefore} from 'd3-shape';
 
 import constants from './constants';
 
+interface CutoffKeyPoint {
+  /** Proportion of reads that are mixtures. */
+  mixtureRate: number;
+  /** Minimum prevalence of reads supporting a mutation. */
+  minPrevalence: number;
+}
 
-function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}) {
+/** Type of the scaling function produced by d3. */
+type ScaleFunc = (value: number) => number;
+
+/**
+ * Memoized generator for a path function that converts cutoff key points
+ * into SVG path data.
+ *
+ * @param mixtureRateScale - x-axis scaling function.
+ * @param minPrevalenceScale - y-axis scaling function.
+ * @returns d3 line generator mapping key points to an SVG path string.
+ */
+function useCalcCutoffCurve({
+  mixtureRateScale,
+  minPrevalenceScale
+}: {
+  mixtureRateScale: ScaleFunc;
+  minPrevalenceScale: ScaleFunc;
+}) {
   return React.useMemo(
-    () => line()
-      .curve(curveStepBefore)
-      // .curve(curveMonotoneX)
-      .x(d => mixtureRateScale(d.mixtureRate))
-      .y(d => minPrevalenceScale(d.minPrevalence)),
+    () =>
+      line<CutoffKeyPoint>()
+        .curve(curveStepBefore)
+        // .curve(curveMonotoneX)
+        .x(d => mixtureRateScale(d.mixtureRate))
+        .y(d => minPrevalenceScale(d.minPrevalence)),
     [minPrevalenceScale, mixtureRateScale]
   );
 }
 
+interface CutoffCurveProps {
+  /** List of points describing the threshold curve. */
+  cutoffKeyPoints: CutoffKeyPoint[];
+  /** Scaling function for the mixture-rate axis. */
+  mixtureRateScale: ScaleFunc;
+  /** Scaling function for the minimum-prevalence axis. */
+  minPrevalenceScale: ScaleFunc;
+}
 
-const CutoffKeyPoint = PropTypes.shape({
-  mixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired
-});
-
-
-CutoffCurve.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(
-    CutoffKeyPoint.isRequired
-  ).isRequired,
-  mixtureRateScale: PropTypes.func.isRequired,
-  minPrevalenceScale: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render the cutoff curve dividing acceptable and unacceptable regions.
+ *
+ * @returns SVG group containing the curve and its faded extension.
+ */
 export default function CutoffCurve({
   cutoffKeyPoints,
   mixtureRateScale,
   minPrevalenceScale
-}) {
+}: CutoffCurveProps) {
   const calcCutoffCurve = useCalcCutoffCurve({
     mixtureRateScale,
     minPrevalenceScale

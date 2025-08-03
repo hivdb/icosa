@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import CutoffCurve from './cutoff-curve';
 import MixtureRateAxis, {useMixtureRateScale} from './mixture-rate-axis';
@@ -7,53 +6,50 @@ import MinPrevalenceAxis, {useMinPrevalenceScale} from './min-prevalence-axis';
 import ThresholdLine from './threshold-line';
 import ActualThreshold from './actual-threshold';
 
+/** Description of a point along the cutoff curve. */
+export interface CutoffKeyPoint {
+  mixtureRate: number;
+  minPrevalence: number;
+  isAboveMixtureRateThreshold: boolean;
+  isBelowMinPrevalenceThreshold: boolean;
+}
 
-export const CutoffKeyPoint = PropTypes.shape({
-  mixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired,
-  isAboveMixtureRateThreshold: PropTypes.bool.isRequired,
-  isBelowMinPrevalenceThreshold: PropTypes.bool.isRequired
-});
+interface SeqReadsThresholdNomogramProps {
+  /** Array of key points forming the cutoff curve. */
+  cutoffKeyPoints: CutoffKeyPoint[];
+  /** User-specified nucleotide mixture threshold. */
+  mixtureRateThreshold: number;
+  /** User-specified mutation detection threshold. */
+  minPrevalenceThreshold: number;
+  /** Actual observed mixture rate. */
+  mixtureRateActual: number;
+  /** Actual observed minimum prevalence. */
+  minPrevalenceActual: number;
+  /** Overall width of the SVG canvas. */
+  width?: number;
+  /** Overall height of the SVG canvas. */
+  height?: number;
+  /** Tick marks for mixture rate axis. */
+  mixtureRateTicks?: number[];
+  /** Tick marks for minimum prevalence axis. */
+  minPrevalenceTicks?: number[];
+}
 
-
-SeqReadsThresholdNomogram.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(
-    CutoffKeyPoint.isRequired
-  ).isRequired,
-  mixtureRateThreshold: PropTypes.number.isRequired,
-  minPrevalenceThreshold: PropTypes.number.isRequired,
-  mixtureRateActual: PropTypes.number.isRequired,
-  minPrevalenceActual: PropTypes.number.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  mixtureRateTicks: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  minPrevalenceTicks: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired
-
-};
-
-SeqReadsThresholdNomogram.defaultProps = {
-  width: 800,
-  height: 400,
-  mixtureRateTicks: [0, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02],
-  minPrevalenceTicks: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
-};
-
-
+/**
+ * Draw the complete nomogram including axes, cutoff curve,
+ * threshold lines and actual threshold marker.
+ */
 export default function SeqReadsThresholdNomogram({
   cutoffKeyPoints,
   mixtureRateThreshold,
   minPrevalenceThreshold,
   mixtureRateActual,
   minPrevalenceActual,
-  width,
-  height,
-  mixtureRateTicks,
-  minPrevalenceTicks
-}) {
+  width = 800,
+  height = 400,
+  mixtureRateTicks = [0, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02],
+  minPrevalenceTicks = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+}: SeqReadsThresholdNomogramProps) {
   const minPrevalenceDomain = React.useMemo(
     () => [Math.min(...minPrevalenceTicks), Math.max(...minPrevalenceTicks)],
     [minPrevalenceTicks]

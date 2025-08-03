@@ -1,3 +1,10 @@
+/**
+ * Numeric values that control layout and styling for the
+ * sequence reads threshold nomogram components.
+ *
+ * These constants are separated so that all related dimensions
+ * can be shared across components without duplicating numbers.
+ */
 const constants = {
   paddingV: 20,
   paddingH: 20,
@@ -14,6 +21,6 @@ const constants = {
   actualThresholdRadius: 6,
   actualThresholdArrowLineSize: 25,
   actualThresholdFontSize: 28
-};
+} as const;
 
 export default constants;

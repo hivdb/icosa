@@ -1,24 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import constants from './constants';
 
 const MAIN_COLOR = '#ba6000';
 
-
-ActualThreshold.propTypes = {
-  thresholdX: PropTypes.number.isRequired,
-  thresholdY: PropTypes.number.isRequired,
-  scaleX: PropTypes.func.isRequired,
-  scaleY: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render a circular marker and annotation representing the
+ * actual thresholds applied on the nomogram.
+ *
+ * @param thresholdX - The observed nucleotide mixture threshold.
+ * @param thresholdY - The observed mutation detection threshold.
+ * @param scaleX - Function mapping a mixture rate to an SVG x-coordinate.
+ * @param scaleY - Function mapping a minimum prevalence to an SVG y-coordinate.
+ * @returns An SVG group containing the marker, arrow and label.
+ */
 export default function ActualThreshold({
   thresholdX,
   thresholdY,
   scaleX,
   scaleY
+}: {
+  thresholdX: number;
+  thresholdY: number;
+  scaleX: (value: number) => number;
+  scaleY: (value: number) => number;
 }) {
   const cx = scaleX(thresholdX);
   const cy = scaleY(thresholdY);
