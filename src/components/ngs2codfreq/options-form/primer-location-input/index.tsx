@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ConfigContext from '../../../../utils/config-context';
 import {useCMS} from '../../../../utils/cms';
@@ -7,7 +6,7 @@ import {useCMS} from '../../../../utils/cms';
 import Button from '../../../button';
 import FileInput from '../../../file-input';
 import Loader from '../../../loader';
-import {primerBedShape} from '../prop-types';
+import {type PrimerBed} from '../types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
 import useMounted from '../../../../utils/use-mounted';
@@ -31,20 +30,17 @@ function guess_strand(strand, name) {
 }
 
 
-PrimerLocationInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  value: PropTypes.arrayOf(
-    primerBedShape.isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+export interface PrimerLocationInputProps {
+  name: string;
+  value: PrimerBed[];
+  onChange: (name: string, value: PrimerBed[]) => void;
+}
 
 export default function PrimerLocationInput({
   name,
   value,
   onChange
-}) {
+}: PrimerLocationInputProps) {
   const [config] = ConfigContext.use();
   const isMounted = useMounted();
   const [autoIncr, setAutoIncr] = React.useState(
@@ -52,7 +48,7 @@ export default function PrimerLocationInput({
       ...value.map(({idx}) => idx)
     ) + 1 : 0
   );
-  const [pendingItems, setPendingItems] = React.useState([]);
+  const [pendingItems, setPendingItems] = React.useState<PrimerBed[]>([]);
 
   const [
     refSequenceText,
@@ -68,7 +64,7 @@ export default function PrimerLocationInput({
   const errors = useValidation(value, refSequence);
 
   const handleChange = React.useCallback(
-    (item, isNew, isRemove = false) => {
+    (item: PrimerBed, isNew: boolean, isRemove = false) => {
       const newValue = [...value];
       if (isNew) {
         if (!isRemove) {
@@ -131,8 +127,8 @@ export default function PrimerLocationInput({
   );
 
   const handleUpload = React.useCallback(
-    async files => {
-      const newItems = [];
+    async (files: File[]) => {
+      const newItems: PrimerBed[] = [];
       let newAutoIncr = autoIncr;
       for (const file of files) {
         if (

@@ -1,31 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import {HoverPopup} from '../../../popup';
 import Button from '../../../button';
 import RadioInput from '../../../radio-input';
 
-import {primerBedShape} from '../prop-types';
+import {type PrimerBed} from '../types';
 import style from '../style.module.scss';
 
 import NameInput from './item-name-input';
 
 
-PrimerBedItemInput.propTypes = {
-  isNew: PropTypes.bool,
-  name: PropTypes.string.isRequired,
-  value: primerBedShape,
-  refSequence: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
-PrimerBedItemInput.defaultProps = {
-  isNew: false
-};
+export interface PrimerBedItemInputProps {
+  isNew?: boolean;
+  name: string;
+  value: PrimerBed;
+  refSequence: string;
+  onChange: (value: PrimerBed | {idx: number}, isNew: boolean, isRemove?: boolean) => void;
+}
 
 export default function PrimerBedItemInput({
-  isNew,
+  isNew = false,
   name,
   value: {
     idx,
@@ -38,7 +33,7 @@ export default function PrimerBedItemInput({
   },
   refSequence,
   onChange
-}) {
+}: PrimerBedItemInputProps) {
   const [
     unsavedStart,
     setUnsavedStart

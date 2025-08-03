@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import {useDownload} from '../../utils/download';
@@ -9,21 +8,20 @@ import Loader from '../loader';
 
 import style from './style.module.scss';
 
+export interface NGSResultsProps {
+  taskKey?: string;
+  progressLookup: Record<string, any>;
+  className?: string;
+  onAnalyze?: (codfreqs: any[]) => void;
+}
 
-NGSResults.propTypes = {
-  taskKey: PropTypes.string,
-  progressLookup: PropTypes.object,
-  className: PropTypes.string,
-  onAnalyze: PropTypes.func
-};
-
-
+/** Display progress and downloadable results of the NGS pipeline. */
 export default function NGSResults({
   taskKey,
   progressLookup,
   className,
   onAnalyze
-}) {
+}: NGSResultsProps) {
   const allProgress = Object.values(progressLookup);
   const finalStep = allProgress.find(({step}) => step === 'finish-task');
   const {codfreqs} = finalStep || {codfreqs: []};
@@ -70,7 +68,7 @@ export default function NGSResults({
   const handleAnalyze = React.useCallback(
     e => {
       e && e.preventDefault();
-      onAnalyze(codfreqs);
+      onAnalyze && onAnalyze(codfreqs);
     },
     [onAnalyze, codfreqs]
   );

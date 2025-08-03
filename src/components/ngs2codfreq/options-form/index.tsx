@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import pluralize from 'pluralize';
 
@@ -8,13 +7,14 @@ import useMessages from '../../../utils/use-messages';
 import ExtLink from '../../link/external';
 import Markdown from '../../markdown';
 import {
-  fastpConfigShape,
   defaultFastpConfig,
-  cutadaptConfigShape,
   defaultCutadaptConfig,
-  ivarConfigShape,
-  defaultIvarConfig
-} from './prop-types';
+  defaultIvarConfig,
+  type FastpConfig,
+  type CutadaptConfig,
+  type IvarConfig,
+  type NGSOptions
+} from './types';
 
 import style from './style.module.scss';
 import FlagSwitch from './flag-switch';
@@ -51,25 +51,12 @@ const INCLUDE_UNMERGED_VALUES = [true, false];
 const INCLUDE_UNMERGED_TEXTS = ['Include', 'Exclude'];
 
 
-NGSOptionsForm.propTypes = {
-  isDefault: PropTypes.bool.isRequired,
-  fastpConfig: fastpConfigShape.isRequired,
-  cutadaptConfig: cutadaptConfigShape.isRequired,
-  ivarConfig: ivarConfigShape.isRequired,
-  primerType: PropTypes.oneOf(['fasta', 'bed', 'off']).isRequired,
-  saveInBrowser: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired
-};
+export interface NGSOptionsFormProps extends NGSOptions {
+  isDefault: boolean;
+  onChange: (name: string, value: any) => void;
+}
 
-NGSOptionsForm.defaultProps = {
-  fastpConfig: {...defaultFastpConfig},
-  cutadaptConfig: {...defaultCutadaptConfig},
-  ivarConfig: {...defaultIvarConfig},
-  saveInBrowser: true,
-  primerType: 'off'
-};
-
-
+/** Form allowing the user to configure trimming/filtering options. */
 export default function NGSOptionsForm({
   isDefault,
   fastpConfig,
@@ -103,7 +90,7 @@ export default function NGSOptionsForm({
   primerType,
   saveInBrowser,
   onChange
-}) {
+}: NGSOptionsFormProps) {
   const isMounted = useMounted();
   const [config] = ConfigContext.use();
   const [fastaDesc, bedDesc] = useMessages([
@@ -256,7 +243,7 @@ export default function NGSOptionsForm({
        max={40}
        step={5}>
         The quality value that a base is qualified. Default 15 means phred
-        quality >=Q15 is qualified.
+        quality &gt;=Q15 is qualified.
       </NumberRangeInput>
       <NumberRangeInput
        disabled={disableQualityFiltering}

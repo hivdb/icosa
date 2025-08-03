@@ -1,21 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
+import React from 'react';
 import RadioInput from '../../radio-input';
 
 import style from './style.module.scss';
 
 
-AdapterTrimmingSwitch.propTypes = {
-  disableAdapterTrimming: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired
-};
+export interface AdapterTrimmingSwitchProps {
+  disableAdapterTrimming: boolean;
+  onChange: (name: string, value: boolean) => void;
+}
 
-
+/** Toggle enabling/disabling adapter trimming. */
 export default function AdapterTrimmingSwitch({
   disableAdapterTrimming,
   onChange
-}) {
+}: AdapterTrimmingSwitchProps) {
   const handleChange = React.useCallback(
     event => onChange(
       'fastpConfig.disabledAdapterTrimming',

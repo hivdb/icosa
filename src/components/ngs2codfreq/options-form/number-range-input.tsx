@@ -1,41 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
 
 
-NumberRangeInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.number.isRequired,
-  defaultValue: PropTypes.number,
-  onChange: PropTypes.func.isRequired,
-  min: PropTypes.number,
-  max: PropTypes.number,
-  step: PropTypes.number,
-  disabled: PropTypes.bool,
-  children: PropTypes.node
-};
+export interface NumberRangeInputProps {
+  name: string;
+  label: string;
+  value: number;
+  defaultValue?: number;
+  onChange: (name: string, value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  children?: React.ReactNode;
+}
 
-NumberRangeInput.defaultProps = {
-  min: 0,
-  max: 100,
-  step: 1
-};
-
+/** Combined range/number input with reset to default. */
 export default function NumberRangeInput({
   name,
   label,
   value,
   defaultValue,
   onChange,
-  min,
-  max,
-  step,
+  min = 0,
+  max = 100,
+  step = 1,
   disabled,
   children
-}) {
+}: NumberRangeInputProps) {
   const handleSelectAll = React.useCallback(
     event => event.currentTarget.select(),
     []

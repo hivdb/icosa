@@ -1,8 +1,11 @@
 import React from 'react';
+import type { PrimerSeq } from '../types';
 
-
-export default function useValidation(primers) {
-  const [errors, setErrors] = React.useState([]);
+/**
+ * Validate primer sequences and report human readable errors.
+ */
+export default function useValidation(primers: PrimerSeq[]) {
+  const [errors, setErrors] = React.useState<React.ReactNode[]>([]);
 
   React.useEffect(
     () => {

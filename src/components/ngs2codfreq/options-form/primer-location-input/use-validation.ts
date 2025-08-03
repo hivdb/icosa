@@ -1,8 +1,9 @@
 import React from 'react';
+import type { PrimerBed } from '../types';
 
-
-export default function useValidation(primers, refSequence) {
-  const [errors, setErrors] = React.useState([]);
+/** Validate primer locations against a reference sequence. */
+export default function useValidation(primers: PrimerBed[], refSequence: string | null) {
+  const [errors, setErrors] = React.useState<React.ReactNode[]>([]);
 
   React.useEffect(
     () => {

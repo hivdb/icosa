@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
@@ -11,19 +11,16 @@ import {
 import style from '../style.module.scss';
 import DropPlaceholder from './drop-placeholder';
 
-
-FASTQItem.propTypes = {
-  file: PropTypes.shape({
-    name: PropTypes.string.isRequired
-  }).isRequired,
-  index: PropTypes.number.isRequired,
-  className: PropTypes.string,
-  onDragStart: PropTypes.func,
-  onDrag: PropTypes.func,
-  onDragEnd: PropTypes.func,
-  onRemove: PropTypes.func,
-  draggable: PropTypes.bool
-};
+interface FASTQItemProps {
+  file: File;
+  index: number;
+  className?: string;
+  onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
+  onDrag: (e: React.DragEvent<HTMLLIElement>) => void;
+  onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
+  onRemove: (args: {index: number; fileName: string}) => void;
+  draggable?: boolean;
+}
 
 function FASTQItem({
   file,
@@ -34,24 +31,24 @@ function FASTQItem({
   onDragEnd,
   onRemove,
   draggable
-}) {
+}: FASTQItemProps) {
   const handleDragStart = React.useCallback(
-    event => {
+    (event: React.DragEvent<HTMLLIElement>) => {
       event.dataTransfer.setData('text', JSON.stringify({
         fileName: file.name,
         index
       }));
       onDragStart(file, event);
       event.dataTransfer.effectAllowed = 'move';
-      event.currentTarget.dataset.dragging = '';
+      (event.currentTarget as HTMLElement).dataset.dragging = '';
     },
     [onDragStart, file, index]
   );
 
   const handleDragEnd = React.useCallback(
-    event => {
+    (event: React.DragEvent<HTMLLIElement>) => {
       onDragEnd(event);
-      delete event.currentTarget.dataset.dragging;
+      delete (event.currentTarget as HTMLElement).dataset.dragging;
     },
     [onDragEnd]
   );
@@ -99,28 +96,22 @@ function FASTQItem({
 }
 
 
-FASTQPairItem.propTypes = {
-  name: PropTypes.string.isRequired,
-  pair: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired
-    }).isRequired
-  ).isRequired,
-  n: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  className: PropTypes.string,
-  onDragStart: PropTypes.func,
-  onDrag: PropTypes.func,
-  onDragEnd: PropTypes.func,
-  curDragFile: PropTypes.shape({
-    name: PropTypes.string.isRequired
-  }).isRequired,
-  onSplit: PropTypes.func,
-  onMove: PropTypes.func,
-  onNameChange: PropTypes.func,
-  onRemove: PropTypes.func,
-  draggable: PropTypes.bool
-};
+export interface FASTQPairItemProps {
+  name: string;
+  pair: (File | null)[];
+  n: number;
+  index: number;
+  className?: string;
+  onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
+  onDrag: (e: React.DragEvent<HTMLLIElement>) => void;
+  onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
+  curDragFile: File | null;
+  onSplit: (idx: number) => void;
+  onMove: (args: {src: {index: number; fileName: string}; target: {index: number}}) => void;
+  onNameChange: (name: string, index: number) => void;
+  onRemove: (args: {index: number; fileName: string}) => void;
+  draggable?: boolean;
+}
 
 export default function FASTQPairItem({
   name,
@@ -137,7 +128,7 @@ export default function FASTQPairItem({
   onNameChange,
   onRemove,
   draggable
-}) {
+}: FASTQPairItemProps) {
   const handleSplit = React.useCallback(
     () => {
       onSplit(index);
@@ -146,12 +137,12 @@ export default function FASTQPairItem({
   );
 
   const handleMove = React.useCallback(
-    src => onMove({src, target: {index}}),
+    (src: {index: number; fileName: string}) => onMove({src, target: {index}}),
     [onMove, index]
   );
 
   const handleNameChange = React.useCallback(
-    event => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const newName = event.currentTarget.value;
       onNameChange(newName, index);
     },

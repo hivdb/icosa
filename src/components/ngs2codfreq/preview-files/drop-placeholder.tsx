@@ -1,17 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import style from '../style.module.scss';
 
 
-DropPlaceholder.propTypes = {
-  allowFiles: PropTypes.array,
-  blockFiles: PropTypes.array,
-  onMove: PropTypes.func,
-  curDragFile: PropTypes.object,
-  className: PropTypes.string
-};
+export interface DropPlaceholderProps {
+  allowFiles?: File[];
+  blockFiles?: (File | null)[];
+  onMove: (payload: {index: number; fileName: string}) => void;
+  curDragFile: File | null;
+  className?: string;
+}
 
 export default function DropPlaceholder({
   allowFiles,
@@ -19,7 +18,7 @@ export default function DropPlaceholder({
   onMove,
   curDragFile,
   className
-}) {
+}: DropPlaceholderProps) {
   // console.log(curDragFile);
   const allowDrop = (
     curDragFile &&
