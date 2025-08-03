@@ -1,25 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import constants from './constants';
+import type {ScaleFn} from './types';
 
 const MAIN_COLOR = '#ba6000';
 
+export interface ActualThresholdProps {
+  /** Applied nucleotide mixture threshold on the X axis. */
+  thresholdX: number;
+  /** Applied mutation detection threshold on the Y axis. */
+  thresholdY: number;
+  /** Scaling function for the X axis. */
+  scaleX: ScaleFn;
+  /** Scaling function for the Y axis. */
+  scaleY: ScaleFn;
+}
 
-ActualThreshold.propTypes = {
-  thresholdX: PropTypes.number.isRequired,
-  thresholdY: PropTypes.number.isRequired,
-  scaleX: PropTypes.func.isRequired,
-  scaleY: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render a pointer highlighting the actual thresholds applied on the nomogram.
+ *
+ * @param props - {@link ActualThresholdProps} specifying thresholds and scales.
+ * @returns SVG group containing the marker, circle and text labels.
+ */
 export default function ActualThreshold({
   thresholdX,
   thresholdY,
   scaleX,
   scaleY
-}) {
+}: ActualThresholdProps) {
   const cx = scaleX(thresholdX);
   const cy = scaleY(thresholdY);
   const {

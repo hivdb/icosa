@@ -1,43 +1,48 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import {line, /*curveMonotoneX, */curveStepBefore} from 'd3-shape';
+import {line, curveStepBefore} from 'd3-shape';
 
 import constants from './constants';
+import type {CutoffKeyPoint, ScaleFn} from './types';
 
+interface CutoffCurveProps {
+  /** Key points describing the cutoff curve. */
+  cutoffKeyPoints: CutoffKeyPoint[];
+  /** Scaling function for mixture rate (X axis). */
+  mixtureRateScale: ScaleFn;
+  /** Scaling function for minimum prevalence (Y axis). */
+  minPrevalenceScale: ScaleFn;
+}
 
-function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}) {
+/**
+ * Create a memoized D3 line generator for drawing the cutoff curve.
+ *
+ * @param options - Scaling functions for X and Y axes.
+ * @returns The configured D3 line generator.
+ */
+function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}: {
+  mixtureRateScale: ScaleFn;
+  minPrevalenceScale: ScaleFn;
+}) {
   return React.useMemo(
-    () => line()
+    () => line<CutoffKeyPoint>()
       .curve(curveStepBefore)
-      // .curve(curveMonotoneX)
       .x(d => mixtureRateScale(d.mixtureRate))
       .y(d => minPrevalenceScale(d.minPrevalence)),
     [minPrevalenceScale, mixtureRateScale]
   );
 }
 
-
-const CutoffKeyPoint = PropTypes.shape({
-  mixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired
-});
-
-
-CutoffCurve.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(
-    CutoffKeyPoint.isRequired
-  ).isRequired,
-  mixtureRateScale: PropTypes.func.isRequired,
-  minPrevalenceScale: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render the cutoff curve showing the valid threshold area.
+ *
+ * @param props - {@link CutoffCurveProps} defining key points and scales.
+ * @returns SVG group containing the cutoff path.
+ */
 export default function CutoffCurve({
   cutoffKeyPoints,
   mixtureRateScale,
   minPrevalenceScale
-}) {
+}: CutoffCurveProps) {
   const calcCutoffCurve = useCalcCutoffCurve({
     mixtureRateScale,
     minPrevalenceScale
@@ -54,7 +59,7 @@ export default function CutoffCurve({
           d.minPrevalence <= prevalenceDomain[1]
         )
       );
-      return calcCutoffCurve(keyPoints);
+      return calcCutoffCurve(keyPoints) ?? undefined;
     },
     [calcCutoffCurve, cutoffKeyPoints, mixtureRateDomain, prevalenceDomain]
   );
@@ -67,7 +72,7 @@ export default function CutoffCurve({
           d.minPrevalence < prevalenceDomain[0]
         )
       );
-      return calcCutoffCurve(keyPoints);
+      return calcCutoffCurve(keyPoints) ?? undefined;
     },
     [calcCutoffCurve, cutoffKeyPoints, mixtureRateDomain, prevalenceDomain]
   );

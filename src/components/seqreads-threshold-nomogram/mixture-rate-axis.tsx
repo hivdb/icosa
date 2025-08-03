@@ -1,15 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import {scaleLog} from 'd3-scale';
 
 import constants from './constants';
+import type {ScaleFn} from './types';
 
+export interface UseMixtureRateScaleOptions {
+  /** Width of the SVG canvas. */
+  width: number;
+  /** Tick values for the mixture rate axis. */
+  mixtureRateTicks: number[];
+}
 
+/**
+ * Generate a logarithmic-like scale for the mixture rate axis.
+ * The function adjusts the domain so that zero can be represented by shifting
+ * values before applying a log transformation.
+ *
+ * @param options - {@link UseMixtureRateScaleOptions} describing canvas width
+ *   and tick configuration.
+ * @returns A memoized scale function for mixture rate values.
+ */
 export function useMixtureRateScale({
   width,
   mixtureRateTicks
-}) {
+}: UseMixtureRateScaleOptions): ScaleFn {
   const axisStart = (
     constants.paddingH +
     constants.axisTitleFontSize +
@@ -27,25 +41,39 @@ export function useMixtureRateScale({
       const nonZeroMinTick = Math.min(...mixtureRateTicks.filter(n => n > 0));
       const level = 0.2 * 10 ** -Math.floor(Math.log10(nonZeroMinTick));
 
-      const baseScale = scaleLog()
+      const baseScale = scaleLog<number>()
         .base(10)
         .domain(mixtureRateDomain.map(n => n * level + 1))
         .range([axisStart, axisEnd]);
-      const scale = value => baseScale(value * level + 1);
+      const scale = ((value: number) => baseScale(value * level + 1)) as ScaleFn;
       scale.domain = () => baseScale.domain().map(n => (n - 1) / level);
-      scale.range = baseScale.range;
+      scale.range = baseScale.range.bind(baseScale);
       return scale;
     },
     [axisStart, axisEnd, mixtureRateTicks]
   );
 }
 
+interface AxisPathOptions {
+  /** Scale for positioning. */
+  scale: ScaleFn;
+  /** Y coordinate for the axis line. */
+  axisTop: number;
+  /** Tick values. */
+  ticks: number[];
+}
 
+/**
+ * Calculate the SVG path for the X axis including tick marks.
+ *
+ * @param options - {@link AxisPathOptions} with scale and tick details.
+ * @returns SVG path data string.
+ */
 function useAxisPathData({
   scale,
   axisTop,
   ticks
-}) {
+}: AxisPathOptions) {
   return React.useMemo(
     () => {
       const [x1, x2] = scale.range();
@@ -74,8 +102,13 @@ function useAxisPathData({
   );
 }
 
-
-function pcntFormat(value) {
+/**
+ * Format mixture rate values as percentages with adaptive precision.
+ *
+ * @param value - Raw value between 0 and 1.
+ * @returns Percentage string with 0-1 decimal places.
+ */
+function pcntFormat(value: number) {
   if (value < 0.1) {
     return `${(value * 100).toPrecision(1)}%`;
   }
@@ -84,21 +117,26 @@ function pcntFormat(value) {
   }
 }
 
+interface MixtureRateAxisProps {
+  /** Scale function for the axis. */
+  scale: ScaleFn;
+  /** Height of the overall SVG canvas. */
+  height: number;
+  /** Tick values to render. */
+  ticks: number[];
+}
 
-MixtureRateAxis.propTypes = {
-  scale: PropTypes.func.isRequired,
-  height: PropTypes.number.isRequired,
-  ticks: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired
-};
-
-
+/**
+ * Render the X axis representing nucleotide mixture threshold.
+ *
+ * @param props - {@link MixtureRateAxisProps} defining scale and ticks.
+ * @returns SVG group element containing labels and axis line.
+ */
 export default function MixtureRateAxis({
   scale,
   height,
   ticks
-}) {
+}: MixtureRateAxisProps) {
   const axisTop = (
     height -
     constants.paddingV -
