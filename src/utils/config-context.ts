@@ -31,11 +31,8 @@ export function useConfigLoader<T extends {configFromURL?: string}>(config: T) {
         loadedConfig = config;
       }
 
-      return new Proxy(loadedConfig, {
-        get(target, name: string | symbol) {
-          return Object.freeze((target as any)[name]);
-        }
-      });
+      const frozen = Object.freeze(loadedConfig);
+      return frozen as Readonly<typeof loadedConfig>;
     },
     [config]
   );
