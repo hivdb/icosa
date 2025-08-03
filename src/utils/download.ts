@@ -2,7 +2,13 @@ import React from 'react';
 import JSZip from 'jszip';
 import useMounted from './use-mounted';
 
-export async function showFilePicker(fileName) {
+/**
+ * Show a file picker dialog when supported by the browser.
+ *
+ * @param fileName - Suggested filename for the picker.
+ * @returns A file handle or `undefined` when the API is unavailable.
+ */
+export async function showFilePicker(fileName: string): Promise<any | undefined> {
   if (window.showSaveFilePicker) {
     return await window.showSaveFilePicker({
       suggestedName: fileName
@@ -10,21 +16,33 @@ export async function showFilePicker(fileName) {
   }
 }
 
-export async function makeZip(fileName, files, fileHandle = null) {
-  let zip = new JSZip();
-  let reports = zip.folder(fileName.replace(/\.zip$/, ''));
+/**
+ * Create a zip archive and trigger its download.
+ *
+ * @param fileName - Name of the resulting zip file.
+ * @param files - Files to include within the archive.
+ * @param fileHandle - Optional file handle from the picker API.
+ * @returns A promise that resolves when the download is initiated.
+ */
+export async function makeZip(
+  fileName: string,
+  files: {folder?: string; fileName: string; data: Blob | string}[],
+  fileHandle: any = null
+): Promise<any> {
+  const zip = new JSZip();
+  const reports = zip.folder(fileName.replace(/\.zip$/, ''));
   files.forEach(({folder, fileName, data}) => {
     if (folder) {
-      reports.folder(folder).file(fileName, data);
+      reports.folder(folder).file(fileName, data as any);
     }
     else {
-      reports.file(fileName, data);
+      reports.file(fileName, data as any);
     }
   });
   return zip
     .generateAsync({
       type: 'blob',
-      compression: "DEFLATE",
+      compression: 'DEFLATE',
       compressionOptions: {level: 1}
     })
     .then(data => makeDownload(
@@ -38,21 +56,31 @@ export async function makeZip(fileName, files, fileHandle = null) {
 
 const utf8Encoder = new TextEncoder();
 
+/**
+ * Trigger a file download either via the File System Access API or a
+ * fallback anchor element.
+ *
+ * @param fileName - Suggested file name.
+ * @param mediaType - MIME type of the data.
+ * @param data - Blob or string content to download.
+ * @param isBlob - When `true`, `data` is already a `Blob` instance.
+ * @param fileHandle - Optional file handle obtained from picker.
+ */
 export async function makeDownload(
-  fileName,
-  mediaType,
-  data,
+  fileName: string,
+  mediaType: string,
+  data: Blob | string,
   isBlob = false,
-  fileHandle = null
-) {
-  if (typeof(document) === 'undefined') {
+  fileHandle: any = null
+): Promise<void> {
+  if (typeof document === 'undefined') {
     return;
   }
   if (!fileHandle) {
     try {
       fileHandle = await showFilePicker(fileName);
     }
-    catch (error) {
+    catch (error: any) {
       if (error.name === 'AbortError') {
         // user aborts downloading
         return;
@@ -62,23 +90,27 @@ export async function makeDownload(
   }
   const ts = new Date().getTime();
   fileName = fileName.replace(/(\.[^.]+$|$)/, `_${ts}$1`);
+  let blob: Blob;
   if (!isBlob) {
-    data = utf8Encoder.encode(data);
-    data = new Blob([data], {type: mediaType});
+    const encoded = utf8Encoder.encode(data as string);
+    blob = new Blob([encoded], {type: mediaType});
+  }
+  else {
+    blob = data as Blob;
   }
   if (fileHandle) {
     const writable = await fileHandle.createWritable();
-    await writable.write(data);
+    await writable.write(blob);
     await writable.close();
   }
   else {
-    let uri = URL.createObjectURL(data);
+    const uri = URL.createObjectURL(blob);
     if (window.navigator.msSaveOrOpenBlob) {
       // download method of IE
-      window.navigator.msSaveOrOpenBlob(data, fileName);
+      window.navigator.msSaveOrOpenBlob(blob, fileName);
     }
     else {
-      let a = document.createElement('a');
+      const a = document.createElement('a');
 
       // firefox required a tag being attached to document
       a.style.display = 'none';
@@ -92,17 +124,16 @@ export async function makeDownload(
   }
 }
 
-
-function fallbackDownload(fileName, data) {
+function fallbackDownload(fileName: string, data: Blob): void {
   const ts = new Date().getTime();
   fileName = fileName.replace(/(\.[^.]+$|$)/, `_${ts}$1`);
-  let uri = URL.createObjectURL(data);
+  const uri = URL.createObjectURL(data);
   if (window.navigator.msSaveOrOpenBlob) {
     // download method of IE
     window.navigator.msSaveOrOpenBlob(data, fileName);
   }
   else {
-    let a = document.createElement('a');
+    const a = document.createElement('a');
 
     // firefox required a tag being attached to document
     a.style.display = 'none';
@@ -115,31 +146,41 @@ function fallbackDownload(fileName, data) {
   }
 }
 
-
-async function writeToFileHandle(fileHandle, data) {
+async function writeToFileHandle(fileHandle: any, data: Blob): Promise<void> {
   const writeFS = await fileHandle.createWritable();
   await writeFS.write(data);
   await writeFS.close();
 }
 
-
-function cleanFileName(name) {
+function cleanFileName(name: string): string {
   return name.replace(/[\\/:*?"<>|]/g, '.');
 }
-
 
 function defaultState() {
   return {
     initiated: false,
-    loadedFiles: [],
-    dirHandle: null,
-    fileHandle: null,
-    zipObj: null
+    loadedFiles: [] as string[],
+    dirHandle: null as any,
+    fileHandle: null as any,
+    zipObj: null as any
   };
 }
 
+interface UseDownloadArgs {
+  name: string;
+  suffix: string;
+  types: any;
+  multiple?: boolean;
+}
 
-export function useDownload({name, suffix, types, multiple = true}) {
+/**
+ * React hook assisting in downloading one or more files, optionally through
+ * the File System Access API.
+ *
+ * @param args - Configuration for the download behaviour.
+ * @returns Helper methods and state describing the download process.
+ */
+export function useDownload({name, suffix, types, multiple = true}: UseDownloadArgs) {
   const isMounted = useMounted();
   const [isDownloading, setIsDownloading] = React.useState(false);
   const state = React.useRef(defaultState());
@@ -185,7 +226,7 @@ export function useDownload({name, suffix, types, multiple = true}) {
       fileName,
       data,
       isBlob = true
-    }) => {
+    }: {folder?: string; fileName: string; data: Blob | string; isBlob?: boolean}) => {
       if (!state.current.initiated) {
         await onInit();
       }

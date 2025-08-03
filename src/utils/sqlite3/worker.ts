@@ -1,21 +1,25 @@
-import initSqlJs from "sql.js";
-
-import sqlWASM from "sql.js/dist/sql-wasm.wasm";
+import initSqlJs from 'sql.js';
+import sqlWASM from 'sql.js/dist/sql-wasm.wasm';
 
 /* eslint no-restricted-globals: ["error"] */
 
-let db;
+let db: any;
 
-function onModuleReady(SQL) {
-  function createDb(data) {
+/**
+ * Handle messages sent to the worker by executing SQLite operations.
+ *
+ * @param SQL - Initialized sql.js module.
+ */
+function onModuleReady(SQL: any) {
+  function createDb(data?: Uint8Array) {
     if (db != null) db.close();
     db = new SQL.Database(data);
     return db;
   }
 
-  var buff; var data; var result;
-  data = this["data"];
-  var config = data["config"] ? data["config"] : {};
+  let buff: ArrayBuffer | undefined; let data: any; let result: any;
+  data = (this as any)["data"];
+  const config = data["config"] ? data["config"] : {};
   switch (data && data["action"]) {
     case "open":
       buff = data["buffer"];
@@ -39,14 +43,14 @@ function onModuleReady(SQL) {
       if (db === null) {
         createDb();
       }
-      var callback = function callback(row) {
+      const callback = function callback(row: any) {
         return postMessage({
           id: data["id"],
           row,
           finished: false
         });
       };
-      var done = function done() {
+      const done = function done() {
         return postMessage({
           id: data["id"],
           finished: true
@@ -76,17 +80,17 @@ function onModuleReady(SQL) {
   }
 }
 
-function onError(err) {
+function onError(err: any) {
   return postMessage({
-    id: this["data"]["id"],
+    id: (this as any)["data"]["id"],
     error: err["message"]
   });
 }
 
 if (typeof importScripts === "function") {
   db = null;
-  var sqlModuleReady = initSqlJs({locateFile: () => sqlWASM});
-  self.onmessage = function onmessage(event) {
+  const sqlModuleReady = initSqlJs({locateFile: () => sqlWASM});
+  self.onmessage = function onmessage(event: MessageEvent) {
     return sqlModuleReady
       .then(onModuleReady.bind(event))
       .catch(onError.bind(event));

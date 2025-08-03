@@ -6,7 +6,7 @@ import {makeDownload} from './download';
 const API_SERVER = 'https://codfreq-api.hivdb.org';
 
 
-function handleResponseError(e) {
+function handleResponseError(e: any) {
   if (!e.response || !e.response.data) {
     throw e;
   }
@@ -15,7 +15,7 @@ function handleResponseError(e) {
 }
 
 
-async function createTask(options) {
+async function createTask(options: any) {
   let resp;
   try {
     resp = await axios.post(`${API_SERVER}/create-task`, {
@@ -33,7 +33,7 @@ async function createTask(options) {
 }
 
 
-async function * uploadFile(file, url, fields) {
+async function * uploadFile(file: any, url: string, fields: Record<string, any>) {
   const formData = new FormData();
   for (const name in fields) {
     formData.append(name, fields[name]);
@@ -85,7 +85,7 @@ async function * uploadFile(file, url, fields) {
 }
 
 
-async function * uploadFiles(taskKey, filePairs) {
+async function * uploadFiles(taskKey: string, filePairs: any[]) {
   const files = filePairs.reduce(
     (acc, {pair}) => [
       ...acc,
@@ -122,7 +122,7 @@ async function * uploadFiles(taskKey, filePairs) {
 }
 
 
-async function triggerRunner(taskKey, filePairs, runners) {
+async function triggerRunner(taskKey: string, filePairs: any[], runners: any) {
   const pairInfo = filePairs.map(
     ({name, pair, n}) => ({
       name,
@@ -148,7 +148,7 @@ async function triggerRunner(taskKey, filePairs, runners) {
 }
 
 
-async function * fetchRunnerProgress(taskKey) {
+async function * fetchRunnerProgress(taskKey: string) {
   let prevCounts = {};
   for await (const event of fetchRunnerLogs(taskKey)) {
     const {op, numTasks, ecsTaskId} = event;
@@ -219,7 +219,7 @@ async function * fetchRunnerProgress(taskKey) {
 }
 
 
-async function * fetchRunnerLogs(taskKey) {
+async function * fetchRunnerLogs(taskKey: string) {
   let startTime = undefined;
   while (true) {
     let resp;
@@ -262,7 +262,7 @@ async function * fetchRunnerLogs(taskKey) {
 }
 
 
-export async function saveAllFiles(taskKey, {onAddFile, onFinish}) {
+export async function saveAllFiles(taskKey: string, {onAddFile, onFinish}: any) {
   let resp;
   let nextToken;
   let isTruncated;
@@ -295,7 +295,7 @@ export async function saveAllFiles(taskKey, {onAddFile, onFinish}) {
 }
 
 
-export async function downloadCodfreqs(taskKey) {
+export async function downloadCodfreqs(taskKey: string) {
   let resp;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs-zip`, {
@@ -316,7 +316,7 @@ export async function downloadCodfreqs(taskKey) {
 }
 
 
-async function fetchCodfreqs(taskKey) {
+async function fetchCodfreqs(taskKey: string) {
   let resp;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs`, {
@@ -397,7 +397,12 @@ async function fetchCodfreqs(taskKey) {
 }
 
 
-export async function * restoreTask(taskKey) {
+/**
+ * Restore a previously created task and stream progress events.
+ *
+ * @param taskKey - Unique identifier of the task.
+ */
+export async function * restoreTask(taskKey: string) {
   let loaded = false;
   yield {
     loaded,
@@ -455,7 +460,14 @@ export async function * restoreTask(taskKey) {
 }
 
 
-export default async function * fastq2codfreq(filePairs, runners, options) {
+/**
+ * Upload FASTQ pairs, trigger codfreq generation and stream progress.
+ *
+ * @param filePairs - Array of file pair descriptors.
+ * @param runners - Runner configuration.
+ * @param options - Task options sent to the API.
+ */
+export default async function * fastq2codfreq(filePairs: any[], runners: any, options: any) {
   const {taskKey} = await createTask(options);
   let loaded = false;
   yield {

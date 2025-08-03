@@ -1,13 +1,11 @@
 import isEqual from 'lodash/isEqual';
 import {csvParse} from './csv';
 
-
-function testTSV(text) {
+function testTSV(text: string): boolean {
   return !!text && /\t/.test(text);
 }
 
-
-function tsvrow(row) {
+function tsvrow(row: string): string[] {
   const cells = row.split(/\t/g);
   return cells.map(c => {
     c = c.trim();
@@ -20,9 +18,23 @@ function tsvrow(row) {
   });
 }
 
+export interface GeneValidatorDef {
+  regexp: string;
+  gene: string;
+  posOffset?: number;
+  range?: [number, number];
+}
 
-export function buildGeneValidator(geneValidatorDefs) {
-  let patternPairs = [];
+/**
+ * Build a function to normalize gene names and positions.
+ *
+ * @param geneValidatorDefs - Definitions of gene validation rules.
+ * @returns A function mapping input gene and position to normalized values.
+ */
+export function buildGeneValidator(
+  geneValidatorDefs: GeneValidatorDef[]
+): (gene: string, pos: number) => [string|null, number|null] {
+  const patternPairs: [RegExp, string, number, [number, number]?][] = [];
   for (const {
     regexp,
     gene,
@@ -31,7 +43,7 @@ export function buildGeneValidator(geneValidatorDefs) {
   } of geneValidatorDefs) {
     patternPairs.push([new RegExp(regexp, 'i'), gene, posOffset, range]);
   }
-  return (gene, pos) => {
+  return (gene: string, pos: number): [string|null, number|null] => {
     for (const [pattern, normGene, posOffset, range] of patternPairs) {
       if (pattern.test(gene)) {
         if (!range || (pos >= range[0] && pos <= range[1])) {
@@ -43,8 +55,11 @@ export function buildGeneValidator(geneValidatorDefs) {
   };
 }
 
-
-function parseAAVF(name, rows, geneValidator) {
+function parseAAVF(
+  name: string,
+  rows: string[],
+  geneValidator: (gene: string, pos: number) => [string|null, number|null]
+) {
   const gpMap = {};
   const gpRefMap = {};
   for (let row of rows) {
@@ -164,7 +179,7 @@ function parseAAVF(name, rows, geneValidator) {
 }
 
 
-function detectCodFreqDialect(firstRow) {
+function detectCodFreqDialect(firstRow: any[]): string {
   if (isEqual(firstRow, [
     'gene',
     'pos',
@@ -183,7 +198,11 @@ function detectCodFreqDialect(firstRow) {
 }
 
 
-function parseCodFreq(name, rows, geneValidator) {
+function parseCodFreq(
+  name: string,
+  rows: any[],
+  geneValidator: (gene: string, pos: number) => [string|null, number|null]
+) {
   const gpMap = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
   const [firstRow] = rows;
@@ -279,10 +298,10 @@ const utrPattern = (
   /# *(?<name>[\S]+) (?<refStart>\d+)\.\.(?<refEnd>\d+): *(?<consensus>[\S]+)/
 );
 
-function parseUntransRegions(rows) {
+function parseUntransRegions(rows: string[]): [any[], string[]] {
   let begin = false;
-  const results = [];
-  const remainRows = [];
+  const results: any[] = [];
+  const remainRows: string[] = [];
   for (const row of rows) {
     if (utrEnd.test(row)) {
       begin = false;
@@ -309,13 +328,24 @@ function parseUntransRegions(rows) {
   return [results, remainRows];
 }
 
-
-export function parseSequenceReads(name, data, geneValidator) {
+/**
+ * Parse sequence read data in multiple supported formats.
+ *
+ * @param name - Sample name.
+ * @param data - Raw text content of the sequence reads file.
+ * @param geneValidator - Function to normalize gene names and positions.
+ * @returns Parsed reads along with untranslated region information.
+ */
+export function parseSequenceReads(
+  name: string,
+  data: string,
+  geneValidator: (gene: string, pos: number) => [string|null, number|null]
+) {
   const [
     untranslatedRegions,
     unparsedRows
   ] = parseUntransRegions(data.split(/[\r\n]+/g));
-  let rows;
+  let rows: any[];
   if (unparsedRows[0].startsWith('##fileformat=AAVF')) {
     return parseAAVF(name, unparsedRows, geneValidator);
   }
@@ -323,7 +353,7 @@ export function parseSequenceReads(name, data, geneValidator) {
     rows = unparsedRows.map(tsvrow);
   }
   else {
-    rows = csvParse(unparsedRows.join('\n'), false);
+    rows = csvParse(unparsedRows.join('\n'), false) as any[];
   }
   return {
     ...parseCodFreq(name, rows, geneValidator),

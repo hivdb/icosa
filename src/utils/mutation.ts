@@ -5,45 +5,66 @@ const AMINO_ACIDS = 'ACDEFGHIKLMNPQRSTVWY';
 // const nonaaRegex = new RegExp(`[^${AMINO_ACIDS}_/*-]+`, 'g');
 const aaRegex = new RegExp(`[${AMINO_ACIDS}_*-]`, 'g');
 
-export function parseMutation(mut, defaultGene) {
-  let pos = null;
-  let aas = null;
-  let ref = null;
-  let gene = defaultGene;
+/**
+ * Parse a mutation string into its components.
+ *
+ * @param mut - Mutation string such as "PR:L10F".
+ * @param defaultGene - Default gene when the mutation string omits it.
+ * @returns Tuple of position, amino-acid string, reference AA and gene.
+ */
+export function parseMutation(mut: string, defaultGene?: string): [string|null, string|null, string|null, string|null] {
+  let pos: string | null = null;
+  let aas: string | null = null;
+  let ref: string | null = null;
+  let gene: string | null = defaultGene ?? null;
   if (mut.includes(':')) {
     [gene] = mut.split(':', 1);
-    mut = mut.slice(gene.length + 1);
+    mut = mut.slice((gene as string).length + 1);
   }
 
   if (/^[A-Za-z]/.test(mut)) {
     ref = mut.slice(0, 1);
     mut = mut.slice(1);
   }
-  pos = /^\d+/.exec(mut);
-  if (pos != null) {
-    [pos] = pos;
+  const match = /^\d+/.exec(mut);
+  if (match != null) {
+    [pos] = match;
     aas = mut.slice(pos.length);
     aas = aas.replace(/[^A-Za-z_*-]+/g, '');
   }
   return [pos, aas, ref, gene];
 }
 
-export function expandIndel(aa) {
+/**
+ * Convert shorthand indel representation to verbose form.
+ *
+ * @param aa - Amino acid string possibly containing indel markers.
+ * @returns Expanded indel string.
+ */
+export function expandIndel(aa: string): string {
   return aa
     .replace(/[i_]/, 'ins')
     .replace(/[d-]/, 'del');
 }
 
-export function mutationCompare(mut1, mut2) {
+/**
+ * Compare two mutation strings by position and amino acids.
+ *
+ * @param mut1 - First mutation string.
+ * @param mut2 - Second mutation string.
+ * @returns Negative when `mut1` comes before `mut2`, positive when after,
+ *          and zero when equal.
+ */
+export function mutationCompare(mut1: string, mut2: string): number {
   // TODO: also compare genes
   const [pos1, aas1] = parseMutation(mut1);
   const [pos2, aas2] = parseMutation(mut2);
-  let diff = pos1 - pos2;
+  let diff = Number(pos1) - Number(pos2);
   if (diff === 0) {
-    if (aas1 < aas2) {
+    if ((aas1 || '') < (aas2 || '')) {
       diff = -1;
     }
-    else if (aas1 > aas2) {
+    else if ((aas1 || '') > (aas2 || '')) {
       diff = 1;
     }
     else {
@@ -53,16 +74,35 @@ export function mutationCompare(mut1, mut2) {
   return diff;
 }
 
-export function sanitizeMutations(mutations, {
-  allowPositions,
-  defaultGene,
-  geneSynonyms,
-  geneReferences,
-  messages,
-  removeErrors = false
-}) {
-  const posIndices = {};
-  let merged = [];
+interface SanitizeOptions {
+  allowPositions?: boolean;
+  defaultGene?: string;
+  geneSynonyms: Record<string, string>;
+  geneReferences: Record<string, string>;
+  messages: Record<string, string>;
+  removeErrors?: boolean;
+}
+
+/**
+ * Normalize and validate a list of mutation strings.
+ *
+ * @param mutations - Raw mutation strings.
+ * @param opts - Validation and normalization options.
+ * @returns Tuple of sanitized mutations and those containing errors.
+ */
+export function sanitizeMutations(
+  mutations: string[],
+  {
+    allowPositions,
+    defaultGene,
+    geneSynonyms,
+    geneReferences,
+    messages,
+    removeErrors = false
+  }: SanitizeOptions
+): [string[], {text: string; errors: string[]}[]] {
+  const posIndices: Record<string, number> = {};
+  let merged: {aas?: string; text: string; errors: string[]}[] = [];
   for (const mut of mutations) {
     let {
       canonGene, gene, ref, pos,
@@ -107,33 +147,56 @@ export function sanitizeMutations(mutations, {
   ];
 }
 
-
-function getMessage(key, messages) {
+function getMessage(key: string, messages: Record<string, string>): string {
   if (key in messages) {
     return messages[key];
   }
   return `<${key}>`;
 }
 
+interface ParseValidateOptions {
+  allowPositions?: boolean;
+  defaultGene?: string;
+  geneSynonyms: Record<string, string>;
+  geneReferences: Record<string, string>;
+  messages?: Record<string, string>;
+}
 
-export function parseAndValidateMutation(mut, {
-  allowPositions,
-  defaultGene,
-  geneSynonyms,
-  geneReferences,
-  messages = {}
-}) {
-  const errors = [];
+interface ParsedMutation {
+  gene?: string;
+  canonGene?: string;
+  ref?: string;
+  pos?: number;
+  aas?: string;
+  indel?: string;
+  text: string;
+  errors: string[];
+}
+
+/**
+ * Parse and validate a mutation string returning normalized details.
+ *
+ * @param mut - Raw mutation string.
+ * @param opts - Validation options.
+ * @returns Parsed mutation information and any errors.
+ */
+export function parseAndValidateMutation(
+  mut: string,
+  {
+    allowPositions,
+    defaultGene,
+    geneSynonyms,
+    geneReferences,
+    messages = {}
+  }: ParseValidateOptions
+): ParsedMutation {
+  const errors: string[] = [];
   let [pos, aas,, gene] = parseMutation(mut, defaultGene);
   if (!allowPositions && aas === null) {
     errors.push(getMessage('mut-input-error-invalid-mutation', messages));
   }
   if (pos === null || gene === null) {
     errors.push(getMessage('mut-input-error-invalid-mutation', messages));
-    //   "invalid mutation. A mutation must format as Gene:RefPosAA. " +
-    //   "For examples, PR:L10F, RT:M184V for HIV-1, or " +
-    //   "S:E484K, RdRP:P323L for SARS-CoV-2."
-    // );
     return {
       text: mut,
       errors
@@ -164,41 +227,41 @@ export function parseAndValidateMutation(mut, {
     gene = tryMatchGene;
   }
 
-  if (pos < 1) {
+  const posNum = Number(pos);
+  if (posNum < 1) {
     errors.push(
       getMessage('mut-input-error-pos-is-zero', messages)
     );
-    //"a position {'<'} 1 was entered");
   }
   const refSeq = (
     geneReferences[gene] ||
     geneReferences[geneSynonyms[gene]]
   );
-  if (pos > refSeq.length) {
+  if (posNum > refSeq.length) {
     errors.push(
       getMessage('mut-input-error-pos-out-of-bounds', messages)
-        .replace('$$MAX_POS$$', refSeq.length)
+        .replace('$$MAX_POS$$', refSeq.length.toString())
     );
     return {
       text: mut,
       errors
     };
   }
-  aas = aas
+  aas = (aas || '')
     .replace(/[iI]ns(e(r(t(i(o(n)?)?)?)?)?)?/g, '_')
     .replace(/[dD]el(e(t(i(o(n)?)?)?)?)?/g, '-')
     .toUpperCase();
   aas = uniq(aas.match(aaRegex) || []).join('');
   if (!allowPositions && aas.length === 0) {
-    errors.push("no valid amino acid was found");
+    errors.push('no valid amino acid was found');
     return {
       text: mut,
       errors
     };
   }
-  const ref = refSeq[pos - 1];
+  const ref = refSeq[posNum - 1];
   if (ref === aas) {
-    errors.push("the entered amino acid is identical to the reference");
+    errors.push('the entered amino acid is identical to the reference');
   }
   let indel = 'none';
   if (aas.includes('_')) {
@@ -213,10 +276,10 @@ export function parseAndValidateMutation(mut, {
     gene,
     canonGene: geneSynonyms[gene] || gene,
     ref,
-    pos,
+    pos: posNum,
     aas,
     indel,
-    text: `${gene}:${ref || ''}${pos}${aas}`,
+    text: `${gene}:${ref || ''}${posNum}${aas}`,
     errors
   };
 }
