@@ -25,7 +25,9 @@ export default defineConfig({
     css: true,
     alias: {
       'flexbox-grid-mixins': path.resolve(__dirname, 'src/shims/flexbox-grid-mixins.scss'),
-      'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss')
+      'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss'),
+      'ramda/src/forEach': path.resolve(__dirname, 'src/shims/ramda-src-forEach.js'),
+      '~react-dropdown/style': path.resolve(__dirname, 'src/shims/react-dropdown-style.scss')
     }
   }
 });
