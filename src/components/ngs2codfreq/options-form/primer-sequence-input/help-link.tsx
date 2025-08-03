@@ -1,15 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import ExtLink from '../../../link/external';
 
+export interface HelpLinkProps {
+  option: string;
+  anchor: string;
+}
 
-HelpLink.propTypes = {
-  option: PropTypes.string.isRequired,
-  anchor: PropTypes.string.isRequired
-};
-
-export default function HelpLink({option, anchor}) {
+export default function HelpLink({option, anchor}: HelpLinkProps) {
   return <>
     Cutadapt option "{option}".
     <br />

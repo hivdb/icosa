@@ -1,25 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {HoverPopup} from '../../../popup';
 
 import style from '../style.module.scss';
 
+export interface ItemNameInputProps {
+  name: string;
+  value: string;
+  setValue: (value: string) => void;
+}
 
-ItemHeaderInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  header: PropTypes.string.isRequired,
-  setHeader: PropTypes.func.isRequired
-};
-
-export default function ItemHeaderInput({
+export default function ItemNameInput({
   name,
-  header,
-  setHeader
-}) {
+  value,
+  setValue
+}: ItemNameInputProps) {
   const handleChange = React.useCallback(
-    event => setHeader(event.currentTarget.value),
-    [setHeader]
+    (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.currentTarget.value),
+    [setValue]
   );
 
   return (
@@ -27,15 +25,15 @@ export default function ItemHeaderInput({
      noUnderline
      position="left"
      message={<>
-       Primer header
+       Primer name
      </>}>
       <input
        type="text"
        id={name}
        name={name}
        className={style['name-input']}
-       value={header}
-       placeholder="Header"
+       value={value}
+       placeholder="Name"
        onChange={handleChange} />
     </HoverPopup>
   );

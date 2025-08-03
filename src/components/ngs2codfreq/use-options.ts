@@ -1,12 +1,14 @@
 import React from 'react';
 import set from 'lodash/set';
 import isEqual from 'lodash/isEqual';
+import createPersistedState from 'use-persisted-state/src';
+
 import {
   defaultFastpConfig,
   defaultCutadaptConfig,
-  defaultIvarConfig
-} from './options-form/prop-types';
-import createPersistedState from 'use-persisted-state/src';
+  defaultIvarConfig,
+  type NGSOptions
+} from './options-form/types';
 
 const usePersistedOptions = createPersistedState(
   '--ngs2codfreq-persisted-settings-' +
@@ -16,9 +18,18 @@ const usePersistedOptions = createPersistedState(
 );
 
 
-export default function useOptions() {
+/**
+ * React hook that manages options for the NGS to CodFreq workflow.
+ *
+ * It persists the configuration in local storage (when enabled) and
+ * provides a change handler to update nested keys.
+ *
+ * @returns A tuple containing the current options, a change handler and a
+ * boolean indicating whether the options are still at their default values.
+ */
+export default function useOptions(): [NGSOptions, (key: string, value: any) => void, boolean] {
   const [persistedOptions, setPersistedOptions] = usePersistedOptions({});
-  const [options, setOptions] = React.useState({
+  const [options, setOptions] = React.useState<NGSOptions>({
     fastpConfig: {...defaultFastpConfig},
     cutadaptConfig: {...defaultCutadaptConfig},
     ivarConfig: {...defaultIvarConfig},
@@ -28,8 +39,8 @@ export default function useOptions() {
   });
 
   const onChange = React.useCallback(
-    (key, value) => {
-      const newOptions = {...options};
+    (key: string, value: any) => {
+      const newOptions: NGSOptions = {...options};
       if (key === '.') {
         Object.assign(newOptions, value);
       }

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 import fastq2codfreq, {restoreTask} from '../../utils/fastq2codfreq';
 
@@ -8,14 +8,33 @@ import OptionsForm from './options-form';
 import NGSResults from './results';
 
 import useOptions from './use-options';
+import type { FastqPair } from './fastq-pairs';
 
+interface UpdateProgressArgs {
+  progress: any;
+  progressLookup: Record<string, any>;
+  forceUpdate: () => void;
+  onTriggerRunner?: (taskKey: string) => boolean | void;
+  onLoad?: (codfreqs: any) => void;
+}
+
+/**
+ * Update internal progress tracking and trigger side effects.
+ *
+ * @param args.progress - progress payload from the worker.
+ * @param args.progressLookup - lookup table of progress steps.
+ * @param args.forceUpdate - function to force re-render.
+ * @param args.onTriggerRunner - optional callback when runner is triggered.
+ * @param args.onLoad - optional callback when results are loaded.
+ * @returns whether the progress loop should terminate.
+ */
 function updateProgress({
   progress,
   progressLookup,
   forceUpdate,
   onTriggerRunner,
   onLoad
-}) {
+}: UpdateProgressArgs): boolean {
   const {step, taskKey, loaded, codfreqs} = progress;
   progressLookup[step] = progress;
   forceUpdate();
@@ -31,29 +50,26 @@ function updateProgress({
   return false;
 }
 
-NGS2CodFreq.propTypes = {
-  showOptionsForm: PropTypes.bool.isRequired,
-  taskKey: PropTypes.string,
-  onTriggerRunner: PropTypes.func,
-  onLoad: PropTypes.func,
-  onAnalyze: PropTypes.func,
-  className: PropTypes.string,
-  runners: PropTypes.array
-};
+export interface NGS2CodFreqProps {
+  showOptionsForm?: boolean;
+  taskKey?: string;
+  onTriggerRunner?: (taskKey: string) => boolean | void;
+  onLoad?: (codfreqs: any) => void;
+  onAnalyze?: (codfreqs: any) => void;
+  className?: string;
+  runners?: any[];
+}
 
-NGS2CodFreq.defaultProps = {
-  showOptionsForm: false
-};
-
+/** Main component orchestrating the upload and processing of FASTQ files. */
 export default function NGS2CodFreq({
-  showOptionsForm,
+  showOptionsForm = false,
   taskKey,
   onTriggerRunner,
   onLoad,
   onAnalyze,
   className,
   runners
-}) {
+}: NGS2CodFreqProps) {
 
   const [, forceUpdate] = React.useReducer(n => n + 1, 0);
   const {current: progressLookup} = React.useRef({});
@@ -86,7 +102,7 @@ export default function NGS2CodFreq({
   );
 
   const handleSubmit = React.useCallback(
-    async fastqPairs => {
+    async (fastqPairs: FastqPair[]) => {
       if (fastqPairs.length > 0) {
         const {fastpConfig, cutadaptConfig, ivarConfig, primerType} = options;
         const requestOptions = {fastpConfig};

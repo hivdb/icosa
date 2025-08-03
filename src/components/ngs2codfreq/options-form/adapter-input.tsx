@@ -1,34 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import CheckboxInput from '../../checkbox-input';
 
 import style from './style.module.scss';
 
 
-AdapterInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  autoValue: PropTypes.string,
-  children: PropTypes.node
-};
+export interface AdapterInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (name: string, value: string) => void;
+  disabled?: boolean;
+  autoValue?: string;
+  children?: React.ReactNode;
+}
 
-AdapterInput.defaultProps = {
-  autoValue: 'auto'
-};
-
+/** Input field for adapter sequences with auto-detect capability. */
 export default function AdapterInput({
   name,
   label,
   value,
   onChange,
   disabled,
-  autoValue,
+  autoValue = 'auto',
   children
-}) {
-  const textAreaRef = React.useRef();
+}: AdapterInputProps) {
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const handleChange = React.useCallback(
     event => {
       const newValue = event.currentTarget.value;
@@ -41,7 +37,7 @@ export default function AdapterInput({
     event => (
       event.currentTarget.checked ?
         onChange(name, autoValue) :
-        textAreaRef.current.focus()
+        textAreaRef.current?.focus()
     ),
     [name, onChange, autoValue]
   );

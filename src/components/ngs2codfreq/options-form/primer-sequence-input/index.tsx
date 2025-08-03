@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import Button from '../../../button';
 import FileInput from '../../../file-input';
-import {primerSeqShape} from '../prop-types';
+import {type PrimerSeq} from '../types';
 import {parseFasta} from '../../../../utils/fasta';
 import readFile from '../../../../utils/read-file';
 import useMounted from '../../../../utils/use-mounted';
@@ -25,31 +24,28 @@ function detectHeaderType(header) {
 }
 
 
-PrimerSequenceInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  value: PropTypes.arrayOf(
-    primerSeqShape.isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+export interface PrimerSequenceInputProps {
+  name: string;
+  value: PrimerSeq[];
+  onChange: (name: string, value: PrimerSeq[]) => void;
+}
 
 export default function PrimerSequenceInput({
   name,
   value,
   onChange
-}) {
+}: PrimerSequenceInputProps) {
   const isMounted = useMounted();
   const [autoIncr, setAutoIncr] = React.useState(
     value.length > 0 ? Math.max(
       ...value.map(({idx}) => idx)
     ) + 1 : 0
   );
-  const [pendingItems, setPendingItems] = React.useState([]);
+  const [pendingItems, setPendingItems] = React.useState<PrimerSeq[]>([]);
   const errors = useValidation(value);
 
   const handleChange = React.useCallback(
-    (item, isNew, isRemove = false) => {
+    (item: PrimerSeq, isNew: boolean, isRemove = false) => {
       const newValue = [...value];
       if (isNew) {
         if (!isRemove) {
@@ -109,8 +105,8 @@ export default function PrimerSequenceInput({
   );
 
   const handleUpload = React.useCallback(
-    async files => {
-      const newItems = [];
+    async (files: File[]) => {
+      const newItems: PrimerSeq[] = [];
       let newAutoIncr = autoIncr;
       for (const file of files) {
         if (

@@ -1,23 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import RadioInput from '../../radio-input';
 
 import style from './style.module.scss';
 
+export interface DisableFlagSwitchProps<T> {
+  name: string;
+  label: string;
+  value: T;
+  onChange: (name: string, value: T) => void;
+  valueChoices: T[];
+  textChoices: string[];
+  children?: React.ReactNode;
+}
 
-DisableFlagSwitch.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.any.isRequired,
-  onChange: PropTypes.func.isRequired,
-  valueChoices: PropTypes.array.isRequired,
-  textChoices: PropTypes.array.isRequired,
-  children: PropTypes.node
-};
-
-
-export default function DisableFlagSwitch({
+/** Generic radio switch for toggling between values. */
+export default function DisableFlagSwitch<T>({
   name,
   label,
   value,
@@ -25,7 +22,7 @@ export default function DisableFlagSwitch({
   valueChoices,
   textChoices,
   children
-}) {
+}: DisableFlagSwitchProps<T>) {
   const handleChange = React.useCallback(
     event => onChange(
       name,

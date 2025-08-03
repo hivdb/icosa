@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
@@ -9,7 +8,7 @@ import ConfigContext from '../../utils/config-context';
 import Link from '../link';
 import Loader from '../loader';
 
-import {identifyPairs} from './fastq-pairs';
+import {identifyPairs, type FastqPair} from './fastq-pairs';
 import PreviewFiles from './preview-files';
 import style from './style.module.scss';
 
@@ -18,26 +17,27 @@ const SUPPORT_FORMATS = {
   'application/gzip': ['.fastq.gz']
 };
 
-NGSUploadForm.propTypes = {
-  isOptionsDefault: PropTypes.bool.isRequired,
-  showOptionsForm: PropTypes.bool.isRequired,
-  className: PropTypes.string,
-  onSubmit: PropTypes.func
-};
+export interface NGSUploadFormProps {
+  isOptionsDefault: boolean;
+  showOptionsForm: boolean;
+  className?: string;
+  onSubmit?: (pairs: FastqPair[]) => void;
+}
 
+/** Form for uploading FASTQ files and configuring options. */
 export default function NGSUploadForm({
   isOptionsDefault,
   showOptionsForm,
   className,
   onSubmit
-}) {
+}: NGSUploadFormProps) {
 
   const [config, isConfigPending] = ConfigContext.use();
-  const [fastqPairs, setFastqPairs] = React.useState([]);
+  const [fastqPairs, setFastqPairs] = React.useState<FastqPair[]>([]);
 
   const handleUpload = React.useCallback(
-    async (fileList) => {
-      const fastqFiles = [];
+    async (fileList: File[]) => {
+      const fastqFiles: File[] = [];
       const knownFiles = new Set();
       for (const {pair} of fastqPairs) {
         for (const file of pair) {
@@ -71,7 +71,7 @@ export default function NGSUploadForm({
       }
       setFastqPairs([
         ...fastqPairs,
-        ...identifyPairs(fastqFiles)
+        ...Array.from(identifyPairs(fastqFiles))
       ]);
     },
     [fastqPairs, setFastqPairs]
@@ -80,7 +80,7 @@ export default function NGSUploadForm({
   const handleSubmit = React.useCallback(
     e => {
       e && e.preventDefault();
-      onSubmit(fastqPairs);
+      onSubmit && onSubmit(fastqPairs);
     },
     [onSubmit, fastqPairs]
   );

@@ -1,12 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import {HoverPopup} from '../../../popup';
 import Button from '../../../button';
 import RadioInput from '../../../radio-input';
 
-import {primerSeqShape} from '../prop-types';
+import {type PrimerSeq} from '../types';
 import style from '../style.module.scss';
 
 import useEndsType from './use-ends-type';
@@ -14,29 +13,20 @@ import HeaderInput from './item-header-input';
 import HelpLink from './help-link';
 
 
-PrimerSeqItemInput.propTypes = {
-  isNew: PropTypes.bool,
-  name: PropTypes.string.isRequired,
-  value: primerSeqShape,
-  onChange: PropTypes.func.isRequired
-};
-
-PrimerSeqItemInput.defaultProps = {
-  isNew: false
-};
+export interface PrimerSeqItemInputProps {
+  isNew?: boolean;
+  name: string;
+  value: PrimerSeq;
+  onChange: (value: PrimerSeq | {idx: number}, isNew: boolean, isRemove?: boolean) => void;
+}
 
 export default function PrimerSeqItemInput({
-  isNew,
+  isNew = false,
   name,
-  value: {
-    idx,
-    header,
-    sequence,
-    type
-  },
+  value: { idx, header, sequence, type },
   onChange
-}) {
-  const textAreaRef = React.useRef();
+}: PrimerSeqItemInputProps) {
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const [
     unsavedHeader,
     setUnsavedHeader
