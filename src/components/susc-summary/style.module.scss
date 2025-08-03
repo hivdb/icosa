@@ -1,8 +1,8 @@
-@import "../../styles/colors";
-@import "../../styles/constants";
-@import "../../styles/functions";
-@import "../../styles/extension";
-@import "../../styles/popup";
+@use "../../styles/colors" as *;
+@use "../../styles/constants" as *;
+@use "../../styles/functions" as *;
+@use "../../styles/extension" as *;
+@use "../../styles/popup" as *;
 
 
 $cell-padding: .1rem;

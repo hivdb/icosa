@@ -1,4 +1,4 @@
-@import '../../styles/select';
+@use '../../styles/select' as *;
 .tooltip {
   display: none;
   position: fixed;

@@ -9,8 +9,8 @@ describe('Sidebar', () => {
   it('marks current selected item', () => {
     const {container} = render(
       <Sidebar title="Title" currentSelected="a">
-        <SidebarItem name="a" to="/a">Item A</SidebarItem>
-        <SidebarItem name="b" to="/b">Item B</SidebarItem>
+        <SidebarItem name="a" href="/a">Item A</SidebarItem>
+        <SidebarItem name="b" href="/b">Item B</SidebarItem>
       </Sidebar>
     );
     const current = container.querySelector(`.${style.current}`);

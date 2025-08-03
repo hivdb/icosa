@@ -1,5 +1,5 @@
-@import "./colors";
-@import "./table";
+@use "./colors" as *;
+@use "./table" as *;
 
 :local .content-container {
   @extend %table-style;

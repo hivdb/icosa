@@ -1,9 +1,13 @@
+import React from 'react';
 import {render} from '@testing-library/react';
 import {describe, it, expect, vi} from 'vitest';
 import '@testing-library/jest-dom';
 
 vi.mock('../../utils/use-messages', () => ({
   default: () => ['<mutation-popup>', '', '', '', '', '']
+}));
+vi.mock('../markdown', () => ({
+  default: ({children}: {children: React.ReactNode}) => <>{children}</>
 }));
 
 import Mutation from './index';

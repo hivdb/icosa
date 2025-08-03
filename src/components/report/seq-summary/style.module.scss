@@ -1,9 +1,9 @@
-@import "../ext";
-@import "../../../styles/tabs";
-@import "../../../styles/mixins";
-@import "../../../styles/colors";
-@import "../../../styles/dropdown";
-@import "../../../styles/functions";
+@use "../ext" as *;
+@use "../../../styles/tabs" as *;
+@use "../../../styles/mixins" as *;
+@use "../../../styles/colors" as *;
+@use "../../../styles/dropdown" as *;
+@use "../../../styles/functions" as *;
 
 .seq-summary {
   @extend %report-section;

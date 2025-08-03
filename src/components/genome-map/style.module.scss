@@ -1,5 +1,5 @@
-@import "../../styles/default-colors";
-@import "../../styles/functions";
+@use "../../styles/default-colors" as *;
+@use "../../styles/functions" as *;
 
 .map-container {
   position: relative;

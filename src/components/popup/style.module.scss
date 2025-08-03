@@ -1,4 +1,4 @@
-@import "../../styles/popup";
+@use "../../styles/popup" as *;
 
 .icosa-popup {
   @include popup;

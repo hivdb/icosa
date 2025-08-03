@@ -1,6 +1,6 @@
-@import "../../styles/colors";
-@import "../../styles/functions";
-@import "../../styles/extension";
+@use "../../styles/colors" as *;
+@use "../../styles/functions" as *;
+@use "../../styles/extension" as *;
 
 ul.sir-pcnt-bar {
   --bar-width: 30rem;

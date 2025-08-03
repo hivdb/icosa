@@ -1,4 +1,4 @@
-@import "../../styles";
+@use "../../styles" as *;
 
 span.file-input {
   display: inline-flex;

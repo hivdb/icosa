@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "../ext";
+@use "../ext" as *;
 
 .report-mutation-stats {
   @extend %report-section;
