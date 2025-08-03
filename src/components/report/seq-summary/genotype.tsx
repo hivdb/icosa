@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
@@ -9,41 +8,43 @@ import ExtLink from '../../link/external';
 import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
 
+/**
+ * Properties for the {@link Genotype} component.
+ *
+ * @param config - Application configuration providing message strings.
+ * @param bestMatchingSubtype - The subtype that best matches the sequence.
+ * @param subtypes - All subtype matches returned by the subtyping service.
+ */
+export interface GenotypeProps {
+  config: {messages: Record<string, string>};
+  bestMatchingSubtype?: {
+    display: string;
+    referenceAccession: string;
+  };
+  subtypes?: Array<{
+    displayWithoutDistance: string;
+    subtype?: {displayName: string};
+    distancePcnt: string;
+    referenceAccession: string;
+    referenceCountry?: string;
+    referenceYear?: number;
+  }>;
+}
 
-Genotype.propTypes = {
-  config: PropTypes.object.isRequired,
-  bestMatchingSubtype: PropTypes.shape({
-    display: PropTypes.string.isRequired,
-    referenceAccession: PropTypes.string.isRequired
-  }),
-  subtypes: PropTypes.arrayOf(
-    PropTypes.shape({
-      displayWithoutDistance: PropTypes.string.isRequired,
-      subtype: PropTypes.shape({
-        displayName: PropTypes.string.isRequired
-      }),
-      distancePcnt: PropTypes.string.isRequired,
-      referenceAccession: PropTypes.string.isRequired,
-      referenceCountry: PropTypes.string,
-      referenceYear: PropTypes.number
-    }).isRequired
-  )
-};
-
-
-Genotype.defaultProps = {
-  subtypes: []
-};
-
-
-export default function Genotype(props) {
+/**
+ * Display genotype information with optional detailed subtype information.
+ * A toggle link allows expanding or collapsing the details list.
+ *
+ * @param props - {@link GenotypeProps} defining genotype data.
+ * @returns Definition list entries or `null` if no genotype is available.
+ */
+export default function Genotype({
+  config,
+  bestMatchingSubtype,
+  subtypes = []
+}: GenotypeProps) {
   const [showGenotypeDetails, setShowGenotypeDetails] = useState(false);
 
-  const {
-    config,
-    bestMatchingSubtype,
-    subtypes
-  } = props;
   const genotypeText = bestMatchingSubtype ?
     bestMatchingSubtype.display : null;
   const bestMatchingVnum = bestMatchingSubtype ?
@@ -80,7 +81,7 @@ export default function Genotype(props) {
           {subtypes.map(
             ({
               displayWithoutDistance: displayGenotype,
-              subtype: {displayName: genotype},
+              subtype: {displayName: genotype} = {},
               distancePcnt: distPcnt,
               referenceAccession: vnum,
               referenceCountry: country,
@@ -89,7 +90,7 @@ export default function Genotype(props) {
               <li
                key={idx} className={
                 vnum === bestMatchingVnum ?
-                  style['best-match'] : null
+                  style['best-match'] : undefined
               }>
                 <ExtLink
                  href={vnum.startsWith('EPI_ISL_') ?
@@ -110,9 +111,11 @@ export default function Genotype(props) {
     </dd>
   ];
 
-  function toggleGenotypeDetails(e) {
+  /** Toggle the visibility of genotype details list. */
+  function toggleGenotypeDetails(e?: React.MouseEvent<HTMLAnchorElement>) {
     e && e.preventDefault();
     setShowGenotypeDetails(!showGenotypeDetails);
   }
 
 }
+

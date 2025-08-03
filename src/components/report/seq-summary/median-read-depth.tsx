@@ -1,31 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
+import React from 'react';
 import style from './style.module.scss';
 
+/**
+ * Properties for the {@link MedianReadDepth} component.
+ */
+export interface MedianReadDepthProps {
+  config: {
+    listReadDepthByGene?: string[];
+    geneDisplay?: Record<string, string>;
+  };
+  readDepthStats: {median: number};
+  geneSeqs: Array<{
+    gene: {name: string};
+    readDepthStats: {median: number};
+  }>;
+}
 
-const readDepthStatsShape = PropTypes.shape({
-  median: PropTypes.number.isRequired
-});
-
-MedianReadDepth.propTypes = {
-  config: PropTypes.shape({
-    listReadDepthByGene: PropTypes.array,
-    geneDisplay: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    )
-  }).isRequired,
-  readDepthStats: readDepthStatsShape.isRequired,
-  geneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      readDepthStats: readDepthStatsShape.isRequired
-    })
-  )
-};
-
+/**
+ * Display median read depth for the whole genome and optionally for selected
+ * genes.
+ *
+ * @param props - {@link MedianReadDepthProps} containing read depth stats.
+ * @returns Definition list entries describing read depth.
+ */
 export default function MedianReadDepth({
   config: {
     listReadDepthByGene = [],
@@ -33,7 +31,7 @@ export default function MedianReadDepth({
   },
   readDepthStats: {median: globalRD},
   geneSeqs
-}) {
+}: MedianReadDepthProps) {
 
   return <>
     <dt>Median read depth:</dt>

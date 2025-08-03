@@ -1,25 +1,26 @@
 import React from 'react';
 import {useRouter} from 'found';
-import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
 
+/**
+ * Properties for the {@link MinCodonReads} component.
+ */
+export interface MinCodonReadsProps {
+  config: {
+    seqReadsDefaultParams: {minCodonReads: number};
+    seqReadsMinCodonReadsOptions: Array<{label: string; value: number}>;
+  };
+  minCodonReads?: number | null;
+}
 
-MinCodonReads.propTypes = {
-  config: PropTypes.shape({
-    seqReadsDefaultParams: PropTypes.shape({
-      minCodonReads: PropTypes.number.isRequired
-    }).isRequired,
-    seqReadsMinCodonReadsOptions: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.number.isRequired
-      }).isRequired
-    ).isRequired
-  }).isRequired,
-  minCodonReads: PropTypes.number
-};
-
+/**
+ * Render a dropdown for selecting the minimum codon reads threshold.
+ *
+ * @param props - {@link MinCodonReadsProps} defining options and value.
+ * @returns Definition list entries with a dropdown component.
+ */
 function MinCodonReads({
   config: {
     seqReadsDefaultParams: {
@@ -28,7 +29,7 @@ function MinCodonReads({
     seqReadsMinCodonReadsOptions: options
   },
   minCodonReads: curValue
-}) {
+}: MinCodonReadsProps) {
   const {match, router} = useRouter();
   if (curValue === null || isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.cdreads);

@@ -1,28 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import style from './style.module.scss';
 
 
-PrettyPairwise.propTypes = {
-  gene: PropTypes.string.isRequired,
-  prettyPairwise: PropTypes.shape({
-    positionLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    refAALine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    alignedNAsLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    mutationLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  })
-};
+export interface PrettyPairwiseProps {
+  gene: string;
+  prettyPairwise: {
+    positionLine: string[];
+    refAALine: string[];
+    alignedNAsLine: string[];
+    mutationLine: string[];
+  };
+}
 
+/**
+ * Render a human-readable pairwise alignment for a specific gene.
+ *
+ * @param props - {@link PrettyPairwiseProps} containing gene name and
+ *   alignment lines.
+ * @returns Header and preformatted alignment lines.
+ */
 export default function PrettyPairwise({
   gene,
   prettyPairwise: {
@@ -31,7 +29,7 @@ export default function PrettyPairwise({
     alignedNAsLine,
     mutationLine
   }
-}) {
+}: PrettyPairwiseProps) {
 
   return [
     <header key={0}>

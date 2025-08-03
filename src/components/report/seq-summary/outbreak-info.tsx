@@ -1,4 +1,5 @@
 import React from 'react';
+import React from 'react';
 import ExtLink from '../../link/external';
 
 import Loader from '../../loader';
@@ -6,8 +7,22 @@ import {usePangoLineage} from './pango-lineage';
 
 import style from './style.module.scss';
 
+interface OutbreakInfoProps {
+  config: {
+    outbreakInfo: {lineages: {results: Array<{name: string; total_count: number}>}};
+  };
+  asyncResultsURI?: string;
+  lineage?: string;
+  probability?: number | null;
+  version?: string;
+  loaded?: boolean;
+}
 
-function useOutbreakInfo(props) {
+/**
+ * Retrieve outbreak information corresponding to the PANGO lineage from
+ * Outbreak.info dataset.
+ */
+function useOutbreakInfo(props: OutbreakInfoProps) {
   const {
     data: pangoData,
     error,
@@ -35,7 +50,15 @@ function useOutbreakInfo(props) {
 }
 
 
-export default function OutbreakInfo(props) {
+/**
+ * Display outbreak statistics for the resolved PANGO lineage. Data is fetched
+ * via {@link useOutbreakInfo} which queries Outbreak.info.
+ *
+ * @param props - {@link OutbreakInfoProps} including configuration and
+ *   lineage lookup information.
+ * @returns Definition list entries displaying outbreak data.
+ */
+export default function OutbreakInfo(props: OutbreakInfoProps) {
   const {data, error, isPending} = useOutbreakInfo(props);
 
   let child;

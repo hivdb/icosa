@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {FaEye} from '@react-icons/all-files/fa/FaEye';
 import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash';
 
@@ -9,18 +8,18 @@ import parentStyle from '../style.module.scss';
 
 import SinglePrettyPairwise from '../pretty-pairwise';
 
-
-PrettyPairwiseButton.propTypes = {
-  disablePrettyPairwise: PropTypes.bool.isRequired,
-  showPrettyPairwise: PropTypes.bool,
-  togglePrettyPairwise: PropTypes.func
-};
+/** Properties for {@link PrettyPairwiseButton}. */
+export interface PrettyPairwiseButtonProps {
+  disablePrettyPairwise: boolean;
+  showPrettyPairwise?: boolean;
+  togglePrettyPairwise?: () => void;
+}
 
 function PrettyPairwiseButton({
   disablePrettyPairwise,
   showPrettyPairwise,
   togglePrettyPairwise
-}) {
+}: PrettyPairwiseButtonProps) {
 
   return <Button
    className={parentStyle.button}
@@ -32,19 +31,15 @@ function PrettyPairwiseButton({
   </Button>;
 }
 
+/** Properties for {@link PrettyPairwiseList}. */
+export interface PrettyPairwiseListProps {
+  geneSeqs: Array<{
+    gene: {name: string};
+    prettyPairwise: any; // structure defined by SinglePrettyPairwise
+  }>;
+}
 
-PrettyPairwiseList.propTypes = {
-  geneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      prettyPairwise: SinglePrettyPairwise.propTypes.prettyPairwise
-    }).isRequired
-  ).isRequired
-};
-
-function PrettyPairwiseList({geneSeqs}) {
+function PrettyPairwiseList({geneSeqs}: PrettyPairwiseListProps) {
 
   return <div className={style['pretty-pairwise']}>
     {geneSeqs.map(
