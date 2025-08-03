@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 /**
  * Configuration options for the `fastp` pre-processing tool.
  * @property includeUnmerged - Include unmerged reads in output.
@@ -115,56 +113,3 @@ export const defaultIvarConfig: IvarConfig = {
   minQuality: 0,
   includeReadsWithNoPrimers: true
 };
-
-/*
- * PropTypes shapes are kept for legacy JavaScript components that still rely
- * on runtime property validation. They mirror the TypeScript interfaces above
- * and are exported alongside the default configuration objects.
- */
-export const fastpConfigShape = PropTypes.shape({
-  includeUnmerged: PropTypes.bool.isRequired,
-  qualifiedQualityPhred: PropTypes.number.isRequired,
-  unqualifiedPercentLimit: PropTypes.number.isRequired,
-  nBaseLimit: PropTypes.number.isRequired,
-  averageQual: PropTypes.number.isRequired,
-  lengthRequired: PropTypes.number.isRequired,
-  lengthLimit: PropTypes.number.isRequired,
-  adapterSequence: PropTypes.string.isRequired,
-  adapterSequenceR2: PropTypes.string.isRequired,
-  disableAdapterTrimming: PropTypes.bool.isRequired,
-  disableTrimPolyG: PropTypes.bool.isRequired,
-  disableQualityFiltering: PropTypes.bool.isRequired,
-  disableLengthFiltering: PropTypes.bool.isRequired
-});
-
-export const primerSeqShape = PropTypes.shape({
-  idx: PropTypes.number.isRequired,
-  header: PropTypes.string.isRequired,
-  sequence: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(['three-end', 'five-end', 'both-end']).isRequired
-});
-
-export const cutadaptConfigShape = PropTypes.shape({
-  primerSeqs: PropTypes.arrayOf(primerSeqShape.isRequired).isRequired,
-  errorRate: PropTypes.number.isRequired,
-  noIndels: PropTypes.bool.isRequired,
-  times: PropTypes.number.isRequired,
-  minOverlap: PropTypes.number.isRequired
-});
-
-export const primerBedShape = PropTypes.shape({
-  idx: PropTypes.number.isRequired,
-  region: PropTypes.string.isRequired, // not used by ivar
-  start: PropTypes.number.isRequired,
-  end: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  score: PropTypes.number.isRequired, // not used by ivar
-  strand: PropTypes.oneOf(['+', '-']).isRequired
-});
-
-export const ivarConfigShape = PropTypes.shape({
-  primerBeds: PropTypes.arrayOf(primerBedShape.isRequired).isRequired,
-  minLength: PropTypes.number.isRequired,
-  minQuality: PropTypes.number.isRequired,
-  includeReadsWithNoPrimers: PropTypes.bool.isRequired
-});

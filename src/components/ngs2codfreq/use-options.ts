@@ -10,7 +10,7 @@ import {
   FastpConfig,
   CutadaptConfig,
   IvarConfig
-} from './options-form/prop-types';
+} from './options-form/types';
 
 /** Combined configuration object used by NGS2CodFreq. */
 export interface NGSOptions {
