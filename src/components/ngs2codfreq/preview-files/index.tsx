@@ -1,0 +1,138 @@
+import React from 'react';
+import React from 'react';
+import classNames from 'classnames';
+
+import {moveFile, removeFile, splicePair, type FastqPair} from '../fastq-pairs';
+import style from '../style.module.scss';
+import FASTQPairItem from './item';
+import useUndoHistory from './undo-history';
+
+
+function calcStep(distance) {
+  let direction = 1;
+  if (distance < 0) {
+    direction = -1;
+    distance = -distance;
+  }
+  return direction * Math.ceil(distance / 20);
+}
+
+
+export interface PreviewFilesProps {
+  fastqPairs: FastqPair[];
+  onChange: (pairs: FastqPair[]) => void;
+  className?: string;
+}
+
+export default function PreviewFiles({fastqPairs, onChange, className}: PreviewFilesProps) {
+
+  const listRef = React.useRef<HTMLUListElement>(null);
+  const [curDragFile, setCurDragFile] = React.useState<File | null>(null);
+  const {pushHistory} = useUndoHistory(onChange);
+
+  React.useEffect(
+    () => pushHistory(fastqPairs),
+    [pushHistory, fastqPairs]
+  );
+
+  const scroll = React.useCallback(
+    (step: number) => {
+      if (listRef.current) {
+        listRef.current.scrollTop += step;
+      }
+    },
+    [listRef]
+  );
+
+  const handleDragStart = React.useCallback(
+    file => {
+      setCurDragFile(file);
+    },
+    [setCurDragFile]
+  );
+
+  const handleDrag = React.useCallback(
+    (event: React.DragEvent<HTMLUListElement>) => {
+      const {top, bottom} = listRef.current!.getBoundingClientRect();
+      const listHeight = bottom - top;
+      const offsetY = event.clientY - top;
+      if (offsetY < 0) {
+        const step = calcStep(offsetY);
+        scroll(step);
+      }
+      else if (offsetY > listHeight) {
+        const step = calcStep(offsetY - listHeight);
+        scroll(step);
+      }
+    },
+    [scroll, listRef]
+  );
+  const handleDragEnd = React.useCallback(
+    () => {
+      setCurDragFile(null);
+    },
+    [setCurDragFile]
+  );
+
+  const handleSplit = React.useCallback(
+    (idx: number) => {
+      const newFastqPairs = splicePair(fastqPairs, idx);
+      onChange(newFastqPairs);
+    },
+    [fastqPairs, onChange]
+  );
+
+  const handleMove = React.useCallback(
+    ({src, target}: {src: {index: number; fileName: string}; target: {index: number}}) => {
+      const newFastqPairs = moveFile(fastqPairs, src, target);
+      onChange(newFastqPairs);
+      setCurDragFile(null);
+    },
+    [fastqPairs, onChange]
+  );
+
+  const handleRemove = React.useCallback(
+    ({index, fileName}: {index: number; fileName: string}) => {
+      const newFastqPairs = removeFile(fastqPairs, index, fileName);
+      onChange(newFastqPairs);
+    },
+    [fastqPairs, onChange]
+  );
+
+  const handleNameChange = React.useCallback(
+    (newName: string, index: number) => {
+      fastqPairs[index].name = newName;
+      onChange([...fastqPairs]);
+    },
+    [fastqPairs, onChange]
+  );
+
+  const draggable = fastqPairs.some(({n}) => n === 1);
+
+  return <>
+    <ul
+     ref={listRef}
+     data-drag-active={!!curDragFile}
+     className={classNames(
+       style['preview-files'],
+       className ? `${className}__preview-files` : null
+     )}>
+      {fastqPairs.map((props, idx) => (
+        <FASTQPairItem
+         {...props}
+         key={idx}
+         index={idx}
+         draggable={draggable}
+         className={className}
+         curDragFile={curDragFile}
+         onDragStart={handleDragStart}
+         onDrag={handleDrag}
+         onDragEnd={handleDragEnd}
+         onMove={handleMove}
+         onSplit={handleSplit}
+         onNameChange={handleNameChange}
+         onRemove={handleRemove} />
+      ))}
+    </ul>
+  </>;
+}

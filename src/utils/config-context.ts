@@ -31,8 +31,8 @@ export function useConfigLoader<T extends {configFromURL?: string}>(config: T) {
         loadedConfig = {...config};
       }
 
-      // Prevent downstream mutation of configuration values.
-      return Object.freeze(loadedConfig);
+      const frozen = Object.freeze(loadedConfig);
+      return frozen as Readonly<typeof loadedConfig>;
     },
     [config]
   );
