@@ -6,15 +6,26 @@ import Button from '../../button';
 import style from './style.module.scss';
 import parentStyle from '../style.module.scss';
 
-import SinglePrettyPairwise from '../pretty-pairwise';
+import SinglePrettyPairwise, {
+  PrettyPairwiseData
+} from '../pretty-pairwise';
 
 /** Properties for {@link PrettyPairwiseButton}. */
 export interface PrettyPairwiseButtonProps {
+  /** Whether the toggle button should be disabled. */
   disablePrettyPairwise: boolean;
+  /** If true, the pretty pairwise section is currently shown. */
   showPrettyPairwise?: boolean;
+  /** Callback invoked to toggle the pretty pairwise section. */
   togglePrettyPairwise?: () => void;
 }
 
+/**
+ * Render a button that toggles visibility of the pretty pairwise section.
+ *
+ * @param props - {@link PrettyPairwiseButtonProps} configuration.
+ * @returns Button element that toggles the pretty pairwise display.
+ */
 function PrettyPairwiseButton({
   disablePrettyPairwise,
   showPrettyPairwise,
@@ -33,12 +44,19 @@ function PrettyPairwiseButton({
 
 /** Properties for {@link PrettyPairwiseList}. */
 export interface PrettyPairwiseListProps {
+  /** Genes and their associated pairwise alignment data. */
   geneSeqs: Array<{
     gene: {name: string};
-    prettyPairwise: any; // structure defined by SinglePrettyPairwise
+    prettyPairwise: PrettyPairwiseData;
   }>;
 }
 
+/**
+ * Render a list of pretty pairwise alignments for multiple genes.
+ *
+ * @param props - {@link PrettyPairwiseListProps} containing gene sequences.
+ * @returns Container with formatted alignments for each gene.
+ */
 function PrettyPairwiseList({geneSeqs}: PrettyPairwiseListProps) {
 
   return <div className={style['pretty-pairwise']}>

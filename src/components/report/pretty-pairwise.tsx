@@ -3,15 +3,26 @@ import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import style from './style.module.scss';
 
+/**
+ * Alignment lines that make up a pretty pairwise display.
+ */
+export interface PrettyPairwiseData {
+  /** Positions along the reference sequence. */
+  positionLine: string[];
+  /** Amino acids from the reference sequence. */
+  refAALine: string[];
+  /** Aligned nucleic acids from the query sequence. */
+  alignedNAsLine: string[];
+  /** Mutation indicators relative to the reference. */
+  mutationLine: string[];
+}
 
+/** Properties for {@link PrettyPairwise}. */
 export interface PrettyPairwiseProps {
+  /** Name of the gene being rendered. */
   gene: string;
-  prettyPairwise: {
-    positionLine: string[];
-    refAALine: string[];
-    alignedNAsLine: string[];
-    mutationLine: string[];
-  };
+  /** Alignment information for the gene. */
+  prettyPairwise: PrettyPairwiseData;
 }
 
 /**
