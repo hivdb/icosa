@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
-import {useRouter, matchShape, routerShape} from 'found';
+import {useRouter} from 'found';
 
 import ConfigContext from '../../../utils/config-context';
 import {CutoffKeyPoint} from '../../seqreads-threshold-nomogram';
@@ -43,64 +42,73 @@ const MedianReadDepth = () => null;
 const ThresholdNomogram = () => null;
 const Genotype = () => null;
 
+/**
+ * Properties for the {@link SeqSummary} component.
+ */
+interface SeqSummaryProps {
+  config: any;
+  headless?: boolean;
+  titleWidth?: string;
+  match: any;
+  router: any;
+  output?: string;
+  name?: string;
+  cutoffKeyPoints: CutoffKeyPoint[];
+  maxMixtureRate?: number;
+  minPrevalence?: number;
+  minCodonReads?: number;
+  assembledConsensus?: string;
+  bestMatchingSubtype?: any;
+  subtypes?: any[];
+  alignedGeneSequences?: any[];
+  allGeneSequenceReads?: any[];
+  availableGenes?: any[];
+  pangolin?: any;
+  readDepthStats?: any[];
+  mixtureRate?: number;
+  actualMinPrevalence?: number;
+  minPositionReads?: number;
+  includeGenes: string[];
+  children?: React.ReactNode | React.ReactNode[];
+}
 
-SeqSummary.propTypes = {
-  config: PropTypes.object,
-  headless: PropTypes.bool.isRequired,
-  titleWidth: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  output: PropTypes.string,
-  name: PropTypes.string,
-  cutoffKeyPoints: PropTypes.arrayOf(CutoffKeyPoint.isRequired).isRequired,
-  maxMixtureRate: PropTypes.number,
-  minPrevalence: PropTypes.number,
-  minCodonReads: PropTypes.number,
-  assembledConsensus: PropTypes.string,
-  bestMatchingSubtype: PropTypes.object,
-  subtypes: PropTypes.array,
-  alignedGeneSequences: PropTypes.array,
-  allGeneSequenceReads: PropTypes.array,
-  availableGenes: PropTypes.array,
-  pangolin: PropTypes.object,
-  readDepthStats: PropTypes.array,
-  mixtureRate: PropTypes.number,
-  actualMinPrevalence: PropTypes.number,
-  minPositionReads: PropTypes.number,
-  includeGenes: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  children: PropTypes.node
-};
-
-
-function SeqSummary(props) {
-  const {
-    config,
-    headless,
-    titleWidth,
-    match,
-    router,
-    output,
-    name,
-    cutoffKeyPoints,
-    maxMixtureRate,
-    minPrevalence,
-    minCodonReads,
-    assembledConsensus,
-    bestMatchingSubtype,
-    subtypes,
-    alignedGeneSequences,
-    allGeneSequenceReads,
-    availableGenes,
-    pangolin,
-    readDepthStats,
-    mixtureRate,
-    actualMinPrevalence,
-    minPositionReads,
-    includeGenes,
-    children
-  } = props;
+/**
+ * Render a summary section for sequence metadata and statistics.
+ *
+ * @param props - {@link SeqSummaryProps} including various summary elements.
+ * @returns Sequence summary section.
+ */
+function SeqSummary({
+  config,
+  headless = false,
+  titleWidth = '18rem',
+  match,
+  router,
+  output = 'default',
+  name,
+  cutoffKeyPoints,
+  maxMixtureRate,
+  minPrevalence,
+  minCodonReads,
+  assembledConsensus,
+  bestMatchingSubtype,
+  subtypes,
+  alignedGeneSequences,
+  allGeneSequenceReads,
+  availableGenes,
+  pangolin,
+  readDepthStats,
+  mixtureRate,
+  actualMinPrevalence,
+  minPositionReads,
+  includeGenes,
+  children = [
+    <SDRMs />,
+    <PrettyPairwise />,
+    <MultilineGeneRange />,
+    <Subtype />
+  ]
+}: SeqSummaryProps) {
 
   const geneSeqs = alignedGeneSequences || allGeneSequenceReads || [];
 
@@ -266,34 +274,18 @@ function SeqSummary(props) {
 
 }
 
-SeqSummary.propTypes = {
-  config: PropTypes.object.isRequired,
-  headless: PropTypes.bool.isRequired,
-  children: PropTypes.arrayOf(
-    PropTypes.node.isRequired
-  ).isRequired,
-  titleWidth: PropTypes.string.isRequired,
-  output: PropTypes.string.isRequired
-};
-
-SeqSummary.defaultProps = {
-  output: 'default',
-  headless: false,
-  titleWidth: '18rem',
-  children: [
-    <SDRMs />,
-    <PrettyPairwise />,
-    <MultilineGeneRange />,
-    <Subtype />
-  ]
-};
-
 const MemoSeqSummary = React.memo(
   SeqSummary,
   ({name: prevName}, {name: nextName}) => prevName === nextName
 );
 
-function SeqSummaryWrapper(props) {
+interface SeqSummaryWrapperProps extends Omit<SeqSummaryProps, 'config' | 'match' | 'router'> {}
+
+/**
+ * Wrapper around {@link SeqSummary} that injects configuration and routing
+ * context.
+ */
+function SeqSummaryWrapper(props: SeqSummaryWrapperProps) {
   const {match, router} = useRouter();
   return <ConfigContext.Consumer>
     {config => (

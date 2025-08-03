@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
+import React, {useState} from 'react';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
@@ -11,14 +11,28 @@ import parentStyle from '../style.module.scss';
 
 const NUCCORE_PREFIX = 'https://www.ncbi.nlm.nih.gov/nuccore/';
 
+/** Properties for the {@link Subtype} component. */
+export interface SubtypeProps {
+  bestMatchingSubtype?: {display: string; referenceAccession: string};
+  subtypes?: Array<{
+    displayWithoutDistance: string;
+    subtype: {displayName: string};
+    distancePcnt: string;
+    referenceAccession: string;
+    referenceCountry: string;
+    referenceYear: number;
+  }>;
+}
 
-function Subtype(props) {
+/**
+ * Display subtype information with optional detailed list of candidate
+ * subtypes.
+ *
+ * @param props - {@link SubtypeProps} describing subtype results.
+ * @returns Definition list entries or `null` when subtype is unavailable.
+ */
+function Subtype({bestMatchingSubtype, subtypes = []}: SubtypeProps) {
   const [showSubtypeDetails, setShowSubtypeDetails] = useState(false);
-
-  const {
-    bestMatchingSubtype,
-    subtypes
-  } = props;
   const subtypeText = bestMatchingSubtype ?
     bestMatchingSubtype.display : null;
   const bestMatchingVnum = bestMatchingSubtype ?
@@ -87,30 +101,5 @@ function Subtype(props) {
   }
 
 }
-
-
-Subtype.propTypes = {
-  bestMatchingSubtype: PropTypes.shape({
-    display: PropTypes.string.isRequired,
-    referenceAccession: PropTypes.string.isRequired
-  }),
-  subtypes: PropTypes.arrayOf(
-    PropTypes.shape({
-      displayWithoutDistance: PropTypes.string.isRequired,
-      subtype: PropTypes.shape({
-        displayName: PropTypes.string.isRequired
-      }),
-      distancePcnt: PropTypes.string.isRequired,
-      referenceAccession: PropTypes.string.isRequired,
-      referenceCountry: PropTypes.string.isRequired,
-      referenceYear: PropTypes.number.isRequired
-    }).isRequired
-  )
-};
-
-
-Subtype.defaultProps = {
-  subtypes: []
-};
 
 export default Subtype;

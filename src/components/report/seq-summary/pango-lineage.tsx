@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import memoize from 'lodash/memoize';
 import sleep from 'sleep-promise';
 
@@ -7,8 +6,11 @@ import Loader from '../../loader';
 import useSmartAsync from '../../../utils/use-smart-async';
 
 
+/**
+ * Fetch asynchronous pangolin results and cache by URL.
+ */
 const fetchPangolinResult = memoize(
-  async function(url) {
+  async function(url: string) {
     do {
       const resp = await fetch(url);
       if (resp.status !== 200) {
@@ -18,7 +20,10 @@ const fetchPangolinResult = memoize(
       const {
         version,
         reports: [{lineage, probability}]
-      } = await resp.json();
+      } = await resp.json() as {
+        version: string;
+        reports: Array<{lineage: string; probability: number | null}>;
+      };
       return {loaded: true, version, lineage, probability};
     }
     while (true); // eslint-disable-line no-constant-condition
@@ -27,15 +32,23 @@ const fetchPangolinResult = memoize(
 
 export {fetchPangolinResult};
 
+interface PangoProps {
+  lineage?: string;
+  probability?: number | null;
+  version?: string;
+  loaded?: boolean;
+  asyncResultsURI: string;
+}
+
 export function usePangoLineage({
   lineage,
   probability,
   version,
   loaded,
   asyncResultsURI
-}) {
+}: PangoProps) {
   const asyncFetch = React.useCallback(
-    async ({url}) => {
+    async ({url}: {url: string}) => {
       if (loaded) {
         return {
           loaded: true,
@@ -57,18 +70,21 @@ export function usePangoLineage({
 
 }
 
+interface PangoLineageComponentProps extends PangoProps {
+  bestMatchingSubtype?: {display: string};
+  subtypes?: unknown[];
+}
 
-PangoLineage.propTypes = {
-  bestMatchingSubtype: PropTypes.shape({
-    display: PropTypes.string.isRequired
-  }),
-  subtypes: PropTypes.array
-};
-
-
+/**
+ * Present the inferred PANGO lineage with probability and version details.
+ *
+ * @param pangolin - {@link PangoLineageComponentProps} containing lineage
+ *   information and query options.
+ * @returns Definition list entries displaying lineage information.
+ */
 export default function PangoLineage({
   ...pangolin
-}) {
+}: PangoLineageComponentProps) {
   const {data, error, isPending} = usePangoLineage(pangolin);
 
   let child;

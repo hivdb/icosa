@@ -1,28 +1,29 @@
 import React from 'react';
 import {useRouter} from 'found';
-import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 import {HoverPopup} from '../../popup';
 import useMessages from '../../../utils/use-messages';
 
 import style from './style.module.scss';
 
+/**
+ * Properties for the {@link MinPrevalence} component.
+ */
+export interface MinPrevalenceProps {
+  config: {
+    messages: Record<string, string>;
+    seqReadsDefaultParams: {minPrevalence: number};
+    seqReadsMinPrevalenceOptions: Array<{label: string; value: number}>;
+  };
+  minPrevalence?: number;
+}
 
-MinPrevalence.propTypes = {
-  config: PropTypes.shape({
-    messages: PropTypes.object.isRequired,
-    seqReadsDefaultParams: PropTypes.shape({
-      minPrevalence: PropTypes.number.isRequired
-    }).isRequired,
-    seqReadsMinPrevalenceOptions: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.number.isRequired
-      }).isRequired
-    ).isRequired
-  }).isRequired,
-  minPrevalence: PropTypes.number
-};
-
+/**
+ * Render a dropdown allowing selection of the minimum prevalence threshold.
+ *
+ * @param props - {@link MinPrevalenceProps} providing options and value.
+ * @returns Definition list entries containing a dropdown.
+ */
 function MinPrevalence({
   config: {
     messages,
@@ -32,7 +33,7 @@ function MinPrevalence({
     seqReadsMinPrevalenceOptions: options
   },
   minPrevalence: curValue
-}) {
+}: MinPrevalenceProps) {
   const {match, router} = useRouter();
   if (curValue === undefined) {
     curValue = Number.parseFloat(match.location.query.cutoff);

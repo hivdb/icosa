@@ -1,28 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import style from './style.module.scss';
 
+/**
+ * Alignment lines that make up a pretty pairwise display.
+ */
+export interface PrettyPairwiseData {
+  /** Positions along the reference sequence. */
+  positionLine: string[];
+  /** Amino acids from the reference sequence. */
+  refAALine: string[];
+  /** Aligned nucleic acids from the query sequence. */
+  alignedNAsLine: string[];
+  /** Mutation indicators relative to the reference. */
+  mutationLine: string[];
+}
 
-PrettyPairwise.propTypes = {
-  gene: PropTypes.string.isRequired,
-  prettyPairwise: PropTypes.shape({
-    positionLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    refAALine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    alignedNAsLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    mutationLine: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  })
-};
+/** Properties for {@link PrettyPairwise}. */
+export interface PrettyPairwiseProps {
+  /** Name of the gene being rendered. */
+  gene: string;
+  /** Alignment information for the gene. */
+  prettyPairwise: PrettyPairwiseData;
+}
 
+/**
+ * Render a human-readable pairwise alignment for a specific gene.
+ *
+ * @param props - {@link PrettyPairwiseProps} containing gene name and
+ *   alignment lines.
+ * @returns Header and preformatted alignment lines.
+ */
 export default function PrettyPairwise({
   gene,
   prettyPairwise: {
@@ -31,7 +40,7 @@ export default function PrettyPairwise({
     alignedNAsLine,
     mutationLine
   }
-}) {
+}: PrettyPairwiseProps) {
 
   return [
     <header key={0}>

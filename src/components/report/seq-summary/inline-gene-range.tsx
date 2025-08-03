@@ -1,44 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
 
 
-InlineGeneRange.propTypes = {
-  config: PropTypes.shape({
-    allGenes: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    geneDisplay: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    highlightGenes: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  }).isRequired,
-  geneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string
-      }).isRequired,
-      unsequencedRegions: PropTypes.shape({
-        size: PropTypes.number.isRequired,
-        regions: PropTypes.arrayOf(
-          PropTypes.shape({
-            posStart: PropTypes.number.isRequired,
-            posEnd: PropTypes.number.isRequired
-          }).isRequired
-        )
-      }).isRequired
-    }).isRequired
-  ).isRequired,
-  includeGenes: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  )
-};
+/**
+ * Properties for the {@link InlineGeneRange} component.
+ */
+export interface InlineGeneRangeProps {
+  config: {
+    allGenes: string[];
+    geneDisplay: Record<string, string>;
+    highlightGenes: string[];
+  };
+  geneSeqs: Array<{
+    gene: {name: string};
+    unsequencedRegions: {
+      size: number;
+      regions: Array<{posStart: number; posEnd: number}>;
+    };
+  }>;
+  includeGenes?: string[];
+}
 
-function InlineGeneRange({config, geneSeqs, includeGenes}) {
+/**
+ * Display a concise list of genes included in the sequence and highlight
+ * missing regions or genes.
+ *
+ * @param props - {@link InlineGeneRangeProps} describing gene sequences and
+ *   configuration.
+ * @returns Definition list entries representing gene coverage.
+ */
+function InlineGeneRange({config, geneSeqs, includeGenes}: InlineGeneRangeProps) {
   if (!includeGenes) {
     includeGenes = config.allGenes;
   }

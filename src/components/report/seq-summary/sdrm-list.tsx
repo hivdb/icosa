@@ -1,29 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {FaEye} from '@react-icons/all-files/fa/FaEye';
 import {FaEyeSlash} from '@react-icons/all-files/fa/FaEyeSlash';
 
 import Button from '../../button';
 import parentStyle from '../style.module.scss';
 
-SDRMButton.propTypes = {
-  config: PropTypes.shape({
-    displaySDRMs: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-      PropTypes.bool.isRequired
-    ])
-  }).isRequired,
-  disableSDRMs: PropTypes.bool.isRequired,
-  showSDRMs: PropTypes.bool,
-  toggleSDRMs: PropTypes.func
-};
+/** Properties for {@link SDRMButton}. */
+export interface SDRMButtonProps {
+  config: {displaySDRMs: string[] | boolean};
+  disableSDRMs: boolean;
+  showSDRMs?: boolean;
+  toggleSDRMs?: () => void;
+}
 
 function SDRMButton({
   config: {displaySDRMs},
   disableSDRMs,
   showSDRMs,
   toggleSDRMs
-}) {
+}: SDRMButtonProps) {
   return displaySDRMs &&
     (displaySDRMs === true || displaySDRMs.length > 0) ? (
       <Button
@@ -36,31 +31,16 @@ function SDRMButton({
     ) : null;
 }
 
+/** Properties for {@link SDRMList}. */
+export interface SDRMListProps {
+  config: {displaySDRMs: string[] | boolean};
+  geneSeqs?: Array<{
+    gene: {name: string};
+    sdrms: Array<{text: string}>;
+  }>;
+}
 
-SDRMList.propTypes = {
-  config: PropTypes.shape({
-    displaySDRMs: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-      PropTypes.bool.isRequired
-    ])
-  }).isRequired,
-  geneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      sdrms: PropTypes.arrayOf(
-        PropTypes.shape({
-          text: PropTypes.string.isRequired
-        }).isRequired
-      ).isRequired
-    }).isRequired
-  )
-};
-
-SDRMList.defaultProps = {geneSeqs: []};
-
-function SDRMList({geneSeqs, config: {displaySDRMs}}) {
+function SDRMList({geneSeqs = [], config: {displaySDRMs}}: SDRMListProps) {
   return <>
     {displaySDRMs ? geneSeqs.map((geneSeq, idx) => {
       const {gene: {name: gene}, sdrms} = geneSeq;

@@ -1,28 +1,29 @@
 import React from 'react';
 import {useRouter} from 'found';
-import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 import {HoverPopup} from '../../popup';
 import useMessages from '../../../utils/use-messages';
 
 import style from './style.module.scss';
 
+/**
+ * Properties for the {@link MinPositionReads} component.
+ */
+export interface MinPositionReadsProps {
+  config: {
+    messages: Record<string, string>;
+    seqReadsDefaultParams: {minPositionReads: number};
+    seqReadsMinPositionReadsOptions: Array<{label: string; value: number}>;
+  };
+  minPositionReads?: number | null;
+}
 
-MinPositionReads.propTypes = {
-  config: PropTypes.shape({
-    messages: PropTypes.object.isRequired,
-    seqReadsDefaultParams: PropTypes.shape({
-      minPositionReads: PropTypes.number.isRequired
-    }).isRequired,
-    seqReadsMinPositionReadsOptions: PropTypes.arrayOf(
-      PropTypes.shape({
-        value: PropTypes.number.isRequired
-      }).isRequired
-    ).isRequired
-  }).isRequired,
-  minPositionReads: PropTypes.number
-};
-
+/**
+ * Render a dropdown to adjust the minimum position reads threshold.
+ *
+ * @param props - {@link MinPositionReadsProps} providing options and value.
+ * @returns Definition list entries containing a dropdown element.
+ */
 function MinPositionReads({
   config: {
     messages,
@@ -32,7 +33,7 @@ function MinPositionReads({
     seqReadsMinPositionReadsOptions: options
   },
   minPositionReads: curValue
-}) {
+}: MinPositionReadsProps) {
   const {match, router} = useRouter();
   if (curValue === null || isNaN(curValue)) {
     curValue = Number.parseFloat(match.location.query.posreads);

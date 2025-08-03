@@ -1,12 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import Nomogram, {CutoffKeyPoint} from '../../seqreads-threshold-nomogram';
 
 import style from './style.module.scss';
 
 
-function inferMixtureRateTicks(mixtureRateThreshold) {
+function inferMixtureRateTicks(mixtureRateThreshold: number) {
   if (mixtureRateThreshold === 0) {
     return [0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1];
   }
@@ -46,7 +44,7 @@ function inferMixtureRateTicks(mixtureRateThreshold) {
 function inferMinPrevalenceTicks({
   minPrevalenceActual,
   minPrevalenceThreshold
-}) {
+}: {minPrevalenceActual: number; minPrevalenceThreshold: number}) {
   let highPrevalence = 0.3;
   let lowPrevalence = 0;
   if (minPrevalenceActual > 0.2) {
@@ -74,23 +72,29 @@ function inferMinPrevalenceTicks({
 
 }
 
+export interface ThresholdNomogramProps {
+  cutoffKeyPoints: CutoffKeyPoint[];
+  maxMixtureRate: number;
+  minPrevalence: number;
+  mixtureRate: number;
+  actualMinPrevalence: number;
+}
 
-NomogramContainer.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(CutoffKeyPoint.isRequired).isRequired,
-  maxMixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired,
-  mixtureRate: PropTypes.number.isRequired,
-  actualMinPrevalence: PropTypes.number.isRequired
-};
-
-
+/**
+ * Render the sequencing thresholds nomogram which visualizes the relationship
+ * between mixture rate and mutation prevalence thresholds.
+ *
+ * @param props - {@link ThresholdNomogramProps} specifying key points and
+ *   thresholds.
+ * @returns A div container hosting the nomogram SVG.
+ */
 export default function NomogramContainer({
   cutoffKeyPoints,
   maxMixtureRate: mixtureRateThreshold,
   minPrevalence: minPrevalenceThreshold,
   mixtureRate: mixtureRateActual,
   actualMinPrevalence: minPrevalenceActual
-}) {
+}: ThresholdNomogramProps) {
   const mixtureRateTicks = React.useMemo(
     () => inferMixtureRateTicks(mixtureRateThreshold),
     [mixtureRateThreshold]
