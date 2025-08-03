@@ -40,6 +40,7 @@
     "d3-shape": "^3.1.0",
     "escape-string-regexp": "^5.0.0",
     "farce": "^0.4.1",
+    "fast-memoize": "^2.5.2",
     "flexbox-grid-mixins": "^0.3.3",
     "found": "^1.1.2",
     "graphiql": "^1.8.8",
