@@ -2,6 +2,9 @@
   "name": "icosa",
   "version": "0.3.35",
   "private": true,
+  "engines": {
+    "node": "22"
+  },
   "resolutions": {
     "vfile": "^4.2.1",
     "react": "^18.2.0",

@@ -1,9 +1,12 @@
 import React from 'react';
-
 import style from './style.module.scss';
 
-
-export default function Placeholder() {
+/**
+ * Skeleton placeholder used while content is loading.
+ *
+ * @returns Placeholder DOM structure.
+ */
+export default function Placeholder(): JSX.Element {
   return (
     <div className={style['ph-item']}>
       <div className={style['ph-col-12']}>
@@ -22,3 +25,4 @@ export default function Placeholder() {
     </div>
   );
 }
+
