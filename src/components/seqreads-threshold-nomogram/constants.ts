@@ -1,3 +1,6 @@
+/**
+ * Shared drawing constants for the sequence reads threshold nomogram.
+ */
 const constants = {
   paddingV: 20,
   paddingH: 20,

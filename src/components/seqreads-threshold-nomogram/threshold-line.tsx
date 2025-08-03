@@ -1,34 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import constants from './constants';
 
+export interface ThresholdLineProps {
+  /** Orientation of the threshold line. */
+  direction: 'horizontal' | 'vertical';
+  /** Scale converting values to x positions. */
+  scaleX: any;
+  /** Scale converting values to y positions. */
+  scaleY: any;
+  /** Threshold value on the corresponding axis. */
+  threshold: number;
+  /** Comparison operator indicating the shaded region. */
+  thresholdCmp: '>' | '<';
+  /** Dash style for the threshold line. */
+  strokeDasharray?: string;
+  /** Color used for the line and fill. */
+  color: string;
+}
 
-ThresholdLine.propTypes = {
-  direction: PropTypes.oneOf(['horizontal', 'vertical']).isRequired,
-  scaleX: PropTypes.func.isRequired,
-  scaleY: PropTypes.func.isRequired,
-  threshold: PropTypes.number.isRequired,
-  thresholdCmp: PropTypes.oneOf(['>', '<']).isRequired,
-  strokeDasharray: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired
-};
-
-
-ThresholdLine.defaultProps = {
-  strokeDasharray: '5,5'
-};
-
-
+/**
+ * Draw a threshold line and a shaded region indicating values that satisfy the
+ * threshold condition.
+ *
+ * @param props - {@link ThresholdLineProps} configuring geometry and styles.
+ * @returns SVG group with line, shaded region and gradient definition.
+ */
 export default function ThresholdLine({
   direction,
   scaleX,
   scaleY,
   threshold,
   thresholdCmp,
-  strokeDasharray,
+  strokeDasharray = '5,5',
   color
-}) {
+}: ThresholdLineProps): JSX.Element {
   const uniqId = `threshold-${direction}-${thresholdCmp}${threshold}`;
   const lineProps = {
     strokeDasharray,
@@ -82,14 +90,16 @@ export default function ThresholdLine({
       gradientProps.x1 = 1;
     }
   }
-  return <g>
-    <defs>
-      <linearGradient {...gradientProps}>
-        <stop offset="0%" opacity="0.2" stopColor={color} />
-        <stop offset="100%" opacity="0" stopColor="#fff" />
-      </linearGradient>
-    </defs>
-    <line {...lineProps} />
-    <rect {...rectProps} />
-  </g>;
+  return (
+    <g>
+      <defs>
+        <linearGradient {...gradientProps}>
+          <stop offset="0%" opacity="0.2" stopColor={color} />
+          <stop offset="100%" opacity="0" stopColor="#fff" />
+        </linearGradient>
+      </defs>
+      <line {...lineProps} />
+      <rect {...rectProps} />
+    </g>
+  );
 }

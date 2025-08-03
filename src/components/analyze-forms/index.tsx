@@ -7,12 +7,14 @@ import PatternsInputForm from './patterns-input-form';
 import SequenceInputForm from './sequence-input-form';
 import SequenceReadsInputForm from './sequence-reads-input-form';
 import NGS2CodFreqForm from './ngs2codfreq-form';
+import useBasePath from './use-base-path';
 
 /**
- * Determine current tab name from location.
+ * Extract the name of the active tab from the router location.
  *
- * @param location - Router location object.
- * @returns Last segment of the pathname.
+ * @param location - Router location object containing the current pathname.
+ * @returns The last segment of the pathname which corresponds to the active
+ * tab identifier.
  */
 function useCurrentTab(location: {pathname: string}): string {
   return React.useMemo(() => {
@@ -21,33 +23,36 @@ function useCurrentTab(location: {pathname: string}): string {
   }, [location.pathname]);
 }
 
-/**
- * Compute base path excluding the current tab segment.
- *
- * @param location - Router location object.
- * @returns Pathname prefix before the tab segment.
- */
-export function useBasePath(location: {pathname: string}): string {
-  return React.useMemo(() => {
-    const tabName = location.pathname.replace(/\/$/, '').split(/\//);
-    return tabName.slice(0, tabName.length - 1).join('/');
-  }, [location.pathname]);
-}
+// useBasePath has been moved to its own module to allow isolated testing
 
 export interface AnalyzeFormsProps {
+  /** Router match object providing current location. */
   match: {location: {pathname: string}};
+  /** Router instance used for navigation actions. */
   router: {replace(path: string): void; push(loc: any): void};
+  /** Optional submit handler invoked by individual forms. */
   onSubmit?(...args: any[]): Promise<any>;
+  /** Tabs to display. Defaults to patterns, sequences and reads. */
   enableTabs?: Array<'patterns' | 'sequences' | 'reads'>;
+  /** Base path used when constructing tab links. */
   basePath: string;
+  /** Destination path for mutation pattern submission. */
   patternsTo: string;
+  /** Destination path for sequence submission. */
   sequencesTo: string;
+  /** Destination path for sequence read submission. */
   readsTo?: string;
+  /** Configuration for sequence output options. */
   sequencesOutputOptions?: Record<string, any>;
+  /** Configuration for sequence read output options. */
   seqReadsOutputOptions?: Record<string, any>;
+  /** Available NGS runners passed to the ngs2codfreq form. */
   ngsRunners?: any[];
+  /** Optional sidebar element displayed with ngs2codfreq. */
   ngs2codfreqSide?: React.ReactNode;
+  /** Children elements placed above all forms. */
   children?: React.ReactNode;
+  /** Allow additional arbitrary props. */
   [key: string]: any;
 }
 
@@ -58,10 +63,13 @@ const defaultTabs: Array<'patterns' | 'sequences' | 'reads'> = [
 ];
 
 /**
- * Tabbed container exposing patterns, sequences and sequence reads forms.
+ * High level container that renders a set of analyze forms within a tabbed
+ * interface. Each tab corresponds to a different type of input supported by
+ * the application (mutation patterns, sequences or sequence reads).
  *
  * @param props - {@link AnalyzeFormsProps} controlling form tabs.
- * @returns Container element with tabbed forms.
+ * @returns A section containing the tab navigation and the rendered form for
+ * the active tab.
  */
 export default function AnalyzeForms({
   router,

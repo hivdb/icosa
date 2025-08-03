@@ -7,9 +7,15 @@ import Button from '../button';
 import style from './style.module.scss';
 
 /**
- * Extract the `state` object from router location for pre-filling form inputs.
+ * Retrieve previously entered form values from the router location.
  *
- * @returns Saved input state from the router location or an empty object.
+ * @remarks
+ * The router stores user input in the `location.state` object when navigating
+ * between form pages.  This hook extracts that state so the form can be
+ * pre-filled when the user returns to it.
+ *
+ * @returns A plain object containing any saved input state.  If the location
+ * does not include a `state` object an empty object is returned.
  */
 function useSavedInput(): Record<string, any> {
   const {
@@ -63,6 +69,13 @@ export default function AnalyzeBaseForm({
   const {router, match} = useRouter();
   const savedInput = useSavedInput();
 
+  /**
+   * Submit handler forwarded to the underlying HTML form. It delegates the
+   * actual submission logic to the consumer provided {@link onSubmit} callback
+   * and performs navigation when the submission is considered valid.
+   *
+   * @param e - Synthetic form submit event.
+   */
   const handleSubmit = React.useCallback(
     async (e: React.SyntheticEvent) => {
       e.persist();
@@ -83,6 +96,12 @@ export default function AnalyzeBaseForm({
     [match, onSubmit, router, to]
   );
 
+  /**
+   * Reset handler that clears router state and notifies consumers. All form
+   * values stored in the location state will be discarded.
+   *
+   * @param e - Synthetic reset event from the form.
+   */
   const handleReset = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.persist();

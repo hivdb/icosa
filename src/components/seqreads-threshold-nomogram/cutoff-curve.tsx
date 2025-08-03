@@ -1,43 +1,57 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import React from 'react';
 import {line, /*curveMonotoneX, */curveStepBefore} from 'd3-shape';
 
 import constants from './constants';
 
+export interface CutoffKeyPoint {
+  /** Mixture rate value of the key point. */
+  mixtureRate: number;
+  /** Minimum prevalence value of the key point. */
+  minPrevalence: number;
+}
 
-function useCalcCutoffCurve({mixtureRateScale, minPrevalenceScale}) {
+function useCalcCutoffCurve({
+  mixtureRateScale,
+  minPrevalenceScale
+}: {
+  mixtureRateScale: (v: number) => number;
+  minPrevalenceScale: (v: number) => number;
+}) {
   return React.useMemo(
-    () => line()
-      .curve(curveStepBefore)
-      // .curve(curveMonotoneX)
-      .x(d => mixtureRateScale(d.mixtureRate))
-      .y(d => minPrevalenceScale(d.minPrevalence)),
+    () =>
+      line<CutoffKeyPoint>()
+        .curve(curveStepBefore)
+        // .curve(curveMonotoneX)
+        .x(d => mixtureRateScale(d.mixtureRate))
+        .y(d => minPrevalenceScale(d.minPrevalence)),
     [minPrevalenceScale, mixtureRateScale]
   );
 }
 
+export interface CutoffCurveProps {
+  /** Array of key points defining the cutoff curve. */
+  cutoffKeyPoints: CutoffKeyPoint[];
+  /** Scale converting mixture rate values to x positions. */
+  mixtureRateScale: (v: number) => number;
+  /** Scale converting prevalence values to y positions. */
+  minPrevalenceScale: (v: number) => number;
+}
 
-const CutoffKeyPoint = PropTypes.shape({
-  mixtureRate: PropTypes.number.isRequired,
-  minPrevalence: PropTypes.number.isRequired
-});
-
-
-CutoffCurve.propTypes = {
-  cutoffKeyPoints: PropTypes.arrayOf(
-    CutoffKeyPoint.isRequired
-  ).isRequired,
-  mixtureRateScale: PropTypes.func.isRequired,
-  minPrevalenceScale: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render the cutoff curve that separates passing and failing reads in the
+ * nomogram.
+ *
+ * @param props - {@link CutoffCurveProps} describing scales and key points.
+ * @returns SVG group with path elements drawing the cutoff curve.
+ */
 export default function CutoffCurve({
   cutoffKeyPoints,
   mixtureRateScale,
   minPrevalenceScale
-}) {
+}: CutoffCurveProps): JSX.Element {
   const calcCutoffCurve = useCalcCutoffCurve({
     mixtureRateScale,
     minPrevalenceScale
