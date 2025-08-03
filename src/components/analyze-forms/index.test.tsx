@@ -1,14 +1,7 @@
-/*
-import {useBasePath} from './index';
+import {getBasePath} from './use-base-path';
 
-// Test disabled due to heavy dependencies in analyze forms index.
 it('computes base path from location', () => {
-  const base = useBasePath({pathname: '/foo/bar/'} as any);
+  const base = getBasePath('/foo/bar/');
   expect(base).toBe('/foo');
-});
-*/
-
-it('placeholder', () => {
-  expect(true).toBe(true);
 });
 

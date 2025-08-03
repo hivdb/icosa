@@ -1,25 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import constants from './constants';
 
 const MAIN_COLOR = '#ba6000';
 
+export interface ActualThresholdProps {
+  /** X coordinate of the applied nucleotide mixture threshold. */
+  thresholdX: number;
+  /** Y coordinate of the applied mutation detection threshold. */
+  thresholdY: number;
+  /** Scaling function converting mixture rate to SVG x position. */
+  scaleX: (value: number) => number;
+  /** Scaling function converting prevalence to SVG y position. */
+  scaleY: (value: number) => number;
+}
 
-ActualThreshold.propTypes = {
-  thresholdX: PropTypes.number.isRequired,
-  thresholdY: PropTypes.number.isRequired,
-  scaleX: PropTypes.func.isRequired,
-  scaleY: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render an arrow and label showing the actual thresholds applied to the
+ * analysis results.
+ *
+ * @param props - {@link ActualThresholdProps} describing geometry and scales.
+ * @returns SVG group element visualizing the actual thresholds.
+ */
 export default function ActualThreshold({
   thresholdX,
   thresholdY,
   scaleX,
   scaleY
-}) {
+}: ActualThresholdProps): JSX.Element {
   const cx = scaleX(thresholdX);
   const cy = scaleY(thresholdY);
   const {
