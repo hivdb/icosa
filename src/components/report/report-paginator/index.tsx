@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Select from '../../select';
 
@@ -9,23 +8,41 @@ import Button from './button';
 import style from './style.module.scss';
 
 
-function getUniqKey(inputObj) {
-  if ('name' in inputObj) {
+interface InputObj {
+  name?: string;
+  header?: string;
+}
+
+function getUniqKey(inputObj: InputObj): string {
+  if ('name' in inputObj && inputObj.name) {
     return inputObj.name;
   }
   else {
-    return inputObj.header;
+    return inputObj.header as string;
   }
 }
 
 
+interface ReportPaginatorProps {
+  inputObjs: InputObj[];
+  currentSelected: {index: number; name: string};
+  onSelect: (value: string) => void;
+  children?: React.ReactNode;
+}
+
+/**
+ * Render the paginator component which allows selecting among sequence inputs.
+ *
+ * @param props - Component props.
+ * @returns React element containing paginator UI.
+ */
 function ReportPaginator({
   inputObjs,
   currentSelected,
   onSelect,
   children: extras
-}) {
-  const containerRef = React.useRef();
+}: ReportPaginatorProps) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const [fixed, handleWindowScroll] = React.useReducer(
     () => {
       const {top} = containerRef.current.getBoundingClientRect();
@@ -43,7 +60,7 @@ function ReportPaginator({
   }, [handleWindowScroll]);
 
   const handleChange = React.useCallback(
-    ({value}) => onSelect(value),
+    ({value}: {value: string}) => onSelect(value),
     [onSelect]
   );
 
@@ -93,17 +110,24 @@ function ReportPaginator({
 
 }
 
-ReportPaginator.propTypes = {
-  inputObjs: PropTypes.array,
-  currentSelected: PropTypes.shape({
-    index: PropTypes.number,
-    name: PropTypes.string
-  }),
-  onSelect: PropTypes.func,
-  children: PropTypes.node
-};
+/**
+ * Options for {@link useReportPaginator}.
+ */
+interface UseReportPaginatorOptions {
+  inputObjs: InputObj[];
+  loaded: boolean;
+  output?: string;
+  currentSelected: {index: number; name: string};
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
+  children?: React.ReactNode;
+}
 
-
+/**
+ * Hook wiring up pagination controls with scroll observation for reports.
+ *
+ * @param options - Configuration including data sources and callbacks.
+ * @returns Handlers for observing nodes and the paginator element.
+ */
 function useReportPaginator({
   inputObjs,
   loaded,
@@ -111,7 +135,7 @@ function useReportPaginator({
   currentSelected,
   fetchAnother,
   children
-}) {
+}: UseReportPaginatorOptions) {
   const resetPaginatorScrollOffset = React.useCallback(
     () => {
       const event = new Event('--sierra-paginator-reset-scroll');
@@ -133,11 +157,8 @@ function useReportPaginator({
   });
 
   const onPaginatorSelect = React.useCallback(
-    name => scrollTo(name, resetPaginatorScrollOffset, false, true),
-    [
-      scrollTo,
-      resetPaginatorScrollOffset
-    ]
+    (name: string) => scrollTo(name, resetPaginatorScrollOffset, false, true),
+    [scrollTo, resetPaginatorScrollOffset]
   );
 
   return {
