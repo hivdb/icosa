@@ -1,35 +1,35 @@
+import React from 'react';
 import {useRouter} from 'found';
 
 import BigData, {isBigData} from '../../utils/big-data';
 import useAddParams from './use-add-params';
 
-
-export function useWhenNoSeqReads(callback) {
+export function useWhenNoSeqReads(callback: () => void) {
   const {
     match: {
       location: {
         state: {
           allSequenceReads: key
-        } = {}
-      } = {}
-    }
-  } = useRouter();
+        } = {},
+      } = {},
+    },
+  } = useRouter() as any;
   if (!isBigData(key)) {
     callback();
   }
 }
 
-export default function useAllSeqReads({defaultParams}) {
+export default function useAllSeqReads({defaultParams}: {defaultParams: any}) {
   const {
     match: {
       location: {
         state: {
           allSequenceReads: key
-        } = {}
-      } = {}
-    }
-  } = useRouter();
-  let allOrigSeqReads = [];
+        } = {},
+      } = {},
+    },
+  } = useRouter() as any;
+  let allOrigSeqReads: any[] = [];
   let isPending = true;
   try {
     [allOrigSeqReads, isPending] = BigData.use(key);

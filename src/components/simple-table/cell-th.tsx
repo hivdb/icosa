@@ -1,15 +1,33 @@
 import React from 'react';
 import sleep from 'sleep-promise';
-import PropTypes from 'prop-types';
 import {FaSortDown} from '@react-icons/all-files/fa/FaSortDown';
 import {FaSortUp} from '@react-icons/all-files/fa/FaSortUp';
 import {FaSort} from '@react-icons/all-files/fa/FaSort';
 
 import style from './style.module.scss';
-import {columnDefShape, sortStateShape} from './prop-types';
 
+interface ColumnDef {
+  name: string;
+  label: React.ReactNode;
+  sort: (rows: any[], name: string) => any[];
+  sortable: boolean;
+  nullsLast?: boolean;
+  headCellStyle?: React.CSSProperties;
+}
 
-function getNextDirection(direction) {
+interface SortColumn {
+  name: string;
+  direction: 'ascending' | 'descending' | null;
+  nullsLast?: boolean;
+  sort: (rows: any[], name: string) => any[];
+}
+
+interface SortState {
+  columns: SortColumn[];
+  sortedData: any[];
+}
+
+function getNextDirection(direction: 'ascending' | 'descending' | null) {
   if (direction === null) {
     return 'ascending';
   }
@@ -21,10 +39,9 @@ function getNextDirection(direction) {
   }
 }
 
-
-function moveNullsLast(data, name) {
-  const nonNulls = [];
-  const nulls = [];
+function moveNullsLast(data: any[], name: string) {
+  const nonNulls: any[] = [];
+  const nulls: any[] = [];
   for (const item of data) {
     if (
       item[name] === undefined ||
@@ -40,8 +57,7 @@ function moveNullsLast(data, name) {
   return [...nonNulls, ...nulls];
 }
 
-
-function applySorts(data, columns) {
+function applySorts(data: any[], columns: SortColumn[]) {
   let sortedData = [...data];
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
@@ -69,14 +85,24 @@ function applySorts(data, columns) {
   return sortedData;
 }
 
+interface Props {
+  data: any[];
+  columnDef: ColumnDef;
+  sortState: SortState;
+  onBeforeSort?: (arg: SortState) => void;
+  onSort?: (arg: SortState) => void;
+}
 
+/**
+ * Render a sortable table header cell.
+ */
 function SimpleTableCellTh({
   data,
   columnDef,
   sortState,
   onBeforeSort,
   onSort
-}) {
+}: Props) {
   const {
     name,
     label,
@@ -118,7 +144,7 @@ function SimpleTableCellTh({
         newColumns.length = 0;
       }
 
-      onBeforeSort && onBeforeSort({columns: newColumns});
+      onBeforeSort && onBeforeSort({columns: newColumns, sortedData: []});
 
       // await for sorting=true applied (transition takes ~150ms)
       // Note: while waiting for the 300ms, sortByColumns can be triggered
@@ -198,15 +224,5 @@ function SimpleTableCellTh({
     ]
   );
 }
-
-SimpleTableCellTh.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.object.isRequired
-  ).isRequired,
-  columnDef: columnDefShape.isRequired,
-  sortState: sortStateShape.isRequired,
-  onBeforeSort: PropTypes.func,
-  onSort: PropTypes.func
-};
 
 export default SimpleTableCellTh;
