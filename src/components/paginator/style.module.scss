@@ -1,5 +1,5 @@
-@import "../../styles";
-@import "./variables";
+@use "../../styles" as *;
+@use "./variables" as *;
 
 .paginator-container {
   @extend %paginator-variables;

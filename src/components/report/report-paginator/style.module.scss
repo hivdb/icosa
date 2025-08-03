@@ -1,6 +1,6 @@
-@import "../../../styles/colors";
-@import "../../../styles/select";
-@import "../../paginator/variables";
+@use "../../../styles/colors" as *;
+@use "../../../styles/select" as *;
+@use "../../paginator/variables" as *;
 
 .report-paginator-container {
   position: sticky !important;

@@ -1,4 +1,4 @@
-@import "../ext";
+@use "../ext" as *;
 
 .codon-reads-coverage {
   @extend %report-section;

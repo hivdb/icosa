@@ -1,6 +1,6 @@
-@import "../../styles";
-@import "../../styles/tabs";
-@import "../../styles/dropdown";
+@use "../../styles" as *;
+@use "../../styles/tabs" as *;
+@use "../../styles/dropdown" as *;
 
 label.input-label {
   @include inline-input-label(8rem);

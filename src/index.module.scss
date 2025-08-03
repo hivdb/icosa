@@ -1,4 +1,4 @@
-@import "./styles/default-colors";
+@use "./styles/default-colors" as *;
 
 body {
   @include default-color;

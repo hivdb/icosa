@@ -1,4 +1,4 @@
-@import "../../styles/select";
+@use "../../styles/select" as *;
 
 .algver-select {
   width: 15rem;

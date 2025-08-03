@@ -1,4 +1,4 @@
-@import '../../styles/colors';
+@use '../../styles/colors' as *;
 
 .vertical-tabs {
   --tab-width: 5rem;
@@ -8,11 +8,11 @@
   --ribbon-width: .5rem;
   --border-width: 1px;
   --toggler-width: 2.5rem;
+  display: grid;
+  grid-template-columns: var(--tab-width) auto;
   @media (min-resolution: 2dppx) {
     --border-width: .5px;
   }
-  display: grid;
-  grid-template-columns: var(--tab-width) auto;
 
   &[data-tabs-expanded="false"] {
     grid-template-columns: auto;

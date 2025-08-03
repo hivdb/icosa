@@ -1,6 +1,6 @@
 @import "~normalize-scss";
-@import "./colors";
-@import "./constants";
+@use "./colors" as *;
+@use "./constants" as *;
 
 @include normalize();
 

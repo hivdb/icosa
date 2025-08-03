@@ -1,4 +1,4 @@
-@import "../../styles/colors";
+@use "../../styles/colors" as *;
 
 .mutation-comments-container {
   border: 1px solid color(dividing-line);

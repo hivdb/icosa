@@ -1,7 +1,7 @@
-@import "../../styles";
-@import "../../styles/tabs";
-@import "../../styles/dropdown";
-@import "../../styles/functions";
+@use "../../styles" as *;
+@use "../../styles/tabs" as *;
+@use "../../styles/dropdown" as *;
+@use "../../styles/functions" as *;
 
 
 .mutation-main-input-with-columns {

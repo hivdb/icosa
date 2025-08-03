@@ -1,5 +1,5 @@
-@import "../../styles/constants";
-@import "../../styles/functions";
+@use "../../styles/constants" as *;
+@use "../../styles/functions" as *;
 
 $header-bgcolor: #f9fafb;
 $header-bgcolor-hover: #f3f3f3;

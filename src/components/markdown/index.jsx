@@ -34,6 +34,11 @@ import {presetShape as genomeMapPresetShape} from '../genome-map';
 }*/
 
 
+/**
+ * ExtendedMarkdown renders markdown content with optional table of
+ * contents, reference links, and macro support. It wraps `react-markdown`
+ * and exposes additional hooks used throughout the application.
+ */
 function ExtendedMarkdown({
   noHeadingStyle,
   toc,
