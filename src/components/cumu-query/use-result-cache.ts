@@ -1,13 +1,28 @@
 import React from 'react';
 import nestGet from 'lodash/get';
 
+interface ResultCacheProps {
+  inputObjs: any[];
+  mainOutputName: string;
+  outputUniqKeyName: string;
+}
 
+interface Cache {
+  inputObjs: any[];
+  lookup: Record<string, any>;
+  misc: Record<string, any>;
+}
+
+/**
+ * Cache results returned from batched queries so that subsequent fetches
+ * can reuse already loaded data.
+ */
 export default function useResultCache({
   inputObjs,
   mainOutputName,
   outputUniqKeyName
-}) {
-  const cache = React.useMemo(
+}: ResultCacheProps) {
+  const cache: Cache = React.useMemo(
     () => ({
       inputObjs,
       lookup: {},
@@ -17,11 +32,11 @@ export default function useResultCache({
   );
 
   const cacheResults = React.useCallback(
-    data => {
+    (data: Record<string, any>) => {
       cache.lookup = cache.lookup || {};
-      const mainOutputs = data[mainOutputName];
+      const mainOutputs = data[mainOutputName] as any[];
       for (const outputObj of mainOutputs) {
-        const uniqKeyVal = nestGet(outputObj, outputUniqKeyName);
+        const uniqKeyVal = nestGet(outputObj, outputUniqKeyName) as string;
         cache.lookup[uniqKeyVal] = outputObj;
       }
       const misc = {...data};
@@ -36,7 +51,7 @@ export default function useResultCache({
     () => {
       const mainOutputs = Object.values(cache.lookup);
 
-      const mergedData = {
+      const mergedData: Record<string, any> = {
         currentVersion: {},
         currentProgramVersion: {},
         ...cache.misc
@@ -50,7 +65,7 @@ export default function useResultCache({
   );
 
   const isCached = React.useCallback(
-    uniqKeyVal => uniqKeyVal in cache.lookup,
+    (uniqKeyVal: string) => uniqKeyVal in cache.lookup,
     [cache]
   );
 
@@ -60,3 +75,4 @@ export default function useResultCache({
     isCached
   };
 }
+

@@ -4,7 +4,20 @@ import {useRouter} from 'found';
 
 import {calcOffsetLimit, DEFAULT_QUICKLOAD_LIMIT} from './funcs';
 
+interface UseFetchAnotherArgs {
+  inputObjs: any[];
+  loaded: boolean;
+  isCached: (name: any) => boolean;
+  setCursor: (cursor: {offset: number; limit: number; loadFirstIndex: number}) => void;
+  lazyLoad: boolean;
+  quickLoadLimit?: number;
+  inputUniqKeyName: string;
+}
 
+/**
+ * Generate a function that fetches another item and updates URL state if
+ * necessary.
+ */
 export default function useFetchAnother({
   inputObjs,
   loaded,
@@ -13,20 +26,18 @@ export default function useFetchAnother({
   lazyLoad,
   quickLoadLimit = DEFAULT_QUICKLOAD_LIMIT,
   inputUniqKeyName
-}) {
+}: UseFetchAnotherArgs) {
   const {match, router} = useRouter();
-  const pendingResolve = React.useRef(null);
+  const pendingResolve = React.useRef<((value?: unknown) => void) | null>(null);
 
   const fetchAnother = React.useCallback(
-    (curName, updateCurrentSelected = true) => {
+    (curName: any, updateCurrentSelected = true) => {
       const curIdx = inputObjs.findIndex(
         obj => nestGet(obj, inputUniqKeyName) === curName
       );
       if (curIdx < 0) {
         console.error(
-          `Given item ${
-            JSON.stringify(curName)
-          } not found, this is no doubt a bug`
+          `Given item ${JSON.stringify(curName)} not found, this is no doubt a bug`
         );
         return;
       }
@@ -38,10 +49,7 @@ export default function useFetchAnother({
             name: curName
           }
         };
-        // When router.replace trigger, the corresponding
-        // loaders (SequenceLoader, SeqReadsLoader, PatternsLoader)
-        // will update `currentSelected`
-        router.replace(loc);
+        router.replace(loc as any);
       }
       let shouldWaitLoaded = false;
       const {
@@ -54,7 +62,7 @@ export default function useFetchAnother({
         lazyLoad,
         quickLoadLimit
       });
-      for (let idx = offset; idx < offset + limit; idx ++) {
+      for (let idx = offset; idx < offset + limit; idx++) {
         const name = nestGet(inputObjs[idx], inputUniqKeyName);
         if (!isCached(name)) {
           shouldWaitLoaded = true;
@@ -102,3 +110,4 @@ export default function useFetchAnother({
 
   return fetchAnother;
 }
+

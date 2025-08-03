@@ -5,10 +5,19 @@ import useResultCache from './use-result-cache';
 import useCursorAndVariables from './use-cursor-and-variables';
 import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
 
-
 export {calcOffsetLimit, calcInitOffsetLimit};
 
-export default function useCumuQuery(props) {
+interface UseCumuQueryArgs {
+  query: any;
+  client: any;
+  mainInputName: string;
+  [key: string]: any;
+}
+
+/**
+ * Hook that manages fetching data cumulatively with cursor state and cache.
+ */
+export default function useCumuQuery(props: UseCumuQueryArgs) {
   const {
     query,
     client,
@@ -104,5 +113,5 @@ export default function useCumuQuery(props) {
       fetchAnother
     };
   }
-
 }
+
