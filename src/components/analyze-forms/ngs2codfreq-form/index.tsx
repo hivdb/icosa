@@ -43,13 +43,12 @@ function reformCodFreqs(
 ) {
   return allSequenceReads.map(({allReads, name, ...seqReads}) => ({
     name: name.replace(SUFFIX_PATTERN, ''),
-    allReads: allReads.map(({allCodonReads, gene, position, ...read}: any) => {
+    allReads: allReads.map(({allCodonReads, gene, position}: RawRead) => {
       [gene, position] = geneValidator(gene, position);
       return {
         allCodonReads: allCodonReads.map(({codon, reads}: any) => ({codon, reads})),
         gene,
-        position,
-        ...read
+        position
       };
     }),
     ...seqReads

@@ -7,6 +7,8 @@ import PatternsInputForm from './patterns-input-form';
 import SequenceInputForm from './sequence-input-form';
 import SequenceReadsInputForm from './sequence-reads-input-form';
 import NGS2CodFreqForm from './ngs2codfreq-form';
+import {useBasePath} from './use-base-path';
+export {useBasePath} from './use-base-path';
 
 /**
  * Determine current tab name from location.
@@ -27,13 +29,6 @@ function useCurrentTab(location: {pathname: string}): string {
  * @param location - Router location object.
  * @returns Pathname prefix before the tab segment.
  */
-export function useBasePath(location: {pathname: string}): string {
-  return React.useMemo(() => {
-    const tabName = location.pathname.replace(/\/$/, '').split(/\//);
-    return tabName.slice(0, tabName.length - 1).join('/');
-  }, [location.pathname]);
-}
-
 export interface AnalyzeFormsProps {
   match: {location: {pathname: string}};
   router: {replace(path: string): void; push(loc: any): void};

@@ -2,20 +2,36 @@ import uniq from 'lodash/uniq';
 import orderBy from 'lodash/orderBy';
 import difference from 'lodash/difference';
 
+interface FastqFile {name: string}
+
+interface PairPattern {
+  delimiter: string | null;
+  diffOffset: number;
+  posPairedMarker: number;
+  reverse: number;
+}
+
+export interface PairedGroup {
+  name: string;
+  pair: [FastqFile | null, FastqFile | null];
+  pattern: PairPattern;
+  n: number;
+}
+
 
 const FILENAME_DELIMITERS = [' ', '_', '-'];
 const PAIRED_FASTQ_MARKER = ['1', '2'];
 const INVALID_PAIRED_FASTQ_MARKER = /[1-9]0*[12]|[^0]00+[12]|[12]\d/;
 
 
-function getShortLen(text1, text2) {
+function getShortLen(text1: string, text2: string): number {
   const text1Len = text1.length;
   const text2Len = text2.length;
   return text1Len < text2Len ? text1Len : text2Len;
 }
 
 
-function findPairedMarker(text1, text2) {
+function findPairedMarker(text1: string, text2: string): number {
   let diffcount = 0;
   let diffpos = -1;
   const shortLen = getShortLen(text1, text2);
@@ -47,12 +63,12 @@ function findPairedMarker(text1, text2) {
 }
 
 
-function* pairingFiles(filenames) {
-  const filenamesLen = filenames.length;
-  for (let i = 0; i < filenamesLen; i ++) {
-    const fn1 = filenames[i];
-    for (let j = i + 1; j < filenamesLen; j ++) {
-      const fn2 = filenames[j];
+function* pairingFiles(files: FastqFile[]): Generator<[FastqFile, FastqFile]> {
+  const filenamesLen = files.length;
+  for (let i = 0; i < filenamesLen; i++) {
+    const fn1 = files[i];
+    for (let j = i + 1; j < filenamesLen; j++) {
+      const fn2 = files[j];
       yield [fn1, fn2];
     }
   }
@@ -66,7 +82,10 @@ function suggestPairName({
     diffOffset,
     reverse
   }
-}) {
+}: {
+  pair: [FastqFile, FastqFile | null];
+  pattern: PairPattern;
+}): string {
   let pairName = fileName.split(/\.fastq(?:\.gz)?/i)[0];
   if (reverse === -1) {
     // single strand
@@ -85,10 +104,10 @@ function suggestPairName({
 
 
 function removeFileUsingRef(
-  allPairs,
-  index,
-  fileName
-) {
+  allPairs: PairedGroup[],
+  index: number,
+  fileName: string
+): void {
   const pairProps = allPairs[index];
   if (pairProps.n === 1) {
     allPairs.splice(index, 1);
@@ -113,16 +132,24 @@ function removeFileUsingRef(
 }
 
 
+/**
+ * Move a file from one pair group to another.
+ *
+ * @param allPairs - Current paired groups.
+ * @param src - Source pair index and filename.
+ * @param target - Target pair index.
+ * @returns Updated paired groups with file relocated.
+ */
 export function moveFile(
-  allPairs,
-  {index: srcIndex, fileName: srcFileName},
-  {index: targetIndex}
-) {
+  allPairs: PairedGroup[],
+  {index: srcIndex, fileName: srcFileName}: {index: number; fileName: string},
+  {index: targetIndex}: {index: number}
+): PairedGroup[] {
   allPairs = [...allPairs];
   const srcPair = allPairs[srcIndex];
-  const targetPair = {
+  const targetPair: PairedGroup = {
     ...allPairs[targetIndex]
-  };
+  } as PairedGroup;
   if (targetPair.n === 2) {
     throw new Error('Target group is already paired.');
   }
@@ -143,24 +170,39 @@ export function moveFile(
 }
 
 
+/**
+ * Remove a file from a pair group.
+ *
+ * @param allPairs - Current paired groups.
+ * @param index - Index of group to remove from.
+ * @param fileName - Name of file to remove.
+ * @returns New paired groups without the removed file.
+ */
 export function removeFile(
-  allPairs,
-  index,
-  fileName
-) {
+  allPairs: PairedGroup[],
+  index: number,
+  fileName: string
+): PairedGroup[] {
   allPairs = [...allPairs];
   removeFileUsingRef(allPairs, index, fileName);
   return allPairs;
 }
 
 
+/**
+ * Split a paired group into two single-file groups.
+ *
+ * @param allPairs - Current paired groups.
+ * @param idx - Index of group to split.
+ * @returns New paired groups with the pair separated.
+ */
 export function splicePair(
-  allPairs,
-  idx
-) {
+  allPairs: PairedGroup[],
+  idx: number
+): PairedGroup[] {
   allPairs = [...allPairs];
   const {pair: [f1, f2]} = allPairs[idx];
-  const p1 = {
+  const p1: PairedGroup = {
     pair: [f1, null],
     pattern: {
       delimiter: null,
@@ -168,10 +210,11 @@ export function splicePair(
       posPairedMarker: -1,
       reverse: -1
     },
-    n: 1
+    n: 1,
+    name: ''
   };
   p1.name = suggestPairName(p1);
-  const p2 = {
+  const p2: PairedGroup = {
     pair: [f2, null],
     pattern: {
       delimiter: null,
@@ -179,7 +222,8 @@ export function splicePair(
       posPairedMarker: -1,
       reverse: -1
     },
-    n: 1
+    n: 1,
+    name: ''
   };
   p2.name = suggestPairName(p2);
   allPairs.splice(idx, 1, p1, p2);
@@ -187,7 +231,7 @@ export function splicePair(
 }
 
 
-function* findPatterns(f1, f2) {
+function* findPatterns(f1: FastqFile, f2: FastqFile): Generator<PairPattern> {
   const fn1 = f1.name;
   const fn2 = f2.name;
   if (fn1.length !== fn2.length) {
@@ -259,7 +303,13 @@ function* findPatterns(f1, f2) {
  *   SampleExample_1.fastq <-> SampleExample_2.fastq.gz
  *   SampleExample_1.FASTQ.GZ <-> SampleExample_2.fastq.gz
  */
-export function* identifyPairs(files) {
+/**
+ * Identify candidate FASTQ pairs based on filename patterns.
+ *
+ * @param files - Uploaded FASTQ files.
+ * @yields Pair grouping information.
+ */
+export function* identifyPairs(files: FastqFile[]): Generator<PairedGroup> {
   const filenames = files.map(({name}) => name);
   const patterns = {};
   for (const [f1, f2] of pairingFiles(files)) {

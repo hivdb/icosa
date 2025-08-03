@@ -1,5 +1,5 @@
 import {renderHook} from '@testing-library/react';
-import {useBasePath} from './index';
+import {useBasePath} from './use-base-path';
 
 describe('useBasePath', () => {
   /**
