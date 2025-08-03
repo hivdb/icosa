@@ -1,67 +1,82 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {scaleMultipleLinears} from './helpers';
+import type {Coverages, MultiScale} from './types';
 
-
-function getMaxCov(coverages) {
+/**
+ * Return the maximum coverage value from a list of coverage points.
+ *
+ * @param coverages - Coverage information for individual positions.
+ * @returns The highest coverage value.
+ */
+function getMaxCov(coverages: Coverages['coverages']): number {
   const covs = coverages.map(({coverage}) => coverage);
   return Math.max(...covs);
 }
 
-
+/**
+ * Generate an SVG path representing coverage values.
+ *
+ * @param coverages - Array of coverage information.
+ * @param scaleX - X-axis scale function.
+ * @param scaleY - Y-axis scale function.
+ * @param minPos - Minimum position to include.
+ * @param maxPos - Maximum position to include.
+ * @param upperLimit - Optional limit for coverage values.
+ * @returns A path string for use in an SVG element.
+ */
 function calcPath(
-  coverages,
-  scaleX,
-  scaleY,
-  minPos,
-  maxPos,
+  coverages: Coverages['coverages'],
+  scaleX: MultiScale,
+  scaleY: MultiScale,
+  minPos: number,
+  maxPos: number,
   upperLimit = Number.POSITIVE_INFINITY
-) {
-  coverages = coverages
+): string {
+  const coveragesArr = coverages
     .reduce(
-      (acc, {position, coverage}) => {
+      (acc: number[], {position, coverage}) => {
         acc[position] = Math.min(upperLimit, coverage);
         return acc;
       },
-      []
+      [] as number[]
     );
   let prevX = scaleX(minPos);
   let prevY = scaleY(0);
-  const pathData = [
-    'm', prevX, prevY
-  ];
-  for (let pos = minPos; pos <= maxPos; pos ++) {
-    const cov = coverages[pos] || 0;
+  const pathData = ['m', prevX, prevY];
+  for (let pos = minPos; pos <= maxPos; pos++) {
+    const cov = coveragesArr[pos] || 0;
     const curX = scaleX(pos);
     const curY = scaleY(cov);
-    pathData.push('L');
-    pathData.push(curX);
-    pathData.push(curY);
+    pathData.push('L', curX, curY);
     prevX = curX;
     prevY = curY;
-    if (coverages[pos]) {
+    if (coveragesArr[pos]) {
       pos += 2;
-      const curX = scaleX(pos + 1);
-      pathData.push('H');
-      pathData.push(curX);
-      prevX = curX;
+      const curX2 = scaleX(pos + 1);
+      pathData.push('H', curX2);
+      prevX = curX2;
     }
   }
-  pathData.push('V');
-  pathData.push(scaleY(0));
-  pathData.push('Z');
+  pathData.push('V', scaleY(0), 'Z');
   return pathData.join(' ');
 }
 
+interface CovAxisProps {
+  /** X-axis position for the coverage axis. */
+  x: number;
+  /** Y-axis scale. */
+  scaleY: MultiScale;
+  /** Width of axis tick marks. */
+  tickWidth: number;
+  /** Font size of axis tick labels. */
+  tickFontSize: number;
+}
 
-CovAxis.propTypes = {
-  x: PropTypes.number.isRequired,
-  scaleY: PropTypes.func.isRequired,
-  tickWidth: PropTypes.number.isRequired,
-  tickFontSize: PropTypes.number.isRequired
-};
-
-function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
+/**
+ * Render the Y axis for the coverage plot including tick labels.
+ */
+function CovAxis({x, scaleY, tickWidth, tickFontSize}: CovAxisProps) {
   const [[covStart, covEnd0], [, covEnd1]] = scaleY.domains();
   const yBottom = scaleY(covStart);
   const yEnd0 = scaleY(covEnd0);
@@ -73,16 +88,16 @@ function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
     x + tickWidth,
     yEnd1 + strokeWidth / 2,
     'h',
-    - tickWidth,
+    -tickWidth,
     'V',
     yEnd0 - 4,
     'l',
-    - tickWidth / 3,
+    -tickWidth / 3,
     4,
     'h',
-    tickWidth / 3 * 2,
+    (tickWidth / 3) * 2,
     'l',
-    - tickWidth / 3,
+    -tickWidth / 3,
     4,
     'V',
     yBottom,
@@ -120,45 +135,34 @@ function CovAxis({x, scaleY, tickWidth, tickFontSize}) {
   </g>;
 }
 
+export interface CoverageLayerProps extends Coverages {
+  /** Vertical offset of the layer. */
+  offsetY: number;
+  /** X-axis scaling function. */
+  scaleX: MultiScale;
+  /** Width of axis tick marks. */
+  tickWidth?: number;
+  /** Font size for tick labels. */
+  tickFontSize?: number;
+  /** Fill color for the coverage area. */
+  fill?: string;
+}
 
-CoverageLayer.propTypes = {
-  tickWidth: PropTypes.number.isRequired,
-  tickFontSize: PropTypes.number.isRequired,
-  offsetY: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  scaleX: PropTypes.func.isRequired,
-  posStart: PropTypes.number.isRequired,
-  posEnd: PropTypes.number.isRequired,
-  fill: PropTypes.string,
-  coverageUpperLimit: PropTypes.number.isRequired,
-  coverages: PropTypes.arrayOf(
-    PropTypes.shape({
-      position: PropTypes.number.isRequired,
-      coverage: PropTypes.number.isRequired
-    }).isRequired
-  ).isRequired
-};
-
-
-CoverageLayer.defaultProps = {
-  coverageUpperLimit: 1000,
-  tickWidth: 8,
-  tickFontSize: 12,
-  fill: '#cacaca'
-};
-
+/**
+ * Render coverage data as an area plot with an associated axis.
+ */
 export default function CoverageLayer({
-  tickWidth,
-  tickFontSize,
+  tickWidth = 8,
+  tickFontSize = 12,
   offsetY,
   height,
   scaleX,
   posStart,
   posEnd,
-  fill,
-  coverageUpperLimit,
+  fill = '#cacaca',
+  coverageUpperLimit = 1000,
   coverages
-}) {
+}: CoverageLayerProps) {
   let maxCov = getMaxCov(coverages);
   let [minPos, maxPos] = scaleX.domain();
   const leftMostPos = minPos;
@@ -167,8 +171,8 @@ export default function CoverageLayer({
   const scaleY = React.useMemo(
     () => scaleMultipleLinears(
       [
-        [0, coverageUpperLimit, .618],
-        [coverageUpperLimit, maxCov, .382]
+        [0, coverageUpperLimit, 0.618],
+        [coverageUpperLimit, maxCov, 0.382]
       ],
       [height + tickFontSize, tickFontSize]
     ),
