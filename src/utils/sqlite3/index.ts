@@ -9,7 +9,7 @@ import Worker from './worker';
 const BASE_URI = 's3-us-west-2.amazonaws.com/cms.hivdb.org';
 
 
-const _loadBinary = memoize(async function _loadBinary(dbURI) {
+const _loadBinary = memoize(async function _loadBinary(dbURI: string) {
   const resp = await fetch(dbURI, {cache: 'default'});
   if (resp.status === 403 || resp.status === 404) {
     throw new Error(`Resource not found: ${dbURI}`);
@@ -22,8 +22,13 @@ const _loadBinary = memoize(async function _loadBinary(dbURI) {
   };
 });
 
-
-export async function loadBinary(dbURI) {
+/**
+ * Fetch a SQLite database binary file and cache the result.
+ *
+ * @param dbURI - URI to the database file.
+ * @returns Promise resolving to the binary payload and resource path.
+ */
+export async function loadBinary(dbURI: string): Promise<{payload: ArrayBuffer; resPath: string}> {
   return await _loadBinary(dbURI);
 }
 
@@ -42,19 +47,19 @@ const MAX_WORKERS = (() => {
 
 // eslint-disable-next-line no-console
 console.debug(`SQLite pool: ${MAX_WORKERS} threads allowed`);
-const WORKER_POOL = {};
+const WORKER_POOL: Record<string, {pool: (Worker|null)[]; totalWorkers: number; locks: Promise<number>[]}> = {};
 
 async function createClient(
-  dbVersion,
-  dbName,
+  dbVersion: string,
+  dbName: string,
   baseURI = BASE_URI
-) {
-  let worker, onRelease, curIdx;
+): Promise<[Worker, () => void]> {
+  let worker: Worker | null, onRelease: (idx: number) => void, curIdx: number;
   const dbURI = `https://${baseURI}/${dbName}/${dbName}-${dbVersion}.db`;
   WORKER_POOL[dbURI] = WORKER_POOL[dbURI] || {
-    pool: new Array(MAX_WORKERS).fill(null),
+    pool: new Array<Worker|null>(MAX_WORKERS).fill(null),
     totalWorkers: 0,
-    locks: new Array(MAX_WORKERS).fill(null)
+    locks: new Array(MAX_WORKERS).fill(null) as any
   };
   const {pool, totalWorkers, locks} = WORKER_POOL[dbURI];
   do {
@@ -87,7 +92,7 @@ async function createClient(
         resolve => {
           newWorker.addEventListener('message', handleMessage);
 
-          function handleMessage({data}) {
+          function handleMessage({data}: {data: any}) {
             if (data.id === 1 && data.ready) {
               newWorker.removeEventListener('message', handleMessage);
               resolve(newWorker);
@@ -149,7 +154,7 @@ async function createClient(
 
 
 const execSQL = memoize(
-  async function execSQL({sql, params, dbVersion, dbName, baseURI}) {
+  async function execSQL({sql, params, dbVersion, dbName, baseURI}: any) {
     const start = new Date().getTime();
     const [
       worker,
@@ -164,7 +169,7 @@ const execSQL = memoize(
       resolve => {
         worker.addEventListener('message', handleMessage);
 
-        function handleMessage({data: {id, results, error}}) {
+        function handleMessage({data: {id, results, error}}: {data: any}) {
           if (id === myId) {
             if (error) {
               console.error(sql, params, error);
@@ -202,6 +207,22 @@ const execSQL = memoize(
 );
 
 
+interface UseQueryArgs {
+  sql?: string;
+  params?: any;
+  dbVersion?: string;
+  dbName?: string;
+  baseURI?: string;
+  skip?: boolean;
+  camel?: boolean;
+}
+
+/**
+ * React hook to execute a SQLite query via a web worker pool.
+ *
+ * @param args - Query string and connection options.
+ * @returns Query result payload and pending flag.
+ */
 export function useQuery({
   sql,
   params,
@@ -210,7 +231,7 @@ export function useQuery({
   baseURI = BASE_URI,
   skip = false,
   camel = true
-}) {
+}: UseQueryArgs) {
   if (!skip && !sql) {
     throw new Error('Required parameter "sql" is empty');
   }
