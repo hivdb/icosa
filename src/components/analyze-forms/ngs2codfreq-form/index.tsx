@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 
 import BigData from '../../../utils/big-data';
@@ -10,59 +9,51 @@ import Loader from '../../loader';
 import {buildGeneValidator} from '../../../utils/sequence-reads';
 import style from '../style.module.scss';
 
-const SUFFIX_PATTERN = (
-  /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i
-);
+const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
 
-
-function reformCodFreqs(allSequenceReads, geneValidator) {
-  return allSequenceReads.map(
-    ({allReads, name, ...seqReads}) => ({
-      name: name.replace(SUFFIX_PATTERN, ''),
-      allReads: allReads.map(
-        ({allCodonReads, gene, position, ...read}) => {
-          [gene, position] = geneValidator(gene, position);
-          return {
-            allCodonReads: allCodonReads.map(
-              ({codon, reads}) => ({codon, reads})
-            ),
-            gene,
-            position,
-            ...read
-          };
-        }
-      ),
-      ...seqReads
-    })
-  );
+function reformCodFreqs(allSequenceReads: any[], geneValidator: (g: string, p: number) => [string, number]) {
+  return allSequenceReads.map(({allReads, name, ...seqReads}) => ({
+    name: name.replace(SUFFIX_PATTERN, ''),
+    allReads: allReads.map(({allCodonReads, gene, position, ...read}: any) => {
+      [gene, position] = geneValidator(gene, position);
+      return {
+        allCodonReads: allCodonReads.map(({codon, reads}: any) => ({codon, reads})),
+        gene,
+        position,
+        ...read
+      };
+    }),
+    ...seqReads
+  }));
 }
 
+export interface NGS2CodFreqFormProps {
+  showOptionsForm?: boolean;
+  runners?: any[];
+  redirectTo?: string;
+  analyzeTo?: string;
+}
 
-NGS2CodFreqForm.propTypes = {
-  showOptionsForm: PropTypes.bool,
-  runners: PropTypes.array,
-  redirectTo: PropTypes.string,
-  analyzeTo: PropTypes.string
-};
-
+/**
+ * Wrapper around {@link NGS2CodFreq} providing redirection into analyze
+ * workflows once codon frequency files are generated.
+ */
 export default function NGS2CodFreqForm({
   showOptionsForm,
   runners,
   redirectTo,
   analyzeTo
-}) {
+}: NGS2CodFreqFormProps): JSX.Element {
   const {
     router,
     match: {
-      location: {
-        query: {task: taskKey} = {}
-      } = {}
+      location: {query: {task: taskKey} = {}} = {}
     }
   } = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
   const handleTriggerRunner = React.useCallback(
-    newTaskKey => {
+    (newTaskKey: string) => {
       if (taskKey !== newTaskKey) {
         router.push({
           pathname: redirectTo,
@@ -75,12 +66,12 @@ export default function NGS2CodFreqForm({
   );
 
   const handleAnalyze = React.useCallback(
-    async codfreqs => {
+    async (codfreqs: any[]) => {
       const geneValidator = buildGeneValidator(config.geneValidatorDefs);
       const allSequenceReads = reformCodFreqs(codfreqs, geneValidator);
       await BigData.clear();
       router.push({
-        pathname: analyzeTo,
+        pathname: analyzeTo!,
         state: {
           allSequenceReads: await BigData.save(allSequenceReads),
           outputOption: 'default'
@@ -92,8 +83,7 @@ export default function NGS2CodFreqForm({
 
   if (isConfigPending) {
     return <Loader inline />;
-  }
-  else {
+  } else {
     return (
       <NGS2CodFreq
        showOptionsForm={showOptionsForm}
@@ -102,7 +92,11 @@ export default function NGS2CodFreqForm({
        taskKey={taskKey}
        runners={runners}
        onAnalyze={handleAnalyze}
-       onTriggerRunner={handleTriggerRunner} />
+       onTriggerRunner={handleTriggerRunner}
+      />
     );
   }
 }
+
+export {reformCodFreqs};
+
