@@ -14,7 +14,8 @@ const fetchConfig = memoize(
  * Create a callback that loads configuration optionally from a remote URL.
  *
  * @param config - Configuration object which may include `configFromURL`.
- * @returns Callback resolving to a frozen configuration object.
+ * @returns Callback that resolves to a shallowly frozen configuration object
+ * merging local and remote settings.
  */
 export function useConfigLoader<T extends {configFromURL?: string}>(config: T) {
   return React.useCallback(
@@ -26,16 +27,12 @@ export function useConfigLoader<T extends {configFromURL?: string}>(config: T) {
           ...config,
           ...asyncConfig
         };
-      }
-      else {
-        loadedConfig = config;
+      } else {
+        loadedConfig = {...config};
       }
 
-      return new Proxy(loadedConfig, {
-        get(target, name: string | symbol) {
-          return Object.freeze((target as any)[name]);
-        }
-      });
+      // Prevent downstream mutation of configuration values.
+      return Object.freeze(loadedConfig);
     },
     [config]
   );

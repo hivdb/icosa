@@ -1,15 +1,35 @@
-const AA_DISPLAYS = {
+const AA_DISPLAYS: Record<string, string> = {
   '-': 'del',
   '_': 'ins',
   '*': 'stop'
 };
 
 
+export interface MutationListParams {
+  /** per-sequence read analysis results */
+  sequenceReadsAnalysis?: any[];
+  /** per-sequence analysis results */
+  sequenceAnalysis?: any[];
+}
+
+export interface MutationListTable {
+  folder: string;
+  tableName: string;
+  header: string[];
+  rows: Record<string, unknown>[];
+}
+
+/**
+ * Build mutation list tables for either sequence analyses or read analyses.
+ *
+ * @param params - {@link MutationListParams} containing analysis results.
+ * @returns Array of {@link MutationListTable} objects ready for export.
+ */
 export default function mutationList({
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
-  let header = [
+}: MutationListParams): MutationListTable[] {
+  let header: string[] = [
     'Sequence Name',
     'Gene',
     'Position',
@@ -27,8 +47,8 @@ export default function mutationList({
       'Percent'
     ];
   }
-  const tables = [];
-  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  const tables: MutationListTable[] = [];
+  const seqResults = (sequenceAnalysis || sequenceReadsAnalysis) as any[];
   for (const seqResult of seqResults) {
     const rows = [];
     const {

@@ -1,15 +1,34 @@
-function unseqRegions({
+export interface UnseqRegionsParams {
+  /** per-sequence read analysis results */
+  sequenceReadsAnalysis?: any[];
+  /** per-sequence analysis results */
+  sequenceAnalysis?: any[];
+}
+
+export interface UnseqRegionTable {
+  tableName: string;
+  header: string[];
+  rows: Record<string, unknown>[];
+}
+
+/**
+ * Build a table summarising unsequenced genome regions for each sequence.
+ *
+ * @param params - {@link UnseqRegionsParams} containing sequence analysis data.
+ * @returns Array with a single {@link UnseqRegionTable} describing unsequenced regions.
+ */
+export default function unseqRegions({
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
+}: UnseqRegionsParams): UnseqRegionTable[] {
   let header = [
     'Sequence Name',
     'Gene',
     'Position Start',
     'Position End'
   ];
-  const rows = [];
-  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  const rows: Record<string, unknown>[] = [];
+  const seqResults = (sequenceAnalysis || sequenceReadsAnalysis) as any[];
   for (const seqResult of seqResults) {
     const {
       inputSequence: {header: seqName1} = {},
@@ -33,5 +52,3 @@ function unseqRegions({
   }
   return [{tableName: 'unsequencedRegions', header, rows}];
 }
-
-export default unseqRegions;
