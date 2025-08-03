@@ -38,6 +38,10 @@ interface SeqReadsThresholdNomogramProps {
 /**
  * Draw the complete nomogram including axes, cutoff curve,
  * threshold lines and actual threshold marker.
+ *
+ * @param props - {@link SeqReadsThresholdNomogramProps} defining
+ *   the data, axis ticks, dimensions and thresholds to draw.
+ * @returns SVG element depicting the nomogram.
  */
 export default function SeqReadsThresholdNomogram({
   cutoffKeyPoints,

@@ -95,6 +95,13 @@ interface NomogramContainerProps {
 /**
  * Wrapper that configures and renders the {@link Nomogram} component
  * for sequence summary reports.
+ *
+ * @param cutoffKeyPoints - Key points describing the cutoff curve.
+ * @param maxMixtureRate - Configured maximum mixture rate threshold.
+ * @param minPrevalence - Configured minimum prevalence threshold.
+ * @param mixtureRate - Observed mixture rate for the sample.
+ * @param actualMinPrevalence - Observed minimum prevalence for the sample.
+ * @returns A div containing the rendered nomogram.
  */
 export default function NomogramContainer({
   cutoffKeyPoints,

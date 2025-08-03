@@ -52,6 +52,9 @@ interface CutoffCurveProps {
 /**
  * Render the cutoff curve dividing acceptable and unacceptable regions.
  *
+ * @param cutoffKeyPoints - List of key points describing the curve.
+ * @param mixtureRateScale - Scaling function for mixture rate values.
+ * @param minPrevalenceScale - Scaling function for minimum prevalence values.
  * @returns SVG group containing the curve and its faded extension.
  */
 export default function CutoffCurve({

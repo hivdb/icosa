@@ -81,7 +81,12 @@ function useAxisPathData({
   }, [axisLeft, scale, ticks]);
 }
 
-/** Format prevalence value as percentage string. */
+/**
+ * Format prevalence value as percentage string.
+ *
+ * @param value - Proportion to format.
+ * @returns Human readable percentage string.
+ */
 function pcntFormat(value: number): string {
   return `${(value * 100).toFixed(0)}%`;
 }
@@ -96,6 +101,7 @@ interface MinPrevalenceAxisProps {
  *
  * @param scale - Scaling function from prevalence to y-position.
  * @param ticks - Tick marks to render on the axis.
+ * @returns SVG group representing the axis and its labels.
  */
 export default function MinPrevalenceAxis({
   scale,

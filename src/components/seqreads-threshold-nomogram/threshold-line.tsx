@@ -27,6 +27,13 @@ interface ThresholdLineProps {
 /**
  * Draw a threshold line with a translucent shaded region on one side.
  *
+ * @param direction - Orientation of the threshold line.
+ * @param scaleX - Scale mapping x-values to positions.
+ * @param scaleY - Scale mapping y-values to positions.
+ * @param threshold - Numeric threshold value.
+ * @param thresholdCmp - Comparison operator indicating shaded region.
+ * @param strokeDasharray - Pattern for rendering the dashed line.
+ * @param color - Color of the line and the shaded region.
  * @returns SVG group containing the line, a gradient and the shaded area.
  */
 export default function ThresholdLine({

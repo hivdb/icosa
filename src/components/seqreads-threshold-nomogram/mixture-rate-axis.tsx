@@ -95,7 +95,12 @@ function useAxisPathData({
   }, [axisTop, scale, ticks]);
 }
 
-/** Format mixture rate value as percentage string. */
+/**
+ * Format mixture rate value as percentage string.
+ *
+ * @param value - Proportion to format.
+ * @returns Human readable percentage string.
+ */
 function pcntFormat(value: number): string {
   if (value < 0.1) {
     return `${(value * 100).toPrecision(1)}%`;
@@ -117,6 +122,7 @@ interface MixtureRateAxisProps {
  * @param scale - Scaling function mapping mixture rate to x-position.
  * @param height - Total height of the SVG canvas.
  * @param ticks - Tick marks to render on the axis.
+ * @returns SVG group representing the axis and its labels.
  */
 export default function MixtureRateAxis({
   scale,
