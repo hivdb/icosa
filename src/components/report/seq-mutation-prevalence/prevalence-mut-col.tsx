@@ -1,21 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import '../../../styles/griddle-table.scss';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 import {parseMutation} from '../../../utils/mutation';
 import style from '../style.module.scss';
 
-
-PrevalenceMutCol.propTypes = {
-  mutation: PropTypes.string.isRequired,
-  row: PropTypes.object.isRequired
-};
+/**
+ * Column renderer for mutation names with expand/collapse icons.
+ *
+ * @param mutation - Mutation text.
+ * @param row - Table row containing data and state.
+ * @returns Span element with formatted mutation text.
+ */
+export interface PrevalenceMutColProps {
+  mutation: string;
+  row: any;
+}
 
 export default function PrevalenceMutCol({
   mutation,
   row
-}) {
+}: PrevalenceMutColProps) {
   let [pos, aas, cons] = parseMutation(
     mutation
       .replace('Deletion', 'del')
@@ -40,7 +45,7 @@ export default function PrevalenceMutCol({
       </span>;
     }
     else { // aas.length > 2 or no-cons mixture
-      let display = [];
+      let display: any[] = [];
       let aaList = new Array(...aas.replace(cons, ''));
       const consPrefix = aas.length === aaList.length ? '' : cons;
       const firstAA = aaList.shift();

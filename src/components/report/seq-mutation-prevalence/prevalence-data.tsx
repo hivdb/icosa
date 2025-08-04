@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import '../../../styles/griddle-table.scss';
 
 import {parseMutation} from '../../../utils/mutation';
@@ -7,7 +6,25 @@ import Link from '../../link';
 
 import {geneToDrugClass} from './common';
 
-function renderPercentage(pcnt) {
+/**
+ * Render mutation prevalence percentages with links to external details.
+ *
+ * @param gene - Gene name for the mutation.
+ * @param rxType - Treatment type (naive or treated).
+ * @param subtype - Subtype name.
+ * @param percents - List of [amino acid, percent] pairs.
+ * @param row - Row data containing mutation text.
+ * @returns JSX element showing percentages.
+ */
+export interface PrevalenceDataProps {
+  gene: string;
+  rxType: string;
+  subtype: string;
+  percents: Array<[string, number]>;
+  row: any;
+}
+
+function renderPercentage(pcnt: number) {
   if (pcnt >= 1) {
     return Math.round(pcnt);
   }
@@ -19,23 +36,13 @@ function renderPercentage(pcnt) {
   }
 }
 
-
-PrevalenceData.propTypes = {
-  gene: PropTypes.string.isRequired,
-  rxType: PropTypes.string.isRequired,
-  subtype: PropTypes.string.isRequired,
-  percents: PropTypes.array.isRequired,
-  row: PropTypes.object.isRequired
-};
-
 export default function PrevalenceData({
   gene,
   rxType,
   subtype,
   percents,
   row
-}) {
-
+}: PrevalenceDataProps) {
   const handleLinkClick = React.useCallback(
     e => e.stopPropagation(),
     []
@@ -61,8 +68,8 @@ export default function PrevalenceData({
     <div>
       {(() => percents
         .map(([aa, pcnt], idx) => {
-          const isZero = parseInt(pcnt, 10) === 0;
-          pcnt = renderPercentage(pcnt);
+          const isZero = parseInt(String(pcnt), 10) === 0;
+          pcnt = renderPercentage(pcnt as number);
           if (aa === cons) {
             return null;
           }
@@ -85,5 +92,4 @@ export default function PrevalenceData({
       )()}
     </div>
   );
-
 }

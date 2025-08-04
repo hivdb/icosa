@@ -8,7 +8,12 @@ vi.mock('../select', () => ({default: ({onChange, options, value}: any) => (
     {options.map((o: any) => <option key={o.value} value={o.value}>{o.label}</option>)}
   </select>
 )}));
-vi.mock('../button', () => ({default: ({children, ...props}: any) => <button {...props}>{children}</button>}));
+vi.mock('../button', () => ({
+  default: ({children, btnStyle, btnSize, btnHeight, ...props}: any) => (
+    // filter styling props to avoid React DOM warnings
+    <button {...props}>{children}</button>
+  )
+}));
 vi.mock('../../utils/download', () => ({makeDownload: vi.fn()}));
 vi.mock('../../utils/use-mounted', () => ({default: () => () => true}));
 

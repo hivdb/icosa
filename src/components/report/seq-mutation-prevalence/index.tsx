@@ -1,23 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   mutationPrevalencesToTableData
 } from './common';
 import GeneMutationPrevalence from './gene-mutation-prevalence';
 
-
-SeqMutationPrevalence.propTypes = {
-  subtypeStats: PropTypes.array.isRequired,
-  mutationPrevalences: PropTypes.array.isRequired,
-  drugResistance: PropTypes.array.isRequired
-};
+/**
+ * Display sequence mutation prevalence tables grouped by gene.
+ *
+ * @param subtypeStats - Statistics for each subtype.
+ * @param mutationPrevalences - Mutation prevalence data.
+ * @param drugResistance - Drug resistance information per gene.
+ * @returns Fragment containing tables for each gene.
+ */
+export interface SeqMutationPrevalenceProps {
+  subtypeStats: any[];
+  mutationPrevalences: any[];
+  drugResistance: any[];
+}
 
 export default function SeqMutationPrevalence({
   subtypeStats,
   mutationPrevalences,
   drugResistance
-}) {
+}: SeqMutationPrevalenceProps) {
   const rowsByGenes = React.useMemo(
     () => mutationPrevalencesToTableData(mutationPrevalences, subtypeStats),
     [mutationPrevalences, subtypeStats]
@@ -30,7 +36,7 @@ export default function SeqMutationPrevalence({
     .reduce((acc, geneDR) => {
       acc[geneDR.gene.name] = geneDR;
       return acc;
-    }, {});
+    }, {} as Record<string, any>);
 
   return (
     <>

@@ -41,4 +41,16 @@ describe('Button component', () => {
     fireEvent.click(btn);
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
+
+  it('does not forward style props to the DOM', () => {
+    render(
+      <Button btnStyle="info" btnSize="large" btnHeight={3}>
+        Styled
+      </Button>
+    );
+    const btn = screen.getByRole('button');
+    expect(btn).not.toHaveAttribute('btnStyle');
+    expect(btn).not.toHaveAttribute('btnSize');
+    expect(btn).not.toHaveAttribute('btnHeight');
+  });
 });

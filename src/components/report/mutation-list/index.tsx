@@ -1,26 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import ConfigContext from '../../../utils/config-context';
 
 import GeneMutationList from './gene-mutation-list';
 import style from './style.module.scss';
 
-
-MutationList.propTypes = {
-  allGeneMutations: PropTypes.array,
-  allGeneSequenceReads: PropTypes.array,
-  alignedGeneSequences: PropTypes.array
-};
+/**
+ * Renders mutation lists grouped by gene.
+ *
+ * @param allGeneMutations - Mutations grouped by gene for pattern analysis.
+ * @param allGeneSequenceReads - Gene sequence reads for seqReads analysis.
+ * @param alignedGeneSequences - Aligned gene sequences for sequence analysis.
+ * @returns Unordered list of gene mutation lists.
+ */
+export interface MutationListProps {
+  allGeneMutations?: any[];
+  allGeneSequenceReads?: any[];
+  alignedGeneSequences?: any[];
+}
 
 function MutationList({
   allGeneMutations,
   allGeneSequenceReads,
   alignedGeneSequences
-}) {
+}: MutationListProps) {
   const geneSeqs = (
     allGeneSequenceReads || // seqReads analysis
     alignedGeneSequences || // sequence analysis
-    allGeneMutations // pattern analysis
+    allGeneMutations || [] // pattern analysis
   );
 
   const [config] = ConfigContext.use();
@@ -36,6 +42,5 @@ function MutationList({
     ))}
   </ul>;
 }
-
 
 export default MutationList;
