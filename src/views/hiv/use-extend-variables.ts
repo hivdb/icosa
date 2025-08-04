@@ -1,16 +1,31 @@
 import React from 'react';
-import {useRouter} from 'found';
+import React from 'react';
+import { useRouter } from 'found';
 import BigData from '../../utils/big-data';
 
 const SUBMIT_STATE_ALLOWLIST = ['algorithm', 'algorithms', 'customAlgorithms'];
 
 
+interface UseExtendVariablesArgs {
+  /** Optional function for obtaining the submit state */
+  getSubmitState?: () => Promise<Record<string, any>>;
+  /** Runtime configuration object */
+  config: { allGenes: string[] };
+}
+
+/**
+ * Extend variables supplied to GraphQL queries with additional state derived
+ * from the current router location or a custom submit-state handler.
+ *
+ * @param args - {@link UseExtendVariablesArgs}
+ * @returns A tuple containing the extender function and pending state.
+ */
 export default function useExtendVariables({
   getSubmitState,
   config
-}) {
+}: UseExtendVariablesArgs): [(vars: Record<string, any>) => Record<string, any>, boolean] {
   const {allGenes} = config;
-  const [extendVars, setExtendVars] = React.useState(null);
+  const [extendVars, setExtendVars] = React.useState<Record<string, any> | null>(null);
   const {match} = useRouter();
 
   React.useEffect(
@@ -43,9 +58,9 @@ export default function useExtendVariables({
 
   return [
     React.useCallback(
-      vars => {
+      (vars: Record<string, any>) => {
         for (const key of SUBMIT_STATE_ALLOWLIST) {
-          if (key in extendVars) {
+          if (extendVars && key in extendVars) {
             vars[key] = extendVars[key];
           }
         }
@@ -54,6 +69,6 @@ export default function useExtendVariables({
       },
       [extendVars, allGenes]
     ),
-    /* isPending = */!extendVars
+    /* isPending = */ !extendVars
   ];
 }

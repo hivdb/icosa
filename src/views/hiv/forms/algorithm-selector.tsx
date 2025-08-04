@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import readFile from '../../../utils/read-file';
 import BigData from '../../../utils/big-data';
 import useMounted from '../../../utils/use-mounted';
@@ -12,15 +10,15 @@ import AlgVerSelect, {
 
 import style from './style.module.scss';
 
-SelectedAlgorithm.propTypes = {
-  children: PropTypes.node.isRequired,
-  onRemove: PropTypes.func.isRequired
-};
+interface SelectedAlgorithmProps {
+  children: React.ReactNode;
+  onRemove: () => void;
+}
 
 function SelectedAlgorithm({
   children,
   onRemove
-}) {
+}: SelectedAlgorithmProps) {
   const handleRemove = React.useCallback(
     event => {
       event.preventDefault();
@@ -41,46 +39,35 @@ function SelectedAlgorithm({
   </span>;
 }
 
-function getCustomAlgLabel(fileName) {
+function getCustomAlgLabel(fileName: string): string {
   return fileName.replace(/.xml$/i, '') + ' (local)';
 }
 
-function getCustomAlgValue(fileName) {
+function getCustomAlgValue(fileName: string): string {
   return `CUSTOM-ALG-${fileName}`;
 }
 
-function isCustomAlg(value) {
+function isCustomAlg(value: string): boolean {
   return value.startsWith('CUSTOM-ALG-');
 }
 
-
-AlgorithmSelector.propTypes = {
-  config: PropTypes.shape({
-    messages: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  }),
-  algorithms: PropTypes.objectOf(
-    PropTypes.shape({
-      value: PropTypes.string.isRequired,
-      label: PropTypes.node.isRequired
-    }).isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+interface AlgorithmSelectorProps {
+  config: { messages: Record<string, string> };
+  algorithms: Record<string, { value: string; label: React.ReactNode; xml?: string }>;
+  onChange: (algs: Record<string, any>) => void;
+}
 
 function AlgorithmSelector({
   config,
   algorithms,
   onChange
-}) {
+}: AlgorithmSelectorProps) {
   const {messages} = config;
-  const [checkboxError, setCheckboxError] = React.useState(null);
+  const [checkboxError, setCheckboxError] = React.useState<string | null>(null);
 
   const isMounted = useMounted();
 
-  const timeoutLock = React.useRef(null);
+  const timeoutLock = React.useRef<NodeJS.Timeout | null>(null);
   const setTimeoutClearError = React.useCallback(
     () => {
       if (timeoutLock.current !== null) {
@@ -97,15 +84,15 @@ function AlgorithmSelector({
   );
 
   const handleAdd = React.useCallback(
-    ({value, label}) => {
-      algorithms[value] = {value, label};
+    ({ value, label }: { value: string; label: React.ReactNode }) => {
+      algorithms[value] = { value, label };
       onChange(algorithms);
     },
     [algorithms, onChange]
   );
 
   const handleRemove = React.useCallback(
-    name => {
+    (name: string) => {
       if (Object.keys(algorithms).length > 2) {
         delete algorithms[name];
         onChange(algorithms);
@@ -119,22 +106,22 @@ function AlgorithmSelector({
   );
 
   const handleUpload = React.useCallback(
-    async (fileList) => {
-      fileList = [...fileList];
+    async (fileList: FileList | File[]) => {
+      fileList = [...(fileList as any)];
       if (fileList.length === 0) {
         return;
       }
-      const myAlgorithms = {...algorithms};
-      for (let file of fileList) {
-        const fileName = file.name;
+      const myAlgorithms = { ...algorithms };
+      for (const file of fileList as any[]) {
+        const fileName = (file as File).name;
         const value = getCustomAlgValue(fileName);
         myAlgorithms[value] = {
           label: getCustomAlgLabel(fileName),
           value,
-          xml: await readFile(file)
+          xml: await readFile(file as File)
         };
       }
-      if (isMounted) {
+      if (isMounted()) {
         onChange(myAlgorithms);
       }
     },
@@ -193,7 +180,13 @@ function AlgorithmSelector({
 }
 
 
-export default function useAlgorithmSelector(config) {
+/**
+ * Hook managing algorithm selection with optional custom algorithm uploads.
+ *
+ * @param config - Configuration including available algorithm versions.
+ * @returns Tuple of rendered selector component and submit-state fetcher.
+ */
+export default function useAlgorithmSelector(config: any): [JSX.Element | null, () => Promise<{ algorithms: string[]; customAlgorithms: any }>] {
   const {
     algorithmVersions,
     excludeAlgorithmVersions
@@ -210,40 +203,36 @@ export default function useAlgorithmSelector(config) {
     [algorithmVersions, excludeAlgorithmVersions]
   );
 
-  const [algorithms, setAlgorithms] = React.useState(defaultAlgorithms);
+  const [algorithms, setAlgorithms] = React.useState<Record<string, any>>(defaultAlgorithms);
 
-  const getAlgorithms = React.useCallback(
-    () => {
-      const publicAlgorithms = Object.keys(algorithms)
-        .filter(alg => !isCustomAlg(alg));
-      const customAlgorithms = Object.keys(algorithms)
-        .filter(alg => isCustomAlg(alg))
-        .reduce((list, alg) => {
-          const {label, xml} = algorithms[alg];
-          list.push({name: label, xml});
-          return list;
-        }, []);
-      return [publicAlgorithms, customAlgorithms];
-    },
-    [algorithms]
-  );
+  const getAlgorithms = React.useCallback(() => {
+    const publicAlgorithms = Object.keys(algorithms).filter(alg => !isCustomAlg(alg));
+    const customAlgorithms = Object.keys(algorithms)
+      .filter(alg => isCustomAlg(alg))
+      .reduce((list: any[], alg) => {
+        const { label, xml } = algorithms[alg];
+        list.push({ name: label, xml });
+        return list;
+      }, []);
+    return [publicAlgorithms, customAlgorithms];
+  }, [algorithms]);
 
-  const getSubmitState = React.useCallback(
-    async () => {
-      let [algorithms, customAlgorithms] = getAlgorithms();
-      customAlgorithms = await BigData.save(customAlgorithms);
-      return {algorithms, customAlgorithms};
-    },
-    [getAlgorithms]
-  );
+  const getSubmitState = React.useCallback(async () => {
+    let [algorithmsList, customAlgorithms] = getAlgorithms();
+    customAlgorithms = await BigData.save(customAlgorithms);
+    return { algorithms: algorithmsList, customAlgorithms };
+  }, [getAlgorithms]);
 
   return [
-    algorithmVersions ? <AlgorithmSelector
-     {...{
-       config,
-       algorithms,
-       onChange: setAlgorithms
-     }} /> : null,
+    algorithmVersions ? (
+      <AlgorithmSelector
+        {...{
+          config,
+          algorithms,
+          onChange: setAlgorithms
+        }}
+      />
+    ) : null,
     getSubmitState
   ];
 }

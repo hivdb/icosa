@@ -1,4 +1,8 @@
-const config = {
+/**
+ * Default configuration for the HIV views.
+ * Values are largely driven by the deployment environment and CMS settings.
+ */
+const config: Record<string, any> = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
     'pages/sierra-hivpol.json'
