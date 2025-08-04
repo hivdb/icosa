@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 
@@ -23,75 +22,50 @@ const useViewReducer = createPersistedReducer(
   '--sierra-report-genome-map-view-opt'
 );
 
-
-MutationViewer.propTypes = {
-  title: PropTypes.string.isRequired,
-  strain: PropTypes.string,
-  output: PropTypes.string,
-  children: PropTypes.node,
-  defaultView: PropTypes.oneOf(['collapse', 'expansion']).isRequired,
-  hideViewToggler: PropTypes.bool,
-  viewCheckboxLabel: PropTypes.string.isRequired,
-  noUnseqRegions: PropTypes.bool.isRequired,
-  regionPresets: PropTypes.object.isRequired,
-  highlightUnusualMutation: PropTypes.bool,
-  highlightDRM: PropTypes.bool,
-  defaultPresetIndex: PropTypes.number.isRequired,
-  allGeneSeqs: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      unsequencedRegions: PropTypes.shape({
-        regions: PropTypes.arrayOf(
-          PropTypes.shape({
-            posStart: PropTypes.number.isRequired,
-            posEnd: PropTypes.number.isRequired
-          }).isRequired
-        ).isRequired
-      })
-    }).isRequired
-  ).isRequired,
-  coverages: PropTypes.arrayOf(
-    PropTypes.shape({
-      gene: PropTypes.string.isRequired,
-      position: PropTypes.number.isRequired,
-      coverage: PropTypes.number.isRequired
-    }).isRequired
-  ),
-  coverageUpperLimit: PropTypes.number
-};
+export interface MutationViewerProps {
+  title?: string;
+  strain?: string;
+  output?: string;
+  children?: React.ReactNode;
+  defaultView?: "collapse" | "expansion";
+  hideViewToggler?: boolean;
+  viewCheckboxLabel?: string;
+  noUnseqRegions?: boolean;
+  regionPresets: any;
+  highlightUnusualMutation?: boolean;
+  highlightDRM?: boolean;
+  defaultPresetIndex?: number;
+  allGeneSeqs: Array<{gene:{name:string}; unsequencedRegions?: {regions: Array<{posStart:number; posEnd:number}>}}>;
+  coverages?: Array<{gene:string; position:number; coverage:number}>;
+  coverageUpperLimit?: number;
+}
 
 
-MutationViewer.defaultProps = {
-  title: 'Mutation map',
-  noUnseqRegions: false,
-  defaultView: 'collapse',
-  hideViewToggler: false,
-  viewCheckboxLabel: 'Collapse mutation maps',
-  defaultPresetIndex: 0,
-  highlightUnusualMutation: true,
-  highlightDRM: true
-};
 
 
+/**
+ * Render genome mutation maps with optional collapse/expansion.
+ *
+ * @param props - {@link MutationViewerProps} properties controlling display
+ * @returns Rendered mutation viewer section
+ */
 function MutationViewer({
-  title,
+  title = 'Mutation map',
   children,
-  defaultView,
-  hideViewToggler,
-  viewCheckboxLabel,
+  defaultView = 'collapse',
+  hideViewToggler = false,
+  viewCheckboxLabel = 'Collapse mutation maps',
   strain,
   output,
-  noUnseqRegions,
-  defaultPresetIndex,
+  noUnseqRegions = false,
+  defaultPresetIndex = 0,
   regionPresets,
   allGeneSeqs,
   coverages,
   coverageUpperLimit,
-  highlightUnusualMutation,
-  highlightDRM
-}) {
+  highlightUnusualMutation = true,
+  highlightDRM = true
+}: MutationViewerProps) {
   const {presets: origPresets, genes} = regionPresets;
   const [selectedIndex, setSelectedIndex] = useState(defaultPresetIndex);
   const [view, toggleView] = useViewReducer(
@@ -272,7 +246,13 @@ function MutationViewer({
 }
 
 
-export default function MutationViewerLoader(props) {
+/**
+ * Loader component that injects configuration context into MutationViewer.
+ *
+ * @param props - {@link MutationViewerProps} without context-supplied fields
+ * @returns MutationViewer component wrapped with context values
+ */
+export default function MutationViewerLoader(props: Omit<MutationViewerProps, 'regionPresets' | 'hideViewToggler' | 'highlightUnusualMutation' | 'highlightDRM'>) {
 
   return <ConfigContext.Consumer>
     {({
