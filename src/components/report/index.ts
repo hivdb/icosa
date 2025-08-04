@@ -1,3 +1,7 @@
+/**
+ * Aggregated exports for report-related components and utilities.
+ * These provide building blocks for rendering analysis reports.
+ */
 import DRInterpretation from './dr-interpretation';
 import DRMutationScores from './dr-mutation-scores';
 import useReportPaginator from './report-paginator';
