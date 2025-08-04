@@ -1,4 +1,7 @@
-const seqLevel = `
+/**
+ * GraphQL fragments defining fields for sequence and gene level data.
+ */
+const seqLevel: string = `
   drugResistance {
     algorithm {
       text
@@ -52,7 +55,8 @@ const seqLevel = `
   }
 `;
 
-const geneSeqLevel = `
+/** GraphQL fragment describing gene sequence level fields. */
+const geneSeqLevel: string = `
   gene { name length }
   mutations {
     text
@@ -85,3 +89,4 @@ export {
   seqLevel,
   geneSeqLevel
 };
+

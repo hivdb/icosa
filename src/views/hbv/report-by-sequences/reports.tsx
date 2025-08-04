@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape} from 'found';
 
 import {
   useReportPaginator
@@ -15,8 +13,7 @@ import SingleSequenceReport from './single-report';
 
 const pageTitlePrefix = 'Sequence Analysis Report';
 
-
-function getPageTitle(sequenceAnalysis, output) {
+function getPageTitle(sequenceAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -31,16 +28,22 @@ function getPageTitle(sequenceAnalysis, output) {
   return pageTitle;
 }
 
-SequenceReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
+interface SequenceReportsProps {
+  output: string;
+  match: any;
+  loaded: boolean;
+  sequences: any[];
+  currentSelected?: any;
+  sequenceAnalysis: any[];
+  fetchAnother: () => void;
+}
 
+/**
+ * Render sequence analysis reports with pagination.
+ *
+ * @param props - {@link SequenceReportsProps} containing data and callbacks.
+ * @returns Rendered sequence report list.
+ */
 function SequenceReports({
   output,
   match,
@@ -49,7 +52,7 @@ function SequenceReports({
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}) {
+}: SequenceReportsProps): JSX.Element {
 
   const {
     onObserve,
@@ -67,7 +70,7 @@ function SequenceReports({
   setTitle(pageTitle);
 
   const seqResultLookup = sequenceAnalysis.reduce(
-    (acc, sr) => {
+    (acc: any, sr: any) => {
       acc[sr.inputSequence.header] = sr;
       return acc;
     },
@@ -98,7 +101,7 @@ function SequenceReports({
       ))}
     </main>
   </>;
-
 }
 
 export default SequenceReports;
+

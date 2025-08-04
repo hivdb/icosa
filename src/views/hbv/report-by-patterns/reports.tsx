@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -15,8 +13,7 @@ import SinglePatternReport from './single-report';
 
 const pageTitlePrefix = 'Pattern Analysis Report';
 
-
-function getPageTitle(patternAnalysis, output) {
+function getPageTitle(patternAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -31,18 +28,23 @@ function getPageTitle(patternAnalysis, output) {
   return pageTitle;
 }
 
+interface PatternReportsProps {
+  output: string;
+  match: any;
+  router: any;
+  loaded: boolean;
+  patterns: any[];
+  currentSelected?: any;
+  patternAnalysis: any[];
+  fetchAnother: () => void;
+}
 
-PatternReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  patternAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
+/**
+ * Render pattern analysis reports with pagination support.
+ *
+ * @param props - {@link PatternReportsProps} including data and callbacks.
+ * @returns Rendered report list.
+ */
 function PatternReports({
   output,
   match,
@@ -52,8 +54,8 @@ function PatternReports({
   currentSelected,
   patternAnalysis,
   fetchAnother
-}) {
-  const clickTransition = React.useRef();
+}: PatternReportsProps): JSX.Element {
+  const clickTransition = React.useRef<any>();
   const onCopy = React.useCallback(
     () => {
       navigator.clipboard.writeText(
@@ -95,7 +97,7 @@ function PatternReports({
   setTitle(pageTitle);
 
   const patResultLookup = patternAnalysis.reduce(
-    (acc, pr) => {
+    (acc: any, pr: any) => {
       acc[pr.name] = pr;
       return acc;
     },
@@ -104,7 +106,7 @@ function PatternReports({
 
   return <>
     {output === 'printable' ?
-      <PrintHeader /> :
+      <PrintHeader curAnalysis="pattern-analysis" /> :
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
@@ -131,3 +133,4 @@ function PatternReports({
 }
 
 export default PatternReports;
+

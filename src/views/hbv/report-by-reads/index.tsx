@@ -1,30 +1,31 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {routerShape, matchShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
-import SeqReadsLoader, {
-  useWhenNoSeqReads
-} from '../../../components/seqreads-loader';
+import SeqReadsLoader, {useWhenNoSeqReads} from '../../../components/seqreads-loader';
 import SeqReadsAnalysisLayout from
   '../../../components/seqreads-analysis-layout';
 
 import query from './query.graphql';
 import SeqReadsReports from './reports';
 
+interface ReportByReadsContainerProps {
+  config?: Record<string, any>;
+  router: any;
+  match: any;
+  lazyLoad: boolean;
+  output?: string;
+  allSequenceReads: any[];
+  currentSelected?: any;
+}
 
-ReportByReadsContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  router: routerShape.isRequired,
-  match: matchShape.isRequired,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Render sequence read analysis reports.
+ *
+ * @param props - {@link ReportByReadsContainerProps} configuration.
+ * @returns Rendered layout for sequence read reports.
+ */
 function ReportByReadsContainer({
   config,
   router,
@@ -33,7 +34,7 @@ function ReportByReadsContainer({
   output,
   allSequenceReads,
   currentSelected
-}) {
+}: ReportByReadsContainerProps): JSX.Element {
   const client = useApolloClient({
     payload: allSequenceReads,
     config
@@ -66,18 +67,23 @@ function ReportByReadsContainer({
 
 }
 
+interface WrapperProps {
+  router: any;
+  match: any;
+}
 
-ReportByReadsContainerWrapper.propTypes = {
-  router: routerShape.isRequired,
-  match: matchShape.isRequired
-};
-
-export default function ReportByReadsContainerWrapper(props) {
+/**
+ * Wrapper to load configuration and sequence reads before rendering.
+ *
+ * @param props - {@link WrapperProps} with routing information.
+ * @returns The reads report container.
+ */
+export default function ReportByReadsContainerWrapper(props: WrapperProps): JSX.Element {
   const {
     location: {
       pathname,
-      query: {output = 'default'} = {}
-    } = {}
+      query: {output = 'default'} = {},
+    } = {},
   } = props.match;
   const lazyLoad = output !== 'printable';
 
@@ -103,3 +109,4 @@ export default function ReportByReadsContainerWrapper(props) {
     </ConfigContext.Consumer>
   );
 }
+

@@ -1,9 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
-  // DRInterpretation, DRMutationScores,
-  SeqSummary, // MutationStats,
+  SeqSummary,
   MutationViewer as MutViewer,
   ValidationReport,
   ReportHeader,
@@ -13,8 +11,7 @@ import {
 
 import style from '../style.module.scss';
 
-
-function useCoverages({allReads}) {
+function useCoverages({allReads}: {allReads: any[]}): any[] {
   return React.useMemo(
     () => allReads.map(
       ({gene, position, totalReads}) => (
@@ -25,18 +22,21 @@ function useCoverages({allReads}) {
   );
 }
 
+interface SingleSeqReadsReportProps {
+  inputSequenceReads: any;
+  sequenceReadsResult?: any;
+  output: string;
+  name: string;
+  index: number;
+  onObserve: (entry: Element) => void;
+  onDisconnect: (entry: Element) => void;
+  match?: any;
+  router?: any;
+}
 
-SingleSeqReadsReport.propTypes = {
-  inputSequenceReads: PropTypes.object.isRequired,
-  sequenceReadsResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render a single sequence reads analysis report.
+ */
 function SingleSeqReadsReport({
   inputSequenceReads,
   sequenceReadsResult,
@@ -45,7 +45,7 @@ function SingleSeqReadsReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SingleSeqReadsReportProps): JSX.Element {
 
   const {
     strain: {display: strain} = {},
@@ -56,7 +56,7 @@ function SingleSeqReadsReport({
   } = sequenceReadsResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   const coverages = useCoverages(inputSequenceReads);
@@ -94,7 +94,7 @@ function SingleSeqReadsReport({
             <ValidationReport {...sequenceReadsResult} {...{output, strain}} />
           </MutViewer>
           {isCritical ? null :
-            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            drugResistance.map((geneDR: any, idx: number) => <React.Fragment key={idx}>
               <DRInterpretation
                suppressLevels
                {...{geneDR, output, strain}} />
@@ -105,7 +105,6 @@ function SingleSeqReadsReport({
   );
 
 }
-
 
 export default React.memo(
   SingleSeqReadsReport,
@@ -132,3 +131,4 @@ export default React.memo(
     prevResult === nextResult
   )
 );
+

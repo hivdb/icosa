@@ -1,13 +1,12 @@
 import gql from 'graphql-tag';
+import type {DocumentNode} from 'graphql';
 import {geneSeqLevel} from '../common-query.graphql';
 
-
-export function getExtraParams() {
+export function getExtraParams(): string {
   return '';
 }
 
-
-export default function getQuery(subOptions) {
+export default function getQuery(subOptions: string[]): DocumentNode {
   const fetchConsensus = (
     subOptions.includes('Consensus sequence (FASTA)') ||
     subOptions.includes('Raw JSON report')
@@ -67,3 +66,4 @@ export default function getQuery(subOptions) {
     }
   `;
 }
+

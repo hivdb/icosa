@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -10,15 +9,20 @@ import Intro, {
 import Button from '../../components/button';
 import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
 
-
 import style from './style.module.scss';
 
+interface PrintHeaderProps {
+  /** Current analysis name to determine messages. */
+  curAnalysis: string;
+}
 
-PrintHeader.propTypes = {
-  curAnalysis: PropTypes.string.isRequired
-};
-
-export default function PrintHeader({curAnalysis}) {
+/**
+ * Header displayed on printable reports with a print button.
+ *
+ * @param props - {@link PrintHeaderProps} including current analysis name.
+ * @returns Rendered header section.
+ */
+export default function PrintHeader({curAnalysis}: PrintHeaderProps): JSX.Element {
 
   let title = 'Sierra Analysis Report';
 
@@ -46,3 +50,4 @@ export default function PrintHeader({curAnalysis}) {
   </Intro>;
 
 }
+

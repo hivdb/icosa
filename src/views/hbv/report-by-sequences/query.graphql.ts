@@ -1,10 +1,11 @@
 import gql from 'graphql-tag';
+import type {DocumentNode} from 'graphql';
 import {
   seqLevel,
   geneSeqLevel
 } from '../common-query.graphql';
 
-export default gql`
+const query: DocumentNode = gql`
   fragment ReportBySequences on SequenceAnalysis {
     inputSequence { header }
     strain { name display }
@@ -51,3 +52,6 @@ export default gql`
     }
   }
 `;
+
+export default query;
+

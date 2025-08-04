@@ -1,4 +1,5 @@
-function joinCols(row) {
+/** Join array values in a row into comma-separated strings. */
+function joinCols(row: Record<string, any>): void {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
       if (row[col].length > 0) {
@@ -11,23 +12,32 @@ function joinCols(row) {
   }
 }
 
+interface GetMutationsArgs {
+  geneSeqs: any[];
+  geneFilter?: (name: string) => boolean;
+  mutFilter?: (m: any) => boolean;
+  mutWithGene?: boolean;
+}
 
+/**
+ * Extract mutation texts from gene sequences.
+ */
 function getMutations({
   geneSeqs,
   geneFilter,
   mutFilter,
   mutWithGene = true
-}) {
-  let results = [];
+}: GetMutationsArgs): string[] {
+  let results: any[] = [];
   for (const geneSeq of geneSeqs.filter(
     ({gene: {name}}) => geneFilter ? geneFilter(name) : true
   )) {
     const gene = geneSeq.gene.name.replace(/^_/, '');
     const mutations = geneSeq.mutations
       .filter(
-        m => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
+        (m: any) => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
       )
-      .map(mut => ({...mut, gene}));
+      .map((mut: any) => ({...mut, gene}));
     results = [...results, ...mutations];
   }
   return results.map(
@@ -37,35 +47,42 @@ function getMutations({
   );
 }
 
-
-function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
+function getPermanentLink(seqName: string, geneSeqs: any[], patternsTo: string, geneFilter: any): string {
   const mutText = getMutations({geneSeqs, geneFilter});
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
   query.set('name', seqName);
-  query.set('mutations', mutText);
+  query.set('mutations', mutText as any);
   link.search = query.toString();
   return link.toString();
 }
 
+interface SeqReadsSummaryArgs {
+  sequenceReadsAnalysis: any[];
+  config: any;
+  patternsTo: string;
+}
 
+/**
+ * Build sequence reads summary tables for tabular report.
+ */
 async function seqReadsSummary({
   sequenceReadsAnalysis,
   config,
   patternsTo
-}) {
-  const rows = [];
+}: SeqReadsSummaryArgs): Promise<any[]> {
+  const rows: any[] = [];
   const {allGenes, geneDisplay} = config;
   let header = [
     'Sequence Name',
     'Genes',
     'Genotype',
     ...allGenes.reduce(
-      (acc, gene) => {
+      (acc: string[], gene: string) => {
         acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
         return acc;
       },
-      []
+      [] as string[]
     ),
     'Median Read Depth',
     'Permanent Link',
@@ -89,19 +106,19 @@ async function seqReadsSummary({
       bestMatchingSubtype: {display: genotype},
       allGeneSequenceReads: geneSeqs
     } = seqResult;
-    let row = {
+    let row: Record<string, any> = {
       'Sequence Name': seqName,
-      'Genes': genes.map(({name}) => geneDisplay[name] || name),
+      'Genes': genes.map(({name}: any) => geneDisplay[name] || name),
       'Genotype': genotype,
       ...allGenes.reduce(
-        (acc, gene) => {
+        (acc: Record<string, any>, gene: string) => {
           acc[`${gene} Mutations`] = getMutations({
             geneSeqs,
-            geneFilter: g => g === gene,
+            geneFilter: (g: string) => g === gene,
             mutWithGene: false
           });
           acc[`# ${gene} Mutations`] = `${geneSeqs.find(
-            ({gene: {name}}) => name === gene
+            ({gene: {name}}: any) => name === gene
           ).mutationCount}`;
           return acc;
         },
@@ -129,3 +146,4 @@ async function seqReadsSummary({
 }
 
 export default seqReadsSummary;
+
