@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -13,12 +12,19 @@ import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
 
 import style from './style.module.scss';
 
+interface PrintHeaderProps {
+  /** The current analysis identifier used to fetch localized titles. */
+  curAnalysis: string;
+}
 
-PrintHeader.propTypes = {
-  curAnalysis: PropTypes.string.isRequired
-};
-
-export default function PrintHeader({curAnalysis}) {
+/**
+ * Render a header used on printable versions of analysis reports.
+ *
+ * @param curAnalysis Identifier of the active analysis, used to resolve
+ * the localized report title.
+ * @returns JSX element containing the title and a print button.
+ */
+export default function PrintHeader({curAnalysis}: PrintHeaderProps) {
 
   let title = 'Sierra Analysis Report';
 
