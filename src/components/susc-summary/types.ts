@@ -33,3 +33,49 @@ export interface Variant {
   /** Name of the variant */
   name: string;
 }
+
+/** Cumulative fold change and count */
+export interface CumFold {
+  /** Fold metrics */
+  cumulativeFold: { median: number };
+  /** Number of measurements contributing */
+  cumulativeCount?: number;
+}
+
+/** Row for antibody susceptibility summary table */
+export interface AbSuscSummaryRow {
+  mutations: Mutation[];
+  references: Reference[];
+  variant?: Variant;
+  displayOrder?: number | null;
+  /** Fold change keyed by antibody combo */
+  fold: Record<string, CumFold>;
+  variantMatchingMutations?: Mutation[];
+  variantExtraMutations?: Mutation[];
+  variantMissingMutations?: Mutation[];
+}
+
+/** Row for vaccine plasma susceptibility summary */
+export interface VpSuscSummaryRow {
+  mutations: Mutation[];
+  vaccineName: string;
+  variant?: Variant;
+  numRefs: number;
+  numSamples: number;
+  medianFold: number;
+  references: Reference[];
+  displayOrder?: number | null;
+  levels: Record<string, number>;
+}
+
+/** Row for convalescent plasma susceptibility summary */
+export interface CpSuscSummaryRow {
+  mutations: Mutation[];
+  variant?: Variant;
+  numRefs: number;
+  numSamples: number;
+  medianFold: number;
+  references: Reference[];
+  displayOrder?: number | null;
+  levels: Record<string, number>;
+}

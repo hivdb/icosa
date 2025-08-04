@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 
-
 const positionOrResidueAnnot = {
   label: PropTypes.string,
   desc: PropTypes.string,
@@ -46,3 +45,4 @@ const viewShape = PropTypes.shape({
 });
 
 export {residueAnnotShape, positionAnnotShape, cameraStateShape, viewShape};
+

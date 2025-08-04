@@ -1,51 +1,55 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Stage,
-  StructureComponent
-} from 'react-ngl';
+import {Stage, StructureComponent} from 'react-ngl';
 import * as NGL from 'ngl';
 
 import {getColorInt} from '../../utils/colors';
 
-import {viewShape, positionAnnotShape} from './prop-types';
+import type {View, PositionAnnot, ResidueAnnot, CameraState} from './types';
+import {viewShape} from './prop-types';
 import ResidueLayer from './residue-layer';
 import CameraController from './camera-controller';
 
+export type {View as ProteinView};
 export {viewShape as proteinViewShape};
 
-ProteinViewer.propTypes = {
-  width: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.number.isRequired
-  ]),
-  height: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.number.isRequired
-  ]),
-  views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
-  positions: PropTypes.arrayOf(
-    positionAnnotShape.isRequired
-  ).isRequired,
-  backgroundColor: PropTypes.string,
-  verboseCameraController: PropTypes.bool
-};
+/** Props for {@link ProteinViewer} */
+interface ProteinViewerProps {
+  /** Canvas width */
+  width?: string | number;
+  /** Canvas height */
+  height?: string | number;
+  /** Available views */
+  views: View[];
+  /** Position annotations */
+  positions: PositionAnnot[];
+  /** Background color of NGL stage */
+  backgroundColor?: string;
+  /** Verbose camera controller */
+  verboseCameraController?: boolean;
+}
 
-ProteinViewer.defaultPropTypes = {
+/** Default properties for ProteinViewer */
+const defaultProps = {
   width: 600,
   height: 600,
   backgroundColor: '#fff'
 };
 
+/**
+ * Wrapper component rendering an interactive protein viewer using NGL.
+ *
+ * @param props - {@link ProteinViewerProps}
+ * @returns JSX element containing the stage and control widgets.
+ */
 export default function ProteinViewer({
-  width,
-  height,
+  width = defaultProps.width,
+  height = defaultProps.height,
   views,
   positions,
-  backgroundColor,
+  backgroundColor = defaultProps.backgroundColor,
   verboseCameraController
-}) {
-  const [view, setView] = React.useState(views[0]);
+}: ProteinViewerProps) {
+  const [view, setView] = React.useState<View>(views[0]);
   const {
     name: viewName,
     pdb,
@@ -53,14 +57,14 @@ export default function ProteinViewer({
     positionOffset = 0,
     defaultCameraState
   } = view;
-  const [cameraState, setCameraState] = React.useState();
+  const [cameraState, setCameraState] = React.useState<CameraState>();
 
   const handleCameraMove = React.useCallback(
-    newCameraState => setCameraState({...cameraState, ...newCameraState}),
+    (newCameraState: CameraState) => setCameraState({...cameraState, ...newCameraState}),
     [cameraState]
   );
 
-  const residues = React.useMemo(
+  const residues = React.useMemo<ResidueAnnot[]>(
     () => positions.map(({position, ...annot}) => ({
       resno: position + positionOffset,
       ...annot
@@ -69,7 +73,7 @@ export default function ProteinViewer({
   );
 
   const reprList = React.useMemo(() => {
-    const hlAtom = residues.reduce(
+    const hlAtom = residues.reduce<Record<number, string | number>>(
       (acc, {resno, bgColor}) => {
         acc[resno] = bgColor;
         return acc;
@@ -77,8 +81,8 @@ export default function ProteinViewer({
       {}
     );
     const schemeId = NGL.ColormakerRegistry.addScheme(
-      function() {
-        this.atomColor = atom => {
+      function(this: any) {
+        this.atomColor = (atom: any) => {
           if (atom.resno in hlAtom) {
             return hlAtom[atom.resno];
           }
@@ -153,3 +157,4 @@ export default function ProteinViewer({
     ]
   );
 }
+
