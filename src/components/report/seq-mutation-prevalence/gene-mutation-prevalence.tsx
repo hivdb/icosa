@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import SimpleTable, {ColumnDef} from '../../simple-table';
 import '../../../styles/griddle-table.scss';
 
@@ -11,12 +10,17 @@ import PrevalenceData from './prevalence-data';
 import PrevalenceMutCol from './prevalence-mut-col';
 import style from './style.module.scss';
 
-
-function useColumnDefs(subtypeStats, gene) {
+/**
+ * Build column definitions for the prevalence table.
+ *
+ * @param subtypeStats - Statistics grouped by subtype.
+ * @param gene - Current gene name.
+ * @returns Array of column definitions.
+ */
+function useColumnDefs(subtypeStats: any[], gene: string) {
   return React.useMemo(
     () => {
-
-      let colDefs = [
+      let colDefs: ColumnDef[] = [
         new ColumnDef({
           name: 'mutation',
           render: (mut, row) => <PrevalenceMutCol mutation={mut} row={row} />,
@@ -33,7 +37,7 @@ function useColumnDefs(subtypeStats, gene) {
       for (const type of ['Naive', 'Treated']) {
         colDefs = colDefs.concat(subtypeStats.map(
           ({name, stats}) => {
-            let colDef;
+            let colDef: ColumnDef | undefined;
             for (const stat of stats) {
               if (stat.gene.name !== gene) {
                 continue;
@@ -59,7 +63,7 @@ function useColumnDefs(subtypeStats, gene) {
                 sortable: false
               });
             }
-            return colDef;
+            return colDef as ColumnDef;
           }
         ));
       }
@@ -69,39 +73,31 @@ function useColumnDefs(subtypeStats, gene) {
   );
 }
 
-
-GeneMutationPrevalence.propTypes = {
-  gene: PropTypes.string.isRequired,
-  subtypeStats: PropTypes.array.isRequired,
-  mutationComments: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired
-};
+/**
+ * Render mutation prevalence table for a gene.
+ *
+ * @param gene - Gene name.
+ * @param subtypeStats - Subtype statistics.
+ * @param mutationComments - Comments grouped by mutation type.
+ * @param data - Table data rows.
+ * @returns Report section with prevalence table and comments.
+ */
+export interface GeneMutationPrevalenceProps {
+  gene: string;
+  subtypeStats: any[];
+  mutationComments: any;
+  data: any[];
+}
 
 export default function GeneMutationPrevalence({
   gene,
   subtypeStats,
   mutationComments,
   data
-}) {
+}: GeneMutationPrevalenceProps) {
   const [displayData, setDisplayData] = React.useState(data);
 
   const colDefs = useColumnDefs(subtypeStats, gene);
-
-  // static childContextTypes = {
-  //   expandedRows: PropTypes.object,
-  //   gene: PropTypes.string
-  // };
-
-  // constructor() {
-  //   super(...arguments);
-  //   this.expandedRows = new Set();
-  // }
-
-  // getChildContext() {
-  //   const {expandedRows} = this;
-  //   const {gene} = this.props;
-  //   return {expandedRows, gene};
-  // }
 
   const handleRowClick = React.useCallback(
     (curRow) => {
@@ -109,13 +105,11 @@ export default function GeneMutationPrevalence({
       if (children) {
         let newDisplayData;
         if (showChildren) {
-          // collapse expanded children
           newDisplayData = displayData.filter(
             ({parentRowId}) => parentRowId !== rowId
           );
         }
         else {
-          // expand children
           newDisplayData = displayData.reduce(
             (acc, row) => {
               acc.push(row);
@@ -126,7 +120,7 @@ export default function GeneMutationPrevalence({
               }
               return acc;
             },
-            []
+            [] as any[]
           );
         }
         curRow.showChildren = !showChildren;

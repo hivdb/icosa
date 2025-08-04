@@ -24,6 +24,12 @@ export interface ButtonProps {
   children: React.ReactNode;
 }
 
+/**
+ * Render a styled button or link element depending on provided props.
+ *
+ * @param props - {@link ButtonProps} describing button behaviour and style.
+ * @returns A React element representing the button or link.
+ */
 const Button: React.FC<ButtonProps> = ({
   btnStyle = 'default',
   btnSize = 'normal',
@@ -51,6 +57,11 @@ const Button: React.FC<ButtonProps> = ({
 
   let Component: React.ElementType = 'button';
   const componentProps: Record<string, unknown> = { ...props };
+
+  // Ensure style-related props are not forwarded to the DOM to avoid React warnings
+  delete (componentProps as any).btnStyle;
+  delete (componentProps as any).btnSize;
+  delete (componentProps as any).btnHeight;
 
   if (href || to) {
     Component = to ? Link : ExtLink;
