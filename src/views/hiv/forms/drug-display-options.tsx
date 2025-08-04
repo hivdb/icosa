@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Markdown from '../../../components/markdown';
 import Link from '../../../components/link';
@@ -7,30 +6,15 @@ import CheckboxInput from '../../../components/checkbox-input';
 
 import style from './style.module.scss';
 
-
-DrugDisplayOptions.propTypes = {
-  drugDisplayNames: PropTypes.objectOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  drugDisplayOptions: PropTypes.arrayOf(
-    PropTypes.shape({
-      drugClass: PropTypes.string.isRequired,
-      drugs: PropTypes.arrayOf(
-        PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          disabled: PropTypes.bool.isRequired
-        }).isRequired
-      ).isRequired
-    }).isRequired
-  ),
-  messages: PropTypes.objectOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  uncheckedDrugs: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onSelectAll: PropTypes.func.isRequired,
-  onReset: PropTypes.func.isRequired
-};
+interface DrugDisplayOptionsProps {
+  drugDisplayNames: Record<string, string>;
+  drugDisplayOptions: Array<{ drugClass: string; drugs: Array<{ name: string; disabled: boolean }> }>;
+  messages: Record<string, string>;
+  uncheckedDrugs: Set<string>;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelectAll: (e: React.MouseEvent) => void;
+  onReset: (e: React.MouseEvent) => void;
+}
 
 function DrugDisplayOptions({
   drugDisplayOptions,
@@ -40,7 +24,7 @@ function DrugDisplayOptions({
   onChange,
   onSelectAll,
   onReset
-}) {
+}: DrugDisplayOptionsProps) {
 
   return (
     <fieldset className={style['drug-display-options']}>
@@ -85,31 +69,34 @@ function DrugDisplayOptions({
   );
 }
 
-export default function useDrugDisplayOptions(config) {
+/**
+ * Hook providing drug display options widget and form state handlers.
+ *
+ * @param config - Configuration including drug display options and messages.
+ * @returns Tuple containing component and submit-state getter.
+ */
+export default function useDrugDisplayOptions(config: any): [JSX.Element | null, () => { disabledDrugs: string[] }] {
   const {
     drugDisplayOptions,
     drugDisplayNames,
     messages
   } = config;
   const defaultUncheckedDrugs = React.useMemo(
-    () => Object
-      .values(drugDisplayOptions || {})
-      .reduce((acc, {drugs}) => [
-        ...acc,
-        ...drugs
-          .filter(({disabled}) => !disabled)
-          .map(({name}) => name)
-      ], []),
+    () =>
+      Object.values(drugDisplayOptions || {}).reduce(
+        (acc: string[], { drugs }: any) => [
+          ...acc,
+          ...drugs.filter(({ disabled }: any) => !disabled).map(({ name }: any) => name)
+        ],
+        []
+      ),
     [drugDisplayOptions]
   );
 
-  const [
-    uncheckedDrugs,
-    setUncheckedDrugs
-  ] = React.useState(new Set(defaultUncheckedDrugs));
+  const [uncheckedDrugs, setUncheckedDrugs] = React.useState<Set<string>>(new Set(defaultUncheckedDrugs));
 
   const handleChange = React.useCallback(
-    e => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       const drug = e.currentTarget.value;
       const newUncheckedDrugs = new Set(uncheckedDrugs);
       if (e.currentTarget.checked) {
@@ -123,7 +110,7 @@ export default function useDrugDisplayOptions(config) {
   );
 
   const handleSelectAll = React.useCallback(
-    e => {
+    (e: React.MouseEvent) => {
       e.preventDefault();
       setUncheckedDrugs(new Set());
     },
@@ -131,7 +118,7 @@ export default function useDrugDisplayOptions(config) {
   );
 
   const handleReset = React.useCallback(
-    e => {
+    (e: React.MouseEvent) => {
       e.preventDefault();
       setUncheckedDrugs(new Set(defaultUncheckedDrugs));
     },
@@ -139,7 +126,7 @@ export default function useDrugDisplayOptions(config) {
   );
 
   const getSubmitState = React.useCallback(
-    () => ({disabledDrugs: Array.from(uncheckedDrugs)}),
+    () => ({ disabledDrugs: Array.from(uncheckedDrugs) }),
     [uncheckedDrugs]
   );
 
@@ -158,5 +145,4 @@ export default function useDrugDisplayOptions(config) {
     ) : null,
     getSubmitState
   ];
-
 }

@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
+import { Match, Router } from 'found';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -15,8 +14,10 @@ import SinglePatternReport from './single-report';
 
 const pageTitlePrefix = 'Pattern Analysis Report';
 
-
-function getPageTitle(patternAnalysis, output) {
+/**
+ * Derive the page title based on available pattern analysis data.
+ */
+function getPageTitle(patternAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -32,19 +33,22 @@ function getPageTitle(patternAnalysis, output) {
 }
 
 
-PatternReports.propTypes = {
-  config: PropTypes.object.isRequired,
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  mutationPrevalenceSubtypes: PropTypes.array,
-  currentSelected: PropTypes.object,
-  patternAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
+interface PatternReportsProps {
+  config: any;
+  output: string;
+  match: Match;
+  router: Router;
+  loaded: boolean;
+  patterns: any[];
+  mutationPrevalenceSubtypes?: any[];
+  currentSelected?: any;
+  patternAnalysis: any[];
+  fetchAnother: () => void;
+}
 
+/**
+ * Component rendering a list of pattern reports.
+ */
 function PatternReports({
   config,
   output,
@@ -56,7 +60,7 @@ function PatternReports({
   currentSelected,
   patternAnalysis,
   fetchAnother
-}) {
+}: PatternReportsProps) {
   const clickTransition = React.useRef();
   const onCopy = React.useCallback(
     () => {

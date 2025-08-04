@@ -1,6 +1,6 @@
 import React from 'react';
-import {routerShape, matchShape} from 'found';
-import PropTypes from 'prop-types';
+import React from 'react';
+import {Router, Match} from 'found';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
@@ -24,19 +24,33 @@ import useAlgorithmSelector from './algorithm-selector';
 
 import style from './style.module.scss';
 
-
-function loadExampleCodonReads(examples, config) {
+/**
+ * Convert relative example codon read URLs into absolute URLs.
+ *
+ * @param examples - List of example URLs.
+ * @param config - CMS configuration for link resolution.
+ * @returns Array of absolute URLs.
+ */
+function loadExampleCodonReads(examples: string[], config: any) {
   return examples.map(url => getFullLink(url, config));
 }
 
-function loadExampleFasta(examples, config) {
+/**
+ * Convert relative example FASTA URLs into objects containing absolute URLs
+ * and human readable titles.
+ */
+function loadExampleFasta(examples: Array<{url: string; title: string}>, config: any) {
   return examples.map(({url, title}) => ({
     url: getFullLink(url, config),
     title
   }));
 }
 
-function useTabularReportOptions({config, match, allSubOptions}) {
+/**
+ * Determine available tabular report options based on configuration and
+ * query parameters.
+ */
+function useTabularReportOptions({config, match, allSubOptions}: any) {
   const {formEnableTabularReportOptions} = config;
   return React.useMemo(
     () => {
@@ -60,39 +74,22 @@ function useTabularReportOptions({config, match, allSubOptions}) {
 }
 
 
-SierraForms.propTypes = {
-  config: PropTypes.shape({
-    // species: PropTypes.string.isRequired,
-    formEnableTabs: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    messages: PropTypes.objectOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    sequenceExamples: PropTypes.arrayOf(
-      PropTypes.shape({
-        url: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired
-      }).isRequired
-    ).isRequired,
-    seqReadsExamples: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired,
-    formEnableTabularReportOptions: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    ).isRequired
-  }).isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  curAnalysis: PropTypes.string.isRequired
-};
+interface SierraFormsProps {
+  config: any;
+  curAnalysis: string;
+  match: Match;
+  router: Router;
+}
 
+/**
+ * Main form component for the HIV views.
+ */
 function SierraForms({
   config,
   curAnalysis,
   match,
   router
-}) {
+}: SierraFormsProps) {
   const basePath = useBasePath(match.location);
   const title = (
     config.messages[`${curAnalysis}-form-title`] ||
@@ -244,8 +241,13 @@ function SierraForms({
   </>;
 }
 
-export default function SierraFormsWithConfig(props) {
-  return <ConfigContext.Consumer>
-    {config => <SierraForms {...props} config={config} />}
-  </ConfigContext.Consumer>;
+/**
+ * Wrapper component injecting configuration from context.
+ */
+export default function SierraFormsWithConfig(props: any) {
+  return (
+    <ConfigContext.Consumer>
+      {config => <SierraForms {...props} config={config} />}
+    </ConfigContext.Consumer>
+  );
 }

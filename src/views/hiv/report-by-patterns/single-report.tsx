@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   ReportHeader,
@@ -14,26 +13,26 @@ import {
 import useDisabledDrugs from '../use-disabled-drugs';
 import style from '../style.module.scss';
 
+interface SinglePatternReportProps {
+  name?: string;
+  currentSelected?: any;
+  patternResult?: any;
+  subtypeStats?: any[];
+  output: string;
+  index: number;
+  config: {
+    displayDRInterpretation?: boolean;
+    displayMutationPrevalence?: boolean;
+    displayAlgComparison?: boolean;
+    displayMutationScores?: string[];
+  };
+  onObserve: () => void;
+  onDisconnect?: () => void;
+}
 
-SinglePatternReport.propTypes = {
-  name: PropTypes.string,
-  currentSelected: PropTypes.object,
-  patternResult: PropTypes.object,
-  subtypeStats: PropTypes.array,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  config: PropTypes.shape({
-    displayDRInterpretation: PropTypes.bool,
-    displayMutationPrevalence: PropTypes.bool,
-    displayAlgComparison: PropTypes.bool,
-    displayMutationScores: PropTypes.arrayOf(
-      PropTypes.string.isRequired
-    )
-  }).isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
-};
-
+/**
+ * Render a single pattern analysis report card.
+ */
 function SinglePatternReport({
   patternResult,
   subtypeStats,
@@ -48,7 +47,7 @@ function SinglePatternReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SinglePatternReportProps) {
   const {
     strain: {name: strain} = {},
     allGeneMutations,

@@ -1,4 +1,9 @@
-const rootLevel = `
+// Shared GraphQL fragments used across multiple HIV views.
+
+/**
+ * Root level fragment describing global metadata returned from the API.
+ */
+export const rootLevel: string = `
   currentVersion {
     display
   }
@@ -14,7 +19,10 @@ const rootLevel = `
   }
 `;
 
-const seqLevel = `
+/**
+ * Fragment used for sequence-level information.
+ */
+export const seqLevel: string = `
 
   # TODO: hivseq only
   mutationPrevalences(includeGenes: $includeGenes) {
@@ -123,7 +131,10 @@ const seqLevel = `
   }
 `;
 
-const geneSeqLevel = `
+/**
+ * Fragment capturing per-gene sequence data.
+ */
+export const geneSeqLevel: string = `
   gene { name length }
   mutations {
     text
@@ -152,4 +163,4 @@ const geneSeqLevel = `
   }
 `;
 
-export {rootLevel, seqLevel, geneSeqLevel};
+export { rootLevel, seqLevel, geneSeqLevel };

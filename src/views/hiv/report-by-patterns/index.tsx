@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
+import { Match, Router } from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -12,18 +11,20 @@ import PatternAnalysisLayout from
 import query from './query.graphql';
 import PatternReports from './reports';
 
+interface ReportByPatternsContainerProps {
+  config: any;
+  lazyLoad: boolean;
+  output?: string;
+  match: Match;
+  router: Router;
+  isPending: boolean;
+  patterns: any[];
+  currentSelected?: any;
+}
 
-ReportByPatternsContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  isPending: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Internal container that fetches data and renders pattern analysis reports.
+ */
 function ReportByPatternsContainer({
   config,
   router,
@@ -33,7 +34,7 @@ function ReportByPatternsContainer({
   isPending,
   patterns,
   currentSelected
-}) {
+}: ReportByPatternsContainerProps) {
 
   if (!isPending && patterns.length === 0) {
     router.replace({
@@ -73,11 +74,16 @@ function ReportByPatternsContainer({
 
 }
 
-ReportByPatternsContainerWrapper.propTypes = {
-  match: matchShape.isRequired
-};
+interface WrapperProps {
+  match: Match;
+  router: Router;
+}
 
-export default function ReportByPatternsContainerWrapper(props) {
+/**
+ * Wrapper component that loads configuration and pattern data before rendering
+ * the actual report container.
+ */
+export default function ReportByPatternsContainerWrapper(props: WrapperProps) {
   const {
     location: {
       query: {output = 'default'} = {}
