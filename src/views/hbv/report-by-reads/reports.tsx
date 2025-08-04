@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
 import {
@@ -17,8 +15,7 @@ import SingleSeqReadsReport from './single-report';
 
 const pageTitlePrefix = 'Sequence Reads Analysis Report';
 
-
-function getPageTitle(sequenceReadsAnalysis, output) {
+function getPageTitle(sequenceReadsAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -33,18 +30,20 @@ function getPageTitle(sequenceReadsAnalysis, output) {
   return pageTitle;
 }
 
+interface SeqReadsReportsProps {
+  output: string;
+  match: any;
+  router: any;
+  loaded: boolean;
+  allSequenceReads: any[];
+  currentSelected?: any;
+  sequenceReadsAnalysis: any[];
+  fetchAnother: () => void;
+}
 
-SeqReadsReports.propTypes = {
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  sequenceReadsAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
+/**
+ * Render sequence reads analysis reports with pagination.
+ */
 function SeqReadsReports({
   output,
   match,
@@ -54,7 +53,7 @@ function SeqReadsReports({
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother
-}) {
+}: SeqReadsReportsProps): JSX.Element {
 
   const numSeqs = allSequenceReads.length;
 
@@ -82,7 +81,7 @@ function SeqReadsReports({
   setTitle(pageTitle);
 
   const seqReadsResultLookup = sequenceReadsAnalysis.reduce(
-    (acc, srr) => {
+    (acc: any, srr: any) => {
       acc[srr.name] = srr;
       return acc;
     },
@@ -119,7 +118,7 @@ function SeqReadsReports({
       ))}
     </main>
   </>;
-
 }
 
 export default SeqReadsReports;
+

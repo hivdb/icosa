@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -12,18 +10,23 @@ import PatternAnalysisLayout from
 import query from './query.graphql';
 import PatternReports from './reports';
 
+interface ReportByPatternsContainerProps {
+  config?: Record<string, any>;
+  router: any;
+  match: any;
+  lazyLoad: boolean;
+  output?: string;
+  isPending: boolean;
+  patterns: any[];
+  currentSelected?: any;
+}
 
-ReportByPatternsContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  isPending: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Render pattern analysis reports for HBV.
+ *
+ * @param props - {@link ReportByPatternsContainerProps} for configuration.
+ * @returns Rendered pattern analysis layout.
+ */
 function ReportByPatternsContainer({
   config,
   router,
@@ -33,11 +36,11 @@ function ReportByPatternsContainer({
   isPending,
   patterns,
   currentSelected
-}) {
+}: ReportByPatternsContainerProps): JSX.Element {
 
   if (!isPending && patterns.length === 0) {
     router.replace({
-      pathname: match.location.pathname.replace(/report[/]*$/, '')
+      pathname: match.location.pathname.replace(/report\/*$/, '')
     });
   }
 
@@ -69,15 +72,22 @@ function ReportByPatternsContainer({
 
 }
 
-ReportByPatternsContainerWrapper.propTypes = {
-  match: matchShape.isRequired
-};
+interface WrapperProps {
+  match: any;
+  router: any;
+}
 
-export default function ReportByPatternsContainerWrapper(props) {
+/**
+ * Wrapper component loading configuration and patterns before rendering.
+ *
+ * @param props - {@link WrapperProps} containing routing information.
+ * @returns The fully configured pattern report container.
+ */
+export default function ReportByPatternsContainerWrapper(props: WrapperProps): JSX.Element {
   const {
     location: {
       query: {output = 'default'} = {}
-    } = {}
+    } = {},
   } = props.match;
   const lazyLoad = output !== 'printable';
   return (
@@ -99,3 +109,4 @@ export default function ReportByPatternsContainerWrapper(props) {
     </ConfigContext.Consumer>
   );
 }
+

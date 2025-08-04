@@ -1,29 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {routerShape, matchShape} from 'found';
 import useApolloClient from '../apollo-client';
 import useExtendVariables from '../use-extend-variables';
 
 import ConfigContext from '../../../utils/config-context';
-import SeqLoader, {
-  useWhenNoSequence
-} from '../../../components/sequence-loader';
+import SeqLoader, {useWhenNoSequence} from '../../../components/sequence-loader';
 import SeqAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 
 import query from './query.graphql';
 import SeqReports from './reports';
 
+interface ReportBySequencesContainerProps {
+  config?: Record<string, any>;
+  lazyLoad: boolean;
+  output?: string;
+  match: any;
+  sequences: any[];
+  currentSelected?: any;
+}
 
-ReportBySequencesContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  match: matchShape.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Render sequence analysis reports for HBV sequences.
+ *
+ * @param props - {@link ReportBySequencesContainerProps} with configuration.
+ * @returns Rendered sequence analysis layout.
+ */
 function ReportBySequencesContainer({
   config,
   lazyLoad,
@@ -31,7 +32,7 @@ function ReportBySequencesContainer({
   match,
   sequences,
   currentSelected
-}) {
+}: ReportBySequencesContainerProps): JSX.Element {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.log(
@@ -71,20 +72,25 @@ function ReportBySequencesContainer({
 
 }
 
+interface WrapperProps {
+  router: any;
+  match: any;
+}
 
-ReportBySequencesContainerWrapper.propTypes = {
-  router: routerShape.isRequired,
-  match: matchShape.isRequired
-};
-
-export default function ReportBySequencesContainerWrapper(props) {
+/**
+ * Wrapper that loads configuration and sequences before rendering reports.
+ *
+ * @param props - {@link WrapperProps} containing router and match.
+ * @returns The sequence report container.
+ */
+export default function ReportBySequencesContainerWrapper(props: WrapperProps): JSX.Element {
   const {
     location: {
       pathname,
       query: {
         output = 'default'
       } = {}
-    } = {}
+    } = {},
   } = props.match;
 
   useWhenNoSequence(() => props.router.replace({
@@ -111,3 +117,4 @@ export default function ReportBySequencesContainerWrapper(props) {
     </ConfigContext.Consumer>
   );
 }
+

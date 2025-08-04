@@ -1,7 +1,4 @@
 import React from 'react';
-import {routerShape, matchShape} from 'found';
-import PropTypes from 'prop-types';
-
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
@@ -10,39 +7,39 @@ import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
-import SeqTabularReports, {
-  subOptions as seqSubOptions
-} from '../tabular-report-by-sequences';
-import ReadsTabularReports, {
-  subOptions as readsSubOptions
-} from '../tabular-report-by-reads';
+import SeqTabularReports, {subOptions as seqSubOptions} from '../tabular-report-by-sequences';
+import ReadsTabularReports, {subOptions as readsSubOptions} from '../tabular-report-by-reads';
 
-
-function loadExampleCodonReads(examples, config) {
+function loadExampleCodonReads(examples: string[], config: any): string[] {
   return examples.map(url => getFullLink(url, config));
 }
 
-function loadExampleFasta(examples, config) {
+function loadExampleFasta(examples: {url: string; title: string}[], config: any): {url: string; title: string}[] {
   return examples.map(({url, title}) => ({
     url: getFullLink(url, config),
     title
   }));
 }
 
+interface SierraFormsProps {
+  config: any;
+  curAnalysis: string;
+  match: any;
+  router: any;
+}
 
-SierraForms.propTypes = {
-  config: PropTypes.object,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  curAnalysis: PropTypes.string.isRequired
-};
-
+/**
+ * Render analysis forms for HBV workflows.
+ *
+ * @param props - {@link SierraFormsProps} containing configuration and routing.
+ * @returns Rendered forms component.
+ */
 function SierraForms({
   config,
   curAnalysis,
   match,
   router
-}) {
+}: SierraFormsProps): JSX.Element {
 
   const basePath = useBasePath(match.location);
   const title = (
@@ -103,7 +100,7 @@ function SierraForms({
          label: 'Printable HTML'
        },
        csv: {
-         label: "Machine-readable data (FASTA/CSV/JSON)",
+         label: 'Machine-readable data (FASTA/CSV/JSON)',
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
          renderer: props => (
@@ -119,8 +116,18 @@ function SierraForms({
   </>;
 }
 
-export default function SierraFormsWithConfig(props) {
+interface SierraFormsWithConfigProps {
+  curAnalysis: string;
+  match: any;
+  router: any;
+}
+
+/**
+ * Wrapper that injects configuration into {@link SierraForms}.
+ */
+export default function SierraFormsWithConfig(props: SierraFormsWithConfigProps): JSX.Element {
   return <ConfigContext.Consumer>
     {config => <SierraForms {...props} config={config} />}
   </ConfigContext.Consumer>;
 }
+

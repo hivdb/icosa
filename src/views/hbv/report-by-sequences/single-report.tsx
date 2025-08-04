@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   ReportHeader,
@@ -12,18 +11,22 @@ import {
 
 import style from '../style.module.scss';
 
+interface SingleSequenceReportProps {
+  header?: string;
+  currentSelected?: any;
+  sequenceResult?: any;
+  output: string;
+  index: number;
+  onObserve: (entry: Element) => void;
+  onDisconnect?: (entry: Element) => void;
+}
 
-SingleSequenceReport.propTypes = {
-  header: PropTypes.string,
-  currentSelected: PropTypes.object,
-  sequenceResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
-};
-
-
+/**
+ * Render a single sequence analysis report.
+ *
+ * @param props - {@link SingleSequenceReportProps} describing the report.
+ * @returns Rendered article element.
+ */
 function SingleSequenceReport({
   sequenceResult,
   output,
@@ -31,7 +34,7 @@ function SingleSequenceReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SingleSequenceReportProps): JSX.Element {
 
   const {
     alignedGeneSequences,
@@ -41,7 +44,7 @@ function SingleSequenceReport({
   } = sequenceResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   return (
@@ -71,7 +74,7 @@ function SingleSequenceReport({
             <ValidationReport {...sequenceResult} {...{output, strain}} />
           </MutViewer>
           {isCritical ? null :
-            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            drugResistance.map((geneDR: any, idx: number) => <React.Fragment key={idx}>
               <DRInterpretation
                suppressLevels
                {...{geneDR, output, strain}} />
@@ -108,3 +111,4 @@ export default React.memo(
     prevResult === nextResult
   )
 );
+

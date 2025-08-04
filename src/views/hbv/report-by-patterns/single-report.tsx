@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   MutationViewer as MutViewer,
@@ -12,17 +11,22 @@ import {
 
 import style from '../style.module.scss';
 
+interface SinglePatternReportProps {
+  name?: string;
+  currentSelected?: any;
+  patternResult?: any;
+  output: string;
+  index: number;
+  onObserve: (entry: Element) => void;
+  onDisconnect?: (entry: Element) => void;
+}
 
-SinglePatternReport.propTypes = {
-  name: PropTypes.string,
-  currentSelected: PropTypes.object,
-  patternResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
-};
-
+/**
+ * Render a single pattern analysis report article.
+ *
+ * @param props - {@link SinglePatternReportProps} describing the report.
+ * @returns Rendered report element.
+ */
 function SinglePatternReport({
   patternResult,
   output,
@@ -30,7 +34,7 @@ function SinglePatternReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SinglePatternReportProps): JSX.Element {
   const {
     allGeneMutations,
     validationResults,
@@ -38,7 +42,7 @@ function SinglePatternReport({
   } = patternResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   const strain = 'HBV';
@@ -64,7 +68,7 @@ function SinglePatternReport({
             <ValidationReport {...patternResult} {...{output, strain}} />
           </MutViewer>
           {isCritical ? null :
-            drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
+            drugResistance.map((geneDR: any, idx: number) => <React.Fragment key={idx}>
               <DRInterpretation
                suppressLevels
                {...{geneDR, output, strain}} />
@@ -76,3 +80,4 @@ function SinglePatternReport({
 }
 
 export default SinglePatternReport;
+

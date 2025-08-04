@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
@@ -16,20 +15,25 @@ import {subOptions} from './sub-options';
 
 export {subOptions};
 
-TabularReportByReadsContainer.propTypes = {
-  children: PropTypes.object, // Set of ids, new interface by seqreads-report
-  allSequenceReads: PropTypes.array.isRequired,
-  onFinish: PropTypes.func.isRequired,
-  patternsTo: PropTypes.string.isRequired
-};
+interface TabularReportByReadsProps {
+  children: Set<number>;
+  allSequenceReads: any[];
+  onFinish: () => void;
+  patternsTo: string;
+}
 
-
+/**
+ * Render tabular reports for sequence reads.
+ *
+ * @param props - {@link TabularReportByReadsProps} with data and callbacks.
+ * @returns Rendered tabular report component.
+ */
 export default function TabularReportByReadsContainer({
   children,
   allSequenceReads,
   onFinish,
   patternsTo
-}) {
+}: TabularReportByReadsProps): JSX.Element {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
@@ -82,3 +86,4 @@ export default function TabularReportByReadsContainer({
   </SeqReadsAnalysisLayout>;
 
 }
+

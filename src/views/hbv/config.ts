@@ -1,10 +1,13 @@
+/**
+ * Default configuration for HBV views.
+ */
 const config = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
     'pages/sierra-hbv.json'
   ),
   graphqlURI: (
-    window.__NODE_ENV === 'production' ?
+    (window as any).__NODE_ENV === 'production' ?
       '/graphql' :
       'http://localhost:8118/Sierra-HBV/graphql'),
   cmsStages: {
@@ -14,33 +17,15 @@ const config = {
     '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/localhost'
   },
   mutationTypesByGenes: {
-    NP: {
-      Other: 'Other'
-    },
-    VP35: {
-      Other: 'Other'
-    },
-    VP40: {
-      Other: 'Other'
-    },
-    GP: {
-      Other: 'Other'
-    },
-    sGP: {
-      Other: 'Other'
-    },
-    ssGP: {
-      Other: 'Other'
-    },
-    VP30: {
-      Other: 'Other'
-    },
-    VP24: {
-      Other: 'Other'
-    },
-    L: {
-      Other: 'Other'
-    }
+    NP: {Other: 'Other'},
+    VP35: {Other: 'Other'},
+    VP40: {Other: 'Other'},
+    GP: {Other: 'Other'},
+    sGP: {Other: 'Other'},
+    ssGP: {Other: 'Other'},
+    VP30: {Other: 'Other'},
+    VP24: {Other: 'Other'},
+    L: {Other: 'Other'}
   },
   maxProteinSize: 2210, // L protein
   seqReadsCodonCovBgColors: {
@@ -54,3 +39,4 @@ const config = {
 };
 
 export default config;
+
