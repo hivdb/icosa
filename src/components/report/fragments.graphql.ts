@@ -1,5 +1,8 @@
 import gql from 'graphql-tag.macro';
 
+/** GraphQL fragments used throughout report components. */
+
+/** Fragment describing the best matching subtype. */
 export const BestMatchingSubtype = gql`
   fragment BestMatchingSubtype on HIVBoundSubtype {
     display
@@ -7,6 +10,7 @@ export const BestMatchingSubtype = gql`
   }
 `;
 
+/** Fragment listing subtype details. */
 export const Subtype = gql`
   fragment Subtypes on HIVBoundSubtype {
     displayWithoutDistance
@@ -18,12 +22,14 @@ export const Subtype = gql`
   }
 `;
 
+/** Fragment for pretty pairwise alignment. */
 export const PrettyPairwise = gql`
   fragment PrettyPairwise on PrettyPairwise {
     positionLine refAALine alignedNAsLine mutationLine
   }
 `;
 
+/** Fragment summarising sequence details. */
 export const SequenceSummary = gql`
   fragment SequenceSummary on SequenceAnalysis {
     bestMatchingSubtype {
@@ -49,12 +55,14 @@ export const SequenceSummary = gql`
   ${PrettyPairwise}
 `;
 
+/** Fragment describing validation results. */
 export const ValidationResult = gql`
   fragment ValidationResult on ValidationResult {
     level message
   }
 `;
 
+/** Fragment defining QA chart data. */
 export const QAChart = gql`
   fragment QAChart on AlignedGeneSequence {
     firstAA
@@ -79,6 +87,7 @@ export const QAChart = gql`
   }
 `;
 
+/** Fragment outlining drug resistance interpretation. */
 export const DRInterpretation = gql`
   fragment DRInterpretation on DrugResistance {
     gene {
@@ -105,6 +114,7 @@ export const DRInterpretation = gql`
   }
 `;
 
+/** Fragment containing mutation score details. */
 export const DRMutationScores = gql`
   fragment DRMutationScores on DrugResistance {
     gene {
