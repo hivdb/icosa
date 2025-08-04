@@ -1,6 +1,9 @@
 import React from 'react';
 import {render, screen, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
+import {vi} from 'vitest';
+vi.mock('graphql-tag.macro', () => ({default: (s: any) => s}));
+vi.mock('./codon-coverage', () => ({default: () => null, query: {definitions: []}}));
 
 import {SeqReadsSummary} from './seqreads-summary';
 

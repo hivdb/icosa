@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Markdown from '../markdown';
 import SIRPcntBar from '../sir-pcnt-bar';
@@ -11,12 +10,11 @@ import {
   getRowKey,
   displayFold
 } from './funcs';
-import {vpSuscSummaryShape} from './prop-types';
+import type {VpSuscSummaryRow} from './types';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
 import style from './style.module.scss';
-
 
 const SIRLevels = [
   'susceptible',
@@ -24,16 +22,15 @@ const SIRLevels = [
   'resistant'
 ];
 
-
-function buildPayload(vaccPlasmaSuscSummary) {
+function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
   return vaccPlasmaSuscSummary
     .reduce(
-      (acc, {
+      (acc: VpSuscSummaryRow[], {
         variant,
         mutations,
         itemsByVaccine,
         displayOrder
-      }) => [
+      }: any) => [
         ...acc,
         ...itemsByVaccine.map(
           ({
@@ -42,8 +39,8 @@ function buildPayload(vaccPlasmaSuscSummary) {
             cumulativeCount: numSamples,
             cumulativeFold: {median: medianFold},
             itemsByResistLevel
-          }) => {
-            const row = {
+          }: any) => {
+            const row: VpSuscSummaryRow = {
               variant,
               mutations,
               vaccineName,
@@ -53,7 +50,7 @@ function buildPayload(vaccPlasmaSuscSummary) {
               references,
               displayOrder,
               levels: {}
-            };
+            } as any;
             for (const level of SIRLevels) {
               row.levels[level] = 0;
             }
@@ -76,12 +73,12 @@ function buildPayload(vaccPlasmaSuscSummary) {
           }
         )
       ],
-      []
+      [] as VpSuscSummaryRow[]
     )
     .filter(({displayOrder}) => displayOrder !== null);
 }
 
-function renderPcntBar(_, row) {
+function renderPcntBar(_: unknown, row: VpSuscSummaryRow) {
   const {
     levels: {
       susceptible: levelS = 0,
@@ -96,21 +93,21 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function useColumnDefs({openRefInNewWindow}) {
+function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
   return React.useMemo(
     () => [
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variant}) => (
+        render: (mutations: any, {variant}: any) => (
           <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
         },
-        sort: [({mutations}) => [
+        sort: [({mutations}: any) => [
           mutations.length,
-          ...mutations.map(({position, AAs}) => [position, AAs])
+          ...mutations.map(({position, AAs}: any) => [position, AAs])
         ]]
       }),
       new ColumnDef({
@@ -143,7 +140,7 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'references',
         label: <LabelReferences />,
-        render: refs => <CellReferences {...{refs, openRefInNewWindow}} />,
+        render: (refs: any) => <CellReferences {...{refs, openRefInNewWindow}} />,
         multiCells: true,
         sortable: false
       })
@@ -152,19 +149,12 @@ function useColumnDefs({openRefInNewWindow}) {
   );
 }
 
+interface VaccPlasmaSuscSummaryTableProps {
+  rows: VpSuscSummaryRow[];
+  openRefInNewWindow?: boolean;
+}
 
-VaccPlasmaSuscSummaryTable.propTypes = {
-  rows: PropTypes.arrayOf(
-    vpSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
-};
-
-VaccPlasmaSuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
-};
-
-function VaccPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
+const VaccPlasmaSuscSummaryTable: React.FC<VaccPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
   const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
   const columnDefs = useColumnDefs({openRefInNewWindow});
 
@@ -204,22 +194,19 @@ function VaccPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
       )}
     </ConfigContext.Consumer>;
   }
-}
-
-
-VaccPlasmaSuscSummary.propTypes = {
-  vaccPlasmaSuscSummary: PropTypes.shape({
-    itemsByVariantOrMutations: PropTypes.array.isRequired
-  }).isRequired
 };
+
+interface VaccPlasmaSuscSummaryProps {
+  vaccPlasmaSuscSummary: {itemsByVariantOrMutations: any[]};
+}
 
 function VaccPlasmaSuscSummary({
   vaccPlasmaSuscSummary: {
     itemsByVariantOrMutations
   }
-}) {
+}: VaccPlasmaSuscSummaryProps) {
   itemsByVariantOrMutations = itemsByVariantOrMutations
-    .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
+    .filter(({itemsByVaccine}: any) => itemsByVaccine.length > 0);
   const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
@@ -229,7 +216,6 @@ function VaccPlasmaSuscSummary({
   );
 }
 
-
 export {
   buildPayload,
   useColumnDefs,
@@ -237,3 +223,4 @@ export {
 };
 
 export default React.memo(VaccPlasmaSuscSummary);
+

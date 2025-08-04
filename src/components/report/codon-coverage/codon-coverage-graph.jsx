@@ -6,7 +6,7 @@ import {Group} from '@vx/group';
 import {Line} from '@vx/shape';
 import {scaleBand, scaleLinear} from '@vx/scale';
 import {withTooltip, Tooltip} from '@vx/tooltip';
-import range from 'd3-array/src/range';
+import {range} from 'd3-array';
 import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import config from '../../../config.js';

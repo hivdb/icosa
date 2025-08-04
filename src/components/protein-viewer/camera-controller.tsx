@@ -1,33 +1,43 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  useStage,
-  useComponent,
-  Position,
-  Rotation
-} from 'react-ngl';
+import React, {useCallback, useEffect, useMemo} from 'react';
+import {useStage, useComponent, Position, Rotation} from 'react-ngl';
 
 import Select from '../select';
 import Button from '../button';
 import {makeDownload} from '../../utils/download';
 import useMounted from '../../utils/use-mounted';
 
-import {viewShape, cameraStateShape} from './prop-types';
+import type {CameraState, View} from './types';
 import style from './style.module.scss';
 
+/** Props for {@link CameraController} */
+interface CameraControllerProps {
+  /** PDB identifier */
+  pdb: string;
+  /** Selection string limiting the view */
+  sele?: string;
+  /** Whether to display camera control sliders */
+  verbose?: boolean;
+  /** Current view name */
+  currentViewName: string;
+  /** Available structural views */
+  views: View[];
+  /** Callback to select a different view */
+  setView: (view: View) => void;
+  /** Current camera state */
+  cameraState?: CameraState;
+  /** Default camera state for reset */
+  defaultCameraState?: CameraState;
+  /** Update callback for camera state */
+  setCameraState: (state: CameraState) => void;
+}
 
-CameraController.propTypes = {
-  pdb: PropTypes.string.isRequired,
-  sele: PropTypes.string,
-  verbose: PropTypes.bool,
-  currentViewName: PropTypes.string.isRequired,
-  views: PropTypes.arrayOf(viewShape.isRequired).isRequired,
-  setView: PropTypes.func.isRequired,
-  cameraState: cameraStateShape,
-  defaultCameraState: cameraStateShape,
-  setCameraState: PropTypes.func.isRequired
-};
-
+/**
+ * Controller rendering camera options and interactive sliders to manipulate
+ * NGL viewer state.
+ *
+ * @param props - {@link CameraControllerProps}
+ * @returns Control panel React component.
+ */
 export default function CameraController({
   pdb,
   sele,
@@ -38,41 +48,41 @@ export default function CameraController({
   cameraState,
   defaultCameraState,
   setCameraState
-}) {
+}: CameraControllerProps) {
   const stage = useStage();
   const component = useComponent();
   const mounted = useMounted();
-  const initPosition = React.useMemo(
+  const initPosition = useMemo(
     () => {
       const defaultPosition = defaultCameraState?.position;
       if (Array.isArray(defaultPosition)) {
-        return new Position(...defaultPosition);
+        return new Position(...defaultPosition as number[]);
       }
       else if (defaultPosition) {
-        return defaultPosition;
+        return defaultPosition as Position;
       }
       return component.getCenter(sele).multiplyScalar(-1);
     },
     [defaultCameraState?.position, component, sele]
   );
-  const initRotation = React.useMemo(
+  const initRotation = useMemo(
     () => {
       const defaultRotation = defaultCameraState?.rotation;
       if (Array.isArray(defaultRotation)) {
-        return new Rotation(...defaultRotation);
+        return new Rotation(...defaultRotation as number[]);
       }
       else if (defaultRotation) {
-        return defaultRotation;
+        return defaultRotation as Rotation;
       }
       return new Rotation(0, 0, 0, 1);
     },
     [defaultCameraState?.rotation]
   );
-  const initDistance = React.useMemo(
+  const initDistance = useMemo(
     () => defaultCameraState?.distance || component.getZoom(sele),
     [defaultCameraState?.distance, component, sele]
   );
-  const positionBox = React.useMemo(
+  const positionBox = useMemo(
     () => {
       const {min, max} = component.getBox(sele);
       return {
@@ -83,7 +93,7 @@ export default function CameraController({
     [component, sele]
   );
 
-  const handleReset = React.useCallback(
+  const handleReset = useCallback(
     () => setCameraState({
       position: initPosition.clone(),
       rotation: initRotation.clone(),
@@ -92,10 +102,10 @@ export default function CameraController({
     [initPosition, initRotation, initDistance, setCameraState]
   );
 
-  const handleChange = React.useCallback(
-    (type, axis) => event => {
+  const handleChange = useCallback(
+    (type: keyof CameraState, axis?: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = Number.parseFloat(event.currentTarget.value);
-      let typeState = cameraState[type];
+      let typeState: any = (cameraState as any)[type];
       if (axis) {
         typeState = typeState.clone();
         typeState[axis] = value;
@@ -111,15 +121,15 @@ export default function CameraController({
     [cameraState, setCameraState]
   );
 
-  const handleSelectView = React.useCallback(
-    ({value}) => setView(views.find(({name}) => name === value)),
+  const handleSelectView = useCallback(
+    ({value}: {value: string}) => setView(views.find(({name}) => name === value) as View),
     [views, setView]
   );
 
-  const handleDownload = React.useCallback(
+  const handleDownload = useCallback(
     () => {
       stage.viewer.getImage().then(
-        blob => (
+        (blob: Blob) => (
           mounted() &&
           makeDownload(`${pdb}.png`, 'image/png', blob, true)
         )
@@ -128,20 +138,20 @@ export default function CameraController({
     [pdb, mounted, stage]
   );
 
-  const viewOptions = React.useMemo(
+  const viewOptions = useMemo(
     () => views.map(({name, label}) => ({
       value: name,
-      label: label || name
+      label: (label as any) || name
     })),
     [views]
   );
 
-  const curViewOption = React.useMemo(
+  const curViewOption = useMemo(
     () => viewOptions.find(({value}) => value === currentViewName),
     [viewOptions, currentViewName]
   );
 
-  React.useEffect(
+  useEffect(
     () => {
       handleReset();
     },
@@ -160,7 +170,7 @@ export default function CameraController({
            value={curViewOption}
            onChange={handleSelectView} /> :
           <label className={style['view-select']}>
-            {viewOptions[0].label || viewOptions[0].name}:
+            {viewOptions[0].label || (viewOptions[0] as any).name}:
           </label>}
         <Button onClick={handleDownload} btnStyle="primary">
           Save image
@@ -241,3 +251,4 @@ export default function CameraController({
     ]
   );
 }
+

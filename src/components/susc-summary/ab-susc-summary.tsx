@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import maxBy from 'lodash/maxBy';
 import sortBy from 'lodash/sortBy';
 import isEqual from 'lodash/isEqual';
@@ -20,14 +18,16 @@ import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import MismatchMutations from './mismatch-mutations';
 import useToggleDisplay from './toggle-display';
-import {
-  antibodyShape,
-  abSuscSummaryShape
-} from './prop-types';
+import type {Antibody, AbSuscSummaryRow} from './types';
 import style from './style.module.scss';
 
-
-function renderFold(resultItem) {
+/**
+ * Render the fold value for a given result item with styling based on level.
+ *
+ * @param resultItem - Fold information for an antibody combination
+ * @returns JSX element showing the formatted fold
+ */
+function renderFold(resultItem?: {cumulativeFold: {median: number}; cumulativeCount: number}) {
   if (!resultItem) {
     return <>-</>;
   }
@@ -50,9 +50,14 @@ function renderFold(resultItem) {
   </div>;
 }
 
-
-function findComboAntibodies(antibodySuscSummary) {
-  const combos = [];
+/**
+ * Identify combinations of antibodies appearing in summary data.
+ *
+ * @param antibodySuscSummary - Summary data grouped by antibody
+ * @returns Unique combinations of antibodies sorted by priority
+ */
+function findComboAntibodies(antibodySuscSummary: any[]): Antibody[][] {
+  const combos: Antibody[][] = [];
   for (const {itemsByAntibody} of antibodySuscSummary) {
     for (const {antibodies} of itemsByAntibody) {
       if (antibodies.length > 1) {
@@ -68,8 +73,13 @@ function findComboAntibodies(antibodySuscSummary) {
   return sortBy(uniqWith(combos, isEqual), ['[0].priority']);
 }
 
-
-function buildPayload(antibodySuscSummary) {
+/**
+ * Build table payload from raw antibody susceptibility summary data.
+ *
+ * @param antibodySuscSummary - Raw summary grouped by variant or mutations
+ * @returns Rows suitable for rendering in the table
+ */
+function buildPayload(antibodySuscSummary: any[]): AbSuscSummaryRow[] {
   let results = antibodySuscSummary
     .map(
       ({
@@ -81,8 +91,8 @@ function buildPayload(antibodySuscSummary) {
         references,
         itemsByAntibody,
         displayOrder
-      }) => {
-        const row = {
+      }: any) => {
+        const row: AbSuscSummaryRow = {
           mutations,
           references,
           variant,
@@ -107,39 +117,45 @@ function buildPayload(antibodySuscSummary) {
   return results;
 }
 
-
-function getAntibodyColumns(antibodies, antibodySuscSummary) {
+/**
+ * Derive antibody column structure including combinations.
+ *
+ * @param antibodies - Input antibody list
+ * @param antibodySuscSummary - Summary rows
+ * @returns Ordered column definitions
+ */
+function getAntibodyColumns(antibodies: Antibody[], antibodySuscSummary: any[]): Antibody[][] {
   const comboAntibodies = findComboAntibodies(antibodySuscSummary);
   antibodies = antibodies.map(({name, abbrName, priority}) => [
     {name, abbrName, priority}
   ]);
   antibodies = sortBy(antibodies, ['[0].priority']);
   for (const abs of comboAntibodies) {
-    const maxAb = maxBy(abs, 'priority');
-    const idx = antibodies.findIndex(abs => (
-      abs[abs.length - 1].name === maxAb.name
+    const maxAb = maxBy(abs, 'priority') as Antibody;
+    const idx = antibodies.findIndex(a => (
+      a[a.length - 1].name === maxAb.name
     ));
     antibodies.splice(idx + 1, 0, abs);
   }
   return antibodies;
 }
 
-
-function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
+/** Build column definitions for antibody susceptibility table */
+function useColumnDefs({antibodyColumns, openRefInNewWindow}: {antibodyColumns: Antibody[][]; openRefInNewWindow: boolean}) {
   return React.useMemo(
     () => [
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variant}) => (
+        render: (mutations: any, {variant}: any) => (
           <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
         },
-        sort: [({mutations}) => [
+        sort: [({mutations}: any) => [
           mutations.length,
-          ...mutations.map(({position, AAs}) => [position, AAs])
+          ...mutations.map(({position, AAs}: any) => [position, AAs])
         ]]
       }),
       ...antibodyColumns.map(abs => new ColumnDef({
@@ -151,7 +167,7 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
       new ColumnDef({
         name: 'references',
         label: <LabelReferences />,
-        render: refs => (
+        render: (refs: any) => (
           <CellReferences {...{refs, openRefInNewWindow}} />
         ),
         sortable: false
@@ -161,26 +177,20 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}) {
   );
 }
 
+interface AntibodySuscSummaryTableProps {
+  /** Data rows */
+  rows: AbSuscSummaryRow[];
+  /** Column definitions for antibodies */
+  antibodyColumns: Antibody[][];
+  /** Open references in new window */
+  openRefInNewWindow?: boolean;
+}
 
-AntibodySuscSummaryTable.propTypes = {
-  antibodyColumns: PropTypes.arrayOf(
-    PropTypes.arrayOf(antibodyShape.isRequired).isRequired
-  ).isRequired,
-  rows: PropTypes.arrayOf(
-    abSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
-};
-
-AntibodySuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
-};
-
-function AntibodySuscSummaryTable({
+const AntibodySuscSummaryTable: React.FC<AntibodySuscSummaryTableProps> = ({
   rows,
   antibodyColumns,
-  openRefInNewWindow
-}) {
+  openRefInNewWindow = false
+}) => {
   const columnDefs = useColumnDefs({antibodyColumns, openRefInNewWindow});
   const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
   const [config, loading] = ConfigContext.use();
@@ -222,23 +232,26 @@ function AntibodySuscSummaryTable({
       </Markdown>
     );
   }
-}
-
-
-AntibodySuscSummary.propTypes = {
-  antibodies: PropTypes.array.isRequired,
-  antibodySuscSummary: PropTypes.shape({
-    itemsByVariantOrMutations: PropTypes.array.isRequired
-  }).isRequired
 };
 
+interface AntibodySuscSummaryProps {
+  antibodies: Antibody[];
+  antibodySuscSummary: {itemsByVariantOrMutations: any[]};
+}
+
+/**
+ * High level component rendering antibody susceptibility summary table.
+ *
+ * @param props - {@link AntibodySuscSummaryProps}
+ * @returns JSX element wrapping the summary table
+ */
 function AntibodySuscSummary({
   antibodies,
   antibodySuscSummary: {itemsByVariantOrMutations}
-}) {
+}: AntibodySuscSummaryProps) {
 
   itemsByVariantOrMutations = itemsByVariantOrMutations
-    .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
+    .filter(({itemsByAntibody}: any) => itemsByAntibody.length > 0);
   const antibodyColumns = React.useMemo(
     () => getAntibodyColumns(antibodies, itemsByVariantOrMutations),
     [antibodies, itemsByVariantOrMutations]
@@ -265,3 +278,4 @@ export {
 };
 
 export default React.memo(AntibodySuscSummary);
+

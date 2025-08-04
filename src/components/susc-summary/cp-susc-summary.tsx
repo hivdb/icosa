@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Markdown from '../markdown';
 import SIRPcntBar from '../sir-pcnt-bar';
@@ -7,7 +6,6 @@ import SimpleTable, {ColumnDef} from '../simple-table';
 
 import ConfigContext from '../../utils/config-context';
 
-import {cpSuscSummaryShape} from './prop-types';
 import {
   getRowKey,
   displayFold
@@ -15,8 +13,8 @@ import {
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
+import type {CpSuscSummaryRow} from './types';
 import style from './style.module.scss';
-
 
 const SIRLevels = [
   'susceptible',
@@ -24,8 +22,13 @@ const SIRLevels = [
   'resistant'
 ];
 
-
-export function buildPayload(convPlasmaSuscSummary) {
+/**
+ * Build table rows for convalescent plasma susceptibility summary.
+ *
+ * @param convPlasmaSuscSummary - Raw summary data
+ * @returns Array of row objects
+ */
+export function buildPayload(convPlasmaSuscSummary: any[]): CpSuscSummaryRow[] {
   return convPlasmaSuscSummary
     .map(
       ({
@@ -36,8 +39,8 @@ export function buildPayload(convPlasmaSuscSummary) {
         cumulativeFold: {median: medianFold},
         itemsByResistLevel,
         displayOrder
-      }) => {
-        const row = {
+      }: any) => {
+        const row: CpSuscSummaryRow = {
           variant,
           mutations,
           numRefs: references.length,
@@ -45,9 +48,8 @@ export function buildPayload(convPlasmaSuscSummary) {
           medianFold,
           references,
           displayOrder,
-          levels: {}
-
-        };
+          levels: {},
+        } as any;
         for (const level of SIRLevels) {
           row.levels[level] = 0;
         }
@@ -72,7 +74,7 @@ export function buildPayload(convPlasmaSuscSummary) {
     .filter(({displayOrder}) => displayOrder !== null);
 }
 
-function renderPcntBar(_, row) {
+function renderPcntBar(_: unknown, row: CpSuscSummaryRow) {
   const {
     levels: {
       susceptible: levelS = 0,
@@ -87,21 +89,21 @@ function renderPcntBar(_, row) {
   ]} />;
 }
 
-function useColumnDefs({openRefInNewWindow}) {
+function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
   return React.useMemo(
     () => ([
       new ColumnDef({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations, {variant}) => (
+        render: (mutations: any, {variant}: any) => (
           <CellMutations {...{mutations, variant}} />
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
         },
-        sort: [({mutations}) => [
+        sort: [({mutations}: any) => [
           mutations.length,
-          ...mutations.map(({position, AAs}) => [position, AAs])
+          ...mutations.map(({position, AAs}: any) => [position, AAs])
         ]]
       }),
       new ColumnDef({
@@ -126,7 +128,7 @@ function useColumnDefs({openRefInNewWindow}) {
       new ColumnDef({
         name: 'references',
         label: <LabelReferences />,
-        render: refs => (
+        render: (refs: any) => (
           <CellReferences {...{refs, openRefInNewWindow}} />
         ),
         sortable: false
@@ -136,20 +138,12 @@ function useColumnDefs({openRefInNewWindow}) {
   );
 }
 
+interface ConvPlasmaSuscSummaryTableProps {
+  rows: CpSuscSummaryRow[];
+  openRefInNewWindow?: boolean;
+}
 
-ConvPlasmaSuscSummaryTable.propTypes = {
-  rows: PropTypes.arrayOf(
-    cpSuscSummaryShape.isRequired
-  ).isRequired,
-  openRefInNewWindow: PropTypes.bool.isRequired
-};
-
-
-ConvPlasmaSuscSummaryTable.defaultProps = {
-  openRefInNewWindow: false
-};
-
-function ConvPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
+const ConvPlasmaSuscSummaryTable: React.FC<ConvPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
   const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
   const columnDefs = useColumnDefs({openRefInNewWindow});
 
@@ -189,21 +183,18 @@ function ConvPlasmaSuscSummaryTable({rows, openRefInNewWindow}) {
       )}
     </ConfigContext.Consumer>;
   }
-}
-
-
-ConvPlasmaSuscSummary.propTypes = {
-  convPlasmaSuscSummary: PropTypes.shape({
-    itemsByVariantOrMutations: PropTypes.array.isRequired
-  }).isRequired
 };
+
+interface ConvPlasmaSuscSummaryProps {
+  convPlasmaSuscSummary: {itemsByVariantOrMutations: any[]};
+}
 
 function ConvPlasmaSuscSummary({
   convPlasmaSuscSummary: {itemsByVariantOrMutations}
-}) {
+}: ConvPlasmaSuscSummaryProps) {
 
   itemsByVariantOrMutations = itemsByVariantOrMutations
-    .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
+    .filter(({itemsByResistLevel}: any) => itemsByResistLevel.length > 0);
   const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
@@ -213,5 +204,5 @@ function ConvPlasmaSuscSummary({
   );
 }
 
-
 export default React.memo(ConvPlasmaSuscSummary);
+
