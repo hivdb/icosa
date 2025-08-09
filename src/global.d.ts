@@ -19,3 +19,8 @@ interface Window {
   /** Node environment string injected at build time */
   __NODE_ENV?: string;
 }
+
+declare namespace JSX {
+  export import IntrinsicElements = React.JSX.IntrinsicElements
+  export import Element = React.JSX.Element
+}

@@ -52,7 +52,7 @@ export default function SeqReadsThresholdNomogram({
   mixtureRateTicks = defaultProps.mixtureRateTicks,
   minPrevalenceTicks = defaultProps.minPrevalenceTicks
 }: SeqReadsThresholdNomogramProps): JSX.Element {
-  const minPrevalenceDomain = React.useMemo(
+  const minPrevalenceDomain: [number, number] = React.useMemo(
     () => [Math.min(...minPrevalenceTicks), Math.max(...minPrevalenceTicks)],
     [minPrevalenceTicks]
   );
