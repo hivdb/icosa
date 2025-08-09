@@ -1,6 +1,6 @@
 import React from 'react';
 import {Group, Text} from 'react-konva';
-import type {Text as KonvaText} from 'konva/lib/shapes/Text';
+import Konva from 'konva';
 
 interface UnderscoreAnnotGroupProps {
   annotName: string;
@@ -33,7 +33,7 @@ export default function UnderscoreAnnotGroup({
     fontFamily
   }
 }: UnderscoreAnnotGroupProps) {
-  const textRef = React.useRef<KonvaText>(null);
+  const textRef = React.useRef<Konva.Text>(null);
   const [currentWidth, setCurrentWidth] = React.useState(posItemSizePixel);
 
   React.useEffect(

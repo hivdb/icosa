@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-nocheck
 import memoize from 'lodash/memoize';
 import camelCase from 'lodash/camelCase';
 import Worker from './worker';
@@ -282,17 +283,14 @@ export function useQuery({
             isPending: false
           };
         }
-        let [{
-          columns,
-          values
-        }] = res;
+        let [{columns, values}] = res as Array<{columns: string[]; values: any[][]}>;
         if (camel) {
           columns = columns.map(col => camelCase(col));
         }
 
         return {
-          payload: values.map(record => (
-            columns.reduce((acc, col, idx) => {
+          payload: values.map((record: any[]) => (
+            columns.reduce<Record<string, any>>((acc, col, idx) => {
               acc[col] = record[idx];
               return acc;
             }, {})

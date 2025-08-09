@@ -1,6 +1,6 @@
 import React from 'react';
 import {Group, Rect, Text} from 'react-konva';
-import type {Text as KonvaText} from 'konva/lib/shapes/Text';
+import Konva from 'konva';
 
 interface HoverPositionGroupProps {
   position: number;
@@ -34,7 +34,7 @@ export default function PositionGroup({
   }
 }: HoverPositionGroupProps) {
 
-  const posNumTextRef = React.useRef<KonvaText>(null);
+  const posNumTextRef = React.useRef<Konva.Text>(null);
   const [addOffsetX, setAddOffsetX] = React.useState(0);
 
   React.useEffect(

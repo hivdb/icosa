@@ -1,4 +1,4 @@
-import createPersistedState from 'use-persisted-state/src';
+import createPersistedState from 'use-persisted-state';
 
 /**
  * Create a reducer hook whose state is persisted via `use-persisted-state`.

@@ -76,14 +76,18 @@ export default function useScrollObserver({
       boundingClientRect: {y: currentY},
       intersectionRatio: currentRatio,
       isIntersecting,
-      target: {
-        dataset: {scrollObserveIndex: index, scrollObserveName: name}
-      }
+      target
     }: IntersectionObserverEntry) => {
+      const {
+        scrollObserveIndex: index,
+        scrollObserveName: name
+      } = (target as HTMLElement).dataset as DOMStringMap;
+      const nameKey = name!;
+      const indexKey = Number(index);
       // see https://stackoverflow.com/a/51976805
-      const previousY = self.current.previousYs[name] || 0;
-      const previousRatio = self.current.previousRatios[name] || 0;
-      let direction = null;
+      const previousY = self.current.previousYs[nameKey] || 0;
+      const previousRatio = self.current.previousRatios[nameKey] || 0;
+      let direction: 'asc' | 'desc' | null = null;
       if (currentRatio > previousRatio && isIntersecting) {
         if (currentY < previousY) {
           direction = DOWN;
@@ -92,13 +96,13 @@ export default function useScrollObserver({
           direction = UP;
         }
       }
-      self.current.previousYs[name] = currentY;
-      self.current.previousRatios[name] = currentRatio;
+      self.current.previousYs[nameKey] = currentY;
+      self.current.previousRatios[nameKey] = currentRatio;
       return {
-        node: self.current.observingNodes[name] || null,
+        node: self.current.observingNodes[nameKey] || null,
         direction,
-        name,
-        index
+        name: nameKey,
+        index: indexKey
       };
     },
     []
@@ -120,13 +124,13 @@ export default function useScrollObserver({
           node: HTMLElement | null;
           name: string;
           index: number;
-          direction: string | null;
+          direction: 'asc' | 'desc' | null;
         }>;
       const {direction} = observedNodes[0] || {};
       if (!direction) {
         return;
       }
-      observedNodes = orderBy(observedNodes, ['index'], [direction]);
+      observedNodes = orderBy(observedNodes, ['index'], [direction as 'asc' | 'desc']);
 
       for (const {node, name} of observedNodes) {
         await asyncLoadNewItem(name, /* updateCurrentSelected = */true);

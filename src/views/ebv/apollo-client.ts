@@ -24,7 +24,7 @@ function buildClient(config: any): ApolloClient<any> {
             sequenceAnalysis: {
               keyArgs: false,
               merge: (existing = [], incoming) => {
-                const merged = {};
+                const merged: Record<string, any> = {};
                 for (const seq of [...existing, ...incoming]) {
                   const {inputSequence: {header}} = seq;
                   merged[header] = seq;

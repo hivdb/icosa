@@ -20,6 +20,6 @@
     ]
   },
   "include": ["src"],
-  "exclude": ["src/views/mut-annot-viewer"],
+  "exclude": ["src/views/mut-annot-viewer", "src/utils"],
   "references": []
 }

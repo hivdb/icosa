@@ -1,6 +1,6 @@
 import React from 'react';
 import isEqual from 'lodash/isEqual';
-import {useAsync, UseAsyncOptions} from 'react-async';
+import {useAsync, AsyncOptions} from 'react-async';
 
 /**
  * Hook similar to `useAsync` but returns stable references to avoid
@@ -10,7 +10,7 @@ import {useAsync, UseAsyncOptions} from 'react-async';
  * @returns Stable asynchronous state with `data`, `error` and `isPending`.
  */
 export default function useSmartAsync<T>(
-  {promiseFn, ...keys}: UseAsyncOptions<T>
+  {promiseFn, ...keys}: AsyncOptions<T>
 ): {data: T | undefined; error: Error | undefined; isPending: boolean} {
   const {data, error, isPending} = useAsync<T>({
     promiseFn,

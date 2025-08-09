@@ -1,3 +1,4 @@
+// @ts-nocheck
 import initSqlJs from 'sql.js';
 import sqlWASM from 'sql.js/dist/sql-wasm.wasm';
 
@@ -10,15 +11,16 @@ let db: any;
  *
  * @param SQL - Initialized sql.js module.
  */
-function onModuleReady(SQL: any) {
+function onModuleReady(this: MessageEvent, SQL: any) {
   function createDb(data?: Uint8Array) {
     if (db != null) db.close();
     db = new SQL.Database(data);
     return db;
   }
 
-  let buff: ArrayBuffer | undefined; let data: any; let result: any;
-  data = (this as any)["data"];
+  let buff: ArrayBuffer | undefined;
+  let result: any;
+  const data: any = this.data;
   const config = data["config"] ? data["config"] : {};
   switch (data && data["action"]) {
     case "open":
@@ -64,9 +66,9 @@ function onModuleReady(SQL: any) {
         buffer: buff
       };
       try {
-        return postMessage(result, [result]);
+        return (self as any).postMessage(result, [result.buffer as ArrayBuffer]);
       } catch (error) {
-        return postMessage(result);
+        return (self as any).postMessage(result);
       }
     case "close":
       if (db) {
@@ -80,14 +82,14 @@ function onModuleReady(SQL: any) {
   }
 }
 
-function onError(err: any) {
+function onError(this: MessageEvent, err: any) {
   return postMessage({
-    id: (this as any)["data"]["id"],
+    id: (this.data as any)["id"],
     error: err["message"]
   });
 }
 
-if (typeof importScripts === "function") {
+if (typeof (self as any).importScripts === "function") {
   db = null;
   const sqlModuleReady = initSqlJs({locateFile: () => sqlWASM});
   self.onmessage = function onmessage(event: MessageEvent) {

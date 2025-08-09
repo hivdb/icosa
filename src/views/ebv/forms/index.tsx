@@ -1,11 +1,10 @@
 import React from 'react';
-import {routerShape, matchShape} from 'found';
-import React from 'react';
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
 
-import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms from '../../../components/analyze-forms';
+import useBasePath from '../../../components/analyze-forms/use-base-path';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
@@ -13,11 +12,43 @@ import SeqTabularReports, {subOptions as seqSubOptions} from '../tabular-report-
 import ReadsTabularReports, {subOptions as readsSubOptions} from '../tabular-report-by-reads';
 
 
-function loadExampleCodonReads(examples, config) {
+export interface ExampleConfig {
+  /** Mapping of host names to CMS stages. */
+  cmsStages: Record<string, string>;
+}
+
+/**
+ * Convert example read file paths to absolute URLs.
+ *
+ * @param examples - List of example file paths.
+ * @param config - Runtime configuration providing CMS stage mapping.
+ * @returns List of fully-qualified example URLs.
+ */
+export function loadExampleCodonReads(
+  examples: string[],
+  config: ExampleConfig
+): string[] {
   return examples.map(url => getFullLink(url, config));
 }
 
-function loadExampleFasta(examples, config) {
+interface FastaExample {
+  /** Relative path to the FASTA example file. */
+  url: string;
+  /** Display title for the example. */
+  title: string;
+}
+
+/**
+ * Convert example FASTA links to absolute URLs while preserving titles.
+ *
+ * @param examples - List of FASTA example descriptors.
+ * @param config - Runtime configuration providing CMS stage mapping.
+ * @returns List of FASTA examples with updated absolute URLs.
+ */
+export function loadExampleFasta(
+  examples: FastaExample[],
+  config: ExampleConfig
+): FastaExample[] {
   return examples.map(({url, title}) => ({
     url: getFullLink(url, config),
     title
@@ -90,12 +121,12 @@ function SierraForms({
          label: 'Machine-readable data (CSV/JSON)',
          subOptions: seqSubOptions,
          defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: Record<string, unknown>) => (
            <SeqTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...props as any} />
          )
        }
      }}
@@ -107,12 +138,12 @@ function SierraForms({
          label: "Machine-readable data (FASTA/CSV/JSON)",
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: Record<string, unknown>) => (
            <ReadsTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...props as any} />
          )
        }
      }}
