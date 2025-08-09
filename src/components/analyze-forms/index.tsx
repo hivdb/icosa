@@ -117,7 +117,7 @@ export default function AnalyzeForms({
             return (
               <SequenceInputForm
                to={sequencesTo}
-               outputOptions={sequencesOutputOptions}
+               outputOptions={sequencesOutputOptions ?? {}}
                {...commonProps}
               />
             );
@@ -125,7 +125,7 @@ export default function AnalyzeForms({
             return (
               <SequenceReadsInputForm
                to={readsTo}
-               outputOptions={seqReadsOutputOptions}
+               outputOptions={seqReadsOutputOptions ?? {}}
                {...commonProps}
               />
             );
@@ -155,7 +155,7 @@ export default function AnalyzeForms({
   return (
     <FormsContainer tabName={tabName}>
       {tabName === 'ngs2codfreq' ? null : (
-        <Tabs onSelect={() => null} selectedIndex={tabIndex}>
+        <Tabs onSelect={() => undefined} selectedIndex={tabIndex}>
           <TabList>
             {tabNames.map((name, idx) => (
               <Tab key={name}>

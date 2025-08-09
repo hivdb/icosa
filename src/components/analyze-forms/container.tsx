@@ -24,7 +24,7 @@ export default function AnalyzeFormsContainer({
   className,
   children,
   tabName
-}: AnalyzeFormsContainerProps): JSX.Element {
+}: AnalyzeFormsContainerProps): React.JSX.Element {
   return (
     <section
      data-tabname={tabName}
