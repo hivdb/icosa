@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   SeqSummary,
@@ -41,8 +42,8 @@ interface SingleSeqReadsReportProps {
   output: string;
   name: string;
   index: number;
-  onObserve: (el: Element | null, idx: number) => void;
-  onDisconnect: (el: Element | null) => void;
+    onObserve: (payload: ObservePayload) => void;
+    onDisconnect: (payload: ObservePayload) => void;
 }
 
 /**
@@ -82,13 +83,13 @@ function SingleSeqReadsReport({
 
   return (
     <article data-loaded={!!sequenceReadsResult} className={style['seqreads-article']}>
-      <ReportHeader
-        output={output}
-        name={name}
-        index={index}
-        onObserve={onObserve}
-        onDisconnect={onDisconnect}
-      />
+        <ReportHeader
+          output={output}
+          name={name}
+          index={index}
+          onObserve={onObserve}
+          onDisconnect={onDisconnect}
+        />
       {sequenceReadsResult ? (
         <>
           <SeqSummary {...sequenceReadsResult} {...{ output, strain, includeGenes }}>

@@ -78,7 +78,9 @@ async function seqSummary({
     ],
     []
   );
-  const allGeneNames = (allGenes as any[]).map(({name}: any) => name);
+    const allGeneNames = (allGenes as Array<{ name: string }>).map(
+      ({ name }: { name: string }) => name
+    );
 
   const header = [
     'Sequence Name',
@@ -168,9 +170,9 @@ async function seqSummary({
     } = seqResult;
     const row: Record<string, unknown> = {
       'Sequence Name': seqName1 || seqName2,
-      'Genes': genes
-        .filter(({name}) => allGeneNames.includes(name))
-        .map(({name}) => geneDisplay[name] || name),
+        'Genes': genes
+          .filter(({ name }: { name: string }) => allGeneNames.includes(name))
+          .map(({ name }: { name: string }) => geneDisplay[name] || name),
       'Subtype (%)': (bestMatchingSubtype || {}).display || null,
       'Median Read Depth': readDepthStats.median,
       'NA Mixture Rate (%)': (100 * mixtureRate).toFixed(2),

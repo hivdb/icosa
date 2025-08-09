@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   ReportHeader,
@@ -26,8 +27,8 @@ interface SinglePatternReportProps {
     displayAlgComparison?: boolean;
     displayMutationScores?: string[];
   };
-  onObserve: () => void;
-  onDisconnect?: () => void;
+    onObserve: (payload: ObservePayload) => void;
+    onDisconnect?: (payload: ObservePayload) => void;
 }
 
 /**
@@ -55,9 +56,9 @@ function SinglePatternReport({
     drugResistance
   } = patternResult || {};
 
-  const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
-  );
+    const isCritical =
+      !!validationResults &&
+      validationResults.some(({ level }: { level: string }) => level === 'CRITICAL');
 
   const disabledDrugs = useDisabledDrugs();
 
@@ -66,12 +67,12 @@ function SinglePatternReport({
      key={name}
      data-loaded={!!patternResult}
      className={style['pattern-article']}>
-      <ReportHeader
-       output={output}
-       name={name}
-       index={index}
-       onObserve={onObserve}
-       onDisconnect={onDisconnect} />
+        <ReportHeader
+         output={output}
+         name={name || ''}
+         index={index}
+         onObserve={onObserve}
+         onDisconnect={onDisconnect} />
       {patternResult ? <>
         <MutViewer
          title="Mutation quality assessment"
@@ -86,14 +87,14 @@ function SinglePatternReport({
            {...patternResult}
            {...{output, strain}} />
         </MutViewer>
-        {isCritical || !displayDRInterpretation ? null :
-          drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
-            <DRInterpretation
-             {...{geneDR, output, disabledDrugs, strain}} />
-            {displayMutationScores.includes(geneDR.gene.name) ?
-              <DRMutationScores
-               {...{geneDR, output, disabledDrugs, strain}} /> : null}
-          </React.Fragment>)}
+          {isCritical || !displayDRInterpretation ? null :
+            drugResistance.map((geneDR: any, idx: number) => <React.Fragment key={idx}>
+              <DRInterpretation
+               {...{geneDR, output, disabledDrugs, strain}} />
+              {displayMutationScores.includes(geneDR.gene.name) ?
+                <DRMutationScores
+                 {...{geneDR, output, disabledDrugs, strain}} /> : null}
+            </React.Fragment>)}
         {!displayMutationPrevalence ? null :
         <SeqMutationPrevalence
          subtypeStats={subtypeStats}

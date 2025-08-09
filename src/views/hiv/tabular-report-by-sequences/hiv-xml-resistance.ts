@@ -4,7 +4,7 @@ import { create as createXML } from 'xmlbuilder2';
 /**
  * Convert modern mutation type labels into legacy XML schema labels.
  */
-function getOldMutType(mutType: string, drugClass: string): string {
+function getOldMutType(mutType: string, drugClass?: string): string {
   if (mutType === 'Other') {
     return 'OTHER';
   }
@@ -31,17 +31,33 @@ function getOldMutType(mutType: string, drugClass: string): string {
   return 'OTHER';
 }
 
+export interface XMLReportFile {
+  /** folder or grouping for the file */
+  tableName: string;
+  /** filename extension */
+  fileExt: string;
+  /** MIME type */
+  mimeType: string;
+  /** file payload */
+  payload: string;
+}
+
 /**
  * Generate legacy XML resistance report.
+ *
+ * @param params - Analysis results and configuration.
+ * @returns Array containing a single XML report description.
  */
 export default async function xmlResistance({
   allGenes,
   sequenceAnalysis,
   currentVersion,
   config
-}: any): Promise<string> {
+}: any): Promise<XMLReportFile[]> {
   const { geneDisplay } = config;
-  const allGeneNames = allGenes.map(({ name }) => name);
+  const allGeneNames = (allGenes as Array<{ name: string }>).map(
+    ({ name }: { name: string }) => name
+  );
 
   const root = createXML({
     version: '1.0',
@@ -80,11 +96,11 @@ export default async function xmlResistance({
       drugResistance: geneDRs
     } = seqResult;
     const result = root.ele('result');
-    const genes = availableGenes
-      .filter(({name}) => allGeneNames.includes(name))
-      .map(({name}) => name);
+      const genes = availableGenes
+        .filter(({ name }: any) => allGeneNames.includes(name))
+        .map(({ name }: any) => name);
 
-    result.ele('success').txt(genes.length > 0);
+      result.ele('success').txt(String(genes.length > 0));
 
     const inputSeq = result.ele('inputSequence');
     inputSeq.ele('md5sum').txt(inputSequence.MD5);
@@ -99,16 +115,20 @@ export default async function xmlResistance({
           `length = ${inputSequence.sequence.length}).`
         );
     }
-    result.ele('GAHypermutated').txt(apobecMutations.length > 1);
+      result.ele('GAHypermutated').txt(String(apobecMutations.length > 1));
 
     // <geneData>'s
     for (const geneName of genes) {
-      const geneDef = allGenes.find(({name}) => geneName === name);
-      const geneSeq = geneSeqs.find(({gene: {name}}) => geneName === name);
+        const geneDef = (allGenes as any[]).find(
+          ({ name }: any) => geneName === name
+        ) as any;
+        const geneSeq = (geneSeqs as any[]).find(
+          ({ gene: { name } }: any) => geneName === name
+        ) as any;
 
       const geneDataElem = result.ele('geneData');
       geneDataElem.ele('gene').txt(geneDisplay[geneName] || geneName);
-      geneDataElem.ele('present').txt(!!geneSeq);
+        geneDataElem.ele('present').txt(String(!!geneSeq));
       if (!geneSeq) {
         continue;
       }
@@ -151,10 +171,10 @@ export default async function xmlResistance({
             .txt(mut.displayAAs.split('_')[1]);
         }
         if (mut.isUnusual) {
-          mutElem.ele('atypical').txt(true);
+          mutElem.ele('atypical').txt(String(true));
         }
         if (mut.isApobecMutation) {
-          mutElem.ele('GAHypermutated').txt(true);
+          mutElem.ele('GAHypermutated').txt(String(true));
         }
       }
 
@@ -200,13 +220,18 @@ export default async function xmlResistance({
 
     // <drugScore>'s
     for (const geneName of genes) {
-      const geneDef = allGenes.find(({name}) => geneName === name);
-      const geneDR = geneDRs.find(({gene: {name}}) => geneName === name);
+      const geneDef = (allGenes as any[]).find(
+        ({ name }: any) => geneName === name
+      ) as any;
+      const geneDR = (geneDRs as any[]).find(
+        ({ gene: { name } }: any) => geneName === name
+      ) as any;
       for (const drugClass of geneDef.drugClasses) {
         for (const drug of drugClass.drugs) {
           const dsElem = result.ele('drugScore');
-          const drugScore = geneDR.drugScores
-            .find(({drug: {name}}) => name === drug.name);
+            const drugScore = geneDR.drugScores.find(
+              ({ drug: { name } }: any) => name === drug.name
+            );
           dsElem.ele('drugCode').txt(drug.displayAbbr);
           dsElem.ele('genericName').txt(drug.fullName);
           dsElem.ele('type').txt(drugClass.name);
@@ -227,14 +252,22 @@ export default async function xmlResistance({
     }
 
     // <scoreTable>'s
-    for (const geneName of genes) {
-      const geneDef = allGenes.find(({name}) => geneName === name);
-      const geneDR = geneDRs.find(({gene: {name}}) => geneName === name);
+      for (const geneName of genes) {
+        const geneDef = (allGenes as any[]).find(
+          ({ name }: any) => geneName === name
+        ) as any;
+        const geneDR = (geneDRs as any[]).find(
+          ({ gene: { name } }: any) => geneName === name
+        ) as any;
       for (const drugClass of geneDef.drugClasses) {
-        let patterns = [];
-        for (const {partialScores} of geneDR.drugScores) {
-          for (const {mutations} of partialScores) {
-            patterns.push(mutations.map(({text}) => text).join('+'));
+        let patterns: string[] = [];
+        for (const { partialScores } of geneDR.drugScores) {
+          for (const { mutations } of partialScores) {
+            patterns.push(
+              (mutations as Array<{ text: string }>).
+                map(({ text }) => text).
+                join('+')
+            );
           }
         }
         patterns = uniq(patterns);
@@ -243,7 +276,7 @@ export default async function xmlResistance({
 
         const headerElem = tblElem.ele('scoreRow');
         const totalElem = tblElem.ele('scoreRow');
-        const patternElems = {};
+        const patternElems: Record<string, any> = {};
         headerElem.ele('score', {value: drugClass.name});
         totalElem.ele('score', {value: 'Total:'});
 
@@ -253,8 +286,10 @@ export default async function xmlResistance({
         }
 
         for (const drug of drugClass.drugs) {
-          const drugScore = geneDR.drugScores
-            .find(({drug: {name}}) => name === drug.name);
+          const drugScore = geneDR.drugScores.find(
+            ({ drug: { name } }: { drug: { name: string } }) =>
+              name === drug.name
+          );
           headerElem.ele('score', {value: drug.displayAbbr});
           totalElem.ele('score', {
             'class': drugClass.name,
@@ -263,9 +298,8 @@ export default async function xmlResistance({
           });
           for (const pattern of patterns) {
             const pScore = drugScore.partialScores.find(
-              ({mutations}) => (
-                pattern === mutations.map(({text}) => text).join('+')
-              )
+              ({ mutations }: { mutations: Array<{ text: string }> }) =>
+                pattern === mutations.map(({ text }) => text).join('+')
             );
             const score = pScore ? pScore.score : 0;
             patternElems[pattern]
@@ -281,13 +315,18 @@ export default async function xmlResistance({
 
     // <comment>'s
     for (const geneName of genes) {
-      const geneDR = geneDRs.find(({gene: {name}}) => geneName === name);
-      for (const {commentType, comments} of geneDR.commentsByTypes) {
+      const geneDR = (geneDRs as any[]).find(
+        ({ gene: { name } }: any) => geneName === name
+      ) as any;
+      if (!geneDR) {
+        continue;
+      }
+      for (const { commentType, comments } of geneDR.commentsByTypes as any[]) {
         if (commentType === 'Dosage') {
           // XML format doesn't support Dosage
           continue;
         }
-        for (const comment of comments) {
+        for (const comment of comments as any[]) {
           const cmtElem = result.ele('comment');
           cmtElem.ele('gene').txt(geneName);
           cmtElem.ele('grouping').txt(commentType);

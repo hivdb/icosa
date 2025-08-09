@@ -26,24 +26,30 @@ interface TabularReportBySequencesContainerProps {
   getSubmitState: () => any;
 }
 
+/**
+ * Container component that renders HIV tabular reports for uploaded sequences.
+ *
+ * @param props - {@link TabularReportBySequencesContainerProps}
+ * @returns Wrapped {@link SequenceAnalysisLayout} or `null` while loading.
+ */
 export default function TabularReportBySequencesContainer({
   subOptionIndices,
   sequences,
   onFinish,
   patternsTo,
   getSubmitState
-}: TabularReportBySequencesContainerProps): JSX.Element | null {
-  const {match} = useRouter();
+}: TabularReportBySequencesContainerProps): React.ReactElement | null {
+  const { match } = useRouter();
 
   const [config, isConfigPending] = ConfigContext.use();
   const client = useApolloClient({
-    config,
+    config: config as { graphqlURI: string },
     skip: isConfigPending,
     payload: sequences
   });
 
   const [handleExtendVariables, isExtVarPending] = useExtendVariables({
-    config,
+    config: config as { allGenes: string[] },
     getSubmitState
   });
 
@@ -56,25 +62,32 @@ export default function TabularReportBySequencesContainer({
     return null;
   }
 
-  return <SequenceAnalysisLayout
-   query={getQuery(curSubOptions)}
-   client={client}
-   sequences={sequences}
-   currentSelected={{index: 0}}
-   renderPartialResults={false}
-   lazyLoad={false}
-   maxPerRequest={14}
-   extraParams={getExtraParams(curSubOptions)}
-   onExtendVariables={handleExtendVariables}>
-    {props => (
-      <SeqTabularReports
-       config={config}
-       match={match}
-       subOptionIndices={subOptionIndices}
-       onFinish={onFinish}
-       patternsTo={patternsTo}
-       {...props} />
-    )}
-  </SequenceAnalysisLayout>;
+  const firstName =
+    sequences[0]?.name || sequences[0]?.inputSequence?.header || '';
+
+  return (
+    <SequenceAnalysisLayout
+      query={getQuery(curSubOptions)}
+      client={client}
+      sequences={sequences}
+      currentSelected={{ index: 0, name: firstName }}
+      renderPartialResults={false}
+      lazyLoad={false}
+      maxPerRequest={14}
+      extraParams={getExtraParams(curSubOptions)}
+      onExtendVariables={handleExtendVariables}
+    >
+      {props => (
+        <SeqTabularReports
+          config={config}
+          match={match}
+          subOptionIndices={subOptionIndices}
+          onFinish={onFinish}
+          patternsTo={patternsTo}
+          {...props}
+        />
+      )}
+    </SequenceAnalysisLayout>
+  );
 
 }
