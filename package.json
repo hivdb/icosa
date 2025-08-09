@@ -103,6 +103,7 @@
     "youtube-url": "^0.5.0"
   },
   "devDependencies": {
+    "@types/d3-array": "^3.2.1",
     "@types/pako": "^2.0.3",
     "canvas": "^3.1.2",
     "jsdom": "26.1.0",

@@ -20,19 +20,21 @@ function renderLink(href: string, props: MarkdownLinkProps) {
   const {children, ...others} = props;
   const target = getTarget(href, props);
   if (!href.startsWith('#') && target == null) {
-    return <Link to={href} {...(props as React.ComponentProps<typeof Link>)} />;
-  }
-  else {
     return (
-      <a
-       href={href}
-       {...others}
-       rel="noopener noreferrer"
-       target={target}>
+      <Link to={href} {...(others as any)}>
         {children}
-      </a>
+      </Link>
     );
   }
+  return (
+    <a
+     href={href}
+     {...others}
+     rel="noopener noreferrer"
+     target={target}>
+      {children}
+    </a>
+  );
 }
 
 export default function MarkdownLink({href, ...props}: MarkdownLinkProps) {

@@ -51,7 +51,7 @@ function PatternReports({
   patternAnalysis,
   fetchAnother
 }: PatternReportsProps): ReactElement {
-  const clickTransition = React.useRef<any>();
+  const clickTransition = React.useRef<any>(null);
   const onCopy = React.useCallback(
     () => {
       navigator.clipboard.writeText(

@@ -8,9 +8,34 @@ import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
 export {calcOffsetLimit, calcInitOffsetLimit};
 
 interface UseCumuQueryArgs {
+  /** GraphQL query document. */
   query: any;
+  /** Apollo client instance. */
   client: any;
+  /** Name of the main input variable. */
   mainInputName: string;
+  /** Objects describing each requested item. */
+  inputObjs: any[];
+  /** Name of the main output field in the response. */
+  mainOutputName: string;
+  /** Path to the unique key within each output object. */
+  outputUniqKeyName: string;
+  /** Initial cursor offset. */
+  initOffset: number;
+  /** Initial cursor limit. */
+  initLimit: number;
+  /** Function extending query variables. */
+  onExtendVariables: (vars: Record<string, any>) => Record<string, any>;
+  /** Currently selected item index. */
+  currentSelected: {index: number};
+  /** Unique key name within each input object. */
+  inputUniqKeyName: string;
+  /** Maximum items fetched per request. */
+  maxPerRequest: number;
+  /** Whether to lazy load items. */
+  lazyLoad: boolean;
+  /** Quick load limit when lazy loading. */
+  quickLoadLimit?: number;
   [key: string]: any;
 }
 
@@ -24,11 +49,7 @@ export default function useCumuQuery(props: UseCumuQueryArgs) {
     mainInputName
   } = props;
 
-  const {
-    cacheResults,
-    restoreResults,
-    isCached
-  } = useResultCache(props);
+  const {cacheResults, restoreResults, isCached} = useResultCache(props);
 
   const {
     cursor,
@@ -38,10 +59,7 @@ export default function useCumuQuery(props: UseCumuQueryArgs) {
     variables,
     isEmptyQuery,
     isCursorFulfilled
-  } = useCursorAndVariables({
-    isCached,
-    ...props
-  });
+  } = useCursorAndVariables({isCached, ...props});
 
   let {
     loading,
@@ -76,12 +94,7 @@ export default function useCumuQuery(props: UseCumuQueryArgs) {
     total: cursor.limit
   };
 
-  const fetchAnother = useFetchAnother({
-    loaded,
-    setCursor,
-    isCached,
-    ...props
-  });
+  const fetchAnother = useFetchAnother({loaded, setCursor, isCached, ...props});
 
   const extVariables = {...variables};
   delete extVariables[mainInputName];
@@ -98,10 +111,7 @@ export default function useCumuQuery(props: UseCumuQueryArgs) {
   }
 
   else {
-    const mergedData = restoreResults({
-      ...cursor,
-      loaded
-    });
+      const mergedData = restoreResults();
 
     return {
       loaded,

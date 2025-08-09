@@ -105,7 +105,10 @@ export default function SequenceReadsInputForm({
               setSubmitting(false);
               setOptionResult(null);
             });
-          setOptionResult(outputOptions[outputOption.name].renderer(state));
+          const renderer = outputOptions[outputOption.name]?.renderer;
+          if (renderer) {
+            setOptionResult(renderer(state));
+          }
         }
       }
       return [validated, state, location.query];

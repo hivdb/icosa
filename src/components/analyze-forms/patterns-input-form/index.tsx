@@ -5,7 +5,7 @@ import CheckboxInput from '../../checkbox-input';
 import createLocationState from '../../../utils/use-location-state';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
 import ConfigContext from '../../../utils/config-context';
-import MutationsInput from '../../mutations-input';
+import MutationsInput, {MutationsConfig} from '../../mutations-input';
 import Loader from '../../loader';
 
 import BaseForm from '../base';
@@ -65,7 +65,10 @@ export default function PatternsInputForm({
     true
   );
 
-  const [config, isConfigPending] = ConfigContext.use();
+  const [config, isConfigPending] = ConfigContext.use() as [
+    MutationsConfig | null,
+    boolean
+  ];
   const [patterns, setPatterns] = usePatterns([newPatternObj()], () => retainInputOpt);
 
   const disabled = patterns.every(pat => pat.mutations.length === 0);
@@ -128,8 +131,6 @@ export default function PatternsInputForm({
 
   return (
     <BaseForm
-     allowRetainingInput
-     retainInputLabel="Save input mutations in my browser for future use"
      resetDisabled={disabled}
      submitDisabled={submitDisabled}
      to={to as string}

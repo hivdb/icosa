@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React from 'react';
+import classNames from 'classnames';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import Children from 'react-children-utilities';
 
@@ -13,9 +13,9 @@ export function getChildrenText(elem: React.ReactNode): string {
 
 export function getAnchor(elem: React.ReactElement | React.ReactNode): string {
   if (React.isValidElement(elem) && elem.type === HeadingTag) {
-    elem = elem.props.children;
+    elem = (elem as React.ReactElement).props.children;
   }
-  return getChildrenText(elem)
+  return String(getChildrenText(elem))
     .toLowerCase()
     .replace(/[^\w-]+/g, '.');
 }
@@ -59,22 +59,27 @@ export function HeadingTag({
     [anchor]
   );
 
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  return (
-    <Tag
-     {...props}
-     ref={elemRef}
-     className={classNames(className, style['heading-tag'])}
-     id={anchor}>
-      {disableAnchor ? null :
-      <a
-       href={`#${anchor}`}
-       className={style['anchor-link']}
-       data-anchor-link="">
-        <FaLink name="linkify" />
-      </a>}
-      {children}
-    </Tag>
+  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  return React.createElement(
+    Tag,
+    {
+      ...props,
+      ref: elemRef,
+      className: classNames(className, style['heading-tag']),
+      id: anchor
+    },
+    disableAnchor
+      ? null
+      : React.createElement(
+          'a',
+          {
+            href: `#${anchor}`,
+            className: style['anchor-link'],
+            'data-anchor-link': ''
+          },
+          React.createElement(FaLink, {name: 'linkify'})
+        ),
+    children
   );
 
 }

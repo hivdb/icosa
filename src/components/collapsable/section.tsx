@@ -50,7 +50,11 @@ export function SectionInner({
   );
 
   const headingChild = React.useMemo(
-    () => Children.deepFind(renderedChildren, child => child && (child as any).type === HeadingTag),
+    () =>
+      Children.deepFind(
+        renderedChildren,
+        child => !!child && (child as any).type === HeadingTag
+      ),
     [renderedChildren]
   );
   const myAnchor = headingChild ? getAnchor(headingChild as any) : null;

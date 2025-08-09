@@ -55,7 +55,7 @@ export interface ExtendedMarkdownProps {
   /** Heading level for the references section. */
   referenceHeadingTagLevel?: number;
   /** Optional component to load references asynchronously. */
-  refDataLoader?: React.ElementType;
+  refDataLoader?: React.ComponentType;
   /** Prefix prepended to relative image sources. */
   imagePrefix?: string;
   /** Optional CMS prefix for tables. */
@@ -129,16 +129,19 @@ function ExtendedMarkdown({
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers
   } as Record<string, any>;
-  mdProps.renderers = generalRenderers;
+  mdProps.renderers = generalRenderers ?? {};
   let jsx = (
     <OrigMarkdown
       {...mdProps}
       key={children as any}
       children={children as any}
-      renderers={renderers}
+      renderers={renderers as Record<string, unknown>}
       plugins={[macroPlugin.transformer]} />
   );
-  const refContext = useReference(refDataLoader, /* cacheKey = */ children);
+  const refContext = useReference(
+    refDataLoader as React.ComponentType | undefined,
+    /* cacheKey = */ children
+  );
   if (displayReferences) {
     jsx = (
       <ReferenceContext.Provider value={refContext}>
@@ -152,7 +155,10 @@ function ExtendedMarkdown({
     );
   }
   if (collapsableLevels && collapsableLevels.length > 0) {
-    jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
+    const levels = collapsableLevels.map(
+      l => `h${l}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    );
+    jsx = <Collapsable levels={levels}>{jsx}</Collapsable>;
   }
   if (toc) {
     return (

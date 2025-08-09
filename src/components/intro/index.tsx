@@ -47,7 +47,7 @@ export default function Intro({className, children}: IntroProps) {
     }
   }
 
-  return <ClassNameContext.Provider value={className}>
+    return <ClassNameContext.Provider value={className ?? null}>
     <div className={classNames(className, style.intro)}>
       {header}
       {body.length > 0 ?

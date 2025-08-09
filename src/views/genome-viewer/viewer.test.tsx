@@ -3,6 +3,7 @@ import React from 'react';
 import {render, waitFor} from '@testing-library/react';
 import RouterContext from 'found/RouterContext';
 import GenomeViewer from './viewer';
+import type {Preset} from '../../components/genome-map/types';
 
 vi.mock('../../components/genome-map', () => ({
   __esModule: true,
@@ -11,7 +12,9 @@ vi.mock('../../components/genome-map', () => ({
 
 describe('GenomeViewerLoader', () => {
   it('renders genome map after loading preset', async () => {
-    const presetLoader = vi.fn(async () => ({
+    const presetLoader = vi.fn(async (): Promise<
+      Preset & {presets: {name: string; label: React.ReactNode}[]}
+    > => ({
       presets: [{name: 'foo', label: 'Foo'}],
       name: 'foo',
       label: 'Foo',
@@ -22,7 +25,9 @@ describe('GenomeViewerLoader', () => {
       paddingLeft: 0,
       domains: [{posStart: 0, posEnd: 10, scaleRatio: 1}],
       positionGroups: [{name: 'pg', positions: [{name: 'p1', pos: 1}]}],
-      regions: [{name: 'rg', posStart: 0, posEnd: 10, shapeType: 'rect'}]
+      regions: [
+        {name: 'rg', posStart: 0, posEnd: 10, shapeType: 'rect' as const}
+      ]
     }));
 
     const context = {router: {push: vi.fn()}, match: {location: {pathname: '/genome-viewer/foo/'}}};
