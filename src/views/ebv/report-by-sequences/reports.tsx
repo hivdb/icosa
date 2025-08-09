@@ -1,4 +1,5 @@
-import React from 'react';
+import type {ReactElement} from 'react';
+import {Fragment} from 'react';
 
 import {
   useReportPaginator
@@ -14,12 +15,19 @@ import SingleSequenceReport from './single-report';
 const pageTitlePrefix = 'Sequence Analysis Report';
 
 
-function getPageTitle(sequenceAnalysis, output) {
+/**
+ * Determine the page title for the sequence report.
+ *
+ * @param sequenceAnalysis - Array of analysis results with sequence headers.
+ * @param output - Output mode, e.g. 'printable'.
+ * @returns Page title string.
+ */
+function getPageTitle(
+  sequenceAnalysis: Array<{inputSequence: {header: string}}>,
+  output: string
+): string {
   let pageTitle;
-  if (
-    output === 'printable' ||
-    sequenceAnalysis.length === 0
-  ) {
+  if (output === 'printable' || sequenceAnalysis.length === 0) {
     pageTitle = `${pageTitlePrefix} Printable Version`;
   }
   else {
@@ -31,12 +39,11 @@ function getPageTitle(sequenceAnalysis, output) {
 
 interface SequenceReportsProps {
   output: string;
-  match: any;
   loaded: boolean;
   sequences: any[];
-  currentSelected?: any;
+  currentSelected?: {index: number; name: string};
   sequenceAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -47,13 +54,12 @@ interface SequenceReportsProps {
  */
 function SequenceReports({
   output,
-  match,
   loaded,
   sequences,
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}: SequenceReportsProps): JSX.Element {
+}: SequenceReportsProps): ReactElement {
 
   const {
     onObserve,
@@ -63,7 +69,7 @@ function SequenceReports({
     inputObjs: sequences,
     loaded,
     output,
-    currentSelected,
+    currentSelected: currentSelected as {index: number; name: string},
     fetchAnother
   });
 
@@ -85,7 +91,7 @@ function SequenceReports({
     }
     <main className={style.main} data-loaded={loaded}>
       {sequences.map(({header}, idx) => (
-        <React.Fragment key={idx}>
+        <Fragment key={idx}>
           <SingleSequenceReport
            key={idx}
            currentSelected={currentSelected}
@@ -94,11 +100,9 @@ function SequenceReports({
            onDisconnect={onDisconnect}
            output={output}
            header={header}
-           index={idx}
-           match={match} />
-          {idx + 1 < sequenceAnalysis.length ?
-            <PageBreak /> : null}
-        </React.Fragment>
+           index={idx} />
+          {idx + 1 < sequenceAnalysis.length ? <PageBreak /> : null}
+        </Fragment>
       ))}
     </main>
   </>;

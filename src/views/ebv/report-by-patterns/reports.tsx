@@ -1,5 +1,5 @@
-import React from 'react';
-import React from 'react';
+import type {ReactElement} from 'react';
+import {Fragment, useCallback, useRef} from 'react';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -15,12 +15,19 @@ import SinglePatternReport from './single-report';
 const pageTitlePrefix = 'Pattern Analysis Report';
 
 
-function getPageTitle(patternAnalysis, output) {
+/**
+ * Build a page title for the pattern analysis report.
+ *
+ * @param patternAnalysis - Array of pattern analysis results.
+ * @param output - Output mode, such as 'printable'.
+ * @returns Generated page title.
+ */
+function getPageTitle(
+  patternAnalysis: Array<{name: string}>,
+  output: string
+): string {
   let pageTitle;
-  if (
-    output === 'printable' ||
-    patternAnalysis.length === 0
-  ) {
+  if (output === 'printable' || patternAnalysis.length === 0) {
     pageTitle = `${pageTitlePrefix} Printable Version`;
   }
   else {
@@ -33,13 +40,11 @@ function getPageTitle(patternAnalysis, output) {
 
 interface PatternReportsProps {
   output: string;
-  match: any;
-  router: any;
   loaded: boolean;
   patterns: any[];
-  currentSelected?: any;
+  currentSelected?: {index: number; name: string};
   patternAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -50,24 +55,22 @@ interface PatternReportsProps {
  */
 function PatternReports({
   output,
-  match,
-  router,
   loaded,
   patterns,
   currentSelected,
   patternAnalysis,
   fetchAnother
-}: PatternReportsProps): JSX.Element {
-  const clickTransition = React.useRef();
-  const onCopy = React.useCallback(
+}: PatternReportsProps): ReactElement {
+  const clickTransition = useRef<HTMLSpanElement>(null);
+  const onCopy = useCallback(
     () => {
       navigator.clipboard.writeText(
         window.location.href
       );
-      clickTransition.current.dataset.onclick = null;
+      clickTransition.current!.dataset.onclick = '';
       setTimeout(
         () => {
-          delete clickTransition.current.dataset.onclick;
+          delete clickTransition.current!.dataset.onclick;
         },
         10000
       );
@@ -83,7 +86,7 @@ function PatternReports({
     inputObjs: patterns,
     loaded,
     output,
-    currentSelected,
+    currentSelected: currentSelected as {index: number; name: string},
     fetchAnother,
     children: <>
       <useReportPaginator.Button onClick={onCopy}>
@@ -108,28 +111,21 @@ function PatternReports({
   );
 
   return <>
-    {output === 'printable' ?
-      <PrintHeader /> :
-      paginator
-    }
+    {output === 'printable' ? <PrintHeader curAnalysis="pattern-analysis" /> : paginator}
     <main className={style.main} data-loaded={loaded}>
       {patterns.map((pat, idx) => (
-        <React.Fragment key={idx}>
+        <Fragment key={idx}>
           <SinglePatternReport
            key={idx}
-           inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}
            name={pat.name}
-           index={idx}
-           match={match}
-           router={router} />
-          {idx + 1 < patternAnalysis.length ?
-            <PageBreak /> : null}
-        </React.Fragment>
+           index={idx} />
+          {idx + 1 < patternAnalysis.length ? <PageBreak /> : null}
+        </Fragment>
       ))}
     </main>
   </>;
