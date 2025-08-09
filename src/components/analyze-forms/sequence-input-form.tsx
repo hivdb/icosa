@@ -44,7 +44,7 @@ export default function SequenceInputForm({
   to,
   outputOptions,
   onSubmit
-}: SequenceInputFormProps): JSX.Element {
+  }: SequenceInputFormProps): React.JSX.Element {
   const [header, setHeader] = React.useState('');
   const [sequence, setSequence] = React.useState('');
   const [showExamples, setShowExamples] = React.useState(false);
@@ -53,21 +53,21 @@ export default function SequenceInputForm({
   const [outputSubOptions, setOutputSubOptions] = React.useState<Set<number> | null>(null);
   const [optionResult, setOptionResult] = React.useState<React.ReactNode>(null);
 
-  const allOutputOptions = React.useMemo(
-    () => ({ __default: { label: 'HTML' }, ...outputOptions }),
+  const allOutputOptions = React.useMemo<Record<string, OutputOptionConfig>>(
+    () => ({__default: {label: 'HTML'}, ...outputOptions}),
     [outputOptions]
   );
 
   const handleOOChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.currentTarget.value;
-      const target = allOutputOptions[value];
-      const children = target.subOptions ? new Set(target.defaultSubOptions) : null;
-      setOutputOption(value);
-      setOutputSubOptions(children);
-    },
-    [allOutputOptions]
-  );
+        const value = e.currentTarget.value;
+        const target = allOutputOptions[value];
+        const children = target.subOptions ? new Set<number>(target.defaultSubOptions) : null;
+        setOutputOption(value);
+        setOutputSubOptions(children);
+      },
+      [allOutputOptions]
+    );
 
   const handleOOChildChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,8 +84,8 @@ export default function SequenceInputForm({
     [outputSubOptions]
   );
 
-  const handleUpload = React.useCallback((filelist: FileList) => {
-    const file = filelist[0];
+  const handleUpload = React.useCallback((files: File[]) => {
+    const file = files[0];
     if (!file || !(/^text\/.+$|^application\/x-gzip$|^$/.test(file.type))) {
       return;
     }
@@ -121,14 +121,20 @@ export default function SequenceInputForm({
   );
 
   const handleSubmit = React.useCallback(
-    async (e: React.SyntheticEvent) => {
+    async (
+      e: React.SyntheticEvent
+    ): Promise<[
+      boolean,
+      Record<string, any>,
+      Record<string, any>?
+    ]> => {
       const sequences = parseFasta(sequence, 'userinput');
       if (header && sequences.length > 0) {
         sequences[0].header = header;
       }
       let validated = true;
-      let state: any = {};
-      let query: any;
+      let state: Record<string, any> = {};
+      let query: Record<string, any> | undefined;
       if (onSubmit) {
         [validated, state, query] = await onSubmit(e, sequences);
       }
@@ -142,27 +148,27 @@ export default function SequenceInputForm({
         } else {
           validated = false; // stop submitting
           setSubmitting(true);
-          state.sequences = sequences.map(({header, sequence}) => ({header, sequence}));
-          state.subOptionIndices = Array.from(outputSubOptions || []);
-          state.onFinish = () =>
-            setTimeout(() => {
-              setSubmitting(false);
-              setOptionResult(null);
-            });
-          setOptionResult(allOutputOptions[outputOption].renderer?.(state) || null);
+            state.sequences = sequences.map(({header, sequence}) => ({header, sequence}));
+            state.subOptionIndices = Array.from(outputSubOptions || []);
+            state.onFinish = () =>
+              setTimeout(() => {
+                setSubmitting(false);
+                setOptionResult(null);
+              });
+            setOptionResult(allOutputOptions[outputOption].renderer?.(state) || null);
+          }
         }
-      }
-      return [validated, state, query];
-    },
-    [
-      header,
-      sequence,
-      onSubmit,
-      outputOption,
-      outputSubOptions,
-      allOutputOptions
-    ]
-  );
+        return [validated, state, query];
+      },
+      [
+        header,
+        sequence,
+        onSubmit,
+        outputOption,
+        outputSubOptions,
+        allOutputOptions
+      ]
+    );
 
   const handleReset = React.useCallback(() => {
     setHeader('');
@@ -240,36 +246,38 @@ export default function SequenceInputForm({
         <fieldset className={style['output-options']}>
           <legend>Output options</legend>
           <div>
-            {Object.entries(allOutputOptions)
-              .sort()
-              .map(([value, {label}], idx) => (
-                <RadioInput
-                 key={idx}
-                 id={`output-options-${idx}`}
-                 name="output-options"
-                 value={value}
-                 onChange={handleOOChange}
-                 checked={value === outputOption}>
-                  {label}
-                </RadioInput>
-              ))}
+              {Object.entries(allOutputOptions)
+                .sort()
+                .map(([value, {label}]: [string, OutputOptionConfig], idx: number) => (
+                  <RadioInput
+                   key={idx}
+                   id={`output-options-${idx}`}
+                   name="output-options"
+                   value={value}
+                   onChange={handleOOChange}
+                   checked={value === outputOption}>
+                    {label}
+                  </RadioInput>
+                ))}
           </div>
           {hasOptionChild ? (
             <div className={style.children}>
               <label className={style['input-label']} htmlFor="output-options-child">
                 Select outputs:{' '}
               </label>
-              {allOutputOptions[outputOption].subOptions?.map((label, idx) => (
-                <CheckboxInput
-                 id={`output-options-child-${idx}`}
-                 name="output-option-children"
-                 key={idx}
-                 value={idx}
-                 onChange={handleOOChildChange}
-                 checked={outputSubOptions?.has(idx) ?? false}>
-                  {label}
-                </CheckboxInput>
-              ))}
+                {allOutputOptions[outputOption].subOptions?.map(
+                  (label: React.ReactNode, idx: number) => (
+                    <CheckboxInput
+                     id={`output-options-child-${idx}`}
+                     name="output-option-children"
+                     key={idx}
+                     value={idx}
+                     onChange={handleOOChildChange}
+                     checked={outputSubOptions?.has(idx) ?? false}>
+                      {label}
+                    </CheckboxInput>
+                  )
+                )}
             </div>
           ) : null}
         </fieldset>

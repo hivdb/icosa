@@ -48,11 +48,11 @@ export default function PatternsInputForm({
   children,
   to,
   onSubmit
-}: PatternsInputFormProps): JSX.Element {
-  const [retainInputOpt, toggleRetainInputOpt] = useRetainInputOpt(
-    (flag: boolean) => !flag,
-    true
-  );
+}: PatternsInputFormProps): React.JSX.Element {
+    const [retainInputOpt, toggleRetainInputOpt] = useRetainInputOpt(
+      (flag: boolean, _action: unknown) => !flag,
+      true
+    );
 
   const [config, isConfigPending] = ConfigContext.use();
   const [patterns, setPatterns] = usePatterns([newPatternObj()], () => retainInputOpt);

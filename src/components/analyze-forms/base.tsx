@@ -65,7 +65,7 @@ export default function AnalyzeBaseForm({
   className,
   resetDisabled,
   submitDisabled
-}: AnalyzeBaseFormProps): JSX.Element {
+}: AnalyzeBaseFormProps): React.JSX.Element {
   const {router, match} = useRouter();
   const savedInput = useSavedInput();
 

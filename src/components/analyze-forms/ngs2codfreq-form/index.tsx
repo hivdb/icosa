@@ -11,7 +11,17 @@ import style from '../style.module.scss';
 
 const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
 
-function reformCodFreqs(allSequenceReads: any[], geneValidator: (g: string, p: number) => [string, number]) {
+/**
+ * Normalize sequence read objects using provided gene validator.
+ *
+ * @param allSequenceReads - Parsed codon frequency objects.
+ * @param geneValidator - Function mapping gene/position to normalized values.
+ * @returns Reformatted sequence read data.
+ */
+function reformCodFreqs(
+  allSequenceReads: any[],
+  geneValidator: (g: string, p: number) => [string | null, number | null]
+) {
   return allSequenceReads.map(({allReads, name, ...seqReads}) => ({
     name: name.replace(SUFFIX_PATTERN, ''),
     allReads: allReads.map(({allCodonReads, gene, position, ...read}: any) => {
@@ -43,7 +53,7 @@ export default function NGS2CodFreqForm({
   runners,
   redirectTo,
   analyzeTo
-}: NGS2CodFreqFormProps): JSX.Element {
+}: NGS2CodFreqFormProps): React.JSX.Element {
   const {
     router,
     match: {
@@ -54,7 +64,7 @@ export default function NGS2CodFreqForm({
 
   const handleTriggerRunner = React.useCallback(
     (newTaskKey: string) => {
-      if (taskKey !== newTaskKey) {
+      if (taskKey !== newTaskKey && redirectTo) {
         router.push({
           pathname: redirectTo,
           query: {task: newTaskKey}
@@ -67,7 +77,7 @@ export default function NGS2CodFreqForm({
 
   const handleAnalyze = React.useCallback(
     async (codfreqs: any[]) => {
-      const geneValidator = buildGeneValidator(config.geneValidatorDefs);
+      const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
       const allSequenceReads = reformCodFreqs(codfreqs, geneValidator);
       await BigData.clear();
       router.push({
