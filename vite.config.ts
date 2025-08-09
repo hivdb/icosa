@@ -37,7 +37,9 @@ export default defineConfig({
       '~react-tabs/style/react-tabs.scss': path.resolve(
         __dirname,
         'src/shims/react-tabs-style.scss'
-      )
+      ),
+      'ngl': path.resolve(__dirname, 'src/shims/ngl.ts'),
+      'react-ngl': path.resolve(__dirname, 'src/shims/react-ngl.tsx')
     }
   }
 });

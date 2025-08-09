@@ -4,7 +4,9 @@ import Nomogram from '../../components/seqreads-threshold-nomogram';
 
 import report from './example-report.json';
 
-
+/**
+ * Debug view rendering the sequence read threshold nomogram with sample data.
+ */
 export default function SeqReadsTresholdNomogramDebugger() {
   const {
     cutoffKeyPoints,
@@ -15,13 +17,15 @@ export default function SeqReadsTresholdNomogramDebugger() {
   } = report;
 
   return (
-    <Nomogram {...{
-      cutoffKeyPoints,
-      mixtureRateThreshold,
-      minPrevalenceThreshold,
-      mixtureRateActual,
-      minPrevalenceActual
-    }}/>
+    <Nomogram
+      {...{
+        cutoffKeyPoints,
+        mixtureRateThreshold,
+        minPrevalenceThreshold,
+        mixtureRateActual,
+        minPrevalenceActual
+      }}
+    />
   );
 
 }
