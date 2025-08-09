@@ -1,3 +1,8 @@
+/**
+ * Shared GraphQL fragments and helper functions used across multiple
+ * SARS-CoV-2 analysis views. The content remains a collection of string
+ * templates that are later interpolated into GraphQL queries.
+ */
 const rootLevel = `
   drdbLastUpdate(drdbVersion: $drdbVersion)
   antibodies(drdbVersion: $drdbVersion) {
@@ -7,7 +12,7 @@ const rootLevel = `
   }
 `;
 
-function pangolinQuery(syncFetch = false) {
+export function pangolinQuery(syncFetch = false): string {
   return `
   pangolin(syncFetch: ${syncFetch}) {
     version
@@ -253,6 +258,5 @@ export {
   rootLevel,
   seqLevelMutComments,
   seqLevelSuscSummary,
-  geneSeqLevel,
-  pangolinQuery
+  geneSeqLevel
 };

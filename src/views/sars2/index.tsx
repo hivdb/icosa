@@ -1,5 +1,4 @@
 import React, {Suspense, lazy} from 'react';
-import PropTypes from 'prop-types';
 import {Route, Redirect} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
@@ -18,26 +17,35 @@ const ReportBySequences = lazy(() => import('./report-by-sequences'));
 const ReportBySeqReads = lazy(() => import('./report-by-reads'));
 
 
-Layout.propTypes = {
-  data: PropTypes.shape({
-    defaultConfig: PropTypes.object.isRequired,
-    config: PropTypes.object,
-    className: PropTypes.string,
-    colors: PropTypes.object
-  }),
-  children: PropTypes.node
-};
-
+interface LayoutProps {
+  /**
+   * Nested React nodes to render inside the layout.
+   */
+  children: React.ReactNode;
+  /**
+   * Configuration values used to initialize the layout.
+   */
+  data: {
+    /** Default configuration shipped with the application. */
+    defaultConfig: Record<string, any>;
+    /** Optional runtime configuration overrides. */
+    config?: Record<string, any>;
+    /** Optional class name for the root element. */
+    className?: string;
+    /** Optional custom color palette. */
+    colors?: Record<string, string>;
+  };
+}
 
 function Layout({
   children,
   data: {
     defaultConfig,
-    config,
+    config = {},
     className,
     colors
   }
-}) {
+}: LayoutProps) {
   const combinedConfig = React.useMemo(
     () => ({...defaultConfig, ...config}),
     [defaultConfig, config]
@@ -54,6 +62,18 @@ function Layout({
 }
 
 
+/**
+ * Build the Found router configuration for SARS-CoV-2 analysis pages.
+ *
+ * @param options Optional routing and configuration settings.
+ * @param options.pathPrefix Base path where the routes are mounted.
+ * @param options.defaultForm The default form path to redirect to.
+ * @param options.config Additional configuration overrides.
+ * @param options.formProps Extra properties passed to the form components.
+ * @param options.colors Optional color palette for `CustomColors`.
+ * @param options.className Additional class name for the layout root.
+ * @returns A `<Route>` element describing the analysis routes.
+ */
 export default function sars2Routes({
   pathPrefix = "sars2/",
   defaultForm = "by-patterns/",
@@ -61,6 +81,13 @@ export default function sars2Routes({
   formProps,
   colors,
   className
+}: {
+  pathPrefix?: string;
+  defaultForm?: string;
+  config?: Record<string, any>;
+  formProps?: Record<string, any>;
+  colors?: Record<string, string>;
+  className?: string;
 } = {}) {
 
   return <Route

@@ -1,4 +1,12 @@
-const config = {
+/**
+ * Default configuration values for SARS-CoV-2 analysis views.
+ *
+ * The structure mirrors the previous JavaScript object and largely
+ * contains static values or URLs used throughout the views. The type
+ * is intentionally loose (`Record<string, any>`) because the shape is
+ * consumed by many downstream utilities that expect dynamic keys.
+ */
+const config: Record<string, any> = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/' +
     'pages/sierra-sars2.json'

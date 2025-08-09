@@ -3,16 +3,24 @@ import isEqual from 'lodash/isEqual';
 import {
   ApolloClient,
   InMemoryCache,
-  HttpLink
+  HttpLink,
+  NormalizedCacheObject
 } from '@apollo/client';
 // import {Hermes} from 'apollo-cache-hermes';
 // import {HttpLink} from 'apollo-link-http';
 
 
-function buildClient(config) {
-  // avoid using ApolloProvider, instead providing a fresh client
-  // to SequenceAnalysisLayout at each time. The cache can be very
-  // tricky to handle when making multiple independent queries.
+interface BuildClientConfig {
+  /** GraphQL endpoint used by the Apollo client. */
+  graphqlURI: string;
+}
+
+/**
+ * Create a new instance of `ApolloClient` with the project specific cache
+ * configuration. A fresh client is preferred for each analysis run to avoid
+ * dealing with complex cache invalidation logic.
+ */
+function buildClient(config: BuildClientConfig): ApolloClient<NormalizedCacheObject> {
   const apolloClient = new ApolloClient({
     link: new HttpLink({
       uri: config.graphqlURI
@@ -44,13 +52,31 @@ function buildClient(config) {
   return apolloClient;
 }
 
+interface UseApolloClientArgs {
+  /** Apollo client configuration. */
+  config: BuildClientConfig;
+  /** Skip creating the client when set to true. */
+  skip?: boolean;
+  /**
+   * Payload data used to determine if a new client is required. When the
+   * payload changes a fresh client is created to ensure cache isolation.
+   */
+  payload?: unknown;
+}
 
+/**
+ * React hook returning a memoised `ApolloClient` instance for SARS-CoV-2
+ * analysis requests.
+ *
+ * @param args Hook arguments controlling client creation.
+ * @returns An `ApolloClient` instance or `null` when `skip` is `true`.
+ */
 export default function useApolloClient({
   config,
   skip = false,
   payload
-}) {
-  const {current} = React.useRef({});
+}: UseApolloClientArgs): ApolloClient<NormalizedCacheObject> | null {
+  const {current} = React.useRef<{client?: ApolloClient<NormalizedCacheObject>; payload?: unknown}>({});
   if (skip) {
     return null;
   }
@@ -60,5 +86,5 @@ export default function useApolloClient({
     current.payload = payload;
   }
 
-  return current.client;
+  return current.client!;
 }
