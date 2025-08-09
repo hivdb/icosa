@@ -1,13 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import range from 'lodash/range';
 
 import ExtLink from '../../../../components/link/external';
-import {
-  posShape, annotShape,
-  citationShape,
-  annotCategoryShape
+import type {
+  Position,
+  Annotation,
+  Citation,
+  AnnotCategory
 } from '../../prop-types';
 import {getAnnotation} from '../../utils';
 import LegendContext from '../legend-context';
@@ -15,13 +15,39 @@ import LegendContext from '../legend-context';
 import style from './style.module.scss';
 
 
+/**
+ * Arguments for {@link getAllAnnotations}.
+ */
+interface AllAnnotationsArgs {
+  positionLookup: Record<number, Position>;
+  seqFragment: [number, number];
+  colorBoxAnnotDef: Annotation;
+}
+
+/**
+ * Aggregated annotation information for a given value.
+ */
+interface AnnotationObj {
+  annotVal: string;
+  annotDesc: string | null;
+  positions: number[];
+}
+
+/**
+ * Collect all annotation values and their positions within a fragment.
+ *
+ * @param positionLookup - lookup table keyed by position
+ * @param seqFragment - [start, end] inclusive fragment positions
+ * @param colorBoxAnnotDef - annotation definition used for lookups
+ * @returns array of aggregated annotation objects
+ */
 function getAllAnnotations({
   positionLookup: posLookup,
   seqFragment: [posStart, posEnd],
   colorBoxAnnotDef: {name: annotName}
-}) {
-  const annotObjs = [];
-  const annotLookup = {};
+}: AllAnnotationsArgs): AnnotationObj[] {
+  const annotObjs: AnnotationObj[] = [];
+  const annotLookup: Record<string, AnnotationObj> = {};
   const allPos = range(posStart, posEnd + 1);
   for (const pos of allPos) {
     const posdata = posLookup[pos];
@@ -51,7 +77,13 @@ function getAllAnnotations({
 }
 
 
-function integersToRangeString(numbers) {
+/**
+ * Convert a list of integers into a human readable range string.
+ *
+ * @param numbers - positions to stringify
+ * @returns range representation such as "1-3 and 5"
+ */
+function integersToRangeString(numbers: number[]): string {
   const groups = (numbers
     .sort((a, b) => a - b)
     .reduce((acc, num) => {
@@ -87,18 +119,27 @@ function integersToRangeString(numbers) {
 }
 
 
-function isShortDesc(content) {
+/**
+ * Determine if a description is short enough to inline.
+ *
+ * @param content - description text
+ * @returns true if description is short
+ */
+function isShortDesc(content: string): boolean {
   return content.length < 6 && !(/\s/.test(content));
 }
 
+/** Props for {@link CitationList}. */
+interface CitationListProps {
+  positionLookup: Record<number, Position>;
+  citations: Record<string, Citation>;
+  annotName: string;
+}
 
-CitationList.propTypes = {
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  citations: PropTypes.objectOf(citationShape.isRequired).isRequired,
-  annotName: PropTypes.string.isRequired
-};
-
-function CitationList({positionLookup, citations, annotName}) {
+/**
+ * Render list of citations for a given annotation.
+ */
+function CitationList({positionLookup, citations, annotName}: CitationListProps) {
   const citationIds = {};
   for (const posdata of Object.values(positionLookup)) {
     const annot = posdata.annotations.find(({name}) => name === annotName);
@@ -123,17 +164,21 @@ function CitationList({positionLookup, citations, annotName}) {
 }
 
 
-CircleInBoxDesc.propTypes = {
-  annot: annotShape.isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  citations: PropTypes.objectOf(citationShape.isRequired).isRequired
-};
+/** Props for {@link CircleInBoxDesc}. */
+interface CircleInBoxDescProps {
+  annot: Annotation;
+  positionLookup: Record<number, Position>;
+  citations: Record<string, Citation>;
+}
 
+/**
+ * Render description for circle-in-box style annotations.
+ */
 function CircleInBoxDesc({
   annot: {name: annotName, label, hideCitations},
   positionLookup,
   citations
-}) {
+}: CircleInBoxDescProps) {
   return <div className={makeClassNames(
     style['annot-view-item'],
     style.wrap
@@ -158,16 +203,17 @@ function CircleInBoxDesc({
 }
 
 
-AAColorDesc.propTypes = {
-  catName: PropTypes.string.isRequired,
-  display: PropTypes.oneOfType([
-    PropTypes.string.isRequired,
-    PropTypes.bool.isRequired
-  ]).isRequired,
-  color: PropTypes.string
-};
+/** Props for {@link AAColorDesc}. */
+interface AAColorDescProps {
+  catName: string;
+  display: string | boolean;
+  color?: string;
+}
 
-function AAColorDesc({catName, display, color}) {
+/**
+ * Render description for amino acid color categories.
+ */
+function AAColorDesc({catName, display, color}: AAColorDescProps) {
   if (display === false) {
     return null;
   }
@@ -198,16 +244,18 @@ function AAColorDesc({catName, display, color}) {
 }
 
 
-AnnotDesc.propTypes = {
-  color: PropTypes.object.isRequired,
-  positions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  annotVal: PropTypes.string.isRequired,
-  annotDesc: PropTypes.string.isRequired
-};
+/** Props for {@link AnnotDesc}. */
+interface AnnotDescProps {
+  positions: number[];
+  annotVal: string;
+  annotDesc: string;
+  color: {stroke?: string; bg?: string};
+}
 
-function AnnotDesc({positions, annotVal, annotDesc, color}) {
+/**
+ * Render description for a color-box annotation.
+ */
+function AnnotDesc({positions, annotVal, annotDesc, color}: AnnotDescProps) {
   const rangeStr = integersToRangeString(positions);
   const short = isShortDesc(annotDesc);
   return <div className={style['annot-view-item']}>
@@ -233,19 +281,19 @@ function AnnotDesc({positions, annotVal, annotDesc, color}) {
 }
 
 
-ColorLegend.propTypes = {
-  seqFragment: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  colorBoxAnnotDef: annotShape.isRequired,
-  aminoAcidsCats: PropTypes.arrayOf(
-    annotCategoryShape.isRequired
-  ).isRequired,
-  circleInBoxAnnotDef: annotShape,
-  citations: PropTypes.objectOf(citationShape.isRequired).isRequired
-};
+/** Props for {@link ColorLegend}. */
+interface ColorLegendProps {
+  seqFragment: [number, number];
+  positionLookup: Record<number, Position>;
+  colorBoxAnnotDef: Annotation;
+  aminoAcidsCats: AnnotCategory[];
+  circleInBoxAnnotDef?: Annotation | null;
+  citations: Record<string, Citation>;
+}
 
+/**
+ * Display a detailed legend describing annotations and color mappings.
+ */
 export default function ColorLegend({
   seqFragment,
   positionLookup,
@@ -253,7 +301,7 @@ export default function ColorLegend({
   aminoAcidsCats,
   circleInBoxAnnotDef,
   citations
-}) {
+}: ColorLegendProps) {
 
   const annotObjs = React.useMemo(
     () => getAllAnnotations({

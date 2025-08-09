@@ -1,21 +1,28 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {IoClose} from '@react-icons/all-files/io5/IoClose';
 
 import Markdown from '../../../../components/markdown';
 import {useNewWindow} from '../../../../components/new-window';
-import ProteinViewer, {
-  proteinViewShape
-} from '../../../../components/protein-viewer';
+import ProteinViewer from '../../../../components/protein-viewer';
+import type {ProteinView} from '../../../../components/protein-viewer';
 
 import style from './style.module.scss';
 
 
+interface UseFootnoteArgs {
+  selectedPositions: number[];
+  commentLookup: Record<number, {comment: string[]}>;
+  commentReferences: string;
+}
+
+/**
+ * Manage state for the footnote panel including visibility and markdown text.
+ */
 export function useFootnote({
   selectedPositions,
   commentLookup,
   commentReferences
-}) {
+}: UseFootnoteArgs) {
   const [showFootnote, setShowFootnote] = React.useState(false);
   const openFn = React.useCallback(
     () => setShowFootnote(true),
@@ -29,7 +36,7 @@ export function useFootnote({
 
   const commentMdText = React.useMemo(
     () => {
-      const buffer = [];
+      const buffer: string[] = [];
       for (const pos of selectedPositions) {
         if (!(pos in commentLookup)) {
           continue;
@@ -58,24 +65,23 @@ export function useFootnote({
     showFootnote,
     openFn,
     closeFn
-  ];
+  ] as const;
 }
 
 
-ViewerFooter.propTypes = {
-  sequence: PropTypes.string.isRequired,
-  refDataLoader: PropTypes.func,
-  selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  proteinViews: PropTypes.arrayOf(
-    proteinViewShape.isRequired
-  ),
-  children: PropTypes.string.isRequired,
-  onClose: PropTypes.func.isRequired
-};
+interface ViewerFooterProps {
+  sequence: string;
+  refDataLoader?: () => Promise<any>;
+  selectedPositions: number[];
+  proteinViews?: ProteinView[];
+  children: string;
+  onClose: () => void;
+}
 
-export default function ViewerFooter(props) {
+/**
+ * Footer section showing comments and optional protein viewer.
+ */
+export default function ViewerFooter(props: ViewerFooterProps) {
   const {
     sequence,
     refDataLoader,
@@ -89,7 +95,7 @@ export default function ViewerFooter(props) {
     onUnload: props.onClose,
     features: "left=50,top=50,width=960,height=960"
   });
-  const scrollableRef = React.useRef();
+  const scrollableRef = React.useRef<HTMLDivElement>(null);
   const positionsForProteinViewer = React.useMemo(
     () => isChild && proteinViews ? selectedPositions.map(
       position => ({

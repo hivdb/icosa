@@ -1,20 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import style from './style.module.scss';
 
 import Button from '../../../../components/button';
 
+interface FootnoteOpenerProps {
+  /** Disable the button when there are no selected positions. */
+  disabled: boolean;
+  /** Handler invoked when the footnote view is requested. */
+  onClick: () => void;
+}
 
-FootnoteOpener.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired
-};
-
+/**
+ * Button used to open the footnote panel containing comments and 3D view.
+ */
 export default function FootnoteOpener({
   disabled,
   onClick
-}) {
+}: FootnoteOpenerProps) {
 
   return (
     <div className={style['input-group']}>

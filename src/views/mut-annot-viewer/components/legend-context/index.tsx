@@ -1,18 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
+/**
+ * React context provider used to share legend color mappings between
+ * components of the mutation annotation viewer.
+ */
 
-const Context = React.createContext({});
+interface LegendContextValue {
+  colorBoxAnnotColorLookup: Record<string, string>;
+  underscoreAnnotColorLookup: Record<string, string>;
+  aminoAcidsCatColorLookup: Record<string, string>;
+  /** Update color lookup tables. */
+  onUpdate: (opts: Partial<Omit<LegendContextValue, 'onUpdate'>>) => void;
+}
 
-
-LegendContext.propTypes = {
-  children: PropTypes.node
-};
+const Context = React.createContext<LegendContextValue>({
+  colorBoxAnnotColorLookup: {},
+  underscoreAnnotColorLookup: {},
+  aminoAcidsCatColorLookup: {},
+  onUpdate: () => {}
+});
 
 LegendContext.ContextObj = Context;
 LegendContext.Consumer = Context.Consumer;
 
-export default function LegendContext({children}) {
+export default function LegendContext({children}: {children?: React.ReactNode}) {
 
   const [
     colorBoxAnnotColorLookup,

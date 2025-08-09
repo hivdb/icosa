@@ -1,36 +1,34 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 
-import {
-  posShape, citationShape,
-  annotCategoryShape, curAnnotNameLookupShape,
-  annotShape
+import type {
+  Position,
+  Citation,
+  AnnotCategory,
+  CurAnnotNameLookup,
+  Annotation
 } from '../../prop-types';
 
 import style from './style.module.scss';
 import ColorLegend from './color-legend';
 
-
-Legend.propTypes = {
-  className: PropTypes.string,
-  seqFragment: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  annotCategories: PropTypes.arrayOf(
-    annotCategoryShape.isRequired
-  ).isRequired,
-  curAnnotNameLookup: curAnnotNameLookupShape.isRequired,
-  annotations: PropTypes.arrayOf(
-    annotShape.isRequired
-  ).isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  citations: PropTypes.objectOf(citationShape.isRequired).isRequired
-  /* selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  sequence: PropTypes.string.isRequired */
-};
+/** Props for the `Legend` component. */
+interface LegendProps {
+  /** Additional CSS class names */
+  className?: string;
+  /** Sequence fragment range represented as [start, end] */
+  seqFragment: number[];
+  /** Available annotation categories */
+  annotCategories: AnnotCategory[];
+  /** Lookup for currently selected annotation names */
+  curAnnotNameLookup: CurAnnotNameLookup;
+  /** All annotation definitions */
+  annotations: Annotation[];
+  /** Position lookup keyed by position */
+  positionLookup: Record<number, Position>;
+  /** Citation lookup keyed by citation id */
+  citations: Record<string, Citation>;
+}
 
 export default function Legend({
   className,
@@ -40,7 +38,7 @@ export default function Legend({
   annotCategories,
   curAnnotNameLookup,
   annotations
-}) {
+}: LegendProps) {
 
   const colorBoxAnnotDef = React.useMemo(
     () => {
