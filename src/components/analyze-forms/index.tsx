@@ -41,6 +41,10 @@ export interface AnalyzeFormsProps {
   /** Destination path for sequence submission. */
   sequencesTo: string;
   /** Destination path for sequence read submission. */
+  /**
+   * Destination path for sequence read submission. Required when the
+   * `reads` tab is enabled.
+   */
   readsTo?: string;
   /** Configuration for sequence output options. */
   sequencesOutputOptions?: Record<string, any>;
@@ -124,7 +128,8 @@ export default function AnalyzeForms({
           case 'reads':
             return (
               <SequenceReadsInputForm
-               to={readsTo}
+               /* `readsTo` is required whenever the reads tab is enabled. */
+               to={readsTo!}
                outputOptions={seqReadsOutputOptions ?? {}}
                {...commonProps}
               />

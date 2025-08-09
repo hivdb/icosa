@@ -16,7 +16,12 @@ import AnalyzeBaseForm from './base';
 it('submits and navigates on valid submission', async () => {
   const onSubmit = vi.fn().mockResolvedValue([true, {foo: 'bar'}, {}]);
   render(
-    <AnalyzeBaseForm to="/next" onSubmit={onSubmit} onReset={vi.fn()}>
+    <AnalyzeBaseForm
+     to="/next"
+     onSubmit={onSubmit}
+     onReset={vi.fn()}
+     resetDisabled={false}
+     submitDisabled={false}>
       <div>child</div>
     </AnalyzeBaseForm>
   );

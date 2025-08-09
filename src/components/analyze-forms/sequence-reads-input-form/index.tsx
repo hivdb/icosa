@@ -30,7 +30,7 @@ const SUPPORT_FORMATS = {
 };
 
 const SUPPORT_FORMATS_TEXT = Object.entries(SUPPORT_FORMATS)
-  .reduce((acc, [key, val]) => [...acc, key, ...val], [])
+  .reduce<string[]>((acc, [key, val]) => [...acc, key, ...val], [])
   .join(',');
 
 const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
@@ -53,7 +53,7 @@ export default function SequenceReadsInputForm({
   exampleCodonReads = [],
   to,
   ...rest
-}: SequenceReadsInputFormProps & Record<string, any>): JSX.Element {
+}: SequenceReadsInputFormProps & Record<string, any>): React.JSX.Element {
   const {outputOption, outputOptions, outputOptionElement} = useOutputOptions(
     rest
   );
@@ -65,10 +65,22 @@ export default function SequenceReadsInputForm({
   const [optionResult, setOptionResult] = React.useState<React.ReactNode>(null);
   const [allSequenceReads, setAllSeqReads] = React.useState<any[]>([]);
 
+  /**
+   * Clear any uploaded sequence reads and reset the form state.
+   */
   const handleReset = React.useCallback(() => setAllSeqReads([]), []);
 
+  /**
+   * Handle form submission by delegating to optional onSubmit and preparing
+   * payloads for navigation.
+   *
+   * @param e - Synthetic submit event from the form.
+   * @returns Tuple indicating validation state, router state and query.
+   */
   const handleSubmit = React.useCallback(
-    async (e: React.SyntheticEvent) => {
+    async (
+      e: React.SyntheticEvent
+    ): Promise<[boolean, Record<string, any>, Record<string, any>?]> => {
       e && e.persist();
       let validated = true;
       let state: any = {};
@@ -108,17 +120,22 @@ export default function SequenceReadsInputForm({
     ]
   );
 
+  /**
+   * Load example codon read files from predefined URLs into form state.
+   *
+   * @param e - Click event from the example data link.
+   */
   const handleLoadExamples = React.useCallback(
     async (e: React.SyntheticEvent) => {
       e && e.preventDefault();
       setLoading(true);
-      const geneValidator = buildGeneValidator(config.geneValidatorDefs);
+      const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
       const allSeqReads: any[] = [];
       for (const url of exampleCodonReads) {
         const resp = await fetch(url);
         const data = await resp.text();
-        let name = url.split('/');
-        name = name[name.length - 1];
+        const parts = url.split('/');
+        const name = parts[parts.length - 1];
         allSeqReads.push(
           parseSequenceReads(name.replace(SUFFIX_PATTERN, ''), data, geneValidator)
         );
@@ -129,11 +146,17 @@ export default function SequenceReadsInputForm({
     [config, exampleCodonReads]
   );
 
+  /**
+   * Process a list of uploaded files, parsing any supported codon read files
+   * and storing the results in component state.
+   *
+   * @param fileList - Files selected via input element or drag-and-drop.
+   */
   const handleUpload = React.useCallback(
     async (fileList: FileList | File[]) => {
       setLoading(true);
       const knownFiles = new Set<string>();
-      const geneValidator = buildGeneValidator(config.geneValidatorDefs);
+      const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
       for (const {name} of allSequenceReads as any[]) {
         knownFiles.add(name);
       }
@@ -161,6 +184,12 @@ export default function SequenceReadsInputForm({
     [config, allSequenceReads]
   );
 
+  /**
+   * Remove an uploaded sequence read entry by index.
+   *
+   * @param index - Position of the entry to remove.
+   * @returns Event handler that performs the removal.
+   */
   const handleRemove = React.useCallback(
     (index: number) => {
       return (e: React.SyntheticEvent) => {
@@ -214,7 +243,7 @@ export default function SequenceReadsInputForm({
             <input {...getInputProps()} />
             <ul
              data-drag-active={isDragActive}
-             data-placeholder={config.messages['seqreads-analysis-form-placeholder']}
+             data-placeholder={config!.messages['seqreads-analysis-form-placeholder']}
              {...getRootProps({className: style['sequence-reads-preview']})}>
               {allSequenceReads.map((sr: any, idx: number) => (
                 <li key={`codfreq-${idx}`}>

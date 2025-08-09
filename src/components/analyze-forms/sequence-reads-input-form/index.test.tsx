@@ -9,7 +9,6 @@ vi.mock('found', () => ({
 
 import SequenceReadsInputForm from './index';
 import ConfigContext from '../../../utils/config-context';
-import {vi} from 'vitest';
 
 // Mock seq-summary dependency used deep inside
 vi.mock('../../report/seq-summary', () => ({
