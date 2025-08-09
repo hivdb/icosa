@@ -1,26 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Layer} from 'react-konva';
 
 import PositionGroup from './position-group';
 import USAnnotGroup from './underscore-annot-group';
 
-import {posShape} from '../../../prop-types';
+import type {Position} from '../../../prop-types';
 
+interface HoverLayerProps {
+  hoverPos?: number;
+  hoverUSAnnot: {annotName?: string; x?: number; y?: number};
+  activePos?: number;
+  anchorPos?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  positionLookup: Record<number, Position>;
+}
 
-HoverLayer.propTypes = {
-  hoverPos: PropTypes.number,
-  hoverUSAnnot: PropTypes.shape({
-    annotName: PropTypes.string,
-    x: PropTypes.number,
-    y: PropTypes.number
-  }).isRequired,
-  activePos: PropTypes.number,
-  anchorPos: PropTypes.number,
-  config: PropTypes.object.isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired
-};
-
+/**
+ * Overlay showing hovered positions and underscore annotation tooltips.
+ */
 export default function HoverLayer({
   hoverPos,
   hoverUSAnnot,
@@ -28,8 +26,8 @@ export default function HoverLayer({
   anchorPos,
   config,
   positionLookup
-}) {
-  const layerRef = React.useRef();
+}: HoverLayerProps) {
+  const layerRef = React.useRef(null);
 
   const positions = React.useMemo(
     () => {

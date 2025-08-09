@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Group, Rect, Circle, Text} from 'react-konva';
 
 
@@ -8,17 +7,21 @@ function getDisplayAA(aa) {
 }
 
 
-PositionGroup.propTypes = {
-  config: PropTypes.object.isRequired,
-  position: PropTypes.number.isRequired,
-  residue: PropTypes.string.isRequired
-};
+interface PositionGroupProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  position: number;
+  residue: string;
+}
 
+/**
+ * Render a single position item including annotations and residue.
+ */
 export default function PositionGroup({
   config,
   position,
   residue
-}) {
+}: PositionGroupProps) {
   const {
     posItemSizePixel: itemSize,
     strokeWidthPixel,

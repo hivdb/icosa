@@ -1,13 +1,21 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Group, Rect} from 'react-konva';
 
+interface PositionGroupProps {
+  position: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: {
+    posItemSizePixel: number;
+    pos2Coord: (pos: number) => {x: number; y: number};
+    strokeWidthPixel: number;
+    selectedStrokeColor: string;
+    selectedBackgroundColor: string;
+  };
+}
 
-PositionGroup.propTypes = {
-  position: PropTypes.number.isRequired,
-  config: PropTypes.object.isRequired
-};
-
+/**
+ * Highlight a selected position using stroke and background colors.
+ */
 export default function PositionGroup({
   position: pos,
   config: {
@@ -17,7 +25,7 @@ export default function PositionGroup({
     selectedStrokeColor,
     selectedBackgroundColor
   }
-}) {
+}: PositionGroupProps) {
   return React.useMemo(
     () => <Group {...pos2Coord(pos)}>
       <Rect

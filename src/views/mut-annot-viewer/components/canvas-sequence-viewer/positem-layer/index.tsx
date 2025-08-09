@@ -1,18 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Layer} from 'react-konva';
 
 import PositionGroup from './position-group';
 
-import {posShape} from '../../../prop-types';
+import type {Position} from '../../../prop-types';
 
+interface PosItemLayerProps {
+  sequence: string;
+  positionLookup: Record<number, Position>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+}
 
-PosItemLayer.propTypes = {
-  sequence: PropTypes.string.isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  config: PropTypes.object.isRequired
-};
-
+/**
+ * Layer rendering all position items for the current sequence fragment.
+ */
 export default function PosItemLayer({
   sequence,
   positionLookup,
@@ -20,7 +22,7 @@ export default function PosItemLayer({
     seqFragment: [posStart, posEnd]
   },
   config
-}) {
+}: PosItemLayerProps) {
 
   const seqFragment = sequence.slice(posStart - 1, posEnd);
 

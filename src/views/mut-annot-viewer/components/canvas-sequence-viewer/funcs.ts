@@ -1,71 +1,88 @@
 import uniq from 'lodash/uniq';
 
-export function integersToRange(numbers) {
+import type {Annotation, Position} from '../../prop-types';
+
+/**
+ * Convert a list of integers into an array of inclusive ranges.
+ *
+ * @param numbers - Integers to be grouped.
+ * @returns Array of `[start, end]` pairs representing continuous ranges.
+ */
+export function integersToRange(numbers: number[]): Array<[number, number]> {
   const groups = (numbers
     .sort((a, b) => a - b)
-    .reduce((acc, num) => {
+    .reduce<[number, number][]>((acc, num) => {
       if (acc.length === 0) {
-        acc.push([num]);
+        acc.push([num, num]);
         return acc;
       }
       const prevGroup = acc[acc.length - 1];
-      const prevNum = prevGroup[prevGroup.length - 1];
+      const prevNum = prevGroup[1];
       if (prevNum + 1 === num) {
         // continuous
-        prevGroup.push(num);
+        prevGroup[1] = num;
       }
       else {
-        acc.push([num]);
+        acc.push([num, num]);
       }
       return acc;
     }, [])
-    .map(group => {
-      if (group.length === 1) {
-        return [group[0], group[0]];
-      }
-      else {
-        return [group[0], group[group.length - 1]];
-      }
-    })
   );
   return groups;
 }
 
-export function getPositionsByAnnot(posLookup, displayAnnots) {
-  const results = [];
+/**
+ * Map annotation definitions to the positions on which they appear.
+ *
+ * @param posLookup - Lookup table of positions by number.
+ * @param displayAnnots - Annotation definitions currently being displayed.
+ * @returns Array of annotation objects with their associated positions.
+ */
+export function getPositionsByAnnot(
+  posLookup: Record<number, Position>,
+  displayAnnots: Annotation[]
+): {annot: Annotation; positions: number[]}[] {
+  const results: {annot: Annotation; positions: number[]}[] = [];
   for (const annot of displayAnnots) {
     const {level} = annot;
-    const result = {annot};
+    const result: {annot: Annotation; positions: number[]} = {annot, positions: []};
 
-    const positions = [];
     for (const posdata of Object.values(posLookup)) {
-      let annotVal = null;
+      let annotVal: string | null = null;
       if (level === 'position') {
-        annotVal = getPosAnnotVal(annot, posdata, null);
+        annotVal = getPosAnnotVal(annot, posdata);
       }
-      else if (getPosAnnotAAs(annot, posdata, null).length > 0) {
+      else if (getPosAnnotAAs(annot, posdata).length > 0) {
         annotVal = 'X';
       }
       if (annotVal === null) {
         continue;
       }
-      positions.push(posdata.position);
+      result.positions.push(posdata.position);
     }
-    result.positions = positions;
     results.push(result);
   }
   return results;
 }
 
-
-export function getExtraAnnotNamesByPositions(posLookup, displayAnnots) {
-  const results = {};
+/**
+ * Collect additional annotation names that occur at each position.
+ *
+ * @param posLookup - Lookup table of positions by number.
+ * @param displayAnnots - Annotation definitions currently being displayed.
+ * @returns Mapping of position to annotation names present at that position.
+ */
+export function getExtraAnnotNamesByPositions(
+  posLookup: Record<number, Position>,
+  displayAnnots: Annotation[]
+): Record<number, string[]> {
+  const results: Record<number, string[]> = {};
   for (const annot of displayAnnots) {
     const {level} = annot;
     if (level === 'position') {
       for (const posdata of Object.values(posLookup)) {
         const pos = posdata.position;
-        const annotVal = getPosAnnotVal(annot, posdata, null);
+        const annotVal = getPosAnnotVal(annot, posdata);
         if (annotVal === null) {
           continue;
         }
@@ -77,8 +94,17 @@ export function getExtraAnnotNamesByPositions(posLookup, displayAnnots) {
   return results;
 }
 
-
-export function getPosAnnotVal(curAnnot, posAnnot) {
+/**
+ * Retrieve the annotation value for a specific position.
+ *
+ * @param curAnnot - Annotation definition.
+ * @param posAnnot - Position data containing annotations.
+ * @returns Annotation value or `null` when not found or not applicable.
+ */
+export function getPosAnnotVal(
+  curAnnot: Annotation | undefined,
+  posAnnot: Position | undefined
+): string | null {
   if (!posAnnot || !curAnnot) {
     return null;
   }
@@ -93,12 +119,22 @@ export function getPosAnnotVal(curAnnot, posAnnot) {
     if (name !== annotName) {
       continue;
     }
-    return value;
+    return value ?? null;
   }
   return null;
 }
 
-export function getPosAnnotAAs(curAnnot, posAnnot) {
+/**
+ * Retrieve amino acid annotations for a position.
+ *
+ * @param curAnnot - Annotation definition.
+ * @param posAnnot - Position data containing annotations.
+ * @returns Array of amino acid strings, or an empty array when none.
+ */
+export function getPosAnnotAAs(
+  curAnnot: Annotation | undefined,
+  posAnnot: Position | undefined
+): string[] {
   if (!posAnnot || !curAnnot) {
     return [];
   }
@@ -110,21 +146,32 @@ export function getPosAnnotAAs(curAnnot, posAnnot) {
     if (name !== annotName) {
       continue;
     }
-    return aminoAcids;
+    return aminoAcids ?? [];
   }
   return [];
 }
 
-
-export function getAnnotPositions(curAnnots, positionLookup, aaColorIdx = 0) {
+/**
+ * Generate a lookup of positions for the given annotations.
+ *
+ * @param curAnnots - Annotation definitions to evaluate.
+ * @param positionLookup - Lookup table of positions by number.
+ * @param aaColorIdx - Starting color index for amino acid annotations.
+ * @returns Mapping of position to `[position, colorIndex, value]` tuples.
+ */
+export function getAnnotPositions(
+  curAnnots: Annotation[],
+  positionLookup: Record<number, Position>,
+  aaColorIdx = 0
+): Record<number, [number, number, string | string[]]> {
   if (curAnnots.length === 0) {
-    return [];
+    return {};
   }
-  const positions = {};
+  const positions: Record<number, [number, number, string | string[]]> = {};
   for (const curAnnot of curAnnots) {
-    const {level, colorRules = []} = curAnnot;
+    const {level, colorRules = []} = curAnnot as Annotation & {colorRules?: string[]};
     const colorRulePatterns = colorRules.map(r => new RegExp(r));
-    const colorRulePlains = [];
+    const colorRulePlains: string[] = [];
     if (level === 'position') {
       for (const posdata of Object.values(positionLookup)) {
         const {position: curPos} = posdata;
@@ -153,9 +200,8 @@ export function getAnnotPositions(curAnnots, positionLookup, aaColorIdx = 0) {
           continue;
         }
         if (curPos in positions) {
-          positions[curPos][2] = uniq([
-            ...positions[curPos][2], ...aas
-          ]).sort();
+          const cur = positions[curPos][2] as string[];
+          positions[curPos][2] = uniq([...cur, ...aas]).sort();
         }
         else {
           positions[curPos] = [curPos, aaColorIdx, aas];
@@ -166,15 +212,22 @@ export function getAnnotPositions(curAnnots, positionLookup, aaColorIdx = 0) {
   return positions;
 }
 
-
+/**
+ * Calculate underscore annotation block locations.
+ *
+ * @param positionLookup - Lookup table of positions by number.
+ * @param underscoreAnnots - Underscore annotation definitions.
+ * @param seqLength - Total sequence length.
+ * @returns Object containing location definitions and a lookup matrix.
+ */
 export function calcUnderscoreAnnotLocations(
-  positionLookup,
-  underscoreAnnots,
-  seqLength
-) {
+  positionLookup: Record<number, Position>,
+  underscoreAnnots: Annotation[],
+  seqLength: number
+): {locations: any[]; matrix: any[]} {
   const posByAnnot = getPositionsByAnnot(positionLookup, underscoreAnnots);
-  const matrix = new Array(seqLength);
-  const locations = [];
+  const matrix: any[] = new Array(seqLength);
+  const locations: any[] = [];
   for (const {annot, positions} of posByAnnot) {
     const {name: annotName, level: annotLevel} = annot;
     if (annotLevel === 'position') {
@@ -211,8 +264,12 @@ export function calcUnderscoreAnnotLocations(
     matrix
   };
 
-  function matrixFindMinAvailableLoc(posStart, posEnd, annotName) {
-    const usedLocs = [];
+  function matrixFindMinAvailableLoc(
+    posStart: number,
+    posEnd: number,
+    annotName: string
+  ): number {
+    const usedLocs: boolean[] = [];
     let maxAvailableLoc = 0;
     for (let pos0 = posStart - 1; pos0 < posEnd; pos0 ++) {
       matrix[pos0] = matrix[pos0] || [];
@@ -235,3 +292,4 @@ export function calcUnderscoreAnnotLocations(
     return minAvailableLoc;
   }
 }
+

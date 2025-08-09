@@ -1,13 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Group, Rect, Text} from 'react-konva';
 
+interface HoverPositionGroupProps {
+  position: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: {
+    posItemSizePixel: number;
+    strokeWidthPixel: number;
+    hoverTextFontSizePixel: number;
+    hoverPosNumOffsetPixel: {x: number; y: number};
+    hoverTextColor: string;
+    fontFamily: string;
+    pos2Coord: (pos: number) => {x: number; y: number};
+    getStrokeColor: (pos: number, hovering: boolean) => string;
+  };
+}
 
-PositionGroup.propTypes = {
-  position: PropTypes.number.isRequired,
-  config: PropTypes.object.isRequired
-};
-
+/**
+ * Render a highlighted position when hovered.
+ */
 export default function PositionGroup({
   position,
   config: {
@@ -20,14 +31,14 @@ export default function PositionGroup({
     pos2Coord,
     getStrokeColor
   }
-}) {
+}: HoverPositionGroupProps) {
 
-  const posNumTextRef = React.useRef();
+  const posNumTextRef = React.useRef<Text>(null);
   const [addOffsetX, setAddOffsetX] = React.useState(0);
 
   React.useEffect(
     () => setAddOffsetX(
-      (posItemSizePixel - posNumTextRef.current.getWidth()) / 2
+      (posItemSizePixel - posNumTextRef.current!.getWidth()) / 2
     ),
     [posItemSizePixel]
   );
