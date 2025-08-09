@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, renderHook} from '@testing-library/react';
+import {render, renderHook, act} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {ApolloClient} from '@apollo/client';
 
@@ -34,11 +34,15 @@ describe('sars2 view utilities', () => {
 
   it('renders print header', () => {
     const cfg = {messages: {'sequence-analysis-report-title': 'Title'}};
-    const {getByText} = render(
-      <ConfigContext.Provider value={[cfg, false] as any}>
-        <PrintHeader curAnalysis="sequence-analysis" />
-      </ConfigContext.Provider>
-    );
+    let getByText: any;
+    act(() => {
+      const result = render(
+        <ConfigContext.Provider value={[cfg, false] as any}>
+          <PrintHeader curAnalysis="sequence-analysis" />
+        </ConfigContext.Provider>
+      );
+      getByText = result.getByText;
+    });
     expect(getByText('Print')).toBeInTheDocument();
   });
 

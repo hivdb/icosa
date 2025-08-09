@@ -1,26 +1,22 @@
 import nestedGet from 'lodash/get';
-
 import {
   buildPayload
 } from '../../../../components/susc-summary/vp-susc-summary';
 
-
-function formatFold(fold) {
+function formatFold(fold: number) {
   return fold >= 1000 ? '≥1000' : `${fold.toFixed(1)}`;
 }
 
-
-function joinMutations(mutations) {
+function joinMutations(mutations: any[]) {
   return mutations.map(({text}) => text).join(', ') || 'None';
 }
-
 
 function buildVPTable({
   seqName,
   itemsByVariantOrMutations,
   drdbLastUpdate
-}) {
-  const rows = [];
+}: any) {
+  const rows: any[] = [];
   for (const {
     mutations,
     vaccineName,
@@ -34,7 +30,7 @@ function buildVPTable({
     const level1 = nestedGet(vpData, 'levels.susceptible');
     const level2 = nestedGet(vpData, 'levels.partial-resistance');
     const level3 = nestedGet(vpData, 'levels.resistant');
-    const row = {
+    const row: any = {
       'Sequence Name': seqName,
       'Gene': 'Spike',
       'Mutations': joinMutations(mutations),
@@ -43,16 +39,16 @@ function buildVPTable({
       '# Studies': numRefs,
       '# Samples': numSamples,
       '<3-Fold': (
-        isNaN(level1) ? null : `${level1 * 100}%`
+        isNaN(level1) ? null : `${(level1 as number) * 100}%`
       ),
       '3-9-Fold': (
-        isNaN(level2) ? null : `${level2 * 100}%`
+        isNaN(level2) ? null : `${(level2 as number) * 100}%`
       ),
       '≥10-Fold': (
-        isNaN(level3) ? null : `${level3 * 100}%`
+        isNaN(level3) ? null : `${(level3 as number) * 100}%`
       ),
       'Median Fold': formatFold(medianFold),
-      'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
+      'References': references.map(({DOI, URL}: any) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate
     };
     rows.push(row);
@@ -60,12 +56,11 @@ function buildVPTable({
   return rows;
 }
 
-
-function vpSuscSummary({
+export default function vpSuscSummary({
   drdbLastUpdate,
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
+}: any) {
   const header = [
     'Sequence Name',
     'Gene',
@@ -81,7 +76,7 @@ function vpSuscSummary({
     'References',
     'Version'
   ];
-  const tables = [];
+  const tables: any[] = [];
   const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
   for (const seqResult of seqResults) {
     const {
@@ -92,7 +87,7 @@ function vpSuscSummary({
     const seqName = seqName1 || seqName2;
     const itemsByVariantOrMutations = vaccPlasmaSuscSummary
       .itemsByVariantOrMutations
-      .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
+      .filter(({itemsByVaccine}: any) => itemsByVaccine.length > 0);
     const rows = buildVPTable({
       seqName,
       itemsByVariantOrMutations,
@@ -109,5 +104,3 @@ function vpSuscSummary({
   }
   return tables;
 }
-
-export default vpSuscSummary;

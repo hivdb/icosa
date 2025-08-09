@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
@@ -14,23 +13,22 @@ import {subOptions} from './sub-options';
 
 export {subOptions};
 
+interface TabularReportBySequencesContainerProps {
+  subOptionIndices: number[];
+  sequences: any[];
+  onFinish: () => void;
+  patternsTo: string;
+}
 
-TabularReportBySequencesContainer.propTypes = {
-  subOptionIndices: PropTypes.arrayOf( // old interface used by seq-report
-    PropTypes.number.isRequired
-  ),
-  sequences: PropTypes.array.isRequired,
-  onFinish: PropTypes.func.isRequired,
-  patternsTo: PropTypes.string.isRequired
-};
-
-
+/**
+ * Render tabular reports for uploaded sequences.
+ */
 export default function TabularReportBySequencesContainer({
   subOptionIndices,
   sequences,
   onFinish,
   patternsTo
-}) {
+}: TabularReportBySequencesContainerProps): JSX.Element | null {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
@@ -74,3 +72,4 @@ export default function TabularReportBySequencesContainer({
   </SequenceAnalysisLayout>;
 
 }
+

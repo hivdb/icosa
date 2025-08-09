@@ -3,23 +3,20 @@ import {
   buildPayload
 } from '../../../../components/susc-summary/cp-susc-summary';
 
-
-function formatFold(fold) {
+function formatFold(fold: number) {
   return fold >= 1000 ? '≥1000' : `${fold.toFixed(1)}`;
 }
 
-
-function joinMutations(mutations) {
+function joinMutations(mutations: any[]) {
   return mutations.map(({text}) => text).join(', ') || 'None';
 }
-
 
 function buildCPTable({
   seqName,
   itemsByVariantOrMutations,
   drdbLastUpdate
-}) {
-  const rows = [];
+}: any) {
+  const rows: any[] = [];
   for (const {
     mutations,
     numRefs,
@@ -32,7 +29,7 @@ function buildCPTable({
     const level1 = nestedGet(cpData, 'levels.susceptible');
     const level2 = nestedGet(cpData, 'levels.partial-resistance');
     const level3 = nestedGet(cpData, 'levels.resistant');
-    const row = {
+    const row: any = {
       'Sequence Name': seqName,
       'Gene': 'Spike',
       'Mutations': joinMutations(mutations),
@@ -41,18 +38,18 @@ function buildCPTable({
       '# Samples': numSamples,
       '<3-Fold': (
         isNaN(level1) ?
-          null : `${level1 * 100}%`
+          null : `${(level1 as number) * 100}%`
       ),
       '3-9-Fold': (
         isNaN(level2) ?
-          null : `${level2 * 100}%`
+          null : `${(level2 as number) * 100}%`
       ),
       '≥10-Fold': (
         isNaN(level3) ?
-          null : `${level3 * 100}%`
+          null : `${(level3 as number) * 100}%`
       ),
       'Median Fold': formatFold(medianFold),
-      'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
+      'References': references.map(({DOI, URL}: any) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate
     };
     rows.push(row);
@@ -60,12 +57,11 @@ function buildCPTable({
   return rows;
 }
 
-
-function cpSuscSummary({
+export default function cpSuscSummary({
   drdbLastUpdate,
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
+}: any) {
   const header = [
     'Sequence Name',
     'Gene',
@@ -80,7 +76,7 @@ function cpSuscSummary({
     'References',
     'Version'
   ];
-  const tables = [];
+  const tables: any[] = [];
   const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
   for (const seqResult of seqResults) {
     const {
@@ -91,7 +87,7 @@ function cpSuscSummary({
     const seqName = seqName1 || seqName2;
     const itemsByVariantOrMutations = convPlasmaSuscSummary
       .itemsByVariantOrMutations
-      .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
+      .filter(({itemsByResistLevel}: any) => itemsByResistLevel.length > 0);
     const rows = buildCPTable({
       seqName,
       itemsByVariantOrMutations,
@@ -108,5 +104,3 @@ function cpSuscSummary({
   }
   return tables;
 }
-
-export default cpSuscSummary;

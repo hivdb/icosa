@@ -4,8 +4,7 @@ import {
   buildPayload
 } from '../../../../components/susc-summary/ab-susc-summary';
 
-
-function extractFold(item) {
+function extractFold(item: any) {
   if (!item) {
     return null;
   }
@@ -15,27 +14,24 @@ function extractFold(item) {
   return median >= 1000 ? '≥1000' : `${median.toFixed(1)}`;
 }
 
-
-function extractCumuCount(item) {
+function extractCumuCount(item: any) {
   if (!item) {
     return null;
   }
   return item.cumulativeCount;
 }
 
-
-function joinMutations(mutations) {
+function joinMutations(mutations: any[]) {
   return mutations.map(({text}) => text).join(', ') || 'None';
 }
-
 
 function buildAbTable({
   seqName,
   itemsByVariantOrMutations,
   drdbLastUpdate,
   antibodyColumns
-}) {
-  const rows = [];
+}: any) {
+  const rows: any[] = [];
   for (const {
     mutations,
     references,
@@ -45,7 +41,7 @@ function buildAbTable({
     displayOrder,
     ...abData
   } of buildPayload(itemsByVariantOrMutations)) {
-    const row = {
+    const row: any = {
       'Sequence Name': seqName,
       'Gene': 'Spike',
       'Mutations': joinMutations(mutations),
@@ -54,16 +50,16 @@ function buildAbTable({
         variant ? joinMutations(variantMissingMutations) : 'NA',
       'Missing Mutations':
         variant ? joinMutations(variantExtraMutations) : 'NA',
-      'References': references.map(({DOI, URL}) => DOI || URL).join(' ; '),
+      'References': references.map(({DOI, URL}: any) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate,
       'Top Match': displayOrder === 0 ? 'Yes' : 'No'
     };
     for (const abs of antibodyColumns) {
       const abText = abs
-        .map(({name, abbrName}) => abbrName || name)
+        .map(({name, abbrName}: any) => abbrName || name)
         .join('+');
       const item = nestedGet(abData, `fold.${
-        abs.map(({name}) => name).join('+')
+        abs.map(({name}: any) => name).join('+')
       }`);
       row[`Median Fold: ${abText}`] = extractFold(item);
       row[`# Results: ${abText}`] = extractCumuCount(item);
@@ -73,13 +69,12 @@ function buildAbTable({
   return rows;
 }
 
-
-function abSuscSummary({
+export default function abSuscSummary({
   drdbLastUpdate,
   antibodies,
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
+}: any) {
   const commonHeader = [
     'Sequence Name',
     'Gene',
@@ -93,7 +88,7 @@ function abSuscSummary({
     'Missing Mutations',
     'Top Match'
   ];
-  const tables = [];
+  const tables: any[] = [];
   const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
   for (const seqResult of seqResults) {
     const {
@@ -104,7 +99,7 @@ function abSuscSummary({
     const seqName = seqName1 || seqName2;
     const itemsByVariantOrMutations = antibodySuscSummary
       .itemsByVariantOrMutations
-      .filter(({itemsByAntibody}) => itemsByAntibody.length > 0);
+      .filter(({itemsByAntibody}: any) => itemsByAntibody.length > 0);
     const antibodyColumns = getAntibodyColumns(
       antibodies,
       itemsByVariantOrMutations
@@ -112,15 +107,15 @@ function abSuscSummary({
     const header = [
       ...commonHeader,
       ...antibodyColumns.reduce(
-        (acc, abs) => {
+        (acc: string[], abs: any) => {
           const abText = abs
-            .map(({name, abbrName}) => abbrName || name)
+            .map(({name, abbrName}: any) => abbrName || name)
             .join('+');
           acc.push(`Median Fold: ${abText}`);
           acc.push(`# Results: ${abText}`);
           return acc;
         },
-        []
+        [] as string[]
       ),
       ...commonHeaderEnd
     ];
@@ -141,5 +136,3 @@ function abSuscSummary({
   }
   return tables;
 }
-
-export default abSuscSummary;

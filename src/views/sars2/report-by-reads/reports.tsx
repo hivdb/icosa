@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
 import {
@@ -17,8 +15,7 @@ import SingleSeqReadsReport from './single-report';
 
 const pageTitlePrefix = 'Sequence Reads Analysis Report';
 
-
-function getPageTitle(sequenceReadsAnalysis, output) {
+function getPageTitle(sequenceReadsAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -33,29 +30,38 @@ function getPageTitle(sequenceReadsAnalysis, output) {
   return pageTitle;
 }
 
+interface SeqReadsReportsProps {
+  /** Version for mutation comments. */
+  cmtVersion?: string;
+  /** Last update timestamp of DRDB. */
+  drdbLastUpdate?: string;
+  /** Rendering output mode. */
+  output: string;
+  /** List of monoclonal antibodies. */
+  antibodies?: any[];
+  /** Router match object. */
+  match: any;
+  /** Router instance. */
+  router: any;
+  /** Whether all data has loaded. */
+  loaded: boolean;
+  /** All uploaded sequence reads. */
+  allSequenceReads: any[];
+  /** Currently selected sequence read. */
+  currentSelected?: any;
+  /** Analysis results for each sequence read. */
+  sequenceReadsAnalysis: any[];
+  /** Callback to fetch additional results. */
+  fetchAnother: () => void;
+}
 
-SeqReadsReports.propTypes = {
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  output: PropTypes.string.isRequired,
-  antibodies: PropTypes.array.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  sequenceReadsAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
-SeqReadsReports.defaultProps = {
-  antibodies: []
-};
-
+/**
+ * Render sequence reads analysis reports with pagination.
+ */
 function SeqReadsReports({
   output,
   cmtVersion,
-  antibodies,
+  antibodies = [],
   drdbLastUpdate,
   match,
   router,
@@ -64,7 +70,7 @@ function SeqReadsReports({
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother
-}) {
+}: SeqReadsReportsProps): JSX.Element {
 
   const numSeqs = allSequenceReads.length;
 
@@ -92,7 +98,7 @@ function SeqReadsReports({
   setTitle(pageTitle);
 
   const seqReadsResultLookup = sequenceReadsAnalysis.reduce(
-    (acc, srr) => {
+    (acc: any, srr: any) => {
       acc[srr.name] = srr;
       return acc;
     },
@@ -132,7 +138,7 @@ function SeqReadsReports({
       ))}
     </main>
   </>;
-
 }
 
 export default SeqReadsReports;
+

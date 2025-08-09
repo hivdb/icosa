@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -15,8 +13,7 @@ import SinglePatternReport from './single-report';
 
 const pageTitlePrefix = 'Pattern Analysis Report';
 
-
-function getPageTitle(patternAnalysis, output) {
+function getPageTitle(patternAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -31,21 +28,23 @@ function getPageTitle(patternAnalysis, output) {
   return pageTitle;
 }
 
+interface PatternReportsProps {
+  cmtVersion?: string;
+  drdbLastUpdate?: string;
+  antibodies?: any[];
+  output: string;
+  match: any;
+  router: any;
+  loaded: boolean;
+  patterns: any[];
+  currentSelected?: any;
+  patternAnalysis: any[];
+  fetchAnother: () => void;
+}
 
-PatternReports.propTypes = {
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  antibodies: PropTypes.array,
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  patternAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
-
+/**
+ * Render pattern analysis reports with pagination.
+ */
 function PatternReports({
   cmtVersion,
   output,
@@ -58,20 +57,24 @@ function PatternReports({
   currentSelected,
   patternAnalysis,
   fetchAnother
-}) {
-  const clickTransition = React.useRef();
+}: PatternReportsProps): JSX.Element {
+  const clickTransition = React.useRef<HTMLSpanElement>(null);
   const onCopy = React.useCallback(
     () => {
       navigator.clipboard.writeText(
         window.location.href
       );
-      clickTransition.current.dataset.onclick = null;
-      setTimeout(
-        () => {
-          delete clickTransition.current.dataset.onclick;
-        },
-        10000
-      );
+      if (clickTransition.current) {
+        clickTransition.current.dataset.onclick = '';
+        setTimeout(
+          () => {
+            if (clickTransition.current) {
+              delete clickTransition.current.dataset.onclick;
+            }
+          },
+          10000
+        );
+      }
     },
     []
   );
@@ -101,7 +104,7 @@ function PatternReports({
   setTitle(pageTitle);
 
   const patResultLookup = patternAnalysis.reduce(
-    (acc, pr) => {
+    (acc: any, pr: any) => {
       acc[pr.name] = pr;
       return acc;
     },
@@ -140,3 +143,4 @@ function PatternReports({
 }
 
 export default PatternReports;
+

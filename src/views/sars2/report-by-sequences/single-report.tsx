@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import {
   ReportHeader,
   ValidationReport,
@@ -25,21 +23,22 @@ import {
 
 import style from '../style.module.scss';
 
+interface SingleSequenceReportProps {
+  header: string;
+  cmtVersion?: string;
+  drdbLastUpdate?: string;
+  currentSelected?: any;
+  antibodies: any[];
+  sequenceResult?: any;
+  output: string;
+  index: number;
+  onObserve: (el: Element) => void;
+  onDisconnect?: (el: Element) => void;
+}
 
-SingleSequenceReport.propTypes = {
-  header: PropTypes.string,
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  currentSelected: PropTypes.object,
-  antibodies: PropTypes.array.isRequired,
-  sequenceResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
-};
-
-
+/**
+ * Render a single uploaded sequence analysis report.
+ */
 function SingleSequenceReport({
   cmtVersion,
   drdbLastUpdate,
@@ -50,7 +49,7 @@ function SingleSequenceReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SingleSequenceReportProps): JSX.Element {
 
   const {
     alignedGeneSequences,
@@ -59,7 +58,7 @@ function SingleSequenceReport({
   } = sequenceResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   return (
@@ -96,41 +95,24 @@ function SingleSequenceReport({
               <MutList {...sequenceResult} {...{output, strain}} />
             </ReportSection>
             <ReportSection
-             titleAnnotation={<>
-               Last updated on {formatDate(cmtVersion)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDate(cmtVersion)}</>
+             }
              title="Mutation comments">
               <SARS2MutComments {...sequenceResult} />
             </ReportSection>
             <ReportSection
              className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDateTime(drdbLastUpdate)}</>
+             }
              title="MAb susceptibility summary">
               <AbSuscSummary
                antibodies={antibodies}
                {...sequenceResult}
                {...{output, strain}} />
             </ReportSection>
-            {/*<ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Convalescent plasma susceptibility summary">
-              <CPSuscSummary
-               {...sequenceResult} {...{output}} />
-            </ReportSection>
-            <ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Plasma from vaccinated persons susceptibility summary">
-              <VPSuscSummary
-               {...sequenceResult} {...{output}} />
-            </ReportSection>*/}
+            {/* Additional susceptibility summaries omitted */}
             <RefsSection />
           </>}
         </> : null}
@@ -149,14 +131,14 @@ export default React.memo(
       onObserve: prevOnObserve,
       header: prevHeader,
       sequenceResult: prevResult
-    },
+    }: SingleSequenceReportProps,
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
       header: nextHeader,
       sequenceResult: nextResult
-    }
+    }: SingleSequenceReportProps
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
@@ -165,3 +147,4 @@ export default React.memo(
     prevResult === nextResult
   )
 );
+

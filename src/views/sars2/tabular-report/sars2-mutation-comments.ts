@@ -1,15 +1,26 @@
-function mutationComments({
+interface MutationCommentInput {
+  sequenceReadsAnalysis?: any[];
+  sequenceAnalysis?: any[];
+}
+
+/**
+ * Generate tables of mutation comments.
+ *
+ * @param param0 - Object containing analysis results.
+ * @returns Array of table data objects.
+ */
+export default function mutationComments({
   sequenceReadsAnalysis,
   sequenceAnalysis
-}) {
-  let header = [
+}: MutationCommentInput) {
+  const header = [
     'Sequence Name',
     'Mutation',
     'Comment',
     'Version'
   ];
-  const tables = [];
-  const seqResults = sequenceAnalysis || sequenceReadsAnalysis;
+  const tables: any[] = [];
+  const seqResults = sequenceAnalysis || sequenceReadsAnalysis || [];
   for (const seqResult of seqResults) {
     const {
       inputSequence: {header: seqName1} = {},
@@ -17,11 +28,11 @@ function mutationComments({
       mutationComments
     } = seqResult;
     const seqName = seqName1 || seqName2;
-    const rows = [];
+    const rows: any[] = [];
     for (const {triggeredMutations, version, comment} of mutationComments) {
       const muts = triggeredMutations.map(({
         gene: {name}, text
-      }) => `${name.replace(/^_/, '')}:${text}`);
+      }: any) => `${name.replace(/^_/, '')}:${text}`);
       rows.push({
         'Sequence Name': seqName,
         'Mutation': muts.join(','),
@@ -40,5 +51,3 @@ function mutationComments({
   }
   return tables;
 }
-
-export default mutationComments;
