@@ -7,10 +7,13 @@ import Intro, {
   IntroHeaderSupplement
 } from '../../components/intro';
 import Button from '../../components/button';
-import {FaPrint} from '@react-icons/all-files/fa/FaPrint';
+import {FaPrint as FaPrintIcon} from '@react-icons/all-files/fa/FaPrint';
 
 
 import style from './style.module.scss';
+
+// Cast icon component to satisfy React 19 typings
+const FaPrint = FaPrintIcon as React.ComponentType;
 
 interface PrintHeaderProps {
   /** The current analysis identifier used to fetch localized titles. */
@@ -32,7 +35,7 @@ export default function PrintHeader({curAnalysis}: PrintHeaderProps) {
 
   const [config, isPending] = ConfigContext.use();
 
-  if (!isPending) {
+  if (!isPending && config) {
     title = config.messages[`${curAnalysis}-report-title`];
   }
 
@@ -44,6 +47,7 @@ export default function PrintHeader({curAnalysis}: PrintHeaderProps) {
          onClick={window.print}
          className={style['print-btn']}
          btnSize="normal" btnStyle="primary">
+          {/** react-icons types lag behind React 19 */}
           <FaPrint /> Print
         </Button>
       </IntroHeaderSupplement>

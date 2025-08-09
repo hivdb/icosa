@@ -34,7 +34,7 @@ export default function TabularReportByReadsContainer({
   allSequenceReads,
   onFinish,
   patternsTo
-}: TabularReportByReadsContainerProps): JSX.Element | null {
+}: TabularReportByReadsContainerProps): React.ReactElement | null {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
@@ -51,8 +51,8 @@ export default function TabularReportByReadsContainer({
   });
 
   const client = useApolloClient({
-    config: config as Record<string, any>,
-    skip: isConfigPending || isPending,
+    config: config as any,
+    skip: isConfigPending || isPending || !config || !allSeqReadsWithParams,
     payload: allSeqReadsWithParams
   });
 

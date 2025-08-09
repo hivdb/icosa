@@ -1,5 +1,5 @@
 import React from 'react';
-import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
+import {FaDownload as FaDownloadIcon} from '@react-icons/all-files/fa/FaDownload';
 
 import {
   useDownloadCodFreqs,
@@ -39,10 +39,6 @@ interface SeqReadsReportsProps {
   output: string;
   /** List of monoclonal antibodies. */
   antibodies?: any[];
-  /** Router match object. */
-  match: any;
-  /** Router instance. */
-  router: any;
   /** Whether all data has loaded. */
   loaded: boolean;
   /** All uploaded sequence reads. */
@@ -63,8 +59,6 @@ const SeqReadsReports: React.FC<SeqReadsReportsProps> = ({
   cmtVersion,
   antibodies = [],
   drdbLastUpdate,
-  match,
-  router,
   loaded,
   allSequenceReads,
   currentSelected,
@@ -75,6 +69,9 @@ const SeqReadsReports: React.FC<SeqReadsReportsProps> = ({
   const numSeqs = allSequenceReads.length;
 
   const {onDownload} = useDownloadCodFreqs(allSequenceReads);
+
+  // react-icons types are outdated for React 19; cast to a generic component
+  const FaDownload = FaDownloadIcon as React.ComponentType;
 
   const {
     onObserve,
@@ -129,9 +126,7 @@ const SeqReadsReports: React.FC<SeqReadsReportsProps> = ({
            onDisconnect={onDisconnect}
            output={output}
            name={inputSeqReads.name}
-           index={idx}
-           match={match}
-           router={router} />
+           index={idx} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

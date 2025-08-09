@@ -11,8 +11,8 @@ import query from './query.graphql';
 import PatternReports from './reports';
 
 interface ReportByPatternsContainerProps {
-  /** Optional configuration. */
-  config?: Record<string, any>;
+  /** Configuration object. */
+  config: Record<string, any>;
   /** Lazy load results. */
   lazyLoad: boolean;
   /** Output mode. */
@@ -20,7 +20,7 @@ interface ReportByPatternsContainerProps {
   /** Route match object. */
   match: any;
   /** Router instance. */
-  router: any;
+  router?: any;
   /** Whether data is still pending. */
   isPending: boolean;
   /** List of mutation patterns. */
@@ -41,17 +41,17 @@ function ReportByPatternsContainer({
   isPending,
   patterns,
   currentSelected
-}: ReportByPatternsContainerProps): JSX.Element {
+}: ReportByPatternsContainerProps): React.ReactElement {
 
   if (!isPending && patterns.length === 0) {
-    router.replace({
+    router?.replace({
       pathname: match.location.pathname.replace(/report\/*$/, '')
     });
   }
 
   const client = useApolloClient({
     payload: patterns,
-    config
+    config: config as any
   });
   const onExtendVariables = useExtendVariables({
     config,
@@ -88,7 +88,7 @@ interface WrapperProps {
 /**
  * Wrapper component that loads configuration and patterns before rendering.
  */
-export default function ReportByPatternsContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportByPatternsContainerWrapper(props: WrapperProps): React.ReactElement {
   const {
     location: {
       query: {output = 'default'} = {}

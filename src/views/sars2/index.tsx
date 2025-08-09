@@ -1,5 +1,5 @@
 import React, {Suspense, lazy} from 'react';
-import {Route, Redirect} from 'found';
+import {Route as FoundRoute, Redirect as FoundRedirect} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
 
@@ -11,10 +11,15 @@ import ConfigContext, {
 } from '../../utils/config-context';
 import CustomColors from '../../components/custom-colors';
 
-const SeqAnaForms = lazy(() => import('./forms'));
-const ReportByPatterns = lazy(() => import('./report-by-patterns'));
-const ReportBySequences = lazy(() => import('./report-by-sequences'));
-const ReportBySeqReads = lazy(() => import('./report-by-reads'));
+// The `found` package ships with outdated React type definitions; cast
+// Redirect to a generic component to satisfy React 19 typings.
+const Route: any = FoundRoute;
+const Redirect = FoundRedirect as React.ComponentType<any>;
+
+const SeqAnaForms = lazy(() => import('./forms') as any) as React.ComponentType<any>;
+const ReportByPatterns = lazy(() => import('./report-by-patterns') as any) as React.ComponentType<any>;
+const ReportBySequences = lazy(() => import('./report-by-sequences') as any) as React.ComponentType<any>;
+const ReportBySeqReads = lazy(() => import('./report-by-reads') as any) as React.ComponentType<any>;
 
 
 interface LayoutProps {
@@ -95,7 +100,7 @@ export default function sars2Routes({
    data={{defaultConfig, config, className, colors}}
    Component={Layout}>
     <Route path="by-patterns/">
-      <Route render={({props}) => (
+      <Route render={({props}: any) => (
         <SeqAnaForms
          {...props} {...formProps}
          pathPrefix={pathPrefix}
@@ -104,7 +109,7 @@ export default function sars2Routes({
       <Route path="report/" Component={ReportByPatterns} />
     </Route>
     <Route path="by-sequences/">
-      <Route render={({props}) => (
+      <Route render={({props}: any) => (
         <SeqAnaForms
          {...props} {...formProps}
          pathPrefix={pathPrefix}
@@ -113,7 +118,7 @@ export default function sars2Routes({
       <Route path="report/" Component={ReportBySequences} />
     </Route>
     <Route path="by-reads/">
-      <Route render={({props}) => (
+      <Route render={({props}: any) => (
         <SeqAnaForms
          {...props} {...formProps}
          pathPrefix={pathPrefix}
@@ -123,19 +128,21 @@ export default function sars2Routes({
     </Route>
     <Route
      path="ngs2codfreq/"
-     render={({props}) => (
+     render={({props}: any) => (
        <SeqAnaForms
         {...props} {...formProps}
         pathPrefix={pathPrefix}
         curAnalysis="ngs2codfreq" />
      )} />
-    <Redirect to={({location: {pathname}}) => (
-      `${pathname}${pathname.endsWith('/') ? '' : '/'}${defaultForm}`
-    )} />
+    <Redirect to={({location}: any) => {
+      const {pathname} = location as {pathname: string};
+      return `${pathname}${pathname.endsWith('/') ? '' : '/'}${defaultForm}`;
+    }} />
     <Redirect
      from="by-mutations/"
-     to={({location: {pathname}}) => (
-       pathname.replace(/by-mutations\/?$/, 'by-patterns/')
-     )} />
+     to={({location}: any) => {
+       const {pathname} = location as {pathname: string};
+       return pathname.replace(/by-mutations\/?$/, 'by-patterns/');
+     }} />
   </Route>;
 }

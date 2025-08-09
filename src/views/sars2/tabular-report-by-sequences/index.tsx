@@ -39,7 +39,7 @@ export default function TabularReportBySequencesContainer({
   sequences,
   onFinish,
   patternsTo
-}: TabularReportBySequencesContainerProps): JSX.Element | null {
+}: TabularReportBySequencesContainerProps): React.ReactElement | null {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();

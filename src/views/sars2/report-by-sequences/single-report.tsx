@@ -53,7 +53,7 @@ const SingleSequenceReport: React.FC<SingleSequenceReportProps> = ({
   index,
   onObserve,
   onDisconnect
-}: SingleSequenceReportProps): JSX.Element => {
+}: SingleSequenceReportProps): React.ReactElement => {
 
   const {
     alignedGeneSequences,

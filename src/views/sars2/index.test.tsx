@@ -27,6 +27,14 @@ describe('sars2 view utilities', () => {
     expect(vars.cmtVersion).toBe('2');
   });
 
+  it('handles undefined config when extending variables', () => {
+    const {result} = renderHook(() => useExtendVariables({
+      match: {location: {}}
+    }));
+    const vars = result.current({foo: 'bar'});
+    expect(vars.foo).toBe('bar');
+  });
+
   it('creates an apollo client', () => {
     const {result} = renderHook(() => useApolloClient({config: {graphqlURI: '/graphql'}}));
     expect(result.current).toBeInstanceOf(ApolloClient);

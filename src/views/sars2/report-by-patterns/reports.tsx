@@ -1,6 +1,6 @@
 import React from 'react';
-import {FaLink} from '@react-icons/all-files/fa/FaLink';
-import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
+import {FaLink as FaLinkIcon} from '@react-icons/all-files/fa/FaLink';
+import {FaCheck as FaCheckIcon} from '@react-icons/all-files/fa/FaCheck';
 
 import {useReportPaginator} from '../../../components/report';
 import PageBreak from '../../../components/page-break';
@@ -33,13 +33,11 @@ interface PatternReportsProps {
   drdbLastUpdate?: string;
   antibodies?: any[];
   output: string;
-  match: any;
-  router: any;
   loaded: boolean;
   patterns: any[];
   currentSelected?: any;
   patternAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -48,16 +46,14 @@ interface PatternReportsProps {
 function PatternReports({
   cmtVersion,
   output,
-  antibodies,
+  antibodies = [],
   drdbLastUpdate,
-  match,
-  router,
   loaded,
   patterns,
   currentSelected,
   patternAnalysis,
   fetchAnother
-}: PatternReportsProps): JSX.Element {
+}: PatternReportsProps): React.ReactElement {
   const clickTransition = React.useRef<HTMLSpanElement>(null);
   const onCopy = React.useCallback(
     () => {
@@ -78,6 +74,10 @@ function PatternReports({
     },
     []
   );
+
+  // Cast icons to generic components to satisfy React 19's type expectations
+  const FaLink = FaLinkIcon as React.ComponentType<{className?: string}>;
+  const FaCheck = FaCheckIcon as React.ComponentType<{className?: string}>;
 
   const {
     onObserve,
@@ -113,7 +113,7 @@ function PatternReports({
 
   return <>
     {output === 'printable' ?
-      <PrintHeader /> :
+      <PrintHeader curAnalysis="pattern-analysis" /> :
       paginator
     }
     <main className={style.main} data-loaded={loaded}>
@@ -122,7 +122,6 @@ function PatternReports({
           <SinglePatternReport
            key={idx}
            cmtVersion={cmtVersion}
-           inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
            onObserve={onObserve}
@@ -130,8 +129,6 @@ function PatternReports({
            output={output}
            name={pat.name}
            index={idx}
-           match={match}
-           router={router}
            antibodies={antibodies}
            drdbLastUpdate={drdbLastUpdate} />
           {idx + 1 < patternAnalysis.length ?

@@ -11,8 +11,8 @@ import query from './query.graphql';
 import SeqReadsReports from './reports';
 
 interface ReportByReadsContainerProps {
-  /** Optional configuration object. */
-  config?: Record<string, any>;
+  /** Configuration object. */
+  config: Record<string, any>;
   /** Router instance for navigation. */
   router: any;
   /** Match object describing the current route. */
@@ -41,10 +41,10 @@ function ReportByReadsContainer({
   output,
   allSequenceReads,
   currentSelected
-}: ReportByReadsContainerProps): JSX.Element {
+}: ReportByReadsContainerProps): React.ReactElement {
   const client = useApolloClient({
     payload: allSequenceReads,
-    config
+    config: config as any
   });
   const onExtendVariables = useExtendVariables({
     config,
@@ -64,8 +64,6 @@ function ReportByReadsContainer({
       <SeqReadsReports
        cmtVersion={config?.cmtVersion}
        output={output}
-       match={match}
-       router={router}
        {...props} />
     )}
   </SeqReadsAnalysisLayout>;
@@ -85,7 +83,7 @@ interface WrapperProps {
  * @param props - {@link WrapperProps} with routing information.
  * @returns The reads report container.
  */
-export default function ReportByReadsContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportByReadsContainerWrapper(props: WrapperProps): React.ReactElement {
   const {
     location: {
       pathname,
