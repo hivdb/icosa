@@ -55,7 +55,7 @@ export interface ExtendedMarkdownProps {
   /** Heading level for the references section. */
     referenceHeadingTagLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Optional component to load references asynchronously. */
-  refDataLoader?: React.ComponentType;
+  refDataLoader?: React.ComponentType<any>;
   /** Prefix prepended to relative image sources. */
   imagePrefix?: string;
   /** Optional CMS prefix for tables. */
@@ -139,7 +139,7 @@ function ExtendedMarkdown({
       plugins={[macroPlugin.transformer]} />
   );
   const refContext = useReference(
-    refDataLoader as React.ComponentType | undefined,
+    refDataLoader as React.ComponentType<any> | undefined,
     /* cacheKey = */ children
   );
   if (displayReferences) {

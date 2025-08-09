@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-import gql from 'graphql-tag';
 import type {DocumentNode} from 'graphql';
 import {geneSeqLevel} from '../common-query.graphql';
 

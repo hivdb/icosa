@@ -1,5 +1,4 @@
-import React from 'react';
-import React from 'react';
+import {ReactElement, useMemo} from 'react';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
@@ -32,7 +31,7 @@ export default function TabularReportBySequencesContainer({
   sequences,
   onFinish,
   patternsTo
-}: TabularReportBySequencesProps): JSX.Element {
+}: TabularReportBySequencesProps): ReactElement | null {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
@@ -43,11 +42,10 @@ export default function TabularReportBySequencesContainer({
   });
 
   const handleExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]} | undefined
   });
 
-  const curSubOptions = React.useMemo(
+  const curSubOptions = useMemo(
     () => subOptions.filter((_, idx) => subOptionIndices.includes(idx)),
     [subOptionIndices]
   );
@@ -56,14 +54,17 @@ export default function TabularReportBySequencesContainer({
     return null;
   }
 
+  const firstName =
+    sequences[0]?.name || sequences[0]?.inputSequence?.header || '';
+
   return <SequenceAnalysisLayout
-   query={getQuery(curSubOptions)}
+   query={getQuery()}
    client={client}
    sequences={sequences}
-   currentSelected={{index: 0}}
+   currentSelected={{index: 0, name: firstName}}
    renderPartialResults={false}
    lazyLoad={false}
-   extraParams={getExtraParams(curSubOptions)}
+   extraParams={getExtraParams()}
    onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports
@@ -71,6 +72,7 @@ export default function TabularReportBySequencesContainer({
        subOptionIndices={subOptionIndices}
        onFinish={onFinish}
        patternsTo={patternsTo}
+       match={match}
        {...props} />
     )}
   </SequenceAnalysisLayout>;

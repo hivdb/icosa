@@ -1,5 +1,4 @@
-import React from 'react';
-import {useRouter} from 'found';
+import {ReactElement, useMemo} from 'react';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
@@ -33,14 +32,12 @@ export default function TabularReportByReadsContainer({
   allSequenceReads,
   onFinish,
   patternsTo
-}: TabularReportByReadsProps): JSX.Element {
+}: TabularReportByReadsProps): ReactElement | null {
 
-  const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
   const handleExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]} | undefined
   });
 
   const [allSeqReadsWithParams, isPending] = useAddParams({
@@ -55,24 +52,25 @@ export default function TabularReportByReadsContainer({
     payload: allSeqReadsWithParams
   });
 
-  const curSubOptions = React.useMemo(
-    () => subOptions.filter((_, idx) => children.has(idx)),
-    [children]
-  );
+    const curSubOptions = useMemo(
+      () => subOptions.filter((_, idx) => children.has(idx)),
+      [children]
+    );
 
   if (isConfigPending || isPending) {
     return null;
   }
 
-  return <SeqReadsAnalysisLayout
-   query={getQuery(curSubOptions)}
-   client={client}
-   allSequenceReads={allSeqReadsWithParams}
-   currentSelected={{index: 0}}
-   renderPartialResults={false}
-   lazyLoad={false}
-   extraParams={getExtraParams(curSubOptions)}
-   onExtendVariables={handleExtendVariables}>
+    const firstName = allSeqReadsWithParams?.[0]?.name ?? '';
+    return <SeqReadsAnalysisLayout
+     query={getQuery(curSubOptions)}
+     client={client}
+     allSequenceReads={allSeqReadsWithParams || []}
+     currentSelected={{index: 0, name: firstName}}
+     renderPartialResults={false}
+     lazyLoad={false}
+     extraParams={getExtraParams()}
+     onExtendVariables={handleExtendVariables}>
     {props => (
       <SeqTabularReports
        config={config}
