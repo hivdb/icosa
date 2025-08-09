@@ -109,18 +109,18 @@ interface ReferencesProps {
 export default function References({
   placeholder = <Loader inline />
 }: ReferencesProps) {
-  const { ensureLoaded } = React.useContext(ReferenceContext as any);
+  const { ensureLoaded } = React.useContext(ReferenceContext) ?? {};
   useAutoUpdate();
 
   return (
     <ol className={style.references}>
-      {ensureLoaded(
+      {ensureLoaded ? ensureLoaded(
         ({ getLinkedReferences }: any) =>
           getLinkedReferences().map((refProps: any) => (
             <RefItem {...refProps} key={refProps.itemId} />
           )),
         placeholder
-      )}
+      ) : null}
     </ol>
   );
 }

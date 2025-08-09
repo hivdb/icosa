@@ -12,24 +12,19 @@ export interface LoadReferencesProps {
  * supplied with the current references and setter functions.
  */
 export default function LoadReferences({ onLoad = () => null }: LoadReferencesProps) {
-  const {
-    getAllReferences,
-    setReference,
-    setLoaded,
-    refDataLoader
-  } = React.useContext(ReferenceContext as any);
+  const context = React.useContext(ReferenceContext);
 
   useAutoUpdate();
 
-  if (refDataLoader) {
-    const LoaderComponent = refDataLoader as React.ElementType;
+  if (context !== null && context.refDataLoader) {
+    const LoaderComponent = context.refDataLoader;
     return React.createElement(LoaderComponent, {
       onLoad: () => {
-        setLoaded();
+        context.setLoaded();
         onLoad();
       },
-      setReference,
-      references: getAllReferences()
+      setReference: context.setReference,
+      references: context.getAllReferences()
     });
   } else {
     onLoad();

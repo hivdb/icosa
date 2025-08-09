@@ -191,4 +191,4 @@ export function useReference(
   );
 }
 
-export default React.createContext<any>({});
+export default React.createContext<ReferenceObject | null>(null);
