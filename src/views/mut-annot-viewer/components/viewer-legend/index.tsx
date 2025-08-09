@@ -1,4 +1,4 @@
-import React from 'react';
+import {useMemo} from 'react';
 import makeClassNames from 'classnames';
 
 import type {
@@ -40,7 +40,7 @@ export default function Legend({
   annotations
 }: LegendProps) {
 
-  const colorBoxAnnotDef = React.useMemo(() => {
+  const colorBoxAnnotDef = useMemo(() => {
     const category = annotCategories.find(({annotStyle}) => annotStyle === 'colorBox');
     if (!category) {
       return undefined;
@@ -50,7 +50,7 @@ export default function Legend({
     return annotations.find(({name}) => name === annotName);
   }, [curAnnotNameLookup, annotCategories, annotations])!;
 
-  const circleInBoxAnnotDef = React.useMemo(
+  const circleInBoxAnnotDef = useMemo(
     () => {
       const category = (
         annotCategories

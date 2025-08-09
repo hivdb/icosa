@@ -1,4 +1,4 @@
-import React from 'react';
+import {useCallback} from 'react';
 import Dropdown from 'react-dropdown';
 
 import style from './style.module.scss';
@@ -26,7 +26,7 @@ interface PresetSelectionProps {
  * @returns A section element containing the dropdown control.
  */
 export default function PresetSelection({match: {location}, router, options}: PresetSelectionProps) {
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     ({value}: {value: string}) => router.push(`${location.pathname}${value}/`),
     [router, location]
   );

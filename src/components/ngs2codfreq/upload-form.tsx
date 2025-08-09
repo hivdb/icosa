@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState, useCallback} from 'react';
 import pluralize from 'pluralize';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
@@ -33,9 +33,9 @@ export default function NGSUploadForm({
 }: NGSUploadFormProps) {
 
   const [config, isConfigPending] = ConfigContext.use();
-  const [fastqPairs, setFastqPairs] = React.useState<FastqPair[]>([]);
+  const [fastqPairs, setFastqPairs] = useState<FastqPair[]>([]);
 
-  const handleUpload = React.useCallback(
+  const handleUpload = useCallback(
     async (fileList: File[]) => {
       const fastqFiles: File[] = [];
       const knownFiles = new Set();
@@ -77,7 +77,7 @@ export default function NGSUploadForm({
     [fastqPairs, setFastqPairs]
   );
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     e => {
       e && e.preventDefault();
       onSubmit && onSubmit(fastqPairs);
@@ -85,7 +85,7 @@ export default function NGSUploadForm({
     [onSubmit, fastqPairs]
   );
 
-  const handleReset = React.useCallback(
+  const handleReset = useCallback(
     e => {
       e && e.preventDefault();
       setFastqPairs([]);

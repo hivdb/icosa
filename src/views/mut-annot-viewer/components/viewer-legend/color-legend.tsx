@@ -1,4 +1,4 @@
-import React from 'react';
+import {useMemo} from 'react';
 import makeClassNames from 'classnames';
 import range from 'lodash/range';
 
@@ -303,7 +303,7 @@ export default function ColorLegend({
   citations
 }: ColorLegendProps) {
 
-  const annotObjs = React.useMemo(
+  const annotObjs = useMemo(
     () => getAllAnnotations({
       positionLookup,
       seqFragment,

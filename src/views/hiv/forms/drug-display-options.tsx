@@ -1,4 +1,9 @@
-import React from 'react';
+import {
+  ReactElement,
+  useCallback,
+  useMemo,
+  useState
+} from 'react';
 
 import Markdown from '../../../components/markdown';
 import Link from '../../../components/link';
@@ -16,6 +21,12 @@ interface DrugDisplayOptionsProps {
   onReset: (e: React.MouseEvent) => void;
 }
 
+/**
+ * Render checkboxes for enabling or disabling drug display options.
+ *
+ * @param props - {@link DrugDisplayOptionsProps}
+ * @returns Fieldset element containing controls for drug display.
+ */
 function DrugDisplayOptions({
   drugDisplayOptions,
   drugDisplayNames,
@@ -75,13 +86,13 @@ function DrugDisplayOptions({
  * @param config - Configuration including drug display options and messages.
  * @returns Tuple containing component and submit-state getter.
  */
-export default function useDrugDisplayOptions(config: any): [JSX.Element | null, () => { disabledDrugs: string[] }] {
+export default function useDrugDisplayOptions(config: any): [ReactElement | null, () => { disabledDrugs: string[] }] {
   const {
     drugDisplayOptions,
     drugDisplayNames,
     messages
   } = config;
-  const defaultUncheckedDrugs = React.useMemo(
+  const defaultUncheckedDrugs = useMemo(
     () =>
       Object.values(drugDisplayOptions || {}).reduce(
         (acc: string[], { drugs }: any) => [
@@ -93,9 +104,9 @@ export default function useDrugDisplayOptions(config: any): [JSX.Element | null,
     [drugDisplayOptions]
   );
 
-  const [uncheckedDrugs, setUncheckedDrugs] = React.useState<Set<string>>(new Set(defaultUncheckedDrugs));
+  const [uncheckedDrugs, setUncheckedDrugs] = useState<Set<string>>(new Set(defaultUncheckedDrugs));
 
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const drug = e.currentTarget.value;
       const newUncheckedDrugs = new Set(uncheckedDrugs);
@@ -109,7 +120,7 @@ export default function useDrugDisplayOptions(config: any): [JSX.Element | null,
     [uncheckedDrugs]
   );
 
-  const handleSelectAll = React.useCallback(
+  const handleSelectAll = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       setUncheckedDrugs(new Set());
@@ -117,7 +128,7 @@ export default function useDrugDisplayOptions(config: any): [JSX.Element | null,
     []
   );
 
-  const handleReset = React.useCallback(
+  const handleReset = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       setUncheckedDrugs(new Set(defaultUncheckedDrugs));
@@ -125,7 +136,7 @@ export default function useDrugDisplayOptions(config: any): [JSX.Element | null,
     [defaultUncheckedDrugs]
   );
 
-  const getSubmitState = React.useCallback(
+  const getSubmitState = useCallback(
     () => ({ disabledDrugs: Array.from(uncheckedDrugs) }),
     [uncheckedDrugs]
   );

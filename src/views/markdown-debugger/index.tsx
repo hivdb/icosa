@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import Markdown from '../../components/markdown';
 import genomeMaps from './genome-maps.json';
 import tableData from './table-data.json';
@@ -25,13 +25,16 @@ interface RefDataLoaderProps {
 
 /**
  * Loads reference data asynchronously and notifies the parent component.
+ *
+ * @param props - {@link RefDataLoaderProps}
+ * @returns `null` once side effects are registered.
  */
 function RefDataLoader({
   onLoad,
   setReference,
   references
 }: RefDataLoaderProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       for (const ref of references) {
         setReference(ref.name, {...ref, children: `${ref.name}aaaa`}, false);
@@ -58,7 +61,9 @@ export default function MarkdownDebugger() {
       escapeHtml={false}
       tables={tableData}
       refDataLoader={RefDataLoader}
-      collapsableLevels={['h3']}
+      // TODO: correct typings when Markdown collapsable levels support string identifiers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      collapsableLevels={['h3'] as any}
       genomeMaps={genomeMaps}
     >
       {testMd}

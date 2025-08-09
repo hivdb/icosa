@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactElement, useMemo } from 'react';
 import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
@@ -31,7 +31,7 @@ export default function TabularReportBySequencesContainer({
   sequences,
   onFinish,
   patternsTo
-}: TabularReportBySequencesProps): JSX.Element {
+}: TabularReportBySequencesProps): ReactElement | null {
 
   const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
@@ -46,7 +46,7 @@ export default function TabularReportBySequencesContainer({
     match
   });
 
-  const curSubOptions = React.useMemo(
+  const curSubOptions = useMemo(
     () => subOptions.filter((_, idx) => subOptionIndices.includes(idx)),
     [subOptionIndices]
   );

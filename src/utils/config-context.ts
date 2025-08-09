@@ -1,4 +1,4 @@
-import React from 'react';
+import {useCallback} from 'react';
 import memoize from 'lodash/memoize';
 
 import createAsyncContext from './async-context';
@@ -18,7 +18,7 @@ const fetchConfig = memoize(
  * merging local and remote settings.
  */
 export function useConfigLoader<T extends {configFromURL?: string}>(config: T) {
-  return React.useCallback(
+  return useCallback(
     async () => {
       let loadedConfig: Record<string, any>;
       if (config.configFromURL) {

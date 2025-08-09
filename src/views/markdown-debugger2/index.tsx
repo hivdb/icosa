@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import Markdown from '../../components/markdown';
 import genomeMaps from './genome-maps.json';
 import tableData from './table-data.json';
@@ -25,13 +25,16 @@ interface RefDataLoaderProps {
 
 /**
  * Injects reference data after a short delay to mimic async behaviour.
+ *
+ * @param props - {@link RefDataLoaderProps}
+ * @returns `null` once side effects are registered.
  */
 function RefDataLoader({
   onLoad,
   setReference,
   references
 }: RefDataLoaderProps) {
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       for (const ref of references) {
         setReference(ref.name, {...ref, children: `${ref.name}aaaa`}, false);

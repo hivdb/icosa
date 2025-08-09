@@ -1,6 +1,7 @@
 import React from 'react';
 import set from 'lodash/set';
 import isEqual from 'lodash/isEqual';
+import {useState, useCallback, useMemo} from 'react';
 import createPersistedState from 'use-persisted-state/src';
 
 import {
@@ -29,7 +30,7 @@ const usePersistedOptions = createPersistedState(
  */
 export default function useOptions(): [NGSOptions, (key: string, value: any) => void, boolean] {
   const [persistedOptions, setPersistedOptions] = usePersistedOptions({});
-  const [options, setOptions] = React.useState<NGSOptions>({
+  const [options, setOptions] = useState<NGSOptions>({
     fastpConfig: {...defaultFastpConfig},
     cutadaptConfig: {...defaultCutadaptConfig},
     ivarConfig: {...defaultIvarConfig},
@@ -38,7 +39,7 @@ export default function useOptions(): [NGSOptions, (key: string, value: any) => 
     ...persistedOptions
   });
 
-  const onChange = React.useCallback(
+  const onChange = useCallback(
     (key: string, value: any) => {
       const newOptions: NGSOptions = {...options};
       if (key === '.') {
@@ -60,7 +61,7 @@ export default function useOptions(): [NGSOptions, (key: string, value: any) => 
     [options, setPersistedOptions]
   );
 
-  const isDefault = React.useMemo(
+  const isDefault = useMemo(
     () => {
       const {
         fastpConfig,

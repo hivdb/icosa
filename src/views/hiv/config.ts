@@ -2,17 +2,19 @@
  * Default configuration for the HIV views.
  * Values are largely driven by the deployment environment and CMS settings.
  */
+const NODE_ENV = window.__NODE_ENV;
+
 const config: Record<string, any> = {
   configFromURL: (
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
     'pages/sierra-hivpol.json'
   ),
   graphqlURI: (
-    window.__NODE_ENV === 'production' ?
+    NODE_ENV === 'production' ?
       '/graphql' :
       'http://localhost:8111/sierra/rest/graphql'),
   server_host: (
-    window.__NODE_ENV === 'production' ?
+    NODE_ENV === 'production' ?
       '' : 'http://localhost:8111'
   ),
   cmsStages: {

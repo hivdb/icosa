@@ -1,5 +1,4 @@
-import React from 'react';
-import React from 'react';
+import { useCallback, useMemo } from 'react';
 import {Router, Match} from 'found';
 
 import {getFullLink} from '../../../utils/cms';
@@ -52,7 +51,7 @@ function loadExampleFasta(examples: Array<{url: string; title: string}>, config:
  */
 function useTabularReportOptions({config, match, allSubOptions}: any) {
   const {formEnableTabularReportOptions} = config;
-  return React.useMemo(
+  return useMemo(
     () => {
       const options = [...(formEnableTabularReportOptions || [])];
       if (
@@ -114,7 +113,7 @@ function SierraForms({
     getAlgSubmitState
   ] = useAlgorithmSelector(config);
 
-  const getSubmitState = React.useCallback(
+  const getSubmitState = useCallback(
     async () => ({
       ...await getDrugSubmitState(),
       ...await getAlgSubmitState()
@@ -127,7 +126,7 @@ function SierraForms({
   // );
   // const showAlgOpt = true;
 
-  const handleSubmit = React.useCallback(
+  const handleSubmit = useCallback(
     async () => {
       return [true, await getSubmitState()];
     },
