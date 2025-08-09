@@ -1,8 +1,10 @@
 import uniq from 'lodash/uniq';
-import {create as createXML} from 'xmlbuilder2';
+import { create as createXML } from 'xmlbuilder2';
 
-
-function getOldMutType(mutType, drugClass) {
+/**
+ * Convert modern mutation type labels into legacy XML schema labels.
+ */
+function getOldMutType(mutType: string, drugClass: string): string {
   if (mutType === 'Other') {
     return 'OTHER';
   }
@@ -29,15 +31,17 @@ function getOldMutType(mutType, drugClass) {
   return 'OTHER';
 }
 
-
+/**
+ * Generate legacy XML resistance report.
+ */
 export default async function xmlResistance({
   allGenes,
   sequenceAnalysis,
   currentVersion,
   config
-}) {
-  const {geneDisplay} = config;
-  const allGeneNames = allGenes.map(({name}) => name);
+}: any): Promise<string> {
+  const { geneDisplay } = config;
+  const allGeneNames = allGenes.map(({ name }) => name);
 
   const root = createXML({
     version: '1.0',

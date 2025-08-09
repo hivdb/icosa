@@ -2,33 +2,35 @@ import seqSummary from '../tabular-report/hiv-seq-summary';
 import resistanceSummary from '../tabular-report/hiv-resistance-summary';
 import mutationList from '../../../components/tabular-report/mutation-list';
 import unseqRegions from '../../../components/tabular-report/unseq-regions';
-import prettyAlignments
-  from '../../../components/tabular-report/pretty-alignments';
-import rawJSON
-  from '../../../components/tabular-report/raw-json';
-import xmlResistance from './hiv-xml-resistance';
+import assembledConsensus from '../../../components/tabular-report/assembled-consensus';
+import prettyAlignments from '../../../components/tabular-report/pretty-alignments';
+import rawJSON from '../../../components/tabular-report/raw-json';
 import algComparison from '../tabular-report/hiv-alg-comparison';
 
-const subOptions = [
+/** Human readable labels for available sub reports. */
+const subOptions: string[] = [
   'Sequence summary',
   'Resistance summary',
+  'Consensus sequence (FASTA)',
   'Mutation list',
   'Unsequenced regions',
   'Pretty amino acid alignments',
   'Algorithm comparison',
-  'Raw JSON report',
-  'Raw XML report (deprecated)'
+  'Raw JSON report'
 ];
 
+/**
+ * Functions that generate content for each sub report option.
+ */
 const subOptionProcessors = [
   seqSummary,
   resistanceSummary,
+  assembledConsensus,
   mutationList,
   unseqRegions,
   prettyAlignments,
   algComparison,
-  rawJSON,
-  xmlResistance
+  rawJSON
 ];
 
-export {subOptions, subOptionProcessors};
+export { subOptions, subOptionProcessors };

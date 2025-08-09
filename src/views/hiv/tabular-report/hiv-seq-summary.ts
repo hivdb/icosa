@@ -1,4 +1,9 @@
-function joinCols(row) {
+/**
+ * Join all array values of an object into comma separated strings.
+ *
+ * @param row - Object whose array properties will be joined in place.
+ */
+function joinCols(row: Record<string, any>): void {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
       if (row[col].length > 0) {
@@ -11,18 +16,28 @@ function joinCols(row) {
   }
 }
 
-
-function getObjectText(objects) {
-  return objects.map(({text, gene: {name}}) => `${name}:${text}`);
+/**
+ * Convert objects with gene and text fields to "gene:text" strings.
+ */
+function getObjectText(objects: Array<{ text: string; gene: { name: string } }>): string[] {
+  return objects.map(({ text, gene: { name } }) => `${name}:${text}`);
 }
 
-
-function getObjectTextNoGene(objects) {
-  return objects.map(({text}) => text);
+/**
+ * Extract text field from objects.
+ */
+function getObjectTextNoGene(objects: Array<{ text: string }>): string[] {
+  return objects.map(({ text }) => text);
 }
 
-
-function getPermanentLink(seqName, mutations, patternsTo) {
+/**
+ * Build a permanent link for sequence report with mutations encoded.
+ */
+function getPermanentLink(
+  seqName: string,
+  mutations: Array<{ text: string; gene: { name: string } }>,
+  patternsTo: string
+): string {
   const mutText = getObjectText(mutations).join(',');
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
@@ -32,14 +47,19 @@ function getPermanentLink(seqName, mutations, patternsTo) {
   return link.toString();
 }
 
-
+/**
+ * Generate sequence summary tables for tabular reports.
+ *
+ * @param args - Analysis results and configuration.
+ * @returns Table definition for export.
+ */
 async function seqSummary({
   allGenes,
   sequenceReadsAnalysis,
   sequenceAnalysis,
   config,
   patternsTo
-}) {
+}: any): Promise<any[]> {
   const rows = [];
   const {geneDisplay} = config;
   const mutTypeHeaders = allGenes.reduce(

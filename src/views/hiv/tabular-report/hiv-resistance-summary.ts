@@ -1,4 +1,7 @@
-function joinCols(row) {
+/**
+ * Join all array values in the row into comma separated strings.
+ */
+function joinCols(row: Record<string, any>): void {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
       if (row[col].length > 0) {
@@ -11,30 +14,32 @@ function joinCols(row) {
   }
 }
 
-
-function getObjectTextNoGene(objects) {
-  return objects.map(({text}) => text);
+/** Extract text field from objects. */
+function getObjectTextNoGene(objects: Array<{text: string}>): string[] {
+  return objects.map(({ text }) => text);
 }
 
-
+/**
+ * Build resistance summary table rows.
+ *
+ * @param args - Analysis results and configuration.
+ * @returns Table definition for export.
+ */
 async function resistanceSummary({
   allGenes,
   sequenceReadsAnalysis,
   sequenceAnalysis,
   currentVersion,
   config
-}) {
-  const rows = [];
-  const {geneDisplay} = config;
-  const allGeneNames = allGenes.map(({name}) => name);
+}: any): Promise<any[]> {
+  const rows: Record<string, any>[] = [];
+  const { geneDisplay } = config;
+  const allGeneNames = allGenes.map(({ name }) => name);
 
-  let header = [
-    'Sequence Name',
-    'Genes'
-  ];
+  let header: string[] = ['Sequence Name', 'Genes'];
 
-  for (const {drugClasses} of allGenes) {
-    for (const {name: dcName, drugs, mutationTypes} of drugClasses) {
+  for (const { drugClasses } of allGenes) {
+    for (const { name: dcName, drugs, mutationTypes } of drugClasses) {
       for (const mtype of mutationTypes) {
         if (mtype === 'Other') {
           continue;
@@ -46,7 +51,7 @@ async function resistanceSummary({
           header.push(`${dcName} ${mtype}`);
         }
       }
-      for (const {displayAbbr} of drugs) {
+      for (const { displayAbbr } of drugs) {
         header.push(`${displayAbbr} Score`);
         header.push(`${displayAbbr} Level`);
       }
@@ -60,29 +65,22 @@ async function resistanceSummary({
   for (const seqResult of sequenceAnalysis || sequenceReadsAnalysis) {
     const {
       name: seqName1,
-      inputSequence: {header: seqName2} = {},
+      inputSequence: { header: seqName2 } = {},
       availableGenes: genes,
       drugResistance: geneDRs
     } = seqResult;
-    let row = {
+    const row: Record<string, any> = {
       'Sequence Name': seqName1 || seqName2,
       'Genes': genes
-        .filter(({name}) => allGeneNames.includes(name))
-        .map(({name}) => geneDisplay[name] || name),
+        .filter(({ name }) => allGeneNames.includes(name))
+        .map(({ name }) => geneDisplay[name] || name),
       'Algorithm Name': currentVersion.family,
       'Algorithm Version': currentVersion.version,
       'Algorithm Date': currentVersion.publishDate
     };
 
-    for (const {
-      mutationsByTypes,
-      drugScores
-    } of geneDRs) {
-      for (const {
-        drugClass,
-        mutationType,
-        mutations
-      } of mutationsByTypes) {
+    for (const { mutationsByTypes, drugScores } of geneDRs) {
+      for (const { drugClass, mutationType, mutations } of mutationsByTypes) {
         if (mutationType === 'Other') {
           continue;
         }
@@ -96,7 +94,7 @@ async function resistanceSummary({
         row[mutTypeHdr] = getObjectTextNoGene(mutations);
       }
       for (const {
-        drug: {displayAbbr},
+        drug: { displayAbbr },
         score,
         level
       } of drugScores) {
@@ -108,7 +106,7 @@ async function resistanceSummary({
 
     rows.push(row);
   }
-  return [{tableName: 'resistanceSummaries', header, rows}];
+  return [{ tableName: 'resistanceSummaries', header, rows }];
 }
 
 export default resistanceSummary;

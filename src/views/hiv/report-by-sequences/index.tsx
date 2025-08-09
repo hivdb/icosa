@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {routerShape, matchShape} from 'found';
 import useApolloClient from '../apollo-client';
 import useExtendVariables from '../use-extend-variables';
 
@@ -14,16 +12,18 @@ import SeqAnalysisLayout from
 import query from './query.graphql';
 import SeqReports from './reports';
 
+interface ReportBySequencesContainerProps {
+  config?: any;
+  lazyLoad: boolean;
+  output?: string;
+  match: any;
+  sequences: any[];
+  currentSelected?: any;
+}
 
-ReportBySequencesContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  match: matchShape.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Render the report for uploaded sequences.
+ */
 function ReportBySequencesContainer({
   config,
   lazyLoad,
@@ -31,7 +31,7 @@ function ReportBySequencesContainer({
   match,
   sequences,
   currentSelected
-}) {
+}: ReportBySequencesContainerProps) {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.log(
@@ -74,13 +74,12 @@ function ReportBySequencesContainer({
 
 }
 
+interface WrapperProps {
+  router: { replace: (loc: any) => void };
+  match: any;
+}
 
-ReportBySequencesContainerWrapper.propTypes = {
-  router: routerShape.isRequired,
-  match: matchShape.isRequired
-};
-
-export default function ReportBySequencesContainerWrapper(props) {
+export default function ReportBySequencesContainerWrapper(props: WrapperProps) {
   const {
     location: {
       pathname,
@@ -90,9 +89,9 @@ export default function ReportBySequencesContainerWrapper(props) {
     } = {}
   } = props.match;
 
-  useWhenNoSequence(() => props.router.replace({
-    pathname: pathname.replace(/report\/*$/, '')
-  }));
+  useWhenNoSequence(() =>
+    props.router.replace({ pathname: pathname.replace(/report\/*$/, '') })
+  );
 
   const lazyLoad = output !== 'printable';
 

@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {routerShape, matchShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -14,16 +12,15 @@ import SeqReadsAnalysisLayout from
 import query from './query.graphql';
 import SeqReadsReports from './reports';
 
-
-ReportByReadsContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  router: routerShape.isRequired,
-  match: matchShape.isRequired,
-  allSequenceReads: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
+interface ReportByReadsContainerProps {
+  config?: any;
+  router: { replace: (loc: any) => void };
+  match: any;
+  lazyLoad: boolean;
+  output?: string;
+  allSequenceReads: any[];
+  currentSelected?: any;
+}
 
 function ReportByReadsContainer({
   config,
@@ -33,7 +30,7 @@ function ReportByReadsContainer({
   output,
   allSequenceReads,
   currentSelected
-}) {
+}: ReportByReadsContainerProps) {
   const client = useApolloClient({
     payload: allSequenceReads,
     config
@@ -69,13 +66,12 @@ function ReportByReadsContainer({
 
 }
 
+interface WrapperProps {
+  router: { replace: (loc: any) => void };
+  match: any;
+}
 
-ReportByReadsContainerWrapper.propTypes = {
-  router: routerShape.isRequired,
-  match: matchShape.isRequired
-};
-
-export default function ReportByReadsContainerWrapper(props) {
+export default function ReportByReadsContainerWrapper(props: WrapperProps) {
   const {
     location: {
       pathname,
@@ -84,9 +80,9 @@ export default function ReportByReadsContainerWrapper(props) {
   } = props.match;
   const lazyLoad = output !== 'printable';
 
-  useWhenNoSeqReads(() => props.router.replace({
-    pathname: pathname.replace(/report\/*$/, '')
-  }));
+  useWhenNoSeqReads(() =>
+    props.router.replace({ pathname: pathname.replace(/report\/*$/, '') })
+  );
 
   return (
     <ConfigContext.Consumer>

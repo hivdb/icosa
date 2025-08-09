@@ -1,12 +1,12 @@
 import gql from 'graphql-tag';
-import {
-  rootLevel,
-  seqLevel,
-  geneSeqLevel
-} from '../common-query.graphql';
+import gql from 'graphql-tag';
+import { DocumentNode } from 'graphql';
+import { rootLevel, seqLevel, geneSeqLevel } from '../common-query.graphql';
 
-
-export function getExtraParams(/* subOptions */) {
+/**
+ * Additional GraphQL parameters required by the query.
+ */
+export function getExtraParams(/* subOptions */): string {
   return `
     $includeGenes: [EnumGene!]!,
     $algorithms: [ASIAlgorithm!],
@@ -14,12 +14,19 @@ export function getExtraParams(/* subOptions */) {
   `;
 }
 
-
-export default function getQuery(/* subOptions */) {
+/**
+ * Build the GraphQL query for the tabular sequence-reads report.
+ *
+ * @param subOptions - Sub report labels to include.
+ * @returns GraphQL document for fetching report data.
+ */
+export default function getQuery(subOptions: string[]): DocumentNode {
+  const fetchConsensus =
+    subOptions.includes('Consensus sequence (FASTA)') ||
+    subOptions.includes('raw JSON report');
   return gql`
-    fragment TabularReportBySequences_Root on Root {
+    fragment TabularReportBySeqReads_Root on Root {
       ${rootLevel}
-      currentVersion { family version publishDate }
       allGenes: genes(names: $includeGenes) {
         name
         refSequence
@@ -37,26 +44,31 @@ export default function getQuery(/* subOptions */) {
         }
       }
     }
-    fragment TabularReportBySequences on SequenceAnalysis {
-      inputSequence { header MD5 sequence }
+    fragment TabularReportBySeqReads on SequenceReadsAnalysis {
+      name
+      ${seqLevel}
       bestMatchingSubtype {
         display
         distance
         referenceAccession
       }
+      readDepthStats {
+        median: percentile(p: 50)
+      }
       availableGenes { name }
       mixtureRate
+      maxMixtureRate
+      actualMinPrevalence
+      minPrevalence
+      minPositionReads
       mutations(
         filterOptions: [SEQUENCED_ONLY],
         includeGenes: $includeGenes
-      ) { gene { name } text }
+      ) { gene { name } text position }
       unusualMutations: mutations(
         filterOptions: [SEQUENCED_ONLY, UNUSUAL],
         includeGenes: $includeGenes
-      ) { gene { name } text }
-      frameShifts(
-        includeGenes: $includeGenes
-      ) { gene { name } text position size }
+      ) { gene { name } text position }
       insertions: mutations(
         filterOptions: [SEQUENCED_ONLY, INSERTION],
         includeGenes: $includeGenes
@@ -77,12 +89,13 @@ export default function getQuery(/* subOptions */) {
         filterOptions: [SEQUENCED_ONLY, APOBEC],
         includeGenes: $includeGenes
       ) { gene { name } text position }
-      ${seqLevel}
-      alignedGeneSequences(includeGenes: $includeGenes) {
+      ${fetchConsensus ? `
+        assembledConsensus
+        assembledUnambiguousConsensus
+      ` : ''}
+      allGeneSequenceReads(includeGenes: $includeGenes) {
         firstAA
         lastAA
-        alignedNAs
-        alignedAAs
         ${geneSeqLevel}
         unsequencedRegions {
           size
@@ -101,18 +114,12 @@ export default function getQuery(/* subOptions */) {
         }
         mutations {
           text
-          reference
           position
-          triplet
           displayAAs
-          insertedNAs
           primaryType
-          DRMDrugClass { name }
           isInsertion
           isDeletion
           hasStop
-          isUnusual
-          isApobecMutation
           isUnsequenced
           isAmbiguous
         }

@@ -163,4 +163,4 @@ export const geneSeqLevel: string = `
   }
 `;
 
-export { rootLevel, seqLevel, geneSeqLevel };
+// Fragments exported individually above
