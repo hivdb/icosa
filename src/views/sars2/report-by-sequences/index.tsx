@@ -30,14 +30,14 @@ interface ReportBySequencesContainerProps {
 /**
  * Render sequence analysis reports for individual sequences.
  */
-function ReportBySequencesContainer({
+const ReportBySequencesContainer: React.FC<ReportBySequencesContainerProps> = ({
   config,
   lazyLoad,
   output,
   match,
   sequences,
   currentSelected
-}: ReportBySequencesContainerProps): JSX.Element {
+}: ReportBySequencesContainerProps): JSX.Element => {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.log(
@@ -48,32 +48,35 @@ function ReportBySequencesContainer({
 
   const client = useApolloClient({
     payload: sequences,
-    config
+    config: config as any
   });
   const onExtendVariables = useExtendVariables({
-    config,
+    config: config as Record<string, any>,
     match
   });
 
-  return <SeqAnalysisLayout
-   query={query}
-   client={client}
-   sequences={sequences}
-   currentSelected={currentSelected}
-   renderPartialResults={output !== 'printable'}
-   lazyLoad={lazyLoad}
-   extraParams="$drdbVersion: String!, $cmtVersion: String!"
-   onExtendVariables={onExtendVariables}>
-    {props => (
-      <SeqReports
-       cmtVersion={config?.cmtVersion}
-       output={output}
-       match={match}
-       {...props} />
-    )}
-  </SeqAnalysisLayout>;
-
-}
+  return (
+    <SeqAnalysisLayout
+      query={query}
+      client={client}
+      sequences={sequences}
+      currentSelected={currentSelected}
+      renderPartialResults={output !== 'printable'}
+      lazyLoad={lazyLoad}
+      extraParams="$drdbVersion: String!, $cmtVersion: String!"
+      onExtendVariables={onExtendVariables}
+    >
+      {(props) => (
+        <SeqReports
+          cmtVersion={config?.cmtVersion}
+          output={output}
+          match={match}
+          {...props}
+        />
+      )}
+    </SeqAnalysisLayout>
+  );
+};
 
 interface WrapperProps {
   router: any;

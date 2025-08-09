@@ -40,7 +40,7 @@ export default function TabularReportByReadsContainer({
   const [config, isConfigPending] = ConfigContext.use();
 
   const handleExtendVariables = useExtendVariables({
-    config,
+    config: config as Record<string, any>,
     match
   });
 
@@ -51,7 +51,7 @@ export default function TabularReportByReadsContainer({
   });
 
   const client = useApolloClient({
-    config,
+    config: config as Record<string, any>,
     skip: isConfigPending || isPending,
     payload: allSeqReadsWithParams
   });
@@ -61,28 +61,35 @@ export default function TabularReportByReadsContainer({
     [children]
   );
 
-  if (isConfigPending || isPending) {
+  if (isConfigPending || isPending || !config || !allSeqReadsWithParams) {
     return null;
   }
 
-  return <SeqReadsAnalysisLayout
-   query={getQuery(curSubOptions)}
-   client={client}
-   allSequenceReads={allSeqReadsWithParams}
-   currentSelected={{index: 0}}
-   renderPartialResults={false}
-   lazyLoad={false}
-   extraParams={getExtraParams(curSubOptions)}
-   onExtendVariables={handleExtendVariables}>
-    {props => (
-      <SeqTabularReports
-       config={config}
-       children={children}
-       onFinish={onFinish}
-       patternsTo={patternsTo}
-       {...props} />
-    )}
-  </SeqReadsAnalysisLayout>;
+  const firstReadsName =
+    allSeqReadsWithParams[0]?.name || 'Reads 1';
+
+  return (
+    <SeqReadsAnalysisLayout
+      query={getQuery(curSubOptions)}
+      client={client}
+      allSequenceReads={allSeqReadsWithParams as any[]}
+      currentSelected={{index: 0, name: firstReadsName}}
+      renderPartialResults={false}
+      lazyLoad={false}
+      extraParams={getExtraParams(curSubOptions)}
+      onExtendVariables={handleExtendVariables}
+    >
+      {(props) => (
+        <SeqTabularReports
+          config={config}
+          children={children}
+          onFinish={onFinish}
+          patternsTo={patternsTo}
+          {...props}
+        />
+      )}
+    </SeqReadsAnalysisLayout>
+  );
 
 }
 

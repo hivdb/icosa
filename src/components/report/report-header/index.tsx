@@ -1,5 +1,6 @@
 import React from 'react';
 import style from './style.module.scss';
+import {ObservePayload} from '../../../utils/use-scroll-observer';
 
 /**
  * Highlight the first word of a section title.
@@ -72,16 +73,6 @@ function ReportHeader({
       <HLFirstWord index={index}>{name}</HLFirstWord>
     </header>
   );
-}
-
-/** Payload used when observing or disconnecting a header. */
-export interface ObservePayload {
-  /** Section name. */
-  name: string;
-  /** Zero-based index. */
-  index: number;
-  /** Parent DOM node of the header. */
-  node: HTMLElement | null;
 }
 
 /** Props for {@link ReportHeader}. */

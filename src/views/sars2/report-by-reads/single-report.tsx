@@ -22,6 +22,7 @@ import {
 } from '../format-date';
 
 import style from '../style.module.scss';
+import {ObservePayload} from '../../../utils/use-scroll-observer';
 
 interface CoveragesInput {
   allReads: Array<{gene: string; position: number; totalReads: number}>;
@@ -59,15 +60,21 @@ interface SingleSeqReadsReportProps {
   /** Index of the sample. */
   index: number;
   /** Intersection observer callback. */
-  onObserve: (el: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
   /** Intersection observer disconnect callback. */
-  onDisconnect: (el: Element) => void;
+  onDisconnect: (payload: ObservePayload) => void;
 }
 
 /**
  * Render a single sequence read analysis report.
  */
-function SingleSeqReadsReport({
+/**
+ * Render a single sequence read analysis report.
+ *
+ * @param props - {@link SingleSeqReadsReportProps} describing the report.
+ * @returns JSX element rendering read analysis details.
+ */
+const SingleSeqReadsReport: React.FC<SingleSeqReadsReportProps> = ({
   cmtVersion,
   antibodies,
   drdbLastUpdate,
@@ -78,7 +85,7 @@ function SingleSeqReadsReport({
   index,
   onObserve,
   onDisconnect
-}: SingleSeqReadsReportProps): JSX.Element {
+}: SingleSeqReadsReportProps): JSX.Element => {
 
   const {
     strain: {display: strain} = {},
@@ -158,8 +165,7 @@ function SingleSeqReadsReport({
       </> : null}
     </article>
   );
-
-}
+};
 
 export default React.memo(
   SingleSeqReadsReport,

@@ -9,6 +9,7 @@ import {
   RefsSection,
   RefContextWrapper
 } from '../../../components/report';
+import {ObservePayload} from '../../../utils/use-scroll-observer';
 
 import SARS2MutComments from '../../../components/sars2-mutation-comments';
 import {
@@ -32,14 +33,17 @@ interface SingleSequenceReportProps {
   sequenceResult?: any;
   output: string;
   index: number;
-  onObserve: (el: Element) => void;
-  onDisconnect?: (el: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect?: (payload: ObservePayload) => void;
 }
 
 /**
  * Render a single uploaded sequence analysis report.
+ *
+ * @param props - {@link SingleSequenceReportProps} describing the report.
+ * @returns JSX element of the sequence report.
  */
-function SingleSequenceReport({
+const SingleSequenceReport: React.FC<SingleSequenceReportProps> = ({
   cmtVersion,
   drdbLastUpdate,
   antibodies,
@@ -49,7 +53,7 @@ function SingleSequenceReport({
   index,
   onObserve,
   onDisconnect
-}: SingleSequenceReportProps): JSX.Element {
+}: SingleSequenceReportProps): JSX.Element => {
 
   const {
     alignedGeneSequences,
@@ -119,8 +123,7 @@ function SingleSequenceReport({
       </RefContextWrapper>
     </article>
   );
-
-}
+};
 
 export default React.memo(
   SingleSequenceReport,

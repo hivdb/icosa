@@ -40,14 +40,14 @@ export interface SequenceAnalysisContainerProps {
  * @param props - {@link SequenceAnalysisContainerProps} for the component.
  * @returns React element wrapping {@link SeqAnalysisQuery}.
  */
-export default function SequenceAnalysisContainer({
+const SequenceAnalysisContainer: React.FC<SequenceAnalysisContainerProps> = ({
   progressText = (progress, total) =>
     `Running sequence analysis... (${progress}/${total})`,
   onExtendVariables = (vars) => vars,
   renderPartialResults = true,
   quickLoadLimit = 2,
   ...props
-}: SequenceAnalysisContainerProps): JSX.Element {
+}: SequenceAnalysisContainerProps) => {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.debug('render SequenceAnalysisContainer', new Date().getTime());
@@ -64,29 +64,30 @@ export default function SequenceAnalysisContainer({
     children,
   } = props;
 
-  return (
-    <SeqAnalysisQuery
-      query={query}
-      lazyLoad={lazyLoad}
-      quickLoadLimit={quickLoadLimit}
-      renderPartialResults={renderPartialResults}
-      currentSelected={currentSelected}
-      showProgressBar={!renderPartialResults}
-      extraParams={extraParams}
-      client={client}
-      progressText={progressText}
-      onExtendVariables={onExtendVariables}
-      sequences={sequences}
-      maxPerRequest={maxPerRequest}
-      {...calcInitOffsetLimit({
-        size: sequences.length,
-        curIndex: currentSelected.index,
-        lazyLoad,
-        quickLoadLimit,
-      })}
-    >
-      {children}
-    </SeqAnalysisQuery>
-  );
-}
+    return (
+      <SeqAnalysisQuery
+        query={query}
+        lazyLoad={lazyLoad}
+        quickLoadLimit={quickLoadLimit}
+        renderPartialResults={renderPartialResults}
+        currentSelected={currentSelected}
+        showProgressBar={!renderPartialResults}
+        extraParams={extraParams}
+        client={client}
+        progressText={progressText}
+        onExtendVariables={onExtendVariables}
+        sequences={sequences}
+        maxPerRequest={maxPerRequest}
+        {...calcInitOffsetLimit({
+          size: sequences.length,
+          curIndex: currentSelected.index,
+          lazyLoad,
+          quickLoadLimit,
+        })}
+      >
+        {children}
+      </SeqAnalysisQuery>
+    );
+  };
 
+export default SequenceAnalysisContainer;
