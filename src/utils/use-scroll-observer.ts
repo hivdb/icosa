@@ -26,10 +26,10 @@ interface Options {
   afterLoadNewItem: () => void;
 }
 
-interface ObservePayload {
+export interface ObservePayload {
   name: string;
   index: number;
-  node: HTMLElement;
+  node: HTMLElement | null;
 }
 
 /**
@@ -95,7 +95,7 @@ export default function useScrollObserver({
       self.current.previousYs[name] = currentY;
       self.current.previousRatios[name] = currentRatio;
       return {
-        node: self.current.observingNodes[name],
+        node: self.current.observingNodes[name] || null,
         direction,
         name,
         index
@@ -117,7 +117,7 @@ export default function useScrollObserver({
       let observedNodes = entries
         .map(getNodeAndDirection)
         .filter(({direction}) => !!direction) as Array<{
-          node: HTMLElement;
+          node: HTMLElement | null;
           name: string;
           index: number;
           direction: string | null;
@@ -130,7 +130,9 @@ export default function useScrollObserver({
 
       for (const {node, name} of observedNodes) {
         await asyncLoadNewItem(name, /* updateCurrentSelected = */true);
-        node.dataset.scrollObserveLoaded = 'yes';
+        if (node) {
+          node.dataset.scrollObserveLoaded = 'yes';
+        }
         break;
       }
       afterLoadNewItem();
@@ -213,6 +215,9 @@ export default function useScrollObserver({
 
   const onObserve = React.useCallback(
     ({name, index, node}: ObservePayload) => {
+      if (!node) {
+        return;
+      }
       node.dataset.scrollObserveName = name;
       node.dataset.scrollObserveIndex = String(index);
       self.current.observingNodes[name] = node;
@@ -224,7 +229,10 @@ export default function useScrollObserver({
   );
 
   const onDisconnect = React.useCallback(
-    ({node}: {node: HTMLElement}) => {
+    ({node}: ObservePayload) => {
+      if (!node) {
+        return;
+      }
       const name = node.dataset.scrollObserveName as string;
       delete self.current.observingNodes[name];
     },

@@ -35,13 +35,13 @@ interface SequenceReportsProps {
   currentSelected?: any;
   antibodies?: any[];
   sequenceAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
  * Render sequence analysis reports with pagination.
  */
-function SequenceReports({
+const SequenceReports: React.FC<SequenceReportsProps> = ({
   output,
   antibodies = [],
   cmtVersion,
@@ -52,7 +52,7 @@ function SequenceReports({
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}: SequenceReportsProps): JSX.Element {
+}: SequenceReportsProps) => {
 
   const {
     onObserve,
@@ -104,7 +104,7 @@ function SequenceReports({
       ))}
     </main>
   </>;
-}
+};
 
 export default SequenceReports;
 

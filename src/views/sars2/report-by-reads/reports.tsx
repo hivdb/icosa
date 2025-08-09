@@ -52,13 +52,13 @@ interface SeqReadsReportsProps {
   /** Analysis results for each sequence read. */
   sequenceReadsAnalysis: any[];
   /** Callback to fetch additional results. */
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
  * Render sequence reads analysis reports with pagination.
  */
-function SeqReadsReports({
+const SeqReadsReports: React.FC<SeqReadsReportsProps> = ({
   output,
   cmtVersion,
   antibodies = [],
@@ -70,7 +70,7 @@ function SeqReadsReports({
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother
-}: SeqReadsReportsProps): JSX.Element {
+}: SeqReadsReportsProps) => {
 
   const numSeqs = allSequenceReads.length;
 
@@ -138,7 +138,7 @@ function SeqReadsReports({
       ))}
     </main>
   </>;
-}
+};
 
 export default SeqReadsReports;
 

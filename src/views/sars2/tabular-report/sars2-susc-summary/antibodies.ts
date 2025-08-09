@@ -1,10 +1,13 @@
 import nestedGet from 'lodash/get';
-import {
-  getAntibodyColumns,
-  buildPayload
-} from '../../../../components/susc-summary/ab-susc-summary';
+import {getAntibodyColumns, buildPayload} from '../../../../components/susc-summary/ab-susc-summary';
 
-function extractFold(item: any) {
+/**
+ * Format fold values for display.
+ *
+ * @param item - fold object from DRDB.
+ * @returns Formatted fold string or `null` when missing.
+ */
+function extractFold(item: any): string | null {
   if (!item) {
     return null;
   }
@@ -14,23 +17,44 @@ function extractFold(item: any) {
   return median >= 1000 ? '≥1000' : `${median.toFixed(1)}`;
 }
 
-function extractCumuCount(item: any) {
+/**
+ * Extract cumulative count from a fold entry.
+ *
+ * @param item - fold object from DRDB.
+ * @returns Cumulative count or `null` when unavailable.
+ */
+function extractCumuCount(item: any): number | null {
   if (!item) {
     return null;
   }
   return item.cumulativeCount;
 }
 
-function joinMutations(mutations: any[]) {
+/**
+ * Join mutation texts with commas.
+ *
+ * @param mutations - list of mutation objects.
+ * @returns Joined mutation string or 'None' when empty.
+ */
+function joinMutations(mutations: any[]): string {
   return mutations.map(({text}) => text).join(', ') || 'None';
 }
 
+/**
+ * Build antibody susceptibility table rows.
+ *
+ * @param seqName - sequence name.
+ * @param itemsByVariantOrMutations - grouped susceptibility items.
+ * @param drdbLastUpdate - DRDB version string.
+ * @param antibodyColumns - antibodies used to generate columns.
+ * @returns Array of row objects for CSV generation.
+ */
 function buildAbTable({
   seqName,
   itemsByVariantOrMutations,
   drdbLastUpdate,
   antibodyColumns
-}: any) {
+}: any): any[] {
   const rows: any[] = [];
   for (const {
     mutations,
@@ -47,9 +71,9 @@ function buildAbTable({
       'Mutations': joinMutations(mutations),
       'Variant': variant ? variant.name : 'NA',
       'Additional Mutations':
-        variant ? joinMutations(variantMissingMutations) : 'NA',
+        variant ? joinMutations(variantMissingMutations ?? []) : 'NA',
       'Missing Mutations':
-        variant ? joinMutations(variantExtraMutations) : 'NA',
+        variant ? joinMutations(variantExtraMutations ?? []) : 'NA',
       'References': references.map(({DOI, URL}: any) => DOI || URL).join(' ; '),
       'Version': drdbLastUpdate,
       'Top Match': displayOrder === 0 ? 'Yes' : 'No'
@@ -69,6 +93,15 @@ function buildAbTable({
   return rows;
 }
 
+/**
+ * Generate antibody susceptibility summary tables.
+ *
+ * @param drdbLastUpdate - DRDB version string.
+ * @param antibodies - antibody definitions.
+ * @param sequenceReadsAnalysis - analysis results from reads.
+ * @param sequenceAnalysis - analysis results from sequences.
+ * @returns Array of tabular report objects for antibodies.
+ */
 export default function abSuscSummary({
   drdbLastUpdate,
   antibodies,
