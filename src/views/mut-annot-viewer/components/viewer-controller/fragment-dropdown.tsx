@@ -30,15 +30,13 @@ export default function FragmentDropdown({
     [fragmentOptions]
   );
 
-  const curValue = React.useMemo(
-    () => {
-      const [posStart, posEnd] = seqFragment;
-      return fragmentOptions.find(({seqFragment: [s, e]}) => (
-        s === posStart && e === posEnd
-      )).name;
-    },
-    [fragmentOptions, seqFragment]
-  );
+  const curValue = React.useMemo(() => {
+    const [posStart, posEnd] = seqFragment;
+    const match = fragmentOptions.find(({seqFragment: [s, e]}) => (
+      s === posStart && e === posEnd
+    ));
+    return match ? match.name : fragmentOptions[0]?.name;
+  }, [fragmentOptions, seqFragment]);
 
   const handleChange = React.useCallback(
     ({value}: {value: string}) => onChange(value),
@@ -51,7 +49,6 @@ export default function FragmentDropdown({
       <Dropdown
        value={curValue}
        options={options}
-       name={`display-region`}
        onChange={handleChange} />
     </div>
   );

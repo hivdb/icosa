@@ -12,7 +12,7 @@ import type {
 import style from './style.module.scss';
 import SizeController from './size-controller';
 import FragmentDropdown from './fragment-dropdown';
-import AnnotCategory from './annot-category';
+import AnnotCategoryComp from './annot-category';
 import FootnoteOpener from './footnote-opener';
 
 /** Props for {@link ViewerController}. */
@@ -55,7 +55,7 @@ export default function ViewerController({
   );
 
   const handleCurAnnotNamesChange = React.useCallback(
-    catName => newCurAnnotNames => {
+    (catName: string) => (newCurAnnotNames: string[]) => {
       const curAnnotNames = curAnnotNameLookup[catName];
       if (newCurAnnotNames !== curAnnotNames) {
         curAnnotNameLookup[catName] = newCurAnnotNames;
@@ -79,7 +79,7 @@ export default function ViewerController({
          seqFragment={seqFragment}
          onChange={onSeqFragmentChange} />
         {annotCategories.map((cat, idx) => (
-          <AnnotCategory
+          <AnnotCategoryComp
            key={idx}
            annotCategory={cat}
            curAnnotNames={curAnnotNameLookup[cat.name]}

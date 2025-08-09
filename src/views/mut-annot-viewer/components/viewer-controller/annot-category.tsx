@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import Dropdown from 'react-dropdown';
 import CheckboxInput from '../../../../components/checkbox-input';
 
@@ -66,7 +65,7 @@ export default function AnnotCategory({
   );
 
   const handleAdd = React.useCallback(
-    ({value}) => {
+    ({value}: {value: string}) => {
       const {multiSelect} = annotCategory;
       if (multiSelect) {
         if (curAnnotNames.some(name => name === value)) {
@@ -83,7 +82,7 @@ export default function AnnotCategory({
   );
 
   const handleRemove = React.useCallback(
-    evt => {
+    (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       const {currentTarget: {dataset: {annotName}}} = evt;
       const newAnnotNames = curAnnotNames.filter(
@@ -97,7 +96,7 @@ export default function AnnotCategory({
   );
 
   const handleToggle = React.useCallback(
-    evt => {
+    (evt: React.MouseEvent<HTMLButtonElement>) => {
       if (curAnnotNames && curAnnotNames.length) {
         onChange([]);
       }
@@ -109,7 +108,7 @@ export default function AnnotCategory({
   );
 
   const handleSelectAll = React.useCallback(
-    evt => {
+    (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       onChange(options.map(({value}) => value));
     },
@@ -117,7 +116,7 @@ export default function AnnotCategory({
   );
 
   const handleRemoveAll = React.useCallback(
-    evt => {
+    (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       onChange([]);
     },
@@ -134,7 +133,7 @@ export default function AnnotCategory({
   } = annotCategory;
 
   const displayName = display ? display : catName;
-  let value = null;
+  let value: string | undefined;
   if (!multiSelect && curAnnotNames && curAnnotNames.length) {
     value = curAnnotNames[0];
   }
@@ -181,7 +180,6 @@ export default function AnnotCategory({
           <Dropdown
            value={value}
            options={options}
-           name={`annot-dropdown-${catName}`}
            placeholder={`Select ${displayName}...`}
            className={style['dropdown-annotations']}
            onChange={handleAdd} /> : null}

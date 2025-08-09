@@ -17,7 +17,7 @@ interface LegendProps {
   /** Additional CSS class names */
   className?: string;
   /** Sequence fragment range represented as [start, end] */
-  seqFragment: number[];
+  seqFragment: [number, number];
   /** Available annotation categories */
   annotCategories: AnnotCategory[];
   /** Lookup for currently selected annotation names */
@@ -40,18 +40,15 @@ export default function Legend({
   annotations
 }: LegendProps) {
 
-  const colorBoxAnnotDef = React.useMemo(
-    () => {
-      const catName = (
-        annotCategories
-          .find(({annotStyle}) => annotStyle === 'colorBox')
-          .name
-      );
-      const annotName = curAnnotNameLookup[catName][0];
-      return annotations.find(({name}) => name === annotName);
-    },
-    [curAnnotNameLookup, annotCategories, annotations]
-  );
+  const colorBoxAnnotDef = React.useMemo(() => {
+    const category = annotCategories.find(({annotStyle}) => annotStyle === 'colorBox');
+    if (!category) {
+      return undefined;
+    }
+    const catName = category.name;
+    const annotName = curAnnotNameLookup[catName][0];
+    return annotations.find(({name}) => name === annotName);
+  }, [curAnnotNameLookup, annotCategories, annotations])!;
 
   const circleInBoxAnnotDef = React.useMemo(
     () => {

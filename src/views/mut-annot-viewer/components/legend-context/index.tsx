@@ -6,7 +6,7 @@ import React from 'react';
  */
 
 interface LegendContextValue {
-  colorBoxAnnotColorLookup: Record<string, string>;
+  colorBoxAnnotColorLookup: Record<string, {stroke?: string; bg?: string}>;
   underscoreAnnotColorLookup: Record<string, string>;
   aminoAcidsCatColorLookup: Record<string, string>;
   /** Update color lookup tables. */
@@ -28,7 +28,7 @@ export default function LegendContext({children}: {children?: React.ReactNode}) 
   const [
     colorBoxAnnotColorLookup,
     setColorBoxAnnotColorLookup
-  ] = React.useState({});
+  ] = React.useState<Record<string, {stroke?: string; bg?: string}> >({});
 
   const [
     underscoreAnnotColorLookup,
@@ -45,7 +45,7 @@ export default function LegendContext({children}: {children?: React.ReactNode}) 
       colorBoxAnnotColorLookup,
       underscoreAnnotColorLookup,
       aminoAcidsCatColorLookup
-    }) => {
+    }: Partial<Omit<LegendContextValue, 'onUpdate'>>) => {
       if (colorBoxAnnotColorLookup) {
         setColorBoxAnnotColorLookup(colorBoxAnnotColorLookup);
       }

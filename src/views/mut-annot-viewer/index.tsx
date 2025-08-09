@@ -2,6 +2,7 @@ import React, {Suspense, lazy} from 'react';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
+import type {FragmentOption} from './prop-types';
 
 import CustomColors from '../../components/custom-colors';
 import {NewWindowRoute} from '../../components/new-window';
@@ -15,6 +16,7 @@ const ViewerFooter = lazy(() => import('./components/viewer-footer'));
 interface PresetConfig {
   name: string;
   display: React.ReactNode;
+  annotationLoader: () => Promise<{refSequence: string} & AnnotationData>;
   [key: string]: any;
 }
 
@@ -24,6 +26,16 @@ interface RoutesOptions {
   colors?: Record<string, string>;
   className?: string;
   refDataLoader?: () => Promise<any>;
+}
+
+interface AnnotationData {
+  fragmentOptions: FragmentOption[];
+  proteinViews: any[];
+  annotCategories: any[];
+  annotations: any[];
+  positions: any[];
+  citations: any[];
+  comments: {data: any[]; references: string};
 }
 
 /**
@@ -48,15 +60,15 @@ export default function mutAnnotViewerRoutes({
 
   return (
     <Route path={pathPrefix} Component={wrapper}>
-      <Route render={({props}) => <PresetSelection {...props} options={presetOptions} />} />
+      <Route render={({props}) => <PresetSelection {...(props as any)} options={presetOptions} />} />
       {presets.map(({name, ...preset}, idx) => (
         <Route
           key={idx}
           path={`${name}/`}
           render={({props}) => (
             <MutAnnotViewer
-              {...props}
-              preset={{name, ...preset}}
+              {...(props as any)}
+              preset={{name, ...preset} as any}
               refDataLoader={refDataLoader}
             />
           )}
@@ -73,7 +85,11 @@ export default function mutAnnotViewerRoutes({
     </Route>
   );
 
-  function wrapper(props: any) {
+  /**
+   * Top-level wrapper applied to all routes ensuring required context providers
+   * are in place while data is lazily loaded.
+   */
+  function wrapper(props: any): React.ReactElement {
     return (
       <Suspense fallback={<Loader />}>
         <CustomColors {...props} className={wrapperClassName} colors={colors} />

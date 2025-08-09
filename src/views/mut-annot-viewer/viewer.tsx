@@ -7,8 +7,10 @@ import ViewerController from './components/viewer-controller';
 import ViewerLegend from './components/viewer-legend';
 import ViewerFooter, {useFootnote} from './components/viewer-footer';
 import {usePositionLookup} from './utils';
+import type {Citation} from './prop-types';
 
 import style from './style.module.scss';
+import type {SeqViewerSize} from './prop-types';
 
 interface Location {
   pathname?: string;
@@ -21,7 +23,7 @@ interface Router {
 
 interface FragmentOption {
   name: string;
-  seqFragment: number[];
+  seqFragment: [number, number];
 }
 
 interface AnnotationData {
@@ -54,8 +56,8 @@ function useSeqFragment({
   fragmentOptions: FragmentOption[];
   location: Location;
   router: Router;
-}): [number[], (region: string) => void] {
-  const defaultSeqFragment = React.useMemo(
+}): [[number, number], (region: string) => void] {
+  const defaultSeqFragment = React.useMemo<[number, number]>(
     () =>
       (
         fragmentOptions.find(({name}) => name === region) ||
@@ -64,7 +66,7 @@ function useSeqFragment({
     [fragmentOptions, region]
   );
 
-  const [seqFragment, _setSeqFragment] = React.useState<number[]>(defaultSeqFragment);
+  const [seqFragment, _setSeqFragment] = React.useState<[number, number]>(defaultSeqFragment);
 
   const setSeqFragment = React.useCallback(
     (reg: string) => {
@@ -116,23 +118,23 @@ function useCurAnnotNameLookup({
  *
  * @returns State tuple of the size and its setter.
  */
-function useSeqViewerSize(): [string, (size: string) => void] {
+export function useSeqViewerSize(): [SeqViewerSize, (size: SeqViewerSize) => void] {
   const KEY_SEQVIEWER = '--sierra-seqviewer-size';
-  const defaultSeqViewerSize = React.useMemo(() => {
-    let size = window.localStorage.getItem(KEY_SEQVIEWER) as string | null;
+  const defaultSeqViewerSize = React.useMemo<SeqViewerSize>(() => {
+    let size = window.localStorage.getItem(KEY_SEQVIEWER) as SeqViewerSize | null;
     if (!['large', 'middle', 'small'].includes(size ?? '')) {
       size = 'middle';
     }
-    return size as string;
+    return size as SeqViewerSize;
   }, []);
 
-  const saveSeqViewerSize = React.useCallback((size: string) => {
+  const saveSeqViewerSize = React.useCallback((size: SeqViewerSize) => {
     window.localStorage.setItem(KEY_SEQVIEWER, size);
   }, []);
 
-  const [seqViewerSize, _setSeqViewerSize] = React.useState<string>(defaultSeqViewerSize);
+  const [seqViewerSize, _setSeqViewerSize] = React.useState<SeqViewerSize>(defaultSeqViewerSize);
   const setSeqViewerSize = React.useCallback(
-    (size: string) => {
+    (size: SeqViewerSize) => {
       _setSeqViewerSize(size);
       saveSeqViewerSize(size);
     },
@@ -188,6 +190,17 @@ function MutAnnotViewerInner({
 
   const [selectedPositions, setSelectedPositions] = React.useState<number[]>([]);
 
+  const citationLookup = React.useMemo(
+    () => citations.reduce(
+      (acc, c) => ({
+        ...acc,
+        [`${c.citationId}.${c.sectionId}`]: c
+      }),
+      {} as Record<string, Citation>
+    ),
+    [citations]
+  );
+
   const [footnote, hasFootnote, showFootnote, openFn, closeFn] = useFootnote({
     selectedPositions,
     commentLookup,
@@ -199,7 +212,6 @@ function MutAnnotViewerInner({
       <section className={style.viewer}>
         <div className={style['controller-container']}>
           <ViewerController
-            sequence={refSeq}
             hasFootnote={hasFootnote}
             onSeqViewerSizeChange={setSeqViewerSize}
             onSeqFragmentChange={setSeqFragment}
@@ -229,14 +241,12 @@ function MutAnnotViewerInner({
               curAnnotNameLookup,
               annotations,
               positionLookup,
-              citations,
               selectedPositions
             }
           }
         />
         <div className={style['legend-container']}>
           <ViewerLegend
-            sequence={refSeq}
             className={style['legend']}
             {
               ...{
@@ -245,8 +255,7 @@ function MutAnnotViewerInner({
                 curAnnotNameLookup,
                 annotations,
                 positionLookup,
-                citations,
-                selectedPositions
+                citations: citationLookup
               }
             }
           />
