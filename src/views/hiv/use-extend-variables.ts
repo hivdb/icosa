@@ -50,7 +50,7 @@ export default function useExtendVariables({
           }
         }
       })();
-      return () => mounted = false;
+      return () => { mounted = false; };
     },
     [match.location?.state, getSubmitState]
   );

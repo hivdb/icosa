@@ -104,6 +104,7 @@
   },
   "devDependencies": {
     "@types/pako": "^2.0.3",
+    "canvas": "^3.1.2",
     "jsdom": "26.1.0",
     "sass-embedded": "^1.89.2",
     "vitest": "3.2.4"

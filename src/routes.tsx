@@ -1,4 +1,3 @@
-import React from 'react';
 import {Route} from 'found';
 
 import Layout from './components/layout';

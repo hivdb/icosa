@@ -61,7 +61,9 @@ export default function MarkdownDebugger() {
       escapeHtml={false}
       tables={tableData}
       refDataLoader={RefDataLoader}
-      collapsableLevels={['h3']}
+      // TODO: correct typings when Markdown collapsable levels support string identifiers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      collapsableLevels={['h3'] as any}
       genomeMaps={genomeMaps}
     >
       {testMd}

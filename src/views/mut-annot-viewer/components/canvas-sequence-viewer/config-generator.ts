@@ -78,7 +78,6 @@ export default class ConfigGenerator {
       baseSizePixel
     });
     this.initGridConfig({
-      baseSizePixel,
       canvasWidthPixel,
       seqFragment
     });
@@ -91,11 +90,9 @@ export default class ConfigGenerator {
       underscoreAnnotNames
     });
     this.initCoordConfig({
-      baseSizePixel,
-      underscoreAnnotNames,
-      aminoAcidsAnnotPositions
+      baseSizePixel
     });
-    this.initColorConfig({});
+    this.initColorConfig();
   }
 
   getHash() {
@@ -124,9 +121,14 @@ export default class ConfigGenerator {
     );
   }
 
+  /**
+   * Establish base measurements for sequence viewer elements.
+   *
+   * @param baseSizePixel - Base pixel unit for layout sizing.
+   */
   initSizeConfig({
     baseSizePixel
-  }) {
+  }: {baseSizePixel: number}) {
     const posItemSizePixel = baseSizePixel;
     const horizontalMarginPixel = baseSizePixel / 5;
     const underscoreAnnotHeightPixel = baseSizePixel / 8;
@@ -163,7 +165,13 @@ export default class ConfigGenerator {
     });
   }
 
-  initGridConfig({canvasWidthPixel, seqFragment}) {
+  /**
+   * Initialize grid dimensions and related counts.
+   *
+   * @param canvasWidthPixel - Width of the drawing canvas in pixels.
+   * @param seqFragment - Inclusive sequence fragment [start, end].
+   */
+  initGridConfig({canvasWidthPixel, seqFragment}: {canvasWidthPixel: number; seqFragment: [number, number]}) {
     const {
       posItemOuterWidthPixel
     } = this;
@@ -180,10 +188,16 @@ export default class ConfigGenerator {
     });
   }
 
+  /**
+   * Calculate offsets for underscore and amino-acid annotations.
+   *
+   * @param underscoreAnnotLocations - Location matrix for underscore annotations.
+   * @param aminoAcidsAnnotPositions - Annotation positions for amino acids.
+   */
   initAnnotsConfig({
     underscoreAnnotLocations,
     aminoAcidsAnnotPositions
-  }) {
+  }: {underscoreAnnotLocations: {matrix?: unknown[]}; aminoAcidsAnnotPositions: Record<number, unknown>[]}) {
     const {
       numCols,
       numRows,
@@ -207,13 +221,13 @@ export default class ConfigGenerator {
       const posEnd = (r + 1) * numCols + absPosStart - 1;
       const annotHeightPerPos = new Array(numCols).fill(0);
       for (let pos = posStart; pos <= posEnd; pos ++) {
-        const posLocs = usLocMatrix[pos - 1];
-        if (posLocs && posLocs.length > 0) {
+        const posLocs = (usLocMatrix[pos - 1] as any[]) || [];
+        if (posLocs.length > 0) {
           annotHeightPerPos[pos - posStart] += posLocs.length * usOuterSize;
         }
       }
       for (const positions of aminoAcidsAnnotPositions) {
-        for (const [pos,, aas] of Object.values(positions)) {
+        for (const [pos,, aas] of Object.values(positions) as Array<[number, unknown, any[]]>) {
           if (pos < posStart) {
             continue;
           }
@@ -234,7 +248,13 @@ export default class ConfigGenerator {
     });
   }
 
-  initCanvasConfig({seqFragment, underscoreAnnotNames}) {
+  /**
+   * Compute overall canvas dimensions.
+   *
+   * @param seqFragment - Inclusive sequence fragment [start, end].
+   * @param underscoreAnnotNames - List of underscore annotation names.
+   */
+  initCanvasConfig({seqFragment, underscoreAnnotNames}: {seqFragment: [number, number]; underscoreAnnotNames: string[]}) {
     const {
       numCols,
       posItemOuterHeightPixel,
@@ -253,16 +273,21 @@ export default class ConfigGenerator {
         verticalMarginPixel +
         Math.ceil(seqFragmentLen / numCols) *
         posItemOuterHeightPixel +
-        underscoreAnnotOffsetYPixelPerRow.reduce((sum, px) => sum + px, 0) +
+        underscoreAnnotOffsetYPixelPerRow.reduce((sum: number, px: number) => sum + px, 0) +
         verticalMarginPixel +
         underscoreAnnotNames.length * underscoreAnnotOuterSize
       )
     });
   }
 
+  /**
+   * Establish coordinate offsets for each grid row.
+   *
+   * @param baseSizePixel - Base pixel size for layout calculations.
+   */
   initCoordConfig({
     baseSizePixel
-  }) {
+  }: {baseSizePixel: number}) {
     const {
       numRows,
       verticalMarginPixel: vMargin,
@@ -325,7 +350,15 @@ export default class ConfigGenerator {
     });
   }
 
-  posRange2CoordPairs = (posStart, posEnd, locIndex) => {
+  /**
+   * Convert a position range into start/end coordinate pairs.
+   *
+   * @param posStart - Start position.
+   * @param posEnd - End position.
+   * @param locIndex - Annotation location index.
+   * @returns Array of coordinate pair objects.
+   */
+  posRange2CoordPairs = (posStart: number, posEnd: number, locIndex: number) => {
     const {
       numCols,
       posItemSizePixel,
@@ -369,7 +402,14 @@ export default class ConfigGenerator {
     return coordPairs;
   };
 
-  posAA2Coord = (pos, aaOffsetIndex) => {
+  /**
+   * Resolve coordinates for an amino-acid annotation at a position.
+   *
+   * @param pos - Sequence position.
+   * @param aaOffsetIndex - Offset index of the amino acid.
+   * @returns Coordinate object.
+   */
+  posAA2Coord = (pos: number, aaOffsetIndex: number) => {
     const {
       posItemSizePixel,
       underscoreAnnotLocations,
@@ -396,7 +436,13 @@ export default class ConfigGenerator {
     };
   };
 
-  pos2Coord = (pos) => {
+  /**
+   * Map a sequence position to x/y coordinates.
+   *
+   * @param pos - Sequence position.
+   * @returns Coordinate object or empty object if out of range.
+   */
+  pos2Coord = (pos: number): {x?: number; y?: number} => {
     const [posStart, posEnd] = this.seqFragment;
     if (!pos || pos < posStart || pos > posEnd) {
       return {};
@@ -425,10 +471,13 @@ export default class ConfigGenerator {
     const usHeight = underscoreAnnotHeightPixel + underscoreAnnotMarginPixel;
 
     const pos = this.coord2Pos(x, y);
-    const posAnnots = matrix[pos - 1] || [];
-    const {x: baseX, y: baseY} = this.pos2Coord(pos);
+    if (pos == null) {
+      return {};
+    }
+    const posAnnots = (matrix[pos - 1] as string[]) || [];
+    const {x: baseX, y: baseY} = this.pos2Coord(pos) as {x: number; y: number};
     const relY = y - baseY - offsetY;
-    const locIdx = parseInt(relY / usHeight);
+    const locIdx = Math.floor(relY / usHeight);
     if (locIdx >= 0 && locIdx < posAnnots.length) {
       return {
         annotName: posAnnots[locIdx],
@@ -497,17 +546,23 @@ export default class ConfigGenerator {
         lookup = this.circleInBoxPositions;
         break;
       default:
-        return [];
+        return {} as Record<number, unknown>;
     }
     return lookup;
   }
 
+  /**
+   * Retrieve amino-acid annotations for a given position.
+   *
+   * @param pos - Sequence position.
+   * @returns Array of amino acid definitions with colors and offsets.
+   */
   getAnnotatedAAs = (pos: number) => {
     const aaDefs: Array<{aminoAcid: string; offsetPixel: {x: number; y: number}; color: string}> = [];
     let globalIdxOffset = 0;
     const {aminoAcidsOverrideColors} = this;
     for (const lookup of this.aminoAcidsAnnotPositions) {
-      const posDef = lookup[pos];
+      const posDef = lookup[pos] as [number, number, string[]];
       if (!posDef) {
         continue;
       }
@@ -535,7 +590,7 @@ export default class ConfigGenerator {
 
   getColorIndex = (pos: number, annotStyle: string): number | undefined => {
     const lookup = this.getAnnotPosLookup(annotStyle);
-    const posDef = lookup[pos];
+    const posDef = lookup[pos] as [unknown, number, unknown];
     if (posDef) {
       const [, colorIdx] = posDef;
       return colorIdx;

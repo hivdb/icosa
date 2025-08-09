@@ -7,6 +7,6 @@ import useLocation from 'found/useLocation';
  * @returns Array of disabled drug identifiers.
  */
 export default function useDisabledDrugs(): string[] {
-  const { state: { disabledDrugs = [] } = {} } = useLocation<any>();
+  const {state: {disabledDrugs = []} = {}} = useLocation();
   return disabledDrugs as string[];
 }

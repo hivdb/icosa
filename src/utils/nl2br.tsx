@@ -1,4 +1,4 @@
-import React from 'react';
+import type {ReactNode} from 'react';
 
 const newLineRegex = /(\r\n|\n\r|\r|\n)/g;
 
@@ -13,7 +13,7 @@ const newLineRegex = /(\r\n|\n\r|\r|\n)/g;
  * @returns Array of strings and `<br/>` elements representing the original
  * newline boundaries.
  */
-export default function nl2br(text: string): React.ReactNode[] {
+export default function nl2br(text: string): ReactNode[] {
   return text.split(newLineRegex).map((line, idx) => {
     if (newLineRegex.test(line)) {
       return <br key={idx} />;

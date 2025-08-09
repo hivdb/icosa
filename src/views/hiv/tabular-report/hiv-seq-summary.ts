@@ -62,15 +62,15 @@ async function seqSummary({
 }: any): Promise<any[]> {
   const rows = [];
   const {geneDisplay} = config;
-  const mutTypeHeaders = allGenes.reduce(
-    (acc, {name: geneName, drugClasses}) => [
+  const mutTypeHeaders = (allGenes as any[]).reduce(
+    (acc: any, {name: geneName, drugClasses}: any) => [
       ...acc,
-      ...drugClasses.reduce(
-        (acc2, {name: dcName, mutationTypes}) => [
+        ...drugClasses.reduce(
+          (acc2: any, {name: dcName, mutationTypes}: any) => [
           ...acc2,
           ...mutationTypes
-            .filter(mtype => mtype !== 'Other')
-            .map(mtype => mtype === dcName ? mtype : `${dcName} ${mtype}`)
+            .filter((mtype: any) => mtype !== 'Other')
+            .map((mtype: any) => mtype === dcName ? mtype : `${dcName} ${mtype}`)
         ],
         []
       ),
@@ -78,13 +78,13 @@ async function seqSummary({
     ],
     []
   );
-  const allGeneNames = allGenes.map(({name}) => name);
+  const allGeneNames = (allGenes as any[]).map(({name}: any) => name);
 
   const header = [
     'Sequence Name',
     'Genes',
-    ...allGenes.reduce(
-      (acc, {name}) => [
+    ...(allGenes as any[]).reduce(
+      (acc: any, {name}: any) => [
         ...acc,
         `${name} Start`,
         `${name} End`
@@ -97,23 +97,23 @@ async function seqSummary({
     ] : []),
     'NA Mixture Rate (%)',
     ...mutTypeHeaders,
-    ...allGenes.reduce(
-      (acc, {drugClasses}) => [
+    ...(allGenes as any[]).reduce(
+      (acc: any, {drugClasses}: any) => [
         ...acc,
         ...drugClasses
           .filter(
-            ({hasSurveilDrugResistMutations: hasSDRMs}) => hasSDRMs
+            ({hasSurveilDrugResistMutations: hasSDRMs}: any) => hasSDRMs
           )
-          .map(({name}) => `${name} SDRMs`)
+          .map(({name}: any) => `${name} SDRMs`)
       ],
       []
     ),
-    ...allGenes.reduce(
-      (acc, {drugClasses}) => [
+    ...(allGenes as any[]).reduce(
+      (acc: any, {drugClasses}: any) => [
         ...acc,
         ...drugClasses
-          .filter(({hasRxSelectedMutations: hasTSMs}) => hasTSMs)
-          .map(({name}) => `${name} TSMs`)
+          .filter(({hasRxSelectedMutations: hasTSMs}: any) => hasTSMs)
+          .map(({name}: any) => `${name} TSMs`)
       ],
       []
     ),
@@ -166,7 +166,7 @@ async function seqSummary({
       ambiguousMutations,
       apobecMutations
     } = seqResult;
-    let row = {
+    const row: Record<string, unknown> = {
       'Sequence Name': seqName1 || seqName2,
       'Genes': genes
         .filter(({name}) => allGeneNames.includes(name))
@@ -202,12 +202,12 @@ async function seqSummary({
       row['Frame Shifts'] = getObjectText(frameShifts);
       row['Num Frame Shifts'] = `${frameShifts.length}`;
     }
-    for (const {gene: {name: geneName}, mutationsByTypes} of geneDRs) {
+    for (const {gene: {name: geneName}, mutationsByTypes} of geneDRs as any[]) {
       for (const {
         drugClass,
         mutationType,
         mutations
-      } of mutationsByTypes) {
+      } of mutationsByTypes as any[]) {
         let mutTypeHdr;
         if (drugClass) {
           if (drugClass.name === mutationType) {
@@ -229,16 +229,16 @@ async function seqSummary({
       lastAA,
       sdrms,
       tsms
-    } of geneSeqs1 || geneSeqs2) {
+    } of (geneSeqs1 || geneSeqs2) as any[]) {
       row[`${geneText} Start`] = firstAA;
       row[`${geneText} End`] = lastAA;
-      const {drugClasses} = allGenes.find(({name}) => geneText === name);
-      for (const {name: dcText} of drugClasses) {
+      const {drugClasses} = allGenes.find(({name}: {name: string}) => geneText === name)!;
+      for (const {name: dcText} of drugClasses as Array<{name: string}>) {
         row[`${dcText} SDRMs`] = getObjectTextNoGene(
-          sdrms.filter(({SDRMDrugClass: dc}) => dcText === dc?.name)
+          sdrms.filter(({SDRMDrugClass: dc}: any) => dcText === dc?.name)
         );
         row[`${dcText} TSMs`] = getObjectTextNoGene(
-          tsms.filter(({TSMDrugClass: dc}) => dcText === dc?.name)
+          tsms.filter(({TSMDrugClass: dc}: any) => dcText === dc?.name)
         );
       }
     }
