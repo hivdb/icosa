@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -34,14 +34,16 @@ function ReportByReadsContainer({
   output,
   allSequenceReads,
   currentSelected
-}: ReportByReadsContainerProps): JSX.Element {
+}: ReportByReadsContainerProps): ReactElement | null {
+  if (!config) {
+    return null;
+  }
   const client = useApolloClient({
     payload: allSequenceReads,
     config
   });
   const onExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]}
   });
 
   return <SeqReadsAnalysisLayout
@@ -59,7 +61,6 @@ function ReportByReadsContainer({
       <SeqReadsReports
        cmtVersion={config.cmtVersion}
        output={output}
-       match={match}
        router={router}
        {...props} />
     )}
@@ -78,7 +79,7 @@ interface WrapperProps {
  * @param props - {@link WrapperProps} with routing information.
  * @returns The reads report container.
  */
-export default function ReportByReadsContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportByReadsContainerWrapper(props: WrapperProps): ReactElement {
   const {
     location: {
       pathname,

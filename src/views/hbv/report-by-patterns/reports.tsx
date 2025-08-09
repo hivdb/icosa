@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -30,13 +30,11 @@ function getPageTitle(patternAnalysis: any[], output: string): string {
 
 interface PatternReportsProps {
   output: string;
-  match: any;
-  router: any;
   loaded: boolean;
   patterns: any[];
   currentSelected?: any;
   patternAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -47,14 +45,12 @@ interface PatternReportsProps {
  */
 function PatternReports({
   output,
-  match,
-  router,
   loaded,
   patterns,
   currentSelected,
   patternAnalysis,
   fetchAnother
-}: PatternReportsProps): JSX.Element {
+}: PatternReportsProps): ReactElement {
   const clickTransition = React.useRef<any>();
   const onCopy = React.useCallback(
     () => {
@@ -114,18 +110,14 @@ function PatternReports({
         <React.Fragment key={idx}>
           <SinglePatternReport
            key={idx}
-           inputPattern={pat}
            currentSelected={currentSelected}
            patternResult={patResultLookup[pat.name]}
            onObserve={onObserve}
            onDisconnect={onDisconnect}
            output={output}
            name={pat.name}
-           index={idx}
-           match={match}
-           router={router} />
-          {idx + 1 < patternAnalysis.length ?
-            <PageBreak /> : null}
+           index={idx} />
+          {idx + 1 < patternAnalysis.length ? <PageBreak /> : null}
         </React.Fragment>
       ))}
     </main>

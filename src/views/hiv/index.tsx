@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, ReactElement } from 'react';
 import { Route, Redirect } from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
@@ -77,7 +77,7 @@ export default function hiv1Routes({
   formProps,
   colors,
   className
-}: HIV1RoutesArgs = {}): JSX.Element {
+}: HIV1RoutesArgs = {}): ReactElement {
   return (
     <Route
       path={pathPrefix}

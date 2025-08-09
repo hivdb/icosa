@@ -1,4 +1,4 @@
-import React, {lazy, Suspense, ReactNode} from 'react';
+import React, {lazy, Suspense, ReactNode, ReactElement} from 'react';
 import {Route, Redirect} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
@@ -37,7 +37,7 @@ interface LayoutProps {
 function Layout({
   children,
   data: {defaultConfig, config, className, colors}
-}: LayoutProps): JSX.Element {
+}: LayoutProps): ReactElement {
   const combinedConfig = React.useMemo(
     () => ({...defaultConfig, ...config}),
     [defaultConfig, config]
@@ -75,7 +75,7 @@ export default function hbvRoutes({
   formProps,
   colors,
   className
-}: HbvRoutesOptions = {}): JSX.Element {
+}: HbvRoutesOptions = {}): ReactElement {
   return <Route
    path={pathPrefix}
    data={{defaultConfig, config, className, colors}}

@@ -1,5 +1,4 @@
-import React from 'react';
-import {useRouter} from 'found';
+import React, {ReactElement} from 'react';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
@@ -33,18 +32,11 @@ export default function TabularReportByReadsContainer({
   allSequenceReads,
   onFinish,
   patternsTo
-}: TabularReportByReadsProps): JSX.Element {
-
-  const {match} = useRouter();
+}: TabularReportByReadsProps): ReactElement | null {
   const [config, isConfigPending] = ConfigContext.use();
 
-  const handleExtendVariables = useExtendVariables({
-    config,
-    match
-  });
-
   const [allSeqReadsWithParams, isPending] = useAddParams({
-    defaultParams: config ? config.seqReadsDefaultParams : {},
+    defaultParams: config?.seqReadsDefaultParams ?? {},
     allSequenceReads,
     skip: isConfigPending
   });
@@ -55,35 +47,45 @@ export default function TabularReportByReadsContainer({
     payload: allSeqReadsWithParams
   });
 
+  if (isConfigPending || isPending || !config) {
+    return null;
+  }
+
+  const handleExtendVariables = useExtendVariables({
+    config: config as {allGenes: string[]}
+  });
+
   const curSubOptions = React.useMemo(
     () => subOptions.filter((_, idx) => children.has(idx)),
     [children]
   );
 
-  if (isConfigPending || isPending) {
-    return null;
-  }
-
-  return <SeqReadsAnalysisLayout
-   query={getQuery(curSubOptions)}
-   client={client}
-   allSequenceReads={allSeqReadsWithParams}
-   currentSelected={{index: 0}}
-   renderPartialResults={false}
-   lazyLoad={false}
-   extraParams={`
-     $includeGenes: [EnumGene!]!
+  return (
+    <SeqReadsAnalysisLayout
+      query={getQuery(curSubOptions)}
+      client={client}
+      allSequenceReads={allSeqReadsWithParams ?? []}
+      currentSelected={{
+        index: 0,
+        name: allSeqReadsWithParams?.[0]?.name ?? 'Reads 1'
+      }}
+      renderPartialResults={false}
+      lazyLoad={false}
+      extraParams={`
+     $includeGenes: [EnumGene!]!,
    `}
-   onExtendVariables={handleExtendVariables}>
-    {props => (
-      <SeqTabularReports
-       config={config}
-       children={children}
-       onFinish={onFinish}
-       patternsTo={patternsTo}
-       {...props} />
-    )}
-  </SeqReadsAnalysisLayout>;
-
+      onExtendVariables={handleExtendVariables}
+    >
+      {props => (
+        <SeqTabularReports
+          config={config}
+          children={children}
+          onFinish={onFinish}
+          patternsTo={patternsTo}
+          {...props}
+        />
+      )}
+    </SeqReadsAnalysisLayout>
+  );
 }
 

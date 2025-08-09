@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -22,7 +22,7 @@ interface PrintHeaderProps {
  * @param props - {@link PrintHeaderProps} including current analysis name.
  * @returns Rendered header section.
  */
-export default function PrintHeader({curAnalysis}: PrintHeaderProps): JSX.Element {
+export default function PrintHeader({curAnalysis}: PrintHeaderProps): ReactElement {
 
   let title = 'Sierra Analysis Report';
 
@@ -30,8 +30,8 @@ export default function PrintHeader({curAnalysis}: PrintHeaderProps): JSX.Elemen
 
   const [config, isPending] = ConfigContext.use();
 
-  if (!isPending) {
-    title = config.messages[`${curAnalysis}-report-title`];
+  if (!isPending && config) {
+    title = config.messages[`${curAnalysis}-report-title`] || title;
   }
 
   return <Intro>

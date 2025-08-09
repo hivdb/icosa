@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 
 import {
   useReportPaginator
@@ -30,12 +30,11 @@ function getPageTitle(sequenceAnalysis: any[], output: string): string {
 
 interface SequenceReportsProps {
   output: string;
-  match: any;
   loaded: boolean;
   sequences: any[];
   currentSelected?: any;
   sequenceAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -46,13 +45,12 @@ interface SequenceReportsProps {
  */
 function SequenceReports({
   output,
-  match,
   loaded,
   sequences,
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}: SequenceReportsProps): JSX.Element {
+}: SequenceReportsProps): ReactElement {
 
   const {
     onObserve,
@@ -93,10 +91,8 @@ function SequenceReports({
            onDisconnect={onDisconnect}
            output={output}
            header={header}
-           index={idx}
-           match={match} />
-          {idx + 1 < sequenceAnalysis.length ?
-            <PageBreak /> : null}
+           index={idx} />
+          {idx + 1 < sequenceAnalysis.length ? <PageBreak /> : null}
         </React.Fragment>
       ))}
     </main>

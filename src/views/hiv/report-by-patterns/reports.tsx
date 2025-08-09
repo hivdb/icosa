@@ -1,5 +1,4 @@
 import React from 'react';
-import { Match, Router } from 'found';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -36,14 +35,12 @@ function getPageTitle(patternAnalysis: any[], output: string): string {
 interface PatternReportsProps {
   config: any;
   output: string;
-  match: Match;
-  router: Router;
   loaded: boolean;
   patterns: any[];
   mutationPrevalenceSubtypes?: any[];
   currentSelected?: any;
   patternAnalysis: any[];
-    fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -52,8 +49,6 @@ interface PatternReportsProps {
 function PatternReports({
   config,
   output,
-  match,
-  router,
   loaded,
   patterns,
   mutationPrevalenceSubtypes,
@@ -125,9 +120,7 @@ function PatternReports({
              onDisconnect={onDisconnect}
              output={output}
              name={pat.name}
-             index={idx}
-             match={match}
-             router={router} />
+             index={idx} />
           {idx + 1 < patternAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

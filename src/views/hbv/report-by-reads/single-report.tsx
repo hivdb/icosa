@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   SeqSummary,
@@ -28,8 +29,8 @@ interface SingleSeqReadsReportProps {
   output: string;
   name: string;
   index: number;
-  onObserve: (entry: Element) => void;
-  onDisconnect: (entry: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect: (payload: ObservePayload) => void;
   match?: any;
   router?: any;
 }
@@ -45,7 +46,7 @@ function SingleSeqReadsReport({
   index,
   onObserve,
   onDisconnect
-}: SingleSeqReadsReportProps): JSX.Element {
+}: SingleSeqReadsReportProps): ReactElement {
 
   const {
     strain: {display: strain} = {},
