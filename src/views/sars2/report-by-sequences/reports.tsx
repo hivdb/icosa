@@ -1,10 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape} from 'found';
-
-import {
-  useReportPaginator
-} from '../../../components/report';
+import {useReportPaginator} from '../../../components/report';
 import PageBreak from '../../../components/page-break';
 
 import setTitle from '../../../utils/set-title';
@@ -15,8 +10,7 @@ import SingleSequenceReport from './single-report';
 
 const pageTitlePrefix = 'Sequence Analysis Report';
 
-
-function getPageTitle(sequenceAnalysis, output) {
+function getPageTitle(sequenceAnalysis: any[], output: string): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -31,26 +25,25 @@ function getPageTitle(sequenceAnalysis, output) {
   return pageTitle;
 }
 
-SequenceReports.propTypes = {
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  output: PropTypes.string.isRequired,
-  match: matchShape.isRequired,
-  loaded: PropTypes.bool.isRequired,
-  sequences: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object,
-  antibodies: PropTypes.array.isRequired,
-  sequenceAnalysis: PropTypes.array.isRequired,
-  fetchAnother: PropTypes.func.isRequired
-};
+interface SequenceReportsProps {
+  cmtVersion?: string;
+  drdbLastUpdate?: string;
+  output: string;
+  match: any;
+  loaded: boolean;
+  sequences: any[];
+  currentSelected?: any;
+  antibodies?: any[];
+  sequenceAnalysis: any[];
+  fetchAnother: () => void;
+}
 
-SequenceReports.defaultProps = {
-  antibodies: []
-};
-
+/**
+ * Render sequence analysis reports with pagination.
+ */
 function SequenceReports({
   output,
-  antibodies,
+  antibodies = [],
   cmtVersion,
   drdbLastUpdate,
   match,
@@ -59,7 +52,7 @@ function SequenceReports({
   currentSelected,
   sequenceAnalysis,
   fetchAnother
-}) {
+}: SequenceReportsProps): JSX.Element {
 
   const {
     onObserve,
@@ -77,7 +70,7 @@ function SequenceReports({
   setTitle(pageTitle);
 
   const seqResultLookup = sequenceAnalysis.reduce(
-    (acc, sr) => {
+    (acc: any, sr: any) => {
       acc[sr.inputSequence.header] = sr;
       return acc;
     },
@@ -111,7 +104,7 @@ function SequenceReports({
       ))}
     </main>
   </>;
-
 }
 
 export default SequenceReports;
+

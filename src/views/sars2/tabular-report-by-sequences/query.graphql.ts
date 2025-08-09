@@ -7,8 +7,7 @@ import {
   pangolinQuery
 } from '../common-query.graphql';
 
-
-export function getExtraParams(subOptions) {
+export function getExtraParams(subOptions: string[]) {
   const fetchMutComments = (
     subOptions.includes('Mutation comments') ||
     subOptions.includes('Raw JSON report')
@@ -20,8 +19,7 @@ export function getExtraParams(subOptions) {
   return extraParams.join(', ');
 }
 
-
-export default function getQuery(subOptions) {
+export default function getQuery(subOptions: string[]) {
   const fetchMutComments = (
     subOptions.includes('Mutation comments') ||
     subOptions.includes('Raw JSON report')

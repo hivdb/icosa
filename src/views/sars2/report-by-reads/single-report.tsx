@@ -1,9 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import {
-  // DRInterpretation, DRMutationScores,
-  SeqSummary, // MutationStats,
+  SeqSummary,
   MutationViewer as MutViewer,
   ValidationReport,
   ReportHeader,
@@ -26,8 +23,14 @@ import {
 
 import style from '../style.module.scss';
 
+interface CoveragesInput {
+  allReads: Array<{gene: string; position: number; totalReads: number}>;
+}
 
-function useCoverages({allReads}) {
+/**
+ * Compute coverage information from all reads.
+ */
+function useCoverages({allReads}: CoveragesInput) {
   return React.useMemo(
     () => allReads.map(
       ({gene, position, totalReads}) => (
@@ -38,21 +41,32 @@ function useCoverages({allReads}) {
   );
 }
 
+interface SingleSeqReadsReportProps {
+  /** Mutation comment version. */
+  cmtVersion?: string;
+  /** List of antibodies. */
+  antibodies: any[];
+  /** DRDB last update timestamp. */
+  drdbLastUpdate?: string;
+  /** Input sequence reads. */
+  inputSequenceReads: any;
+  /** Analysis result for the sequence reads. */
+  sequenceReadsResult?: any;
+  /** Output mode. */
+  output: string;
+  /** Sample name. */
+  name: string;
+  /** Index of the sample. */
+  index: number;
+  /** Intersection observer callback. */
+  onObserve: (el: Element) => void;
+  /** Intersection observer disconnect callback. */
+  onDisconnect: (el: Element) => void;
+}
 
-SingleSeqReadsReport.propTypes = {
-  cmtVersion: PropTypes.string,
-  antibodies: PropTypes.array.isRequired,
-  drdbLastUpdate: PropTypes.string,
-  inputSequenceReads: PropTypes.object.isRequired,
-  sequenceReadsResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func.isRequired
-};
-
-
+/**
+ * Render a single sequence read analysis report.
+ */
 function SingleSeqReadsReport({
   cmtVersion,
   antibodies,
@@ -64,7 +78,7 @@ function SingleSeqReadsReport({
   index,
   onObserve,
   onDisconnect
-}) {
+}: SingleSeqReadsReportProps): JSX.Element {
 
   const {
     strain: {display: strain} = {},
@@ -74,7 +88,7 @@ function SingleSeqReadsReport({
   } = sequenceReadsResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   const coverages = useCoverages(inputSequenceReads);
@@ -120,41 +134,24 @@ function SingleSeqReadsReport({
               <MutList {...sequenceReadsResult} {...{output, strain}} />
             </ReportSection>
             <ReportSection
-             titleAnnotation={<>
-               Last updated on {formatDate(cmtVersion)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDate(cmtVersion)}</>
+             }
              title="Mutation comments">
               <SARS2MutComments {...sequenceReadsResult} />
             </ReportSection>
             <ReportSection
              className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDateTime(drdbLastUpdate)}</>
+             }
              title="MAb susceptibility summary">
               <AbSuscSummary
                antibodies={antibodies}
                {...sequenceReadsResult}
                {...{output, strain}} />
             </ReportSection>
-            {/*<ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Convalescent plasma susceptibility summary">
-              <CPSuscSummary
-               {...sequenceReadsResult} {...{output}} />
-            </ReportSection>
-            <ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Plasma from vaccinated persons susceptibility summary">
-              <VPSuscSummary
-               {...sequenceReadsResult} {...{output}} />
-            </ReportSection>*/}
+            {/* Additional sections omitted for brevity */}
             <RefsSection />
           </>}
         </RefContextWrapper>
@@ -163,7 +160,6 @@ function SingleSeqReadsReport({
   );
 
 }
-
 
 export default React.memo(
   SingleSeqReadsReport,
@@ -174,14 +170,14 @@ export default React.memo(
       onObserve: prevOnObserve,
       inputSequenceReads: prevInputSeq,
       sequenceReadsResult: prevResult
-    },
+    }: SingleSeqReadsReportProps,
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
       inputSequenceReads: nextInputSeq,
       sequenceReadsResult: nextResult
-    }
+    }: SingleSeqReadsReportProps
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
@@ -190,3 +186,4 @@ export default React.memo(
     prevResult === nextResult
   )
 );
+

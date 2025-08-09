@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {matchShape, routerShape} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -12,18 +10,28 @@ import PatternAnalysisLayout from
 import query from './query.graphql';
 import PatternReports from './reports';
 
+interface ReportByPatternsContainerProps {
+  /** Optional configuration. */
+  config?: Record<string, any>;
+  /** Lazy load results. */
+  lazyLoad: boolean;
+  /** Output mode. */
+  output?: string;
+  /** Route match object. */
+  match: any;
+  /** Router instance. */
+  router: any;
+  /** Whether data is still pending. */
+  isPending: boolean;
+  /** List of mutation patterns. */
+  patterns: any[];
+  /** Currently selected pattern. */
+  currentSelected?: any;
+}
 
-ReportByPatternsContainer.propTypes = {
-  config: PropTypes.object,
-  lazyLoad: PropTypes.bool.isRequired,
-  output: PropTypes.string,
-  match: matchShape.isRequired,
-  router: routerShape.isRequired,
-  isPending: PropTypes.bool.isRequired,
-  patterns: PropTypes.array.isRequired,
-  currentSelected: PropTypes.object
-};
-
+/**
+ * Render pattern analysis reports.
+ */
 function ReportByPatternsContainer({
   config,
   router,
@@ -33,7 +41,7 @@ function ReportByPatternsContainer({
   isPending,
   patterns,
   currentSelected
-}) {
+}: ReportByPatternsContainerProps): JSX.Element {
 
   if (!isPending && patterns.length === 0) {
     router.replace({
@@ -63,18 +71,24 @@ function ReportByPatternsContainer({
        output={output}
        match={match}
        router={router}
-       cmtVersion={config.cmtVersion}
+       cmtVersion={config?.cmtVersion}
        {...props} />
     )}
   </PatternAnalysisLayout>;
 
 }
 
-ReportByPatternsContainerWrapper.propTypes = {
-  match: matchShape.isRequired
-};
+interface WrapperProps {
+  /** Route match object. */
+  match: any;
+  /** Router instance. */
+  router?: any;
+}
 
-export default function ReportByPatternsContainerWrapper(props) {
+/**
+ * Wrapper component that loads configuration and patterns before rendering.
+ */
+export default function ReportByPatternsContainerWrapper(props: WrapperProps): JSX.Element {
   const {
     location: {
       query: {output = 'default'} = {}
@@ -100,3 +114,4 @@ export default function ReportByPatternsContainerWrapper(props) {
     </ConfigContext.Consumer>
   );
 }
+

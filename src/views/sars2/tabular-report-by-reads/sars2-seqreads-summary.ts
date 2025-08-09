@@ -2,8 +2,7 @@ import {
   fetchPangolinResult
 } from '../../../components/report/seq-summary/pango-lineage';
 
-
-function joinCols(row) {
+function joinCols(row: Record<string, any>) {
   for (const col of Object.keys(row)) {
     if (row[col] instanceof Array) {
       if (row[col].length > 0) {
@@ -16,23 +15,22 @@ function joinCols(row) {
   }
 }
 
-
 function getMutations({
   geneSeqs,
   geneFilter,
   mutFilter,
   mutWithGene = true
-}) {
-  let results = [];
+}: any) {
+  let results: any[] = [];
   for (const geneSeq of geneSeqs.filter(
-    ({gene: {name}}) => geneFilter ? geneFilter(name) : true
+    ({gene: {name}}: any) => geneFilter ? geneFilter(name) : true
   )) {
     const gene = geneSeq.gene.name.replace(/^_/, '');
     const mutations = geneSeq.mutations
       .filter(
-        m => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
+        (m: any) => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
       )
-      .map(mut => ({...mut, gene}));
+      .map((mut: any) => ({...mut, gene}));
     results = [...results, ...mutations];
   }
   return results.map(
@@ -42,26 +40,24 @@ function getMutations({
   );
 }
 
-
-function getPermanentLink(seqName, geneSeqs, patternsTo, geneFilter) {
+function getPermanentLink(seqName: string, geneSeqs: any[], patternsTo: string, geneFilter?: (gene: string) => boolean) {
   const mutText = getMutations({geneSeqs, geneFilter});
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
   query.set('name', seqName);
-  query.set('mutations', mutText);
+  query.set('mutations', mutText as any);
   link.search = query.toString();
   return link.toString();
 }
 
-
-async function seqReadsSummary({
+export default async function seqReadsSummary({
   sequenceReadsAnalysis,
   config,
   patternsTo
-}) {
-  const rows = [];
+}: any) {
+  const rows: any[] = [];
   const {geneDisplay} = config;
-  let header = [
+  const header = [
     'Sequence Name',
     'Genes',
     'Spike Mutations',
@@ -105,47 +101,47 @@ async function seqReadsSummary({
     if (!pangolin.loaded) {
       pangolin = await fetchPangolinResult(pangolin.asyncResultsURI);
     }
-    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}) => gene === 'S');
-    let row = {
+    const spikeGeneSeq = geneSeqs.find(({gene: {name: gene}}: any) => gene === 'S');
+    const row: Record<string, any> = {
       'Sequence Name': seqName,
-      'Genes': genes.map(({name}) => geneDisplay[name] || name),
+      'Genes': genes.map(({name}: any) => geneDisplay[name] || name),
       'Spike Mutations': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === 'S',
+        geneFilter: (gene: string) => gene === 'S',
         mutWithGene: false
       }),
       'Spike mAb-RMs': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === 'S',
-        mutFilter: m => m.isDRM,
+        geneFilter: (gene: string) => gene === 'S',
+        mutFilter: (m: any) => m.isDRM,
         mutWithGene: false
       }),
       '3CLpro Mutations': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === '_3CLpro',
+        geneFilter: (gene: string) => gene === '_3CLpro',
         mutWithGene: false
       }),
       '3CL-PI DRMs': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === '_3CLpro',
-        mutFilter: m => m.isDRM,
+        geneFilter: (gene: string) => gene === '_3CLpro',
+        mutFilter: (m: any) => m.isDRM,
         mutWithGene: false
       }),
       'RdRP Mutations': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === 'RdRP',
+        geneFilter: (gene: string) => gene === 'RdRP',
         mutWithGene: false
       }),
       'RdRPI DRMs': getMutations({
         geneSeqs,
-        geneFilter: gene => gene === 'RdRP',
-        mutFilter: m => m.isDRM,
+        geneFilter: (gene: string) => gene === 'RdRP',
+        mutFilter: (m: any) => m.isDRM,
         mutWithGene: false
       }),
       'Other Mutations': getMutations({
         geneSeqs,
         geneFilter: (
-          gene => gene !== 'S' &&
+          (gene: string) => gene !== 'S' &&
           gene !== '_3CLpro' &&
           gene !== 'RdRP'
         )
@@ -173,7 +169,7 @@ async function seqReadsSummary({
         seqName,
         geneSeqs,
         patternsTo,
-        gene => gene === 'S'
+        (gene: string) => gene === 'S'
       ),
       'Permanent Link': getPermanentLink(
         seqName,
@@ -187,5 +183,3 @@ async function seqReadsSummary({
   }
   return [{tableName: 'sequenceSummaries', header, rows}];
 }
-
-export default seqReadsSummary;

@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import {
   MutationViewer as MutViewer,
   ValidationReport,
@@ -24,42 +22,40 @@ import {
 
 import style from '../style.module.scss';
 
+interface SinglePatternReportProps {
+  name: string;
+  cmtVersion?: string;
+  drdbLastUpdate?: string;
+  currentSelected?: any;
+  patternResult?: any;
+  output: string;
+  index: number;
+  antibodies: any[];
+  onObserve: (el: Element) => void;
+  onDisconnect?: (el: Element) => void;
+}
 
-SinglePatternReport.propTypes = {
-  name: PropTypes.string,
-  cmtVersion: PropTypes.string,
-  drdbLastUpdate: PropTypes.string,
-  currentSelected: PropTypes.object,
-  patternResult: PropTypes.object,
-  output: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  antibodies: PropTypes.array.isRequired,
-  onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
-};
-
-SinglePatternReport.defaultProps = {
-  antibodies: []
-};
-
+/**
+ * Render a single mutation pattern analysis report.
+ */
 function SinglePatternReport({
   cmtVersion,
   drdbLastUpdate,
-  antibodies,
+  antibodies = [],
   patternResult,
   output,
   name,
   index,
   onObserve,
   onDisconnect
-}) {
+}: SinglePatternReportProps): JSX.Element {
   const {
     allGeneMutations,
     validationResults
   } = patternResult || {};
 
   const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
+    ({level}: any) => level === 'CRITICAL'
   );
 
   const strain = 'SARS2';
@@ -91,40 +87,23 @@ function SinglePatternReport({
               <MutList {...patternResult} {...{output}} />
             </ReportSection>
             <ReportSection
-             titleAnnotation={<>
-               Last updated on {formatDate(cmtVersion)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDate(cmtVersion)}</>
+             }
              title="Mutation comments">
               <SARS2MutComments {...patternResult} />
             </ReportSection>
             <ReportSection
              className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
+             titleAnnotation={
+               <>Last updated on {formatDateTime(drdbLastUpdate)}</>
+             }
              title="MAb susceptibility summary">
               <AbSuscSummary
                antibodies={antibodies}
                {...patternResult} {...{output}} />
             </ReportSection>
-            {/*<ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Convalescent plasma susceptibility summary">
-              <CPSuscSummary
-               {...patternResult} {...{output}} />
-            </ReportSection>
-            <ReportSection
-             className={style['no-page-break']}
-             titleAnnotation={<>
-               Last updated on {formatDateTime(drdbLastUpdate)}
-             </>}
-             title="Plasma from vaccinated persons susceptibility summary">
-              <VPSuscSummary
-               {...patternResult} {...{output}} />
-            </ReportSection>*/}
+            {/* Additional plasma susceptibility sections omitted */}
             <RefsSection />
           </>}
         </RefContextWrapper>
@@ -134,3 +113,4 @@ function SinglePatternReport({
 }
 
 export default SinglePatternReport;
+
