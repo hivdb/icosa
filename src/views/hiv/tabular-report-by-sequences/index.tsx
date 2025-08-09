@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {useRouter} from 'found';
+import { useRouter } from 'found';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
@@ -8,23 +7,24 @@ import SequenceAnalysisLayout from
   '../../../components/sequence-analysis-layout';
 import useExtendVariables from '../use-extend-variables';
 
-import getQuery, {getExtraParams} from './query.graphql';
+import getQuery, { getExtraParams } from './query.graphql';
 import SeqTabularReports from './reports';
-import {subOptions} from './sub-options';
+import { subOptions } from './sub-options';
 
-export {subOptions};
+export { subOptions };
 
-
-TabularReportBySequencesContainer.propTypes = {
-  subOptionIndices: PropTypes.arrayOf( // old interface used by seq-report
-    PropTypes.number.isRequired
-  ),
-  sequences: PropTypes.array.isRequired,
-  onFinish: PropTypes.func.isRequired,
-  patternsTo: PropTypes.string.isRequired,
-  getSubmitState: PropTypes.func.isRequired
-};
-
+interface TabularReportBySequencesContainerProps {
+  /** Indices of sub report options selected */
+  subOptionIndices: number[];
+  /** Uploaded sequences */
+  sequences: any[];
+  /** Callback when report finishes */
+  onFinish: () => void;
+  /** URL to build pattern links */
+  patternsTo: string;
+  /** Submit state getter */
+  getSubmitState: () => any;
+}
 
 export default function TabularReportBySequencesContainer({
   subOptionIndices,
@@ -32,7 +32,7 @@ export default function TabularReportBySequencesContainer({
   onFinish,
   patternsTo,
   getSubmitState
-}) {
+}: TabularReportBySequencesContainerProps): JSX.Element | null {
   const {match} = useRouter();
 
   const [config, isConfigPending] = ConfigContext.use();

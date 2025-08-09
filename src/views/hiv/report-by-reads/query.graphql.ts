@@ -1,11 +1,9 @@
 import gql from 'graphql-tag';
-import {
-  rootLevel,
-  seqLevel,
-  geneSeqLevel
-} from '../common-query.graphql';
+import { rootLevel, seqLevel, geneSeqLevel } from '../common-query.graphql';
 
-
+/**
+ * GraphQL query for the sequence reads analysis report view.
+ */
 export default gql`
   fragment ReportBySequenceReadsRoot on Root {
     ${rootLevel}

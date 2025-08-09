@@ -1,0 +1,153 @@
+import React from 'react';
+
+import {
+  ReportHeader,
+  ValidationReport,
+  SeqSummary,
+  MutationViewer as MutViewer,
+  DRInterpretation,
+  DRMutationScores,
+  SeqMutationPrevalence,
+  AlgComparison
+} from '../../../components/report';
+
+import useDisabledDrugs from '../use-disabled-drugs';
+import style from '../style.module.scss';
+
+interface SingleSequenceReportProps {
+  includeGenes: string[];
+  sequenceResult?: any;
+  subtypeStats?: any[];
+  config: {
+    displaySubtype?: boolean;
+    displayDRInterpretation?: boolean;
+    displayMutationPrevalence?: boolean;
+    displayAlgComparison?: boolean;
+    displayMutationScores?: string[];
+  };
+  output: string;
+  header?: string;
+  index: number;
+  onObserve: (el: Element | null, idx: number) => void;
+  onDisconnect?: (el: Element | null) => void;
+}
+
+/**
+ * Render details for a single sequence analysis result.
+ */
+function SingleSequenceReport({
+  includeGenes,
+  sequenceResult,
+  subtypeStats,
+  config: {
+    displaySubtype = true,
+    displayDRInterpretation = true,
+    displayMutationPrevalence = false,
+    displayAlgComparison = false,
+    displayMutationScores = []
+  },
+  output,
+  header,
+  index,
+  onObserve,
+  onDisconnect
+}: SingleSequenceReportProps) {
+  const {
+    alignedGeneSequences,
+    strain: { name: strain } = {},
+    validationResults,
+    drugResistance
+  } = sequenceResult || {};
+
+  const isCritical = !!validationResults &&
+    validationResults.some(({ level }: any) => level === 'CRITICAL');
+
+  const disabledDrugs = useDisabledDrugs();
+
+  return (
+    <article data-loaded={!!sequenceResult} className={style['sequence-article']}>
+      <ReportHeader
+        output={output}
+        name={header}
+        index={index}
+        onObserve={onObserve}
+        onDisconnect={onDisconnect}
+      />
+      {sequenceResult ? (
+        <>
+          <SeqSummary {...sequenceResult} {...{ output, strain, includeGenes }}>
+            <SeqSummary.MultilineGeneRange />
+            {displaySubtype ? <SeqSummary.Genotype /> : null}
+            <SeqSummary.PrettyPairwise />
+            <SeqSummary.SDRMs />
+          </SeqSummary>
+          <MutViewer
+            title="Sequence quality assessment"
+            viewCheckboxLabel="Collapse genes"
+            allGeneSeqs={alignedGeneSequences}
+            defaultView="expansion"
+            output={output}
+            strain={strain}
+          >
+            <ValidationReport
+              placeholder="There are no known sequence quality issues."
+              {...sequenceResult}
+              {...{ output, strain }}
+            />
+          </MutViewer>
+          {isCritical || !displayDRInterpretation
+            ? null
+            : drugResistance.map((geneDR: any, idx: number) => (
+                <React.Fragment key={idx}>
+                  <DRInterpretation
+                    suppressLevels={!displayMutationScores.includes(
+                      geneDR.gene.name
+                    )}
+                    {...{ geneDR, output, disabledDrugs, strain }}
+                  />
+                  {displayMutationScores.includes(geneDR.gene.name) ? (
+                    <DRMutationScores
+                      {...{ geneDR, output, disabledDrugs, strain }}
+                    />
+                  ) : null}
+                </React.Fragment>
+              ))}
+          {!displayMutationPrevalence ? null : (
+            <SeqMutationPrevalence
+              subtypeStats={subtypeStats}
+              {...sequenceResult}
+            />
+          )}
+          {!displayAlgComparison ? null : (
+            <AlgComparison {...sequenceResult} />
+          )}
+        </>
+      ) : null}
+    </article>
+  );
+}
+
+export default React.memo(
+  SingleSequenceReport,
+  (
+    {
+      index: prevIndex,
+      output: prevOutput,
+      onObserve: prevOnObserve,
+      header: prevHeader,
+      sequenceResult: prevResult
+    },
+    {
+      index: nextIndex,
+      output: nextOutput,
+      onObserve: nextOnObserve,
+      header: nextHeader,
+      sequenceResult: nextResult
+    }
+  ) =>
+    prevIndex === nextIndex &&
+    prevOutput === nextOutput &&
+    prevOnObserve === nextOnObserve &&
+    prevHeader === nextHeader &&
+    prevResult === nextResult
+);
