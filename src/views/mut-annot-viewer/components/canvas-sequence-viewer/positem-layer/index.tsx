@@ -32,7 +32,6 @@ export default function PosItemLayer({
         <PositionGroup
          key={pos0}
          config={config}
-         posAnnot={positionLookup[pos0 + posStart]}
          position={pos0 + posStart}
          residue={residue} />
       ))}

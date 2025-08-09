@@ -96,7 +96,7 @@ export default function AnnotCategory({
   );
 
   const handleToggle = React.useCallback(
-    (evt: React.MouseEvent<HTMLButtonElement>) => {
+    (evt: React.ChangeEvent<HTMLInputElement>) => {
       if (curAnnotNames && curAnnotNames.length) {
         onChange([]);
       }

@@ -25,8 +25,10 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/prop-types": "^15.7.11",
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
+    "@types/uuid": "^9.0.7",
     "@vitejs/plugin-react": "4.7.0",
     "@vx/axis": "^0.0.199",
     "@vx/bounds": "^0.0.199",
@@ -98,11 +100,10 @@
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5",
     "xmlbuilder2": "^3.0.2",
-    "youtube-url": "^0.5.0",
-    "@types/uuid": "^9.0.7",
-    "@types/prop-types": "^15.7.11"
+    "youtube-url": "^0.5.0"
   },
   "devDependencies": {
+    "@types/pako": "^2.0.3",
     "jsdom": "26.1.0",
     "sass-embedded": "^1.89.2",
     "vitest": "3.2.4"

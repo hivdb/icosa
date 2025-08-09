@@ -3,18 +3,21 @@ import React from 'react';
 const newLineRegex = /(\r\n|\n\r|\r|\n)/g;
 
 /**
- * Convert newline characters to `<br/>` elements.
+ * Convert newline characters in a string into React elements.
+ *
+ * Each newline sequence is replaced with a `<br/>` element so that the
+ * resulting array can be rendered directly within JSX without additional
+ * processing.
  *
  * @param text - Text containing newline characters.
- * @returns Array of strings and `<br/>` elements.
+ * @returns Array of strings and `<br/>` elements representing the original
+ * newline boundaries.
  */
-export default function nl2br(text: string): Array<string | JSX.Element> {
+export default function nl2br(text: string): React.ReactNode[] {
   return text.split(newLineRegex).map((line, idx) => {
     if (newLineRegex.test(line)) {
       return <br key={idx} />;
     }
-    else {
-      return line;
-    }
+    return line;
   });
 }

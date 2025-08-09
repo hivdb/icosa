@@ -12,7 +12,7 @@ import {
   calcUnderscoreAnnotLocations
 } from './funcs';
 
-import LegendContext from '../legend-context';
+import LegendContext, {type LegendContextValue} from '../legend-context';
 
 import type {
   CurAnnotNameLookup,
@@ -26,7 +26,7 @@ import type {
 /**
  * Hook providing a ref to the container element and tracking its width.
  */
-function useContainer(): [React.RefObject<HTMLDivElement>, number | null] {
+function useContainer(): [React.RefObject<HTMLDivElement | null>, number | null] {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = React.useState<number | null>(null);
 
@@ -81,21 +81,24 @@ function useConfig({
   curAnnotNameLookup: CurAnnotNameLookup;
   annotCategories: AnnotCategory[];
   containerWidth: number | null;
-  legendContext: {onUpdate: (val: unknown) => void};
+  legendContext: LegendContextValue;
 }) {
   const config = React.useMemo(
-    () => {
-      let colorBoxPositions = [];
-      let circleInBoxPositions = [];
-      let underscoreAnnotLocations = [];
-      let underscoreAnnotNames = [];
-      const aminoAcidsAnnotPositions = [];
-      const aminoAcidsCatNames = [];
-      const aminoAcidsOverrideColors = [];
+      () => {
+        let colorBoxPositions: Record<number, unknown> = {};
+        let circleInBoxPositions: Record<number, unknown> = {};
+        let underscoreAnnotLocations: {locations: any[]; matrix: any[]} = {
+          locations: [],
+          matrix: []
+        };
+        let underscoreAnnotNames: string[] = [];
+        const aminoAcidsAnnotPositions: Record<number, unknown>[] = [];
+        const aminoAcidsCatNames: string[] = [];
+        const aminoAcidsOverrideColors: string[] = [];
       let aaAnnotIdx = 0;
       for (const cat of annotCategories) {
         const {name: catName, annotStyle} = cat;
-        const curAnnotNames = curAnnotNameLookup[catName] || [];
+        const curAnnotNames: string[] = curAnnotNameLookup[catName] || [];
         const curAnnots = annotations.filter(
           ({name}) => curAnnotNames.includes(name)
         );
@@ -121,7 +124,7 @@ function useConfig({
               aaAnnotIdx ++
             );
             aminoAcidsCatNames.push(catName);
-            aminoAcidsOverrideColors.push(cat.color);
+              aminoAcidsOverrideColors.push(cat.color ?? '');
             break;
           default:
             break;
@@ -133,10 +136,9 @@ function useConfig({
           sizeName: size,
           seqFragment,
           canvasWidthPixel: containerWidth,
-          seqLength: sequence.length,
-          colorBoxPositions,
-          circleInBoxPositions,
-          underscoreAnnotLocations,
+            colorBoxPositions,
+            circleInBoxPositions,
+            underscoreAnnotLocations,
           underscoreAnnotNames,
           aminoAcidsAnnotPositions,
           aminoAcidsCatNames,
@@ -161,9 +163,9 @@ function useConfig({
   React.useEffect(
     () => {
       const update = config?.updateLegendContext;
-      if (update) {
-        update({onUpdate});
-      }
+        if (update) {
+          update({onUpdate: onUpdate as any});
+        }
     },
     [config?.updateLegendContext, onUpdate]
   );

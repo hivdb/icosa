@@ -273,7 +273,7 @@ export function calcUnderscoreAnnotLocations(
     let maxAvailableLoc = 0;
     for (let pos0 = posStart - 1; pos0 < posEnd; pos0 ++) {
       matrix[pos0] = matrix[pos0] || [];
-      for (const idx in matrix[pos0]) {
+      for (let idx = 0; idx < matrix[pos0].length; idx ++) {
         if (matrix[pos0][idx]) {
           usedLocs[idx] = true;
         }

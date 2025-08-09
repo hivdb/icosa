@@ -1,4 +1,5 @@
 import {getColorHex} from '../../../../utils/colors';
+import type {LegendContextValue} from '../legend-context';
 
 import type {SeqViewerSize} from '../../prop-types';
 
@@ -413,7 +414,7 @@ export default class ConfigGenerator {
     return {x, y};
   };
 
-  coord2UnderscoreAnnot = (x, y) => {
+  coord2UnderscoreAnnot = (x: number, y: number): {annotName?: string; x?: number; y?: number} => {
     const {
       posItemSizePixel,
       underscoreAnnotHeightPixel,
@@ -438,7 +439,7 @@ export default class ConfigGenerator {
     return {};
   };
 
-  coord2Pos = (x, y) => {
+  coord2Pos = (x: number, y: number): number | null => {
     const {
       canvasWidthPixel: canvasWidth,
       canvasHeightPixel: canvasHeight,
@@ -486,8 +487,8 @@ export default class ConfigGenerator {
     return pos;
   };
 
-  getAnnotPosLookup(annotStyle) {
-    let lookup;
+  getAnnotPosLookup(annotStyle: string): Record<number, unknown> {
+    let lookup: Record<number, unknown>;
     switch (annotStyle) {
       case 'colorBox':
         lookup = this.colorBoxPositions;
@@ -501,8 +502,8 @@ export default class ConfigGenerator {
     return lookup;
   }
 
-  getAnnotatedAAs = (pos) => {
-    const aaDefs = [];
+  getAnnotatedAAs = (pos: number) => {
+    const aaDefs: Array<{aminoAcid: string; offsetPixel: {x: number; y: number}; color: string}> = [];
     let globalIdxOffset = 0;
     const {aminoAcidsOverrideColors} = this;
     for (const lookup of this.aminoAcidsAnnotPositions) {
@@ -527,12 +528,12 @@ export default class ConfigGenerator {
     return aaDefs;
   };
 
-  isPositionAnnotated = (pos, annotStyle) => {
+  isPositionAnnotated = (pos: number, annotStyle: string): boolean => {
     const lookup = this.getAnnotPosLookup(annotStyle);
     return pos in lookup;
   };
 
-  getColorIndex = (pos, annotStyle) => {
+  getColorIndex = (pos: number, annotStyle: string): number | undefined => {
     const lookup = this.getAnnotPosLookup(annotStyle);
     const posDef = lookup[pos];
     if (posDef) {
@@ -541,7 +542,7 @@ export default class ConfigGenerator {
     }
   };
 
-  getUnderscoreAnnotColorIndex = (annotName) => {
+  getUnderscoreAnnotColorIndex = (annotName: string): number => {
     const {underscoreAnnotColorIndexOffset, underscoreAnnotNames} = this;
     const colorIdx = (
       underscoreAnnotNames.indexOf(annotName) +
@@ -550,7 +551,7 @@ export default class ConfigGenerator {
     return colorIdx;
   };
 
-  getStrokeColor = (pos, hovering, annotStyle) => {
+  getStrokeColor = (pos: number, hovering: boolean, annotStyle: string): string => {
     if (hovering) {
       return this.strokeDefaultColorHovering;
     }
@@ -563,7 +564,12 @@ export default class ConfigGenerator {
     }
   };
 
-  getRefAAColor = (pos) => {
+  /**
+   * Get reference amino acid color for a given position.
+   * @param pos - Sequence position.
+   * @returns Hex color string.
+   */
+  getRefAAColor = (pos: number): string => {
     if (
       !this.isPositionAnnotated(pos, 'colorBox') &&
       this.isPositionAnnotated(pos, 'circleInBox')
@@ -573,7 +579,14 @@ export default class ConfigGenerator {
     return this.refAADarkColor;
   };
 
-  getBgColor = (pos, hovering, annotStyle) => {
+  /**
+   * Resolve background color for a position.
+   *
+   * @param pos - Sequence position.
+   * @param hovering - Whether the position is currently hovered.
+   * @param annotStyle - Annotation style to consider.
+   */
+  getBgColor = (pos: number, hovering: boolean, annotStyle: string): string => {
     if (hovering) {
       return this.backgroundDefaultColorHovering;
     }
@@ -592,25 +605,36 @@ export default class ConfigGenerator {
     }
   };
 
-  getUnderscoreAnnotColor = (annotName) => {
+  /**
+   * Get color for underscore annotations.
+   *
+   * @param annotName - Annotation identifier.
+   */
+  getUnderscoreAnnotColor = (annotName: string): string => {
     const colorIdx = this.getUnderscoreAnnotColorIndex(annotName);
     return getColorHex(colorIdx, 'med');
   };
 
-  updateLegendContext = ({onUpdate}) => {
+  /**
+   * Update legend context with calculated color lookups.
+   * @param onUpdate - Callback to merge legend colors.
+   */
+  updateLegendContext = ({onUpdate}: {onUpdate: (opts: Partial<Omit<LegendContextValue, 'onUpdate'>>) => void}): void => {
     const {aminoAcidsOverrideColors} = this;
-    const colorBoxAnnotColorIdx = {};
-    for (const [, colorIdx, val] of Object.values(this.colorBoxPositions)) {
-      colorBoxAnnotColorIdx[val] = colorIdx;
-    }
-    const colorBoxAnnotColorLookup = {};
-    for (let [val, colorIdx] of Object.entries(colorBoxAnnotColorIdx)) {
+    const colorBoxAnnotColorIdx: Record<string, number> = {};
+      for (const [, colorIdx, val] of Object.values(
+        this.colorBoxPositions as Record<number, [number, number, string]>
+      ) as [number, number, string][]) {
+        colorBoxAnnotColorIdx[val] = colorIdx;
+      }
+    const colorBoxAnnotColorLookup: Record<string, {stroke: string; bg: string}> = {};
+    for (const [val, colorIdx] of Object.entries(colorBoxAnnotColorIdx)) {
       colorBoxAnnotColorLookup[val] = {
         stroke: getColorHex(colorIdx, 'dark'),
         bg: getColorHex(colorIdx, 'light')
       };
     }
-    const underscoreAnnotColorLookup = {};
+    const underscoreAnnotColorLookup: Record<string, string> = {};
     for (const annotName of this.underscoreAnnotNames) {
       underscoreAnnotColorLookup[annotName] = (
         this.getUnderscoreAnnotColor(annotName)
@@ -619,8 +643,8 @@ export default class ConfigGenerator {
     onUpdate({
       colorBoxAnnotColorLookup,
       underscoreAnnotColorLookup,
-      aminoAcidsCatColorLookup: this.aminoAcidsCatNames
-        .reduce((acc, name, idx) => {
+      aminoAcidsCatColorLookup: (this.aminoAcidsCatNames as string[])
+        .reduce<Record<string, string>>((acc, name, idx) => {
           acc[name] = (
             aminoAcidsOverrideColors[idx] ||
             getColorHex(idx, 'dark')
