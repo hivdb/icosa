@@ -1,11 +1,13 @@
 import React from 'react';
 import {Link} from 'found';
 
-
+/**
+ * Landing page listing available analysis programs and tools.
+ */
 export default function Home() {
-
-  return <div>
-    <ul>
+  return (
+    <div>
+      <ul>
       <li>
         SARS-CoV-2 Analysis Program
         <ul>
@@ -90,6 +92,6 @@ export default function Home() {
         <Link to="/markdown-debugger/">Markdown Debugger</Link>
       </li>
     </ul>
-  </div>;
-
+    </div>
+  );
 }

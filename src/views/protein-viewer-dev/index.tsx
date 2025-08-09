@@ -1,7 +1,8 @@
 import React from 'react';
 import ProteinViewer from '../../components/protein-viewer';
+import type {PositionAnnot, View} from '../../components/protein-viewer/types';
 
-const POSITION_ANNOTS = [
+const POSITION_ANNOTS: PositionAnnot[] = [
   {position: 346, label: 'R346', bgColor: 0xff0000, color: 'white'},
   {position: 371, label: 'S371', bgColor: 0xff0000, color: 0xffffff},
   {position: 405, label: 'D405', bgColor: 0xff0000, color: 0xffffff},
@@ -20,7 +21,7 @@ const POSITION_ANNOTS = [
   {position: 614, label: 'D614', bgColor: 0x00ff00, color: 0x000000}
 ];
 
-const VIEWS = [
+const VIEWS: View[] = [
   {
     pdb: '6M0J',
     name: 'RBD (306-534)',
@@ -37,11 +38,15 @@ const VIEWS = [
   }
 ];
 
+/**
+ * Development helper rendering a protein structure with annotated residues.
+ */
 export default function ProteinViewerDev() {
   return (
     <ProteinViewer
-     verboseCameraController
-     views={VIEWS}
-     positions={POSITION_ANNOTS} />
+      verboseCameraController
+      views={VIEWS}
+      positions={POSITION_ANNOTS}
+    />
   );
 }
