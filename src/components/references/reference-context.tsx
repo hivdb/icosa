@@ -34,22 +34,35 @@ class ReferenceObject {
     });
   }
 
-  /** Register a callback that fires when references are updated. */
-  listenOnUpdate = (cb: () => void) => {
+  /**
+   * Register a callback that fires when references are updated.
+   *
+   * @param cb - Callback invoked on every update.
+   */
+  listenOnUpdate = (cb: () => void): void => {
     if (!this.#onUpdates.includes(cb)) {
       this.#onUpdates.push(cb);
     }
   };
 
-  /** Mark the reference data as loaded. */
-  setLoaded = () => {
+  /**
+   * Mark the reference data as loaded.
+   *
+   * Resolves any pending promises waiting on reference data.
+   */
+  setLoaded = (): void => {
     this.loaded = true;
     this._resolveLoadingPromise();
   };
 
   /**
    * Ensure that reference data has been loaded before rendering.
-   * Renders a placeholder until the promise resolves.
+   *
+   * @param callback - Function executed with the {@link ReferenceObject}
+   *   once loading has finished.
+   * @param placeholder - React node displayed while waiting for loading.
+   * @returns A React node representing either the placeholder or the result of
+   *   `callback`.
    */
   ensureLoaded = (
     callback: (ctx: ReferenceObject) => React.ReactNode,
@@ -64,7 +77,11 @@ class ReferenceObject {
 
   /**
    * Store a reference object and optionally increment the reference count.
-   * Returns an identifier object used for linking.
+   *
+   * @param name - Display name of the reference.
+   * @param reference - Metadata describing the reference item.
+   * @param incr - Whether to increment the citation counter.
+   * @returns Identifier object for linking to the reference.
    */
   setReference = (
     name: string,
@@ -101,8 +118,11 @@ class ReferenceObject {
   };
 
   /**
-   * Returns true if any references have been stored. When `includeInlines`
-   * is false, only references with links are considered.
+   * Returns true if any references have been stored.
+   *
+   * @param includeInlines - When `false`, only references with link counts are
+   *   considered.
+   * @returns `true` when any references exist.
    */
   hasAnyReference = (includeInlines = false): boolean => {
     if (includeInlines) {
@@ -111,12 +131,21 @@ class ReferenceObject {
     return this.getAllReferences().some(({ linkIds }) => linkIds.length > 0);
   };
 
-  /** Retrieve a stored reference by name. */
+  /**
+   * Retrieve a stored reference by name.
+   *
+   * @param name - Reference name.
+   * @returns Stored reference object if present.
+   */
   getReference = (name: string) => {
     return this.#references[name.toLocaleLowerCase()];
   };
 
-  /** Get all references in insertion order. */
+  /**
+   * Get all references in insertion order.
+   *
+   * @returns Array of stored references decorated with numbering and link IDs.
+   */
   getAllReferences = () => {
     return this.#refNames.map((nameKey, rn0) => {
       const { _count, ...ref } = this.#references[nameKey];
@@ -134,7 +163,11 @@ class ReferenceObject {
     });
   };
 
-  /** Only return references that have at least one link. */
+  /**
+   * Only return references that have at least one link.
+   *
+   * @returns Array of references that are actually cited.
+   */
   getLinkedReferences = () => {
     return this.getAllReferences().filter(({ linkIds }) => linkIds.length > 0);
   };
@@ -143,8 +176,9 @@ class ReferenceObject {
 /**
  * Hook that creates a memoised {@link ReferenceObject} instance.
  *
- * @param refDataLoader - Optional loader component
- * @param cacheKey - A key to reset the cache when changed
+ * @param refDataLoader - Optional loader component.
+ * @param cacheKey - A key to reset the cache when changed.
+ * @returns Memoised {@link ReferenceObject} instance.
  */
 export function useReference(
   refDataLoader?: React.ComponentType<any>,
