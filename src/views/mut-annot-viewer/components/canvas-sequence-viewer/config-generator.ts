@@ -1,6 +1,8 @@
 import {getColorHex} from '../../../../utils/colors';
 
-const BASE_SIZE_PIXEL_MAP = {
+import type {SeqViewerSize} from '../../prop-types';
+
+const BASE_SIZE_PIXEL_MAP: Record<SeqViewerSize, number> = {
   large: 40,
   middle: 32,
   small: 24
@@ -8,13 +10,40 @@ const BASE_SIZE_PIXEL_MAP = {
 
 const FONT_FAMILY = 'Source Sans Pro';
 
-export async function preloadFonts() {
+/**
+ * Preload fonts used by the canvas sequence viewer to avoid layout
+ * shifts when the canvas is first rendered.
+ */
+export async function preloadFonts(): Promise<void> {
   await document.fonts.load(`bold 16px "${FONT_FAMILY}"`);
   await document.fonts.load(`italic 16px "${FONT_FAMILY}"`);
   await document.fonts.load(`16px "${FONT_FAMILY}"`);
 }
 
+/** Options for {@link ConfigGenerator}. */
+interface ConfigGeneratorOptions {
+  sizeName: SeqViewerSize;
+  canvasWidthPixel: number;
+  seqFragment: [number, number];
+  colorBoxPositions: Record<number, unknown>;
+  circleInBoxPositions: Record<number, unknown>;
+  underscoreAnnotLocations: any;
+  underscoreAnnotNames: string[];
+  aminoAcidsAnnotPositions: Record<number, unknown>[];
+  aminoAcidsCatNames: string[];
+  aminoAcidsOverrideColors: string[];
+}
+
+/**
+ * Generate rendering configuration for the sequence viewer. The class is a
+ * collection of calculated values used throughout the canvas layers. Many of
+ * the fields are intentionally typed as `any` while the migration progresses.
+ */
 export default class ConfigGenerator {
+
+  fontFamily: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 
   constructor({
     sizeName,
@@ -27,7 +56,7 @@ export default class ConfigGenerator {
     aminoAcidsAnnotPositions,
     aminoAcidsCatNames,
     aminoAcidsOverrideColors
-  }) {
+  }: ConfigGeneratorOptions) {
     this.fontFamily = FONT_FAMILY;
 
     Object.assign(this, {

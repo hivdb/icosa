@@ -1,21 +1,21 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Layer} from 'react-konva';
 
 import PositionGroup from './position-group';
 
+interface SelectedLayerProps {
+  selectedPositions: number[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+}
 
-SelectedLayer.propTypes = {
-  selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  config: PropTypes.object.isRequired
-};
-
+/**
+ * Layer displaying selected positions.
+ */
 export default function SelectedLayer({
   selectedPositions,
   config
-}) {
+}: SelectedLayerProps) {
   return React.useMemo(
     () => <Layer>
       {selectedPositions.map(pos => (

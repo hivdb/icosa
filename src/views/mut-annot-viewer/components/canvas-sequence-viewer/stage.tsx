@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Stage} from 'react-konva';
 import xor from 'lodash/xor';
 import range from 'lodash/range';
@@ -12,7 +11,50 @@ import SelectedLayer from './selected-layer';
 import AnnotsLayer from './annots-layer';
 import HoverLayer from './hover-layer';
 
-import {posShape} from '../../prop-types';
+import type {Position} from '../../prop-types';
+
+/**
+ * Create an array of integers between `start` and `end` (inclusive).
+ */
+function rangePos(start: number, end: number): number[] {
+  if (start > end) {
+    [end, start] = [start, end];
+  }
+  return range(start, end + 1);
+}
+
+/**
+ * Merge selections by applying an XOR with the previous selection and then
+ * adding new selections. The resulting array is sorted.
+ */
+function unionSelections(
+  curSels: number[],
+  prevSels: number[],
+  newSels: number[]
+): number[] {
+  const combined = union(xor(curSels, prevSels), newSels);
+  return combined.sort((a, b) => a - b);
+}
+
+/**
+ * Determine which modifier keys are active.
+ */
+function getKeyCmd({
+  ctrlKey,
+  metaKey,
+  shiftKey
+}: {
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  shiftKey?: boolean;
+}) {
+  let multiSel = !!(ctrlKey || metaKey);
+  let rangeSel = !!shiftKey;
+  if (multiSel && rangeSel) {
+    multiSel = rangeSel = false;
+  }
+  return {multiSel, rangeSel};
+}
 
 
 function rangePos(start, end) {
@@ -39,18 +81,40 @@ function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
 }
 
 
-function useSelectionState({selectedPositions, onChange}) {
-  const [mouseDown, setMouseDown] = React.useState(false);
-  const [mouseMoved, setMouseMoved] = React.useState(false);
-  const [anchorPos, setAnchorPos] = React.useState(null);
-  const [activePos, setActivePos] = React.useState(null);
-  const [hoverPos, setHoverPos] = React.useState(null);
-  const [hoverUSAnnot, setHoverUSAnnot] = React.useState({});
-  const [curSelecteds, setCurSelecteds] = React.useState(selectedPositions);
-  const [prevSelecteds, setPrevSelecteds] = React.useState([]);
+interface SelectionState {
+  mouseDown: number | false;
+  mouseMoved: boolean;
+  anchorPos: number | null;
+  activePos: number | null;
+  hoverPos: number | null;
+  hoverUSAnnot: Record<string, unknown>;
+  curSelecteds: number[];
+  prevSelecteds: number[];
+}
 
-  const setSelection = React.useCallback(
-    ({
+type SetSelection = (state: Partial<SelectionState> & {reset?: boolean}) => void;
+
+/**
+ * Manage selection state for the sequence viewer.
+ */
+function useSelectionState({
+  selectedPositions,
+  onChange
+}: {
+  selectedPositions: number[];
+  onChange: (positions: number[]) => void;
+}): [SelectionState, SetSelection] {
+  const [mouseDown, setMouseDown] = React.useState<number | false>(false);
+  const [mouseMoved, setMouseMoved] = React.useState(false);
+  const [anchorPos, setAnchorPos] = React.useState<number | null>(null);
+  const [activePos, setActivePos] = React.useState<number | null>(null);
+  const [hoverPos, setHoverPos] = React.useState<number | null>(null);
+  const [hoverUSAnnot, setHoverUSAnnot] = React.useState<Record<string, unknown>>({});
+  const [curSelecteds, setCurSelecteds] = React.useState<number[]>(selectedPositions);
+  const [prevSelecteds, setPrevSelecteds] = React.useState<number[]>([]);
+
+  const setSelection = React.useCallback<SetSelection>(state => {
+    const {
       mouseDown,
       mouseMoved,
       anchorPos,
@@ -60,34 +124,32 @@ function useSelectionState({selectedPositions, onChange}) {
       curSelecteds,
       prevSelecteds,
       reset
-    }) => {
-      if (reset || (curSelecteds && curSelecteds.length === 0)) {
-        setMouseDown(false);
-        setMouseMoved(false);
-        setActivePos(null);
-        setAnchorPos(null);
-        setCurSelecteds([]);
-        setPrevSelecteds([]);
-      }
-      else {
-        mouseDown === undefined || setMouseDown(mouseDown);
-        mouseMoved === undefined || setMouseMoved(mouseMoved);
-        anchorPos === undefined || setAnchorPos(anchorPos);
-        activePos === undefined || setActivePos(activePos);
-        hoverPos === undefined || setHoverPos(hoverPos);
-        hoverUSAnnot === undefined || setHoverUSAnnot(hoverUSAnnot);
-        curSelecteds === undefined || setCurSelecteds(curSelecteds);
-        prevSelecteds === undefined || setPrevSelecteds(prevSelecteds);
-      }
-      if (reset) {
-        onChange([]);
-      }
-      else if (curSelecteds !== undefined) {
-        onChange(curSelecteds);
-      }
-    },
-    [onChange]
-  );
+    } = state;
+    if (reset || (curSelecteds && curSelecteds.length === 0)) {
+      setMouseDown(false);
+      setMouseMoved(false);
+      setActivePos(null);
+      setAnchorPos(null);
+      setCurSelecteds([]);
+      setPrevSelecteds([]);
+    }
+    else {
+      mouseDown === undefined || setMouseDown(mouseDown);
+      mouseMoved === undefined || setMouseMoved(mouseMoved);
+      anchorPos === undefined || setAnchorPos(anchorPos!);
+      activePos === undefined || setActivePos(activePos!);
+      hoverPos === undefined || setHoverPos(hoverPos!);
+      hoverUSAnnot === undefined || setHoverUSAnnot(hoverUSAnnot!);
+      curSelecteds === undefined || setCurSelecteds(curSelecteds);
+      prevSelecteds === undefined || setPrevSelecteds(prevSelecteds!);
+    }
+    if (reset) {
+      onChange([]);
+    }
+    else if (curSelecteds !== undefined) {
+      onChange(curSelecteds);
+    }
+  }, [onChange]);
 
   return [
     {
@@ -105,19 +167,25 @@ function useSelectionState({selectedPositions, onChange}) {
 }
 
 
+/**
+ * Keyboard interaction logic for the sequence viewer.
+ */
 function useKeyboard({
   containerRef,
   config,
   selectedPositions,
-  selection: {
-    activePos,
-    anchorPos,
-    prevSelecteds
-  },
+  selection: {activePos, anchorPos, prevSelecteds},
   setSelection
+}: {
+  containerRef: React.RefObject<HTMLDivElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  selectedPositions: number[];
+  selection: SelectionState;
+  setSelection: SetSelection;
 }) {
   const handleGlobalKeyUp = React.useCallback(
-    evt => {
+    (evt: KeyboardEvent) => {
       const {key} = evt;
       switch (key) {
         case 'Tab':
@@ -148,9 +216,9 @@ function useKeyboard({
   );
 
   const handleKeySelection = React.useMemo(
-    () => debounce((rangeSel, nextState) => {
+    () => debounce((rangeSel: boolean, nextState: {anchorPos: number; activePos: number}) => {
       const {anchorPos, activePos: posEnd} = nextState;
-      const newSel = {};
+      const newSel: Partial<SelectionState> = {};
       if (rangeSel) {
         let selecteds = rangePos(anchorPos, posEnd);
         newSel.prevSelecteds = selecteds;
@@ -172,7 +240,7 @@ function useKeyboard({
   );
 
   const handleKeyDown = React.useCallback(
-    evt => {
+    (evt: React.KeyboardEvent) => {
       const {key, shiftKey: rangeSel} = evt;
       const {
         numCols, numPosPerPage,
@@ -218,7 +286,7 @@ function useKeyboard({
       if (posEnd < absPosStart || posEnd > absPosEnd) {
         return;
       }
-      const newSel = {
+      const newSel: Partial<SelectionState> = {
         activePos: posEnd,
         anchorPos
       };
@@ -232,7 +300,7 @@ function useKeyboard({
   );
 
   const handleGlobalKeyDown = React.useCallback(
-    evt => {
+    (evt: KeyboardEvent) => {
       const {key} = evt;
       const {
         seqFragment: [absPosStart, absPosEnd]
@@ -301,17 +369,18 @@ function useMouse({
   config,
   selectedPositions,
   noBlurSelector,
-  selection: {
-    mouseDown,
-    mouseMoved,
-    anchorPos,
-    prevSelecteds,
-    curSelecteds
-  },
+  selection: {mouseDown, mouseMoved, anchorPos, prevSelecteds, curSelecteds},
   setSelection
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  selectedPositions: number[];
+  noBlurSelector: string;
+  selection: SelectionState;
+  setSelection: SetSelection;
 }) {
   const getPositionFromMouseEvent = React.useCallback(
-    event => {
+    (event: {offsetX: number; offsetY: number}) => {
       const {offsetX, offsetY} = event;
       return config.coord2Pos(offsetX, offsetY);
     },
@@ -319,7 +388,7 @@ function useMouse({
   );
 
   const getUnderscoreAnnotNameFromMouseEvent = React.useCallback(
-    event => {
+    (event: {offsetX: number; offsetY: number}) => {
       const {offsetX, offsetY} = event;
       return config.coord2UnderscoreAnnot(offsetX, offsetY);
     },
@@ -327,7 +396,7 @@ function useMouse({
   );
 
   const handleMouseDown = React.useCallback(
-    ({evt}) => {
+    ({evt}: {evt: MouseEvent}) => {
       let myPrevSelecteds = prevSelecteds;
       const {multiSel, rangeSel} = getKeyCmd(evt);
       const position = getPositionFromMouseEvent(evt);
@@ -335,7 +404,7 @@ function useMouse({
         return;
       }
       let selecteds = [position];
-      const newSel = {};
+      const newSel: Partial<SelectionState> = {};
       if (rangeSel && anchorPos) {
         selecteds = rangePos(anchorPos, position);
       }
@@ -375,11 +444,11 @@ function useMouse({
   );
 
   const handleMouseMove = React.useCallback(
-    ({evt}) => {
+    ({evt}: {evt: MouseEvent}) => {
       // set hovering position
       const hoverPos = getPositionFromMouseEvent(evt);
       const hoverUSAnnot = getUnderscoreAnnotNameFromMouseEvent(evt);
-      const newSel = {
+      const newSel: Partial<SelectionState> = {
         hoverPos,
         hoverUSAnnot
       };
@@ -432,9 +501,9 @@ function useMouse({
   );
 
   const handleMouseUp = React.useCallback(
-    ({evt}) => {
+    ({evt}: {evt: MouseEvent}) => {
       const {multiSel, rangeSel} = getKeyCmd(evt);
-      const newSel = {
+      const newSel: Partial<SelectionState> = {
         mouseDown: false,
         mouseMoved: false
       };
@@ -482,17 +551,18 @@ function useMouse({
   );
 
   const handleGlobalMouseDown = React.useCallback(
-    evt => {
-      let noBlur = evt.target.matches(noBlurSelector);
+    (evt: MouseEvent) => {
+      const target = evt.target as HTMLElement;
+      let noBlur = target.matches(noBlurSelector);
       if (!noBlur) {
         noBlur = Array.from(
           document.querySelectorAll(noBlurSelector)
-        ).some(parent => parent.contains(evt.target));
+        ).some(parent => (parent as HTMLElement).contains(target));
       }
       if (noBlur) {
         return;
       }
-      const isCanvasClicked = evt.target.tagName === 'CANVAS';
+      const isCanvasClicked = target.tagName === 'CANVAS';
       if (!isCanvasClicked) {
         if (curSelecteds.length > 0) {
           setSelection({reset: true});
@@ -522,20 +592,32 @@ function useMouse({
 }
 
 
-function useAutoScroll({activePos, config, footerHeight}) {
-  const containerRef = React.useRef();
+function useAutoScroll({
+  activePos,
+  config,
+  footerHeight
+}: {
+  activePos: number | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  footerHeight: number;
+}) {
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToPos = React.useCallback(
-    position => {
+    (position: number | null) => {
       const {
         posItemOuterHeightPixel: posItemHeight,
         verticalMarginPixel: vMargin,
         pos2Coord
       } = config;
+      if (!position) {
+        return;
+      }
       const {y: posOffsetY} = pos2Coord(position);
       let {pageYOffset, innerHeight: viewportHeight} = window;
       viewportHeight -= footerHeight;
-      const rect = containerRef.current.getBoundingClientRect();
+      const rect = containerRef.current!.getBoundingClientRect();
 
       const posItemTop = rect.y + posOffsetY;
       const posItemBottom = posItemTop + posItemHeight;
@@ -552,40 +634,35 @@ function useAutoScroll({activePos, config, footerHeight}) {
     [config, footerHeight]
   );
 
-  React.useEffect(
-    () => scrollToPos(activePos),
-    [activePos, scrollToPos]
-  );
+  React.useEffect(() => scrollToPos(activePos), [activePos, scrollToPos]);
 
   return containerRef;
 }
 
 
-SeqViewerStage.propTypes = {
-  config: PropTypes.object.isRequired,
-  sequence: PropTypes.string.isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  noBlurSelector: PropTypes.string.isRequired,
-  footerHeight: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired
-};
+interface SeqViewerStageProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: any;
+  sequence: string;
+  positionLookup: Record<number, Position>;
+  selectedPositions: number[];
+  noBlurSelector: string;
+  footerHeight?: number;
+  onChange: (positions: number[]) => void;
+}
 
-SeqViewerStage.defaultProps = {
-  footerHeight: 8 * 14
-};
-
+/**
+ * Canvas stage containing all sequence viewer layers.
+ */
 export default function SeqViewerStage({
   config,
   sequence,
   positionLookup,
   selectedPositions,
   noBlurSelector,
-  footerHeight,
+  footerHeight = 8 * 14,
   onChange
-}) {
+}: SeqViewerStageProps) {
   const [selection, setSelection] = useSelectionState({
     selectedPositions,
     onChange

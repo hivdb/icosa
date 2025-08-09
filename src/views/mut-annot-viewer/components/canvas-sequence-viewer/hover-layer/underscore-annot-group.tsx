@@ -1,15 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Group, Text} from 'react-konva';
 
+interface UnderscoreAnnotGroupProps {
+  annotName: string;
+  x: number;
+  y: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config: {
+    canvasWidthPixel: number;
+    posItemSizePixel: number;
+    hoverUnderscoreAnnotOffsetPixel: {x: number; y: number};
+    hoverTextFontSizePixel: number;
+    hoverTextColor: string;
+    fontFamily: string;
+  };
+}
 
-UnderscoreAnnotGroup.propTypes = {
-  annotName: PropTypes.string.isRequired,
-  x: PropTypes.number.isRequired,
-  y: PropTypes.number.isRequired,
-  config: PropTypes.object.isRequired
-};
-
+/**
+ * Hover tooltip for underscore annotations.
+ */
 export default function UnderscoreAnnotGroup({
   annotName,
   x,
@@ -22,12 +31,12 @@ export default function UnderscoreAnnotGroup({
     hoverTextColor,
     fontFamily
   }
-}) {
-  const textRef = React.useRef();
+}: UnderscoreAnnotGroupProps) {
+  const textRef = React.useRef<Text>(null);
   const [currentWidth, setCurrentWidth] = React.useState(posItemSizePixel);
 
   React.useEffect(
-    () => setCurrentWidth(textRef.current.getWidth()),
+    () => setCurrentWidth(textRef.current!.getWidth()),
     []
   );
 

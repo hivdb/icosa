@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 import debounce from 'lodash/debounce';
 import Loader from '../../../../components/loader';
@@ -15,49 +14,54 @@ import {
 
 import LegendContext from '../legend-context';
 
-import {
-  curAnnotNameLookupShape,
-  annotCategoryShape,
-  posShape, seqViewerSizeType
+import type {
+  CurAnnotNameLookup,
+  AnnotCategory,
+  Position,
+  SeqViewerSize,
+  Annotation
 } from '../../prop-types';
 
 
-function useContainer() {
-  const containerRef = React.useRef();
-  const [containerWidth, setContainerWidth] = React.useState(null);
+/**
+ * Hook providing a ref to the container element and tracking its width.
+ */
+function useContainer(): [React.RefObject<HTMLDivElement>, number | null] {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = React.useState<number | null>(null);
 
-  React.useEffect(
-    () => {
-      let mounted = true;
-      const onWindowResize = debounce(() => {
-        const konva = containerRef.current.querySelector('.konvajs-content');
-        if (konva) {
-          konva.style.display = 'none';
-        }
-        preloadFonts()
-          .then(() => (
-            mounted &&
-            setContainerWidth(containerRef.current.clientWidth)
-          ))
-          .finally(() => {
-            if (konva) {
-              konva.style.display = null;
-            }
-          });
-      }, 200);
-      onWindowResize();
-      window.addEventListener('resize', onWindowResize, false);
-      return () => {
-        window.removeEventListener('resize', onWindowResize, false);
-        mounted = false;
-      };
-    },
-    []
-  );
+  React.useEffect(() => {
+    let mounted = true;
+    const onWindowResize = debounce(() => {
+      const konva = containerRef.current?.querySelector('.konvajs-content') as HTMLElement | null;
+      if (konva) {
+        konva.style.display = 'none';
+      }
+      preloadFonts()
+        .then(() => (
+          mounted &&
+          setContainerWidth(containerRef.current?.clientWidth ?? null)
+        ))
+        .finally(() => {
+          if (konva) {
+            konva.style.display = '';
+          }
+        });
+    }, 200);
+    onWindowResize();
+    window.addEventListener('resize', onWindowResize, false);
+    return () => {
+      window.removeEventListener('resize', onWindowResize, false);
+      mounted = false;
+    };
+  }, []);
   return [containerRef, containerWidth];
 }
 
 
+/**
+ * Build and memoize the rendering configuration for the viewer.
+ */
 function useConfig({
   size,
   sequence,
@@ -68,6 +72,16 @@ function useConfig({
   annotCategories,
   containerWidth,
   legendContext
+}: {
+  size: SeqViewerSize;
+  sequence: string;
+  seqFragment: [number, number];
+  annotations: Annotation[];
+  positionLookup: Record<number, Position>;
+  curAnnotNameLookup: CurAnnotNameLookup;
+  annotCategories: AnnotCategory[];
+  containerWidth: number | null;
+  legendContext: {onUpdate: (val: unknown) => void};
 }) {
   const config = React.useMemo(
     () => {
@@ -158,30 +172,27 @@ function useConfig({
 }
 
 
-CanvasSequenceViewer.propTypes = {
-  size: seqViewerSizeType.isRequired,
-  className: PropTypes.string,
-  annotations: PropTypes.array,
-  seqFragment: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  curAnnotNameLookup: curAnnotNameLookupShape,
-  annotCategories: PropTypes.arrayOf(
-    annotCategoryShape.isRequired
-  ).isRequired,
-  sequence: PropTypes.string.isRequired,
-  positionLookup: PropTypes.objectOf(posShape.isRequired).isRequired,
-  selectedPositions: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  noBlurSelector: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
-};
+interface CanvasSequenceViewerProps {
+  size: SeqViewerSize;
+  className?: string;
+  annotations?: Annotation[];
+  seqFragment: [number, number];
+  curAnnotNameLookup: CurAnnotNameLookup;
+  annotCategories: AnnotCategory[];
+  sequence: string;
+  positionLookup: Record<number, Position>;
+  selectedPositions: number[];
+  noBlurSelector: string;
+  onChange: (positions: number[]) => void;
+}
 
+/**
+ * Root component orchestrating the canvas sequence viewer.
+ */
 export default function CanvasSequenceViewer({
   size,
   className,
-  annotations,
+  annotations = [],
   seqFragment,
   curAnnotNameLookup,
   annotCategories,
@@ -190,7 +201,7 @@ export default function CanvasSequenceViewer({
   selectedPositions,
   noBlurSelector,
   onChange
-}) {
+}: CanvasSequenceViewerProps) {
 
   const [containerRef, containerWidth] = useContainer();
 
