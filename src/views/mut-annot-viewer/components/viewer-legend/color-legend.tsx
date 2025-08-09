@@ -58,7 +58,7 @@ function getAllAnnotations({
     const {annotVal, annotDesc} = getAnnotation(annotations, annotName);
     if (annotVal !== null) {
       const annotKey = `${annotVal}$@$@$${annotDesc}`;
-      let annotObj = {
+      let annotObj: AnnotationObj = {
         annotVal,
         annotDesc,
         positions: []
@@ -84,9 +84,9 @@ function getAllAnnotations({
  * @returns range representation such as "1-3 and 5"
  */
 function integersToRangeString(numbers: number[]): string {
-  const groups = (numbers
+  const groups = numbers
     .sort((a, b) => a - b)
-    .reduce((acc, num) => {
+    .reduce<number[][]>((acc, num) => {
       if (acc.length === 0) {
         acc.push([num]);
         return acc;
@@ -109,8 +109,7 @@ function integersToRangeString(numbers: number[]): string {
       else {
         return `${group[0]}-${group[group.length - 1]}`;
       }
-    })
-  );
+    });
   const lastIdx = groups.length - 1;
   if (lastIdx > 0) {
     return `${groups.slice(0, lastIdx).join(', ')} and ${groups[lastIdx]}`;
@@ -125,8 +124,9 @@ function integersToRangeString(numbers: number[]): string {
  * @param content - description text
  * @returns true if description is short
  */
-function isShortDesc(content: string): boolean {
-  return content.length < 6 && !(/\s/.test(content));
+function isShortDesc(content: string | null): boolean {
+  const text = content ?? '';
+  return text.length < 6 && !(/\s/.test(text));
 }
 
 /** Props for {@link CitationList}. */
@@ -140,7 +140,7 @@ interface CitationListProps {
  * Render list of citations for a given annotation.
  */
 function CitationList({positionLookup, citations, annotName}: CitationListProps) {
-  const citationIds = {};
+  const citationIds: Record<string, number[]> = {};
   for (const posdata of Object.values(positionLookup)) {
     const annot = posdata.annotations.find(({name}) => name === annotName);
     if (annot) {
@@ -206,7 +206,7 @@ function CircleInBoxDesc({
 /** Props for {@link AAColorDesc}. */
 interface AAColorDescProps {
   catName: string;
-  display: string | boolean;
+  display?: string | boolean;
   color?: string;
 }
 
@@ -248,7 +248,7 @@ function AAColorDesc({catName, display, color}: AAColorDescProps) {
 interface AnnotDescProps {
   positions: number[];
   annotVal: string;
-  annotDesc: string;
+  annotDesc: string | null;
   color: {stroke?: string; bg?: string};
 }
 
@@ -321,7 +321,7 @@ export default function ColorLegend({
           {annotObjs.length > 0 ? annotObjs.map((annot, idx) => (
             <AnnotDesc
              key={idx}
-             color={colorBoxAnnotColorLookup[annot.annotVal] || {}}
+             color={colorBoxAnnotColorLookup[annot.annotVal] ?? {}}
              {...annot} />
           )) : 'None'}
           <hr />

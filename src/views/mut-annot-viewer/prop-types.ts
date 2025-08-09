@@ -20,6 +20,8 @@ export interface Annotation {
   hideCitations?: boolean;
   /** Optional color rules applied when rendering */
   colorRules?: string[];
+  /** Associated category name */
+  category?: string;
 }
 
 /** Citation information for a particular mutation annotation. */
@@ -77,7 +79,8 @@ export type Version = '20200924115632';
 /** Fragment option representing a selectable region. */
 export interface FragmentOption {
   name: string;
-  seqFragment: number[];
+  /** Tuple representing inclusive [start, end] positions */
+  seqFragment: [number, number];
 }
 
 /** Array of annotation names used for a category. */

@@ -1,8 +1,14 @@
 import React from 'react';
 import {Group, Rect, Circle, Text} from 'react-konva';
 
-
-function getDisplayAA(aa) {
+/**
+ * Display a mutation amino acid in a human readable form.
+ *
+ * @param aa - Amino acid code where `i` represents an insertion and `d`
+ * represents a deletion.
+ * @returns Readable amino acid string.
+ */
+export function getDisplayAA(aa: string): string {
   return aa.replace('i', 'ins').replace('d', 'del');
 }
 
@@ -12,6 +18,12 @@ interface PositionGroupProps {
   config: any;
   position: number;
   residue: string;
+}
+
+interface AnnotatedAA {
+  aminoAcid: string;
+  offsetPixel: {x: number; y: number};
+  color: string;
 }
 
 /**
@@ -48,8 +60,8 @@ export default function PositionGroup({
     () => config.isPositionAnnotated(position, 'circleInBox'),
     [config, position]
   );
-  const aaDefs = React.useMemo(
-    () => config.getAnnotatedAAs(position),
+  const aaDefs: AnnotatedAA[] = React.useMemo(
+    () => config.getAnnotatedAAs(position) as AnnotatedAA[],
     [config, position]
   );
 
@@ -100,7 +112,7 @@ export default function PositionGroup({
      height={itemSize}
      lineHeight={itemSize / refAAFontSizePixel}
      text={residue} />
-    {aaDefs.map(({aminoAcid: aa, offsetPixel: offset, color}, idx) => (
+    {aaDefs.map(({aminoAcid: aa, offsetPixel: offset, color}: AnnotatedAA, idx: number) => (
       <Text
        key={idx}
        x={offset.x}

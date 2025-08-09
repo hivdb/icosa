@@ -25,29 +25,42 @@ function NewWindowPropsProvider({routeProps, overrideProps, Component}: NewWindo
   return <>{touched.current ? <Component {...routeProps} {...props} {...overrideProps} /> : null}</>;
 }
 
-interface NewWindowRouteOptions {
+interface NewWindowRouteProps {
+  /** Optional prefix used to build the popup path. */
   pathPrefix?: string;
+  /** Props injected into the rendered component inside the popup. */
   overrideProps?: Record<string, any>;
+  /** Component rendered within the new window route. */
+  Component: React.ComponentType<any>;
   [key: string]: any;
 }
 
-export class NewWindowRoute extends Route<any> {
-  overrideProps?: Record<string, any>;
-  constructor({pathPrefix, overrideProps, ...props}: NewWindowRouteOptions) {
-    const path = pathPrefix ? pathPrefix.replace(/\/*$/, '/') + 'popup/' : 'popup/';
-    super({...props, path});
-    this.overrideProps = overrideProps;
-  }
-
-  render({Component, props}: any) {
-    return (
-      <NewWindowPropsProvider
-        routeProps={props}
-        overrideProps={this.overrideProps}
-        Component={Component}
-      />
-    );
-  }
+/**
+ * Route wrapper that opens the target component in a separate browser window.
+ *
+ * The route path is automatically suffixed with `popup/` and the rendered
+ * component receives its props via the {@link NewWindowPropsProvider}.
+ */
+export function NewWindowRoute({
+  pathPrefix,
+  overrideProps,
+  Component,
+  ...props
+}: NewWindowRouteProps): React.ReactElement {
+  const path = pathPrefix ? pathPrefix.replace(/\/*$/, '/') + 'popup/' : 'popup/';
+  return (
+    <Route
+      {...props}
+      path={path}
+      render={({props: routeProps}: any) => (
+        <NewWindowPropsProvider
+          routeProps={routeProps}
+          overrideProps={overrideProps}
+          Component={Component}
+        />
+      )}
+    />
+  );
 }
 
 interface UseNewWindowOptions {

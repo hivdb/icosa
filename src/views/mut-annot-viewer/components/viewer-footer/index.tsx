@@ -126,7 +126,7 @@ export default function ViewerFooter(props: ViewerFooterProps) {
                height={400}
                backgroundColor="#f4f4f4"
                views={proteinViews}
-               positions={positionsForProteinViewer} />
+               positions={positionsForProteinViewer || []} />
             </div> : null}
             <Markdown
              disableHeadingTagAnchor

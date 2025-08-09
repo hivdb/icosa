@@ -36,7 +36,6 @@ export default function PresetSelection({match: {location}, router, options}: Pr
       <Dropdown
         placeholder="Choose a gene to view..."
         options={options}
-        name="preset"
         onChange={handleChange}
       />
     </section>

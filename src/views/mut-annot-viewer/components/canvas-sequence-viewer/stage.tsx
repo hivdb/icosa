@@ -16,7 +16,7 @@ import type {Position} from '../../prop-types';
 /**
  * Create an array of integers between `start` and `end` (inclusive).
  */
-function rangePos(start: number, end: number): number[] {
+export function rangePos(start: number, end: number): number[] {
   if (start > end) {
     [end, start] = [start, end];
   }
@@ -27,7 +27,7 @@ function rangePos(start: number, end: number): number[] {
  * Merge selections by applying an XOR with the previous selection and then
  * adding new selections. The resulting array is sorted.
  */
-function unionSelections(
+export function unionSelections(
   curSels: number[],
   prevSels: number[],
   newSels: number[]
@@ -39,7 +39,7 @@ function unionSelections(
 /**
  * Determine which modifier keys are active.
  */
-function getKeyCmd({
+export function getKeyCmd({
   ctrlKey,
   metaKey,
   shiftKey
@@ -50,30 +50,6 @@ function getKeyCmd({
 }) {
   let multiSel = !!(ctrlKey || metaKey);
   let rangeSel = !!shiftKey;
-  if (multiSel && rangeSel) {
-    multiSel = rangeSel = false;
-  }
-  return {multiSel, rangeSel};
-}
-
-
-function rangePos(start, end) {
-  if (start > end) {
-    [end, start] = [start, end];
-  }
-  return range(start, end + 1);
-}
-
-
-function unionSelections(curSels, prevSels, newSels) {
-  const combined = union(xor(curSels, prevSels), newSels);
-  return combined.sort((a, b) => a - b);
-}
-
-
-function getKeyCmd({ctrlKey, metaKey, shiftKey}) {
-  let multiSel = ctrlKey || metaKey;
-  let rangeSel = shiftKey;
   if (multiSel && rangeSel) {
     multiSel = rangeSel = false;
   }
@@ -247,6 +223,9 @@ function useKeyboard({
         seqFragment: [absPosStart, absPosEnd]
       } = config;
       let posEnd = activePos;
+      if (posEnd == null) {
+        return;
+      }
       switch (key) {
         case 'ArrowLeft':
           posEnd --;
