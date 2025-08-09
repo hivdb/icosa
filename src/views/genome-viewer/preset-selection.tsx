@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Dropdown from 'react-dropdown';
+import Dropdown, { ReactDropdownProps } from 'react-dropdown';
 import {useRouter} from 'found';
 
 import style from './style.module.scss';
@@ -13,7 +13,7 @@ interface Option {
 interface PresetSelectionProps {
   className?: string;
   options: Option[];
-  as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
+  as?: keyof React.JSX.IntrinsicElements | React.ComponentType<any>;
 }
 
 /**
@@ -28,7 +28,7 @@ export default function PresetSelection({
   className,
   options,
   as: Component = 'section'
-}: PresetSelectionProps) {
+}: PresetSelectionProps): React.JSX.Element {
   const routerState = useRouter();
   if (!routerState) {
     throw new Error('PresetSelection must be used within a router');
@@ -65,18 +65,16 @@ export default function PresetSelection({
     [options, router, splittedPathName]
   );
 
-  return React.createElement(
-    Component,
-    {
-      className: classNames(style['preset-selection'], className)
-    },
-    <Dropdown
-      value={current ?? undefined}
-      placeholder="Choose a genome view..."
-      options={options}
-      name="preset"
-      onChange={handleChange}
-    />
+  const Wrapper: React.ElementType = Component;
+  return (
+    <Wrapper className={classNames(style['preset-selection'], className)}>
+      <Dropdown
+        value={current ?? undefined}
+        placeholder="Choose a genome view..."
+        options={options}
+        onChange={handleChange as ReactDropdownProps['onChange']}
+      />
+    </Wrapper>
   );
 }
 

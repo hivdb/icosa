@@ -35,7 +35,7 @@ export function MutationPrefills({
   options = [],
   value,
   onSelect
-}: MutationPrefillsProps): JSX.Element {
+}: MutationPrefillsProps): React.JSX.Element {
   const handleSelect = React.useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       for (const option of Array.from(event.currentTarget.selectedOptions)) {
@@ -87,7 +87,7 @@ export interface UseMutationPrefillsOptions {
 export default function useMutationPrefills({
   onChange,
   config
-}: UseMutationPrefillsOptions): JSX.Element | null {
+}: UseMutationPrefillsOptions): React.JSX.Element | null {
   const { messages, mutationPrefills } = config;
 
   const handlePrefillSelect = React.useCallback(

@@ -107,9 +107,10 @@ export default function PatternsInputForm({
 
   const handleChange = React.useCallback(
     (
-      {uuid, name, mutations}: PatternObj,
+      payload: Record<string, unknown>,
       preventSubmit: boolean
     ) => {
+      const { uuid, name, mutations } = payload as unknown as PatternObj;
       if (uuid) {
         const patternObj = patterns.find(p => p.uuid === uuid);
         if (patternObj) {

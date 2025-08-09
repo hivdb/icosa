@@ -23,7 +23,7 @@ export interface MutationsErrorsProps {
   /** Optional parent className for BEM-style selectors */
   parentClassName?: string;
   /** Callback for removing all problematic mutations */
-  onAutoClean(): void;
+  onAutoClean(e: React.MouseEvent<HTMLAnchorElement>): void;
 }
 
 /**
@@ -38,7 +38,7 @@ export function MutationsErrors({
   allErrors,
   onAutoClean,
   parentClassName
-}: MutationsErrorsProps): JSX.Element {
+}: MutationsErrorsProps): React.JSX.Element {
   const className = parentClassName ? `${parentClassName}-errors` : null;
 
   return (
@@ -50,7 +50,7 @@ export function MutationsErrors({
           (acc, { errors }) => acc + errors.length + 1,
           0
         )
-      }}
+      } as React.CSSProperties}
     >
       <p>
         Please fix following errors: (
@@ -95,7 +95,7 @@ export interface UseMutationErrorsOptions {
   defaultGene?: string;
   geneSynonyms?: Record<string, string>;
   geneReferences?: Record<string, string[]>;
-  messages?: Record<string, string>;
+  messages: Record<string, string>;
   parentClassName?: string;
   mutations: string[];
   onChange(mutations: string[]): void;
@@ -113,14 +113,14 @@ export default function useMutationErrors({
   geneOnly,
   allowPositions,
   defaultGene,
-  geneSynonyms,
-  geneReferences,
+  geneSynonyms = {},
+  geneReferences = {},
   messages,
   parentClassName,
   mutations,
   onChange,
   onPreventSubmit
-}: UseMutationErrorsOptions): JSX.Element {
+}: UseMutationErrorsOptions): React.JSX.Element {
   const [, allErrors] = React.useMemo(
     () =>
       sanitizeMutations(mutations, {
@@ -155,6 +155,7 @@ export default function useMutationErrors({
         defaultGene: geneOnly || defaultGene,
         geneSynonyms,
         geneReferences,
+        messages,
         removeErrors: true
       });
       onChange(sanitized);

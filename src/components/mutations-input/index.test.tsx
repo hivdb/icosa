@@ -25,12 +25,21 @@ vi.mock('../../utils/mutation', () => ({
   sanitizeMutations: (muts: string[]) => [muts, []]
 }));
 
-import MutationsInput from './index';
+import MutationsInput, { MutationsConfig } from './index';
 
 describe('MutationsInput', () => {
   it('handles suggestion selection', () => {
     const onChange = vi.fn();
-    const config = {mutationSuggestions: [{gene: 'g', mutations: [[1, ['A']]]}], geneReferences: {}, geneDisplay: {}};
+    const config: MutationsConfig = {
+      mutationSuggestions: [{
+        gene: 'g',
+        mutations: [[1, ['A'] as Iterable<string>]]
+      }],
+      geneReferences: { g: ['A'] },
+      geneDisplay: { g: 'G' },
+      geneSynonyms: {},
+      messages: {}
+    };
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
     fireEvent.click(screen.getByTestId('suggest'));
     expect(onChange).toHaveBeenCalledWith({mutations: ['mut']}, false);
