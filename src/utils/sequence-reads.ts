@@ -25,6 +25,13 @@ export interface GeneValidatorDef {
   range?: [number, number];
 }
 
+export interface GenePositionRecord {
+  gene: string;
+  position: number;
+  totalReads: number;
+  allCodonReads: {codon: string, reads: number}[];
+}
+
 /**
  * Build a function to normalize gene names and positions.
  *
@@ -58,28 +65,33 @@ export function buildGeneValidator(
 function parseAAVF(
   name: string,
   rows: string[],
-  geneValidator: (gene: string, pos: number) => [string|null, number|null]
+  geneValidator: (gene: string, pos: number) => [string | null, number | null]
 ) {
-  const gpMap = {};
-  const gpRefMap = {};
-  for (let row of rows) {
-    row = tsvrow(row);
+  const gpMap: Record<string, GenePositionRecord> = {};
+  const gpRefMap: Record<string, string> = {};
+  for (const rowText of rows) {
+    const row = tsvrow(rowText);
     if (row.length === 0) {
       continue;
     }
     if (row[0].startsWith('#') || !row.some(c => !!c)) {
       continue;
     }
-    let [, gene, pos,,,, altFreq, coverage, info] = row;
-    pos = parseInt(pos, 10);
+    let gene: string | null;
+    let posText: string;
+    let altFreqText: string;
+    let covText: string;
+    let info: string;
+    [, gene, posText,,,, altFreqText, covText, info] = row;
+    let pos: number | null = parseInt(posText, 10);
     if (isNaN(pos)) {
       continue;
     }
     [gene, pos] = geneValidator(gene, pos);
-    if (!gene) {
+    if (gene == null || pos == null) {
       continue;
     }
-    coverage = parseInt(coverage, 10);
+    const coverage = parseInt(covText, 10);
     if (isNaN(coverage)) {
       continue;
     }
@@ -87,7 +99,7 @@ function parseAAVF(
       continue;
     }
 
-    let refCodon;
+    let refCodon: string | undefined = undefined;
     let altCodons = [];
     let altCodonCounts = [];
     for (const infochunk of info.split(/;/g)) {
@@ -127,7 +139,7 @@ function parseAAVF(
       altCodons = altCodons.map(alt => alt.slice(3));
     }
     if (altCodons.length === 1 && altCodonCounts.length === 0) {
-      altFreq = parseFloat(altFreq);
+      const altFreq = parseFloat(altFreqText);
       if (isNaN(altFreq)) {
         continue;
       }
@@ -201,9 +213,9 @@ function detectCodFreqDialect(firstRow: any[]): string {
 function parseCodFreq(
   name: string,
   rows: any[],
-  geneValidator: (gene: string, pos: number) => [string|null, number|null]
+  geneValidator: (gene: string, pos: number) => [string | null, number | null]
 ) {
-  const gpMap = {};
+  const gpMap: Record<string, GenePositionRecord> = {};
   // Gene, AAPos, TotalReads, Codon, CodonReads
   const [firstRow] = rows;
   const dialect = detectCodFreqDialect(firstRow);
@@ -222,7 +234,7 @@ function parseCodFreq(
     }
     [gene, aaPos] = geneValidator(gene, aaPos);
     // skip header and problem rows
-    if (!gene) {
+    if ( gene == null || aaPos == null) {
       continue;
     }
     totalReads = parseInt(totalReads, 10);
@@ -271,7 +283,7 @@ function parseCodFreq(
         }
         codon = '---';
       }
-      for (let pos = aaPos - aaDelLen + (aaDelLen > 0); pos <= aaPos; pos ++) {
+      for (let pos = aaPos - aaDelLen + Number(aaDelLen > 0); pos <= aaPos; pos ++) {
         const gpKey = `${gene}$$##$$${pos}`;
         if (!(gpKey in gpMap)) {
           gpMap[gpKey] = {
@@ -308,7 +320,7 @@ function parseUntransRegions(rows: string[]): [any[], string[]] {
     }
     else if (begin) {
       const match = utrPattern.exec(row);
-      if (match) {
+      if (match && match.groups) {
         const {name, refStart, refEnd, consensus} = match.groups;
         results.push({
           name,
