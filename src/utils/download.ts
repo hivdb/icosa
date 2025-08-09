@@ -2,6 +2,17 @@ import React from 'react';
 import JSZip from 'jszip';
 import useMounted from './use-mounted';
 
+declare global {
+  interface Window {
+    showSaveFilePicker?: (options?: any) => Promise<any>;
+    showDirectoryPicker?: (options?: any) => Promise<any>;
+  }
+
+  interface Navigator {
+    msSaveOrOpenBlob?: (blob: Blob, fileName: string) => void;
+  }
+}
+
 /**
  * Show a file picker dialog when supported by the browser.
  *
@@ -65,6 +76,9 @@ const utf8Encoder = new TextEncoder();
  * @param data - Blob or string content to download.
  * @param isBlob - When `true`, `data` is already a `Blob` instance.
  * @param fileHandle - Optional file handle obtained from picker.
+ *
+ * Writes the data using the File System Access API when a handle is
+ * provided, falling back to a hidden anchor element when not available.
  */
 export async function makeDownload(
   fileName: string,
@@ -124,6 +138,12 @@ export async function makeDownload(
   }
 }
 
+/**
+ * Create an object URL and trigger a download via an anchor element.
+ *
+ * @param fileName - Name to assign to the downloaded file.
+ * @param data - Blob representing the file contents.
+ */
 function fallbackDownload(fileName: string, data: Blob): void {
   const ts = new Date().getTime();
   fileName = fileName.replace(/(\.[^.]+$|$)/, `_${ts}$1`);
@@ -146,16 +166,29 @@ function fallbackDownload(fileName: string, data: Blob): void {
   }
 }
 
+/**
+ * Write a blob to a handle obtained from the File System Access API.
+ *
+ * @param fileHandle - Handle representing the destination file.
+ * @param data - Blob to persist.
+ */
 async function writeToFileHandle(fileHandle: any, data: Blob): Promise<void> {
   const writeFS = await fileHandle.createWritable();
   await writeFS.write(data);
   await writeFS.close();
 }
 
+/**
+ * Sanitize a filename by replacing characters that are invalid on most
+ * filesystems.
+ */
 function cleanFileName(name: string): string {
   return name.replace(/[\\/:*?"<>|]/g, '.');
 }
 
+/**
+ * Create the mutable state object used by {@link useDownload}.
+ */
 function defaultState() {
   return {
     initiated: false,
@@ -178,11 +211,13 @@ interface UseDownloadArgs {
  * the File System Access API.
  *
  * @param args - Configuration for the download behaviour.
- * @returns Helper methods and state describing the download process.
+ * @returns Helper methods and state describing the download process. The
+ * `isDownloading` flag in the return value indicates whether the process is
+ * currently active.
  */
 export function useDownload({name, suffix, types, multiple = true}: UseDownloadArgs) {
   const isMounted = useMounted();
-  const [isDownloading, setIsDownloading] = React.useState(false);
+  const [isDownloading, setIsDownloading] = React.useState<number | boolean>(false);
   const state = React.useRef(defaultState());
 
   const onInit = React.useCallback(
@@ -239,9 +274,13 @@ export function useDownload({name, suffix, types, multiple = true}: UseDownloadA
       if (folder && /[/\\]$/.test(folder)) {
         throw new Error('folder must not end with slash (/) or backslash (\\)');
       }
+      let blobData: Blob;
       if (!isBlob) {
-        data = utf8Encoder.encode(data);
-        data = new Blob([data]);
+        const encoded = utf8Encoder.encode(data as string);
+        blobData = new Blob([encoded]);
+      }
+      else {
+        blobData = data as Blob;
       }
       if (dirHandle !== null) {
         // multiple files save in directory
@@ -252,20 +291,20 @@ export function useDownload({name, suffix, types, multiple = true}: UseDownloadA
           }
         }
         const fileH = await dirH.getFileHandle(fileName, {create: true});
-        await writeToFileHandle(fileH, data);
+        await writeToFileHandle(fileH, blobData);
       }
       else if (zipObj !== null) {
         // multiple files save in ZIP
         const filePath = folder ? `${folder}/${fileName}` : fileName;
-        zipObj.folder(name).file(filePath, data);
+        zipObj.folder(name).file(filePath, blobData);
       }
       else if (fileHandle !== null) {
         // single file save to fileHandle
-        await writeToFileHandle(fileHandle, data);
+        await writeToFileHandle(fileHandle, blobData);
       }
       else {
         // single file download fallback
-        fallbackDownload(fileName || (name + suffix), data);
+        fallbackDownload(fileName || (name + suffix), blobData);
       }
       state.current.loadedFiles.push(
         folder ? `${folder}/${fileName}` : fileName

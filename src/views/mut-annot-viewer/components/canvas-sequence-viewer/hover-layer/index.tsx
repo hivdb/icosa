@@ -64,6 +64,10 @@ export default function HoverLayer({
       <PositionGroup position={pos} config={config} key={pos} />
     ))}
     {hoverUSAnnot.annotName ?
-      <USAnnotGroup {...hoverUSAnnot} config={config} /> : null}
+      <USAnnotGroup
+       annotName={hoverUSAnnot.annotName!}
+       x={hoverUSAnnot.x!}
+       y={hoverUSAnnot.y!}
+       config={config} /> : null}
   </Layer>;
 }

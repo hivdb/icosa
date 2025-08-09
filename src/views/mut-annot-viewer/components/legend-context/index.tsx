@@ -5,7 +5,7 @@ import React from 'react';
  * components of the mutation annotation viewer.
  */
 
-interface LegendContextValue {
+export interface LegendContextValue {
   colorBoxAnnotColorLookup: Record<string, {stroke?: string; bg?: string}>;
   underscoreAnnotColorLookup: Record<string, string>;
   aminoAcidsCatColorLookup: Record<string, string>;

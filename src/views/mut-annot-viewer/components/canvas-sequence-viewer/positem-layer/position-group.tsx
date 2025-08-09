@@ -98,7 +98,7 @@ export default function PositionGroup({
      fill={posNumColor}
      fontFamily={fontFamily}
      fontSize={posNumFontSizePixel}
-     text={position} />
+     text={position.toString()} />
     <Text
      x={refAAOffset.x}
      y={refAAOffset.y}

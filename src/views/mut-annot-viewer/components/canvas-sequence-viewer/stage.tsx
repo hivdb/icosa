@@ -153,7 +153,7 @@ function useKeyboard({
   selection: {activePos, anchorPos, prevSelecteds},
   setSelection
 }: {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any;
   selectedPositions: number[];
@@ -216,16 +216,17 @@ function useKeyboard({
   );
 
   const handleKeyDown = React.useCallback(
-    (evt: React.KeyboardEvent) => {
+    (evt: KeyboardEvent) => {
       const {key, shiftKey: rangeSel} = evt;
       const {
         numCols, numPosPerPage,
         seqFragment: [absPosStart, absPosEnd]
       } = config;
-      let posEnd = activePos;
-      if (posEnd == null) {
+      const posEndNum = activePos;
+      if (posEndNum == null) {
         return;
       }
+      let posEnd = posEndNum;
       switch (key) {
         case 'ArrowLeft':
           posEnd --;
@@ -262,21 +263,21 @@ function useKeyboard({
       }
       evt.preventDefault();
       evt.stopPropagation();
-      if (posEnd < absPosStart || posEnd > absPosEnd) {
-        return;
-      }
-      const newSel: Partial<SelectionState> = {
-        activePos: posEnd,
-        anchorPos
-      };
+        if (posEnd < absPosStart || posEnd > absPosEnd) {
+          return;
+        }
+        const newSel: Partial<SelectionState> = {
+          activePos: posEnd,
+          anchorPos
+        };
       if (!rangeSel) {
         newSel.anchorPos = posEnd;
       }
-      setSelection(newSel);
-      handleKeySelection(rangeSel, newSel);
-    },
-    [config, handleKeySelection, setSelection, activePos, anchorPos]
-  );
+        setSelection(newSel);
+        handleKeySelection(rangeSel, {anchorPos: newSel.anchorPos!, activePos: newSel.activePos!});
+      },
+      [config, handleKeySelection, setSelection, activePos, anchorPos]
+    );
 
   const handleGlobalKeyDown = React.useCallback(
     (evt: KeyboardEvent) => {
@@ -285,7 +286,7 @@ function useKeyboard({
         seqFragment: [absPosStart, absPosEnd]
       } = config;
       let posEnd = activePos;
-      const isBodyActive = document.activeElement.tagName === 'BODY';
+      const isBodyActive = document.activeElement?.tagName === 'BODY';
       switch (key) {
         case 'ArrowUp':
         case 'ArrowRight':
@@ -318,12 +319,15 @@ function useKeyboard({
       }
       evt.stopPropagation();
       evt.preventDefault();
+      if (posEnd == null) {
+        return;
+      }
       setSelection({
         activePos: posEnd,
         anchorPos: posEnd,
         curSelecteds: [posEnd]
       });
-      containerRef.current.focus();
+      containerRef.current?.focus();
     },
     [config, handleKeyDown, setSelection, activePos, containerRef]
   );
@@ -344,6 +348,15 @@ function useKeyboard({
 }
 
 
+/**
+ * Mouse interaction logic for the sequence viewer.
+ *
+ * @param config - Rendering configuration for coordinate calculations.
+ * @param selectedPositions - Currently selected sequence positions.
+ * @param noBlurSelector - CSS selector for elements that should not trigger blur.
+ * @param selection - Current selection state managed by {@link useSelectionState}.
+ * @param setSelection - Setter function to update selection state.
+ */
 function useMouse({
   config,
   selectedPositions,
@@ -571,6 +584,14 @@ function useMouse({
 }
 
 
+/**
+ * Automatically scroll the viewport to keep the active position visible.
+ *
+ * @param activePos - Currently active sequence position.
+ * @param config - Rendering configuration used to translate positions to coordinates.
+ * @param footerHeight - Height of the footer, used to adjust viewport size.
+ * @returns Ref to the container div that should be scrolled.
+ */
 function useAutoScroll({
   activePos,
   config,
@@ -679,8 +700,8 @@ export default function SeqViewerStage({
     <div
      ref={containerRef}
      className={style['stage-container']}
-     tabIndex="0"
-     onKeyDown={handleKeyDown}>
+     tabIndex={0}
+     onKeyDown={e => handleKeyDown(e.nativeEvent)}>
       <Stage
        width={config.canvasWidthPixel}
        onMouseDown={handleMouseDown}
@@ -696,15 +717,14 @@ export default function SeqViewerStage({
          config={config}
          positionLookup={positionLookup} />
         <HoverLayer
-         hoverPos={selection.hoverPos}
+         hoverPos={selection.hoverPos ?? undefined}
          hoverUSAnnot={selection.hoverUSAnnot}
-         activePos={selection.activePos}
-         anchorPos={selection.anchorPos}
+         activePos={selection.activePos ?? undefined}
+         anchorPos={selection.anchorPos ?? undefined}
          config={config}
          positionLookup={positionLookup} />
         <SelectedLayer
          selectedPositions={selection.curSelecteds}
-         anchorPos={selection.anchorPos}
          config={config} />
       </Stage>
     </div>

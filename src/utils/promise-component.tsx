@@ -44,6 +44,8 @@ export interface PromiseComponentProps<T = unknown, P = any> {
  * (defaulting to {@link Loader}).  Once the promise settles, the resolved
  * value is passed through `then` or `error` and rendered either directly or
  * via the optional `component` prop.
+ *
+ * @returns A React element representing the resolved content.
  */
 export default function PromiseComponent<T = unknown, P = any>({
   promise,
@@ -51,7 +53,7 @@ export default function PromiseComponent<T = unknown, P = any>({
   error = (err: unknown) => err as React.ReactNode,
   component,
   children = <Loader />
-}: PromiseComponentProps<T, P>): JSX.Element {
+}: PromiseComponentProps<T, P>): React.ReactElement {
   const [childProps, setChildProps] = React.useState<P | null>(null);
   const [rendered, setRendered] = React.useState<React.ReactNode>(children);
   const loadedRef = React.useRef<Promise<T> | T | false>(false);
@@ -119,11 +121,13 @@ export interface AsyncComponentProps {
 /**
  * Convenience wrapper around {@link PromiseComponent} which resolves after a
  * specified timeout and then renders its children.
+ *
+ * @returns A React element that appears once the delay has elapsed.
  */
 export function AsyncComponent({
   children,
   duration = 0
-}: AsyncComponentProps): JSX.Element {
+}: AsyncComponentProps): React.ReactElement {
   const thenRender = React.useCallback(() => children(), [children]);
   const promise = React.useMemo(() => sleep(duration), [duration]);
   return <PromiseComponent promise={promise} then={thenRender} />;
