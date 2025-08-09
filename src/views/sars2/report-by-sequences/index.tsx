@@ -13,8 +13,8 @@ import query from './query.graphql';
 import SeqReports from './reports';
 
 interface ReportBySequencesContainerProps {
-  /** Optional configuration. */
-  config?: Record<string, any>;
+  /** Configuration object. */
+  config: Record<string, any>;
   /** Lazy load results. */
   lazyLoad: boolean;
   /** Output mode. */
@@ -37,7 +37,7 @@ const ReportBySequencesContainer: React.FC<ReportBySequencesContainerProps> = ({
   match,
   sequences,
   currentSelected
-}: ReportBySequencesContainerProps): JSX.Element => {
+}: ReportBySequencesContainerProps): React.ReactElement => {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.log(
@@ -70,7 +70,6 @@ const ReportBySequencesContainer: React.FC<ReportBySequencesContainerProps> = ({
         <SeqReports
           cmtVersion={config?.cmtVersion}
           output={output}
-          match={match}
           {...props}
         />
       )}
@@ -86,7 +85,7 @@ interface WrapperProps {
 /**
  * Wrapper that loads configuration and sequences before rendering reports.
  */
-export default function ReportBySequencesContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportBySequencesContainerWrapper(props: WrapperProps): React.ReactElement {
   const {
     location: {
       pathname,

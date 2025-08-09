@@ -3,12 +3,13 @@ import React from 'react';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
 
-import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
+import AnalyzeFormsRaw from '../../../components/analyze-forms';
+import useBasePath from '../../../components/analyze-forms/use-base-path';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
-import SeqTabularReports, {subOptions as seqSubOptions} from '../tabular-report-by-sequences';
-import ReadsTabularReports, {subOptions as readsSubOptions} from '../tabular-report-by-reads';
+import SeqTabularReportsRaw, {subOptions as seqSubOptions} from '../tabular-report-by-sequences';
+import ReadsTabularReportsRaw, {subOptions as readsSubOptions} from '../tabular-report-by-reads';
 import {loadExampleCodonReads, loadExampleFasta} from './helpers';
 
 
@@ -34,6 +35,10 @@ interface SierraFormsProps {
  * @param router Router instance used for navigation.
  * @returns JSX element representing the forms page.
  */
+const AnalyzeForms = AnalyzeFormsRaw as React.ComponentType<any>;
+const SeqTabularReports = SeqTabularReportsRaw as React.ComponentType<any>;
+const ReadsTabularReports = ReadsTabularReportsRaw as React.ComponentType<any>;
+
 function SierraForms({
   config,
   curAnalysis,
@@ -86,7 +91,7 @@ function SierraForms({
          label: 'Machine-readable data (CSV/JSON)',
          subOptions: seqSubOptions,
          defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: any) => (
            <SeqTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
@@ -103,7 +108,7 @@ function SierraForms({
          label: "Machine-readable data (FASTA/CSV/JSON)",
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: any) => (
            <ReadsTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}

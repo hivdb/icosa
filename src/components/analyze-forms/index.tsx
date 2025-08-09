@@ -86,7 +86,7 @@ export default function AnalyzeForms({
   ngsRunners,
   ngs2codfreqSide,
   ...otherProps
-}: AnalyzeFormsProps): JSX.Element {
+}: AnalyzeFormsProps): React.ReactElement {
   const tabNames = React.useMemo(
     () => enableTabs.map(tab => `by-${tab}`),
     [enableTabs]

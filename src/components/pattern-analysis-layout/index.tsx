@@ -49,7 +49,7 @@ export default function PatternAnalysisContainer({
   onExtendVariables = (vars) => vars,
   renderPartialResults = true,
   ...props
-}: PatternAnalysisContainerProps): JSX.Element {
+}: PatternAnalysisContainerProps): React.ReactElement {
   const { currentSelected, patterns, lazyLoad } = props;
 
   return (

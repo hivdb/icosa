@@ -1,8 +1,11 @@
 import React from 'react';
 
 interface ExtendVariableArgs {
-  /** Configuration object containing version information. */
-  config: Record<string, any>;
+  /**
+   * Optional configuration object containing version information such as
+   * `drdbVersion` and `cmtVersion`.
+   */
+  config?: Record<string, any>;
   /** Router match object holding the current location state. */
   match: {
     location: {
@@ -19,7 +22,7 @@ interface ExtendVariableArgs {
  * @returns Callback that augments the provided variables object.
  */
 export default function useExtendVariables({
-  config,
+  config = {},
   match
 }: ExtendVariableArgs): (vars: Record<string, any>) => Record<string, any> {
   return React.useCallback(
@@ -30,6 +33,7 @@ export default function useExtendVariables({
         }
       } = match;
       vars.algorithm = algorithm;
+      // propagate version fields when available
       vars.drdbVersion = config.drdbVersion;
       vars.cmtVersion = config.cmtVersion;
       return vars;

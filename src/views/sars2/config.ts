@@ -11,10 +11,10 @@ const config: Record<string, any> = {
     'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2/' +
     'pages/sierra-sars2.json'
   ),
-  graphqlURI: (
-    window.__NODE_ENV === 'production' ?
-      '/graphql' :
-      'http://localhost:8113/Sierra-SARS2/graphql'),
+    graphqlURI: (
+      (window as any).__NODE_ENV === 'production' ?
+        '/graphql' :
+        'http://localhost:8113/Sierra-SARS2/graphql'),
   cmsStages: {
     'covdb.stanford.edu': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-prod',
     'localhost:3009': 's3-us-west-2.amazonaws.com/cms.hivdb.org/chiro-dev2',
@@ -121,9 +121,9 @@ const config: Record<string, any> = {
       name: 'unusualSites',
       label: '# Other Mutations',
       query: 'unusualSites',
-      formatter: (count, total) => (
-        `${count} (${(count / total * 100).toFixed(1)}%)`
-      )
+        formatter: (count: number, total: number) => (
+          `${count} (${(count / total * 100).toFixed(1)}%)`
+        )
     },
     {
       name: 'dividingLine1',

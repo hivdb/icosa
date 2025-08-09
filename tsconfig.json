@@ -14,8 +14,12 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
+    "types": [
+      "vitest/globals",
+      "react"
+    ]
   },
   "include": ["src"],
+  "exclude": ["src/views/mut-annot-viewer"],
   "references": []
 }

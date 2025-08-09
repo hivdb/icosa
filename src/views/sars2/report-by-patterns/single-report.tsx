@@ -21,6 +21,7 @@ import {
 } from '../format-date';
 
 import style from '../style.module.scss';
+import {ObservePayload} from '../../../utils/use-scroll-observer';
 
 interface SinglePatternReportProps {
   name: string;
@@ -31,8 +32,8 @@ interface SinglePatternReportProps {
   output: string;
   index: number;
   antibodies: any[];
-  onObserve: (el: Element) => void;
-  onDisconnect?: (el: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect?: (payload: ObservePayload) => void;
 }
 
 /**
@@ -48,7 +49,7 @@ function SinglePatternReport({
   index,
   onObserve,
   onDisconnect
-}: SinglePatternReportProps): JSX.Element {
+}: SinglePatternReportProps): React.ReactElement {
   const {
     allGeneMutations,
     validationResults

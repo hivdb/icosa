@@ -85,7 +85,7 @@ const SingleSeqReadsReport: React.FC<SingleSeqReadsReportProps> = ({
   index,
   onObserve,
   onDisconnect
-}: SingleSeqReadsReportProps): JSX.Element => {
+}: SingleSeqReadsReportProps): React.ReactElement => {
 
   const {
     strain: {display: strain} = {},

@@ -29,7 +29,6 @@ interface SequenceReportsProps {
   cmtVersion?: string;
   drdbLastUpdate?: string;
   output: string;
-  match: any;
   loaded: boolean;
   sequences: any[];
   currentSelected?: any;
@@ -46,7 +45,6 @@ const SequenceReports: React.FC<SequenceReportsProps> = ({
   antibodies = [],
   cmtVersion,
   drdbLastUpdate,
-  match,
   loaded,
   sequences,
   currentSelected,
@@ -96,8 +94,7 @@ const SequenceReports: React.FC<SequenceReportsProps> = ({
            onDisconnect={onDisconnect}
            output={output}
            header={header}
-           index={idx}
-           match={match} />
+           index={idx} />
           {idx + 1 < sequenceAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

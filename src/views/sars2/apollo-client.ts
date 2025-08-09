@@ -34,7 +34,7 @@ function buildClient(config: BuildClientConfig): ApolloClient<NormalizedCacheObj
             sequenceAnalysis: {
               keyArgs: false,
               merge: (existing = [], incoming) => {
-                const merged = {};
+                const merged: Record<string, unknown> = {};
                 for (const seq of [...existing, ...incoming]) {
                   const {inputSequence: {header}} = seq;
                   merged[header] = seq;
