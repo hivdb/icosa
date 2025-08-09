@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 declare module '*.module.scss' {
   const classes: { readonly [key: string]: string };
   export default classes;
@@ -11,4 +13,9 @@ declare module './views/mut-annot-viewer' {
 declare module './views/mut-annot-viewer/*' {
   const value: any;
   export default value;
+}
+
+interface Window {
+  /** Node environment string injected at build time */
+  __NODE_ENV?: string;
 }

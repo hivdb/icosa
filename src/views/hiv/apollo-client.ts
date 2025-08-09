@@ -1,5 +1,4 @@
-import React from 'react';
-import React from 'react';
+import { useRef } from 'react';
 import isEqual from 'lodash/isEqual';
 import {
   ApolloClient,
@@ -71,7 +70,7 @@ export default function useApolloClient({
   skip = false,
   payload
 }: UseApolloClientArgs): ApolloClient<any> | null {
-  const { current } = React.useRef<{ client?: ApolloClient<any>; payload?: unknown }>({});
+  const { current } = useRef<{ client?: ApolloClient<any>; payload?: unknown }>({});
   if (skip) {
     return null;
   }

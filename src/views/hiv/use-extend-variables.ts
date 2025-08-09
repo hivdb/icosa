@@ -1,5 +1,4 @@
-import React from 'react';
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'found';
 import BigData from '../../utils/big-data';
 
@@ -25,10 +24,10 @@ export default function useExtendVariables({
   config
 }: UseExtendVariablesArgs): [(vars: Record<string, any>) => Record<string, any>, boolean] {
   const {allGenes} = config;
-  const [extendVars, setExtendVars] = React.useState<Record<string, any> | null>(null);
+  const [extendVars, setExtendVars] = useState<Record<string, any> | null>(null);
   const {match} = useRouter();
 
-  React.useEffect(
+  useEffect(
     () => {
       let mounted = true;
       setExtendVars(null);
@@ -57,7 +56,7 @@ export default function useExtendVariables({
   );
 
   return [
-    React.useCallback(
+    useCallback(
       (vars: Record<string, any>) => {
         for (const key of SUBMIT_STATE_ALLOWLIST) {
           if (extendVars && key in extendVars) {

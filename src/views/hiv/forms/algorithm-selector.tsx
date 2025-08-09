@@ -1,4 +1,11 @@
-import React from 'react';
+import {
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import readFile from '../../../utils/read-file';
 import BigData from '../../../utils/big-data';
 import useMounted from '../../../utils/use-mounted';
@@ -11,16 +18,24 @@ import AlgVerSelect, {
 import style from './style.module.scss';
 
 interface SelectedAlgorithmProps {
-  children: React.ReactNode;
+  /** Content of the algorithm item */
+  children: ReactNode;
+  /** Callback when the item is removed */
   onRemove: () => void;
 }
 
+/**
+ * Display a selected algorithm with a remove button.
+ *
+ * @param props - {@link SelectedAlgorithmProps}
+ * @returns Rendered algorithm element.
+ */
 function SelectedAlgorithm({
   children,
   onRemove
 }: SelectedAlgorithmProps) {
-  const handleRemove = React.useCallback(
-    event => {
+  const handleRemove = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       onRemove();
     },
@@ -51,24 +66,36 @@ function isCustomAlg(value: string): boolean {
   return value.startsWith('CUSTOM-ALG-');
 }
 
+interface AlgorithmSelectorConfig {
+  messages: Record<string, string>;
+  algorithmVersions: Record<string, any[]>;
+  excludeAlgorithmVersions: string[];
+}
+
 interface AlgorithmSelectorProps {
-  config: { messages: Record<string, string> };
-  algorithms: Record<string, { value: string; label: React.ReactNode; xml?: string }>;
+  config: AlgorithmSelectorConfig;
+  algorithms: Record<string, { value: string; label: ReactNode; xml?: string }>;
   onChange: (algs: Record<string, any>) => void;
 }
 
+/**
+ * Render algorithm selection inputs with support for custom uploads.
+ *
+ * @param props - {@link AlgorithmSelectorProps}
+ * @returns Fieldset element containing algorithm selection UI.
+ */
 function AlgorithmSelector({
   config,
   algorithms,
   onChange
 }: AlgorithmSelectorProps) {
   const {messages} = config;
-  const [checkboxError, setCheckboxError] = React.useState<string | null>(null);
+  const [checkboxError, setCheckboxError] = useState<string | null>(null);
 
   const isMounted = useMounted();
 
-  const timeoutLock = React.useRef<NodeJS.Timeout | null>(null);
-  const setTimeoutClearError = React.useCallback(
+  const timeoutLock = useRef<NodeJS.Timeout | null>(null);
+  const setTimeoutClearError = useCallback(
     () => {
       if (timeoutLock.current !== null) {
         clearTimeout(timeoutLock.current);
@@ -83,15 +110,15 @@ function AlgorithmSelector({
     [setCheckboxError, isMounted]
   );
 
-  const handleAdd = React.useCallback(
-    ({ value, label }: { value: string; label: React.ReactNode }) => {
+  const handleAdd = useCallback(
+    ({ value, label }: { value: string; label: ReactNode }) => {
       algorithms[value] = { value, label };
       onChange(algorithms);
     },
     [algorithms, onChange]
   );
 
-  const handleRemove = React.useCallback(
+  const handleRemove = useCallback(
     (name: string) => {
       if (Object.keys(algorithms).length > 2) {
         delete algorithms[name];
@@ -105,7 +132,7 @@ function AlgorithmSelector({
     [algorithms, onChange, setTimeoutClearError]
   );
 
-  const handleUpload = React.useCallback(
+  const handleUpload = useCallback(
     async (fileList: FileList | File[]) => {
       fileList = [...(fileList as any)];
       if (fileList.length === 0) {
@@ -186,13 +213,13 @@ function AlgorithmSelector({
  * @param config - Configuration including available algorithm versions.
  * @returns Tuple of rendered selector component and submit-state fetcher.
  */
-export default function useAlgorithmSelector(config: any): [JSX.Element | null, () => Promise<{ algorithms: string[]; customAlgorithms: any }>] {
+export default function useAlgorithmSelector(config: any): [ReactElement | null, () => Promise<{ algorithms: string[]; customAlgorithms: any }>] {
   const {
     algorithmVersions,
     excludeAlgorithmVersions
   } = config;
 
-  const defaultAlgorithms = React.useMemo(
+  const defaultAlgorithms = useMemo(
     () => algorithmVersions ? getLatestVersions({
       algorithmVersions,
       excludeAlgorithmVersions
@@ -203,9 +230,9 @@ export default function useAlgorithmSelector(config: any): [JSX.Element | null, 
     [algorithmVersions, excludeAlgorithmVersions]
   );
 
-  const [algorithms, setAlgorithms] = React.useState<Record<string, any>>(defaultAlgorithms);
+  const [algorithms, setAlgorithms] = useState<Record<string, any>>(defaultAlgorithms);
 
-  const getAlgorithms = React.useCallback(() => {
+  const getAlgorithms = useCallback(() => {
     const publicAlgorithms = Object.keys(algorithms).filter(alg => !isCustomAlg(alg));
     const customAlgorithms = Object.keys(algorithms)
       .filter(alg => isCustomAlg(alg))
@@ -217,7 +244,7 @@ export default function useAlgorithmSelector(config: any): [JSX.Element | null, 
     return [publicAlgorithms, customAlgorithms];
   }, [algorithms]);
 
-  const getSubmitState = React.useCallback(async () => {
+  const getSubmitState = useCallback(async () => {
     let [algorithmsList, customAlgorithms] = getAlgorithms();
     customAlgorithms = await BigData.save(customAlgorithms);
     return { algorithms: algorithmsList, customAlgorithms };
