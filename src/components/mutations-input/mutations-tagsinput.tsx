@@ -44,11 +44,11 @@ export default function MutationsTagsInput({
   mutations,
   onChange,
   parentClassName
-}: MutationsTagsInputProps): JSX.Element {
+}: MutationsTagsInputProps): React.JSX.Element {
   const {
     allowPositions = false,
     mutationDefaultGene,
-    geneSynonyms,
+    geneSynonyms = {},
     geneReferences,
     messages
   } = config;
@@ -63,7 +63,7 @@ export default function MutationsTagsInput({
     if (!geneOnly) {
       return [mutations, []];
     }
-    const mutObjs = mutations.map(parseMutation);
+    const mutObjs = mutations.map(m => parseMutation(m));
     return [
       mutations.filter((_, idx) => mutObjs[idx][3] === geneOnly),
       mutations.filter((_, idx) => mutObjs[idx][3] !== geneOnly)
@@ -92,7 +92,8 @@ export default function MutationsTagsInput({
         allowPositions,
         defaultGene: mutationDefaultGene,
         geneSynonyms,
-        geneReferences
+        geneReferences,
+        messages
       });
       onChange({ mutations: sanitized }, allErrors.length > 0);
     },
@@ -113,11 +114,12 @@ export default function MutationsTagsInput({
         allowPositions,
         defaultGene: geneOnly || mutationDefaultGene,
         geneSynonyms,
-        geneReferences
+        geneReferences,
+        messages
       });
       if (geneOnly) {
-        text = text.split(':', 2);
-        text = text[text.length - 1];
+        const parts = text.split(':', 2);
+        text = parts[parts.length - 1];
       }
       return (
         <span key={key} className={tagClass} data-error={errors.length > 0}>
@@ -168,7 +170,7 @@ export default function MutationsTagsInput({
         addKeys={[13, 32, 187, 188, 190]}
         addOnBlur
         addOnPaste
-        pasteSplit={data => data.split(/[\s,;+.]+/g)}
+          pasteSplit={(data: string) => data.split(/[\s,;+.]+/g)}
         value={filteredMutations}
         renderTag={renderMutTag}
         inputProps={{

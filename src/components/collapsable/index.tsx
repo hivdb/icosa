@@ -16,7 +16,7 @@ interface Props {
 function Collapsable({levels = ['h3'], children}: Props) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const collapsableContext = React.useMemo(
-    () => new CollapsableContextValue(containerRef, levels),
+    () => new CollapsableContextValue(containerRef as React.RefObject<HTMLDivElement>, levels),
     [containerRef, levels]
   );
   const classNames = React.useMemo(

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   MutationViewer as MutViewer,
@@ -17,8 +18,8 @@ interface SinglePatternReportProps {
   patternResult?: any;
   output: string;
   index: number;
-  onObserve: (entry: Element) => void;
-  onDisconnect?: (entry: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect?: (payload: ObservePayload) => void;
 }
 
 /**
@@ -34,7 +35,7 @@ function SinglePatternReport({
   index,
   onObserve,
   onDisconnect
-}: SinglePatternReportProps): JSX.Element {
+}: SinglePatternReportProps): ReactElement {
   const {
     allGeneMutations,
     validationResults,
@@ -54,7 +55,7 @@ function SinglePatternReport({
      className={style['pattern-article']}>
       <ReportHeader
        output={output}
-       name={name}
+       name={name || ''}
        index={index}
        onObserve={onObserve}
        onDisconnect={onDisconnect} />

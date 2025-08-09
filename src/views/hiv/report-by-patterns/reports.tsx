@@ -1,5 +1,4 @@
 import React from 'react';
-import { Match, Router } from 'found';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import {FaCheck} from '@react-icons/all-files/fa/FaCheck';
 
@@ -36,14 +35,12 @@ function getPageTitle(patternAnalysis: any[], output: string): string {
 interface PatternReportsProps {
   config: any;
   output: string;
-  match: Match;
-  router: Router;
   loaded: boolean;
   patterns: any[];
   mutationPrevalenceSubtypes?: any[];
   currentSelected?: any;
   patternAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -52,8 +49,6 @@ interface PatternReportsProps {
 function PatternReports({
   config,
   output,
-  match,
-  router,
   loaded,
   patterns,
   mutationPrevalenceSubtypes,
@@ -61,22 +56,19 @@ function PatternReports({
   patternAnalysis,
   fetchAnother
 }: PatternReportsProps) {
-  const clickTransition = React.useRef();
-  const onCopy = React.useCallback(
-    () => {
-      navigator.clipboard.writeText(
-        window.location.href
-      );
-      clickTransition.current.dataset.onclick = null;
-      setTimeout(
-        () => {
-          delete clickTransition.current.dataset.onclick;
-        },
-        10000
-      );
-    },
-    []
-  );
+    const clickTransition = React.useRef<HTMLSpanElement>(null);
+    const onCopy = React.useCallback(
+      () => {
+        navigator.clipboard.writeText(window.location.href);
+        if (clickTransition.current) {
+          clickTransition.current.dataset.onclick = '';
+          setTimeout(() => {
+            delete clickTransition.current!.dataset.onclick;
+          }, 10000);
+        }
+      },
+      []
+    );
 
   const {
     onObserve,
@@ -118,20 +110,17 @@ function PatternReports({
     <main className={style.main} data-loaded={loaded}>
       {patterns.map((pat, idx) => (
         <React.Fragment key={idx}>
-          <SinglePatternReport
-           key={idx}
-           config={config}
-           inputPattern={pat}
-           currentSelected={currentSelected}
-           patternResult={patResultLookup[pat.name]}
-           subtypeStats={mutationPrevalenceSubtypes}
-           onObserve={onObserve}
-           onDisconnect={onDisconnect}
-           output={output}
-           name={pat.name}
-           index={idx}
-           match={match}
-           router={router} />
+            <SinglePatternReport
+             key={idx}
+             config={config}
+             currentSelected={currentSelected}
+             patternResult={patResultLookup[pat.name]}
+             subtypeStats={mutationPrevalenceSubtypes}
+             onObserve={onObserve}
+             onDisconnect={onDisconnect}
+             output={output}
+             name={pat.name}
+             index={idx} />
           {idx + 1 < patternAnalysis.length ?
             <PageBreak /> : null}
         </React.Fragment>

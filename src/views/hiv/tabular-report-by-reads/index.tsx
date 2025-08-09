@@ -35,7 +35,7 @@ interface TabularReportByReadsContainerProps {
  * Render HIV tabular report by sequence reads.
  *
  * @param props - {@link TabularReportByReadsContainerProps}
- * @returns Rendered component
+ * @returns Rendered component or `null` while loading
  */
 export default function TabularReportByReadsContainer({
   children,
@@ -43,12 +43,12 @@ export default function TabularReportByReadsContainer({
   onFinish,
   patternsTo,
   getSubmitState
-}: TabularReportByReadsContainerProps): JSX.Element | null {
+}: TabularReportByReadsContainerProps): React.ReactElement | null {
   const { match } = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
 
   const [handleExtendVariables, isExtVarPending] = useExtendVariables({
-    config,
+    config: config as { allGenes: string[] },
     getSubmitState
   });
 
@@ -58,11 +58,11 @@ export default function TabularReportByReadsContainer({
     skip: isConfigPending
   });
 
-  const client = useApolloClient({
-    config,
-    skip: isConfigPending || isPending,
-    payload: allSeqReadsWithParams
-  });
+    const client = useApolloClient({
+      config: config as { graphqlURI: string },
+      skip: isConfigPending || isPending,
+      payload: allSeqReadsWithParams
+    });
 
   const curSubOptions = React.useMemo(
     () => subOptions.filter((_, idx) => children.has(idx)),
@@ -73,28 +73,30 @@ export default function TabularReportByReadsContainer({
     return null;
   }
 
-  return (
-    <SeqReadsAnalysisLayout
-      query={getQuery(curSubOptions)}
-      client={client}
-      allSequenceReads={allSeqReadsWithParams}
-      currentSelected={{ index: 0 }}
-      renderPartialResults={false}
-      lazyLoad={false}
-      maxPerRequest={3}
-      extraParams={getExtraParams(curSubOptions)}
-      onExtendVariables={handleExtendVariables}
-    >
-      {props => (
-        <SeqTabularReports
-          config={config}
-          match={match}
-          children={children}
-          onFinish={onFinish}
-          patternsTo={patternsTo}
-          {...props}
-        />
-      )}
-    </SeqReadsAnalysisLayout>
-  );
+    const firstName = allSeqReadsWithParams?.[0]?.name || '';
+
+    return (
+      <SeqReadsAnalysisLayout
+        query={getQuery(curSubOptions)}
+        client={client}
+        allSequenceReads={allSeqReadsWithParams as any[]}
+        currentSelected={{ index: 0, name: firstName }}
+        renderPartialResults={false}
+        lazyLoad={false}
+        maxPerRequest={3}
+        extraParams={getExtraParams(curSubOptions)}
+        onExtendVariables={handleExtendVariables}
+      >
+        {props => (
+          <SeqTabularReports
+            config={config}
+            match={match}
+            children={children}
+            onFinish={onFinish}
+            patternsTo={patternsTo}
+            {...props}
+          />
+        )}
+      </SeqReadsAnalysisLayout>
+    );
 }

@@ -34,7 +34,9 @@ async function resistanceSummary({
 }: any): Promise<any[]> {
   const rows: Record<string, any>[] = [];
   const { geneDisplay } = config;
-  const allGeneNames = allGenes.map(({ name }) => name);
+  const allGeneNames = (allGenes as Array<{ name: string }>).map(
+    ({ name }: { name: string }) => name
+  );
 
   let header: string[] = ['Sequence Name', 'Genes'];
 
@@ -72,8 +74,8 @@ async function resistanceSummary({
     const row: Record<string, any> = {
       'Sequence Name': seqName1 || seqName2,
       'Genes': genes
-        .filter(({ name }) => allGeneNames.includes(name))
-        .map(({ name }) => geneDisplay[name] || name),
+        .filter(({ name }: { name: string }) => allGeneNames.includes(name))
+        .map(({ name }: { name: string }) => geneDisplay[name] || name),
       'Algorithm Name': currentVersion.family,
       'Algorithm Version': currentVersion.version,
       'Algorithm Date': currentVersion.publishDate

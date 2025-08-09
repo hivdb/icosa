@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
 import {
@@ -32,13 +32,12 @@ function getPageTitle(sequenceReadsAnalysis: any[], output: string): string {
 
 interface SeqReadsReportsProps {
   output: string;
-  match: any;
   router: any;
   loaded: boolean;
   allSequenceReads: any[];
   currentSelected?: any;
   sequenceReadsAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -46,14 +45,13 @@ interface SeqReadsReportsProps {
  */
 function SeqReadsReports({
   output,
-  match,
   router,
   loaded,
   allSequenceReads,
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother
-}: SeqReadsReportsProps): JSX.Element {
+}: SeqReadsReportsProps): ReactElement {
 
   const numSeqs = allSequenceReads.length;
 
@@ -110,7 +108,6 @@ function SeqReadsReports({
            output={output}
            name={inputSeqReads.name}
            index={idx}
-           match={match}
            router={router} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}

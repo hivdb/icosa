@@ -32,7 +32,7 @@ interface SequenceReportsProps {
   currentSelected?: any;
   sequenceAnalysis: any[];
   mutationPrevalenceSubtypes?: any[];
-  fetchAnother: () => void;
+    fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
   extVariables: { includeGenes: string[] };
 }
 
@@ -78,25 +78,27 @@ function SequenceReports({
         paginator
       )}
       <main className={style.main} data-loaded={loaded}>
-        {sequences.map(({ header }, idx) => (
-          <React.Fragment key={idx}>
-            <SingleSequenceReport
-              key={idx}
-              includeGenes={includeGenes}
-              currentSelected={currentSelected}
-              sequenceResult={seqResultLookup[header]}
-              subtypeStats={mutationPrevalenceSubtypes}
-              onObserve={onObserve}
-              onDisconnect={onDisconnect}
-              config={config}
-              output={output}
-              header={header}
-              index={idx}
-              match={match}
-            />
-            {idx + 1 < sequenceAnalysis.length ? <PageBreak /> : null}
-          </React.Fragment>
-        ))}
+          {sequences.map(({ header }, idx) => (
+            <React.Fragment key={idx}>
+              <SingleSequenceReport
+                key={idx}
+                includeGenes={includeGenes}
+                sequenceResult={seqResultLookup[header]}
+                subtypeStats={mutationPrevalenceSubtypes}
+                onObserve={(el: Element | null) =>
+                  onObserve({ node: el as HTMLElement | null, name: header, index: idx })
+                }
+                onDisconnect={(el: Element | null) =>
+                  onDisconnect({ node: el as HTMLElement | null, name: header, index: idx })
+                }
+                config={config}
+                output={output}
+                header={header}
+                index={idx}
+              />
+              {idx + 1 < sequenceAnalysis.length ? <PageBreak /> : null}
+            </React.Fragment>
+          ))}
       </main>
     </>
   );

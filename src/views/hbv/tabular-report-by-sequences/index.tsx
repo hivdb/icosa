@@ -1,5 +1,4 @@
 import { ReactElement, useMemo } from 'react';
-import {useRouter} from 'found';
 import useApolloClient from '../apollo-client';
 
 import ConfigContext from '../../../utils/config-context';
@@ -32,8 +31,6 @@ export default function TabularReportBySequencesContainer({
   onFinish,
   patternsTo
 }: TabularReportBySequencesProps): ReactElement | null {
-
-  const {match} = useRouter();
   const [config, isConfigPending] = ConfigContext.use();
   const client = useApolloClient({
     config,
@@ -41,9 +38,12 @@ export default function TabularReportBySequencesContainer({
     payload: sequences
   });
 
+  if (isConfigPending || !config) {
+    return null;
+  }
+
   const handleExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]}
   });
 
   const curSubOptions = useMemo(
@@ -51,15 +51,11 @@ export default function TabularReportBySequencesContainer({
     [subOptionIndices]
   );
 
-  if (isConfigPending) {
-    return null;
-  }
-
   return <SequenceAnalysisLayout
-   query={getQuery(curSubOptions)}
+   query={getQuery()}
    client={client}
    sequences={sequences}
-   currentSelected={{index: 0}}
+   currentSelected={{index: 0, name: sequences[0]?.header ?? 'Sequence 1'}}
    renderPartialResults={false}
    lazyLoad={false}
    extraParams={`

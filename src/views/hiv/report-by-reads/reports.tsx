@@ -34,7 +34,7 @@ interface SeqReadsReportsProps {
   currentSelected?: any;
   sequenceReadsAnalysis: any[];
   mutationPrevalenceSubtypes?: any[];
-  fetchAnother: () => void;
+    fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
   extVariables: { includeGenes: string[] };
 }
 
@@ -100,21 +100,19 @@ function SeqReadsReports({
       <main className={style.main} data-loaded={loaded}>
         {allSequenceReads.map((inputSeqReads, idx) => (
           <React.Fragment key={idx}>
-            <SingleSeqReadsReport
-              key={idx}
-              includeGenes={includeGenes}
-              inputSequenceReads={inputSeqReads}
-              sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
-              subtypeStats={mutationPrevalenceSubtypes}
-              onObserve={onObserve}
-              onDisconnect={onDisconnect}
-              config={config}
-              output={output}
-              name={inputSeqReads.name}
-              index={idx}
-              match={match}
-              router={router}
-            />
+              <SingleSeqReadsReport
+                key={idx}
+                includeGenes={includeGenes}
+                inputSequenceReads={inputSeqReads}
+                sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
+                subtypeStats={mutationPrevalenceSubtypes}
+                onObserve={onObserve}
+                onDisconnect={onDisconnect}
+                config={config}
+                output={output}
+                name={inputSeqReads.name}
+                index={idx}
+              />
             {idx + 1 < sequenceReadsAnalysis.length ? <PageBreak /> : null}
           </React.Fragment>
         ))}

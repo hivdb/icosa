@@ -1,5 +1,5 @@
 import React from 'react';
-import Dropdown from 'react-dropdown';
+import Dropdown, { Option as DropdownOption } from 'react-dropdown';
 
 import { expandIndel } from '../../utils/mutation';
 
@@ -21,7 +21,7 @@ export interface MutationSuggestOptionsProps {
   /** Optional child content such as additional inputs */
   children?: React.ReactNode;
   /** Callback when a suggestion is chosen */
-  onChange(option: { value: string; pos: number }): void;
+  onChange(option: DropdownOption): void;
 }
 
 /**
@@ -41,7 +41,7 @@ export default function MutationSuggestOptions({
   },
   children,
   onChange
-}: MutationSuggestOptionsProps): JSX.Element {
+}: MutationSuggestOptionsProps): React.JSX.Element {
   return (
     <section key={gene} className={style['gene-mutation-input']}>
       <h2 className={style.desc}>
@@ -59,19 +59,18 @@ export default function MutationSuggestOptions({
               value={{ value: '', label: '---' }}
               options={Array.from(aas)
                 .map(aa => ({
-                  pos,
                   value: `${gene}:${geneReferences[gene][pos - 1]}${pos}${expandIndel(aa)}`,
-                  label: expandIndel(aa)
+                  label: expandIndel(aa),
+                  data: { pos }
                 }))
                 .concat([
                   {
-                    pos,
                     value: `${gene}:${geneReferences[gene][pos - 1]}${pos}`,
-                    label: '*'
+                    label: '*',
+                    data: { pos }
                   }
                 ])}
               placeholder="---"
-              name={`mut-${gene}-${pos}`}
               onChange={onChange}
             />
           </li>

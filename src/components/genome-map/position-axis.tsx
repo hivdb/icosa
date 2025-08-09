@@ -46,7 +46,7 @@ function getTicks(
   else {
     allTicks[lastIdx] = end;
   }
-  const allPositions = allTicks.map((x, idx) => {
+  const allPositions = allTicks.map((x: number, idx: number) => {
     if (idx === 0) {
       return posStart!;
     }
@@ -86,7 +86,7 @@ export default function PositionAxis({
   offsetY = 0,
   scaleX,
   positionAxis = {posOffset: 0, tickCount: 15, roundToNearest: 100}
-}: PositionAxisProps) {
+}: PositionAxisProps): React.JSX.Element {
   const tickOffset = tickFontSize * 1.5;
 
   const axisPathData = React.useMemo(() => {

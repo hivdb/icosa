@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   ReportHeader,
@@ -68,10 +69,10 @@ function SingleSequenceReport({
     <article data-loaded={!!sequenceResult} className={style['sequence-article']}>
       <ReportHeader
         output={output}
-        name={header}
+        name={header || ''}
         index={index}
-        onObserve={onObserve}
-        onDisconnect={onDisconnect}
+        onObserve={({ node }: ObservePayload) => onObserve(node, index)}
+        onDisconnect={(payload: ObservePayload) => onDisconnect?.(payload.node)}
       />
       {sequenceResult ? (
         <>

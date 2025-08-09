@@ -230,7 +230,6 @@ export function SeqReadsSummary({
               <Dropdown
                 value={curMinReadsDepthOption}
                 options={MINREADS_OPTIONS}
-                name="minread-depth"
                 onChange={handleMinPositionReadsChange}
               />
             </dd>
@@ -259,7 +258,6 @@ export function SeqReadsSummary({
                 value={curCutoffOption}
                 placeholder="..."
                 options={CUTOFF_OPTIONS}
-                name="cutoff"
                 onChange={handleCutoffChange}
               />
             </dd>

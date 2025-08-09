@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import Intro, {
   IntroHeader,
   IntroHeaderSupplement
@@ -20,15 +20,15 @@ interface PrintHeaderProps {
  * @param props - {@link PrintHeaderProps}
  * @returns React element containing title and print button.
  */
-export default function PrintHeader({ curAnalysis }: PrintHeaderProps): JSX.Element {
+export default function PrintHeader({ curAnalysis }: PrintHeaderProps): ReactElement {
   let title = 'Sierra Analysis Report';
 
   const now = React.useMemo(() => new Date(), []);
 
   const [config, isPending] = ConfigContext.use();
 
-  if (!isPending) {
-    title = config.messages[`${curAnalysis}-report-title`] || title;
+  if (!isPending && config) {
+    title = config.messages?.[`${curAnalysis}-report-title`] || title;
   }
 
   return (

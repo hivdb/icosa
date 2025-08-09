@@ -245,9 +245,9 @@ export default function useAlgorithmSelector(config: any): [ReactElement | null,
   }, [algorithms]);
 
   const getSubmitState = useCallback(async () => {
-    let [algorithmsList, customAlgorithms] = getAlgorithms();
-    customAlgorithms = await BigData.save(customAlgorithms);
-    return { algorithms: algorithmsList, customAlgorithms };
+    const [algorithmsList, customAlgorithms] = getAlgorithms();
+    const customAlgKey = await BigData.save(customAlgorithms);
+    return { algorithms: algorithmsList, customAlgorithms: customAlgKey };
   }, [getAlgorithms]);
 
   return [

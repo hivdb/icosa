@@ -78,7 +78,7 @@ export default function useFetchAnother({
         pendingResolve.current = resolve;
       });
       if (!shouldWaitLoaded) {
-        pendingResolve.current();
+        pendingResolve.current?.();
         pendingResolve.current = null;
       }
       return promise;

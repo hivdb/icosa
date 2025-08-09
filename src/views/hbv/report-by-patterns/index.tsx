@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -36,7 +36,7 @@ function ReportByPatternsContainer({
   isPending,
   patterns,
   currentSelected
-}: ReportByPatternsContainerProps): JSX.Element {
+}: ReportByPatternsContainerProps): ReactElement | null {
 
   if (!isPending && patterns.length === 0) {
     router.replace({
@@ -44,13 +44,16 @@ function ReportByPatternsContainer({
     });
   }
 
+  if (!config) {
+    return null;
+  }
+
   const client = useApolloClient({
     payload: patterns,
     config
   });
   const onExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]}
   });
   return <PatternAnalysisLayout
    query={query}
@@ -63,7 +66,6 @@ function ReportByPatternsContainer({
     {props => (
       <PatternReports
        output={output}
-       match={match}
        router={router}
        cmtVersion={config.cmtVersion}
        {...props} />
@@ -83,7 +85,7 @@ interface WrapperProps {
  * @param props - {@link WrapperProps} containing routing information.
  * @returns The fully configured pattern report container.
  */
-export default function ReportByPatternsContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportByPatternsContainerWrapper(props: WrapperProps): ReactElement {
   const {
     location: {
       query: {output = 'default'} = {}

@@ -3,7 +3,8 @@ import {Router, Match} from 'found';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
-import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms from '../../../components/analyze-forms';
+import useBasePath from '../../../components/analyze-forms/use-base-path';
 import Intro, {IntroHeader} from '../../../components/intro';
 import {ConfigContext} from '../../../components/report';
 import Markdown from '../../../components/markdown';
@@ -205,13 +206,13 @@ function SierraForms({
            label: "Machine-readable data (CSV/JSON)",
            subOptions: seqSubOptions,
            defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-           renderer: props => (
+           renderer: (props: Record<string, unknown>) => (
              <SeqTabularReports
               patternsTo={patternsTo}
               sequencesTo={sequencesTo}
               readsTo={readsTo}
               getSubmitState={getSubmitState}
-              {...props} />
+              {...(props as any)} />
            )
          }
        } : {})
@@ -225,13 +226,13 @@ function SierraForms({
            label: "Machine-readable data (FASTA/CSV/JSON)",
            children: readsSubOptions,
            defaultChildren: readsSubOptions.map((_, idx) => idx),
-           renderer: props => (
+           renderer: (props: Record<string, unknown>) => (
              <ReadsTabularReports
               patternsTo={patternsTo}
               sequencesTo={sequencesTo}
               readsTo={readsTo}
               getSubmitState={getSubmitState}
-              {...props} />
+              {...(props as any)} />
            )
          }
        } : {})

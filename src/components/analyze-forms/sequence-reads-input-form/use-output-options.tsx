@@ -25,7 +25,7 @@ export interface UseOutputOptionsProps {
 export default function useOutputOptions({
   outputOptions: origOutputOptions
 }: UseOutputOptionsProps) {
-  const outputOptions = React.useMemo(
+  const outputOptions = React.useMemo<Record<string, SeqReadsOutputOption>>(
     () => ({
       __default: {label: 'HTML'},
       ...(origOutputOptions || {})
@@ -44,7 +44,9 @@ export default function useOutputOptions({
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const name = e.currentTarget.value;
       const target = outputOptions[name];
-      const children = target.children ? new Set(target.defaultChildren) : null;
+      const children = target.children
+        ? new Set<number>(target.defaultChildren)
+        : null;
       setOutputOption({name, children});
     },
     [outputOptions]
@@ -77,7 +79,7 @@ export default function useOutputOptions({
       <fieldset className={style['output-options']}>
         <legend>Output options</legend>
         <div className={style['divided-options']}>
-          <SeqSummary titleWidth="16rem" headless>
+          <SeqSummary titleWidth="16rem" headless cutoffKeyPoints={[]} includeGenes={[]}>
             <SeqSummary.MinPositionReads />
             <SeqSummary.MaxMixtureRate />
             <SeqSummary.MinPrevalence />
@@ -86,7 +88,7 @@ export default function useOutputOptions({
             <div>
               {Object.entries(outputOptions)
                 .sort()
-                .map(([value, {label}], idx) => (
+                .map(([value, {label}]: [string, SeqReadsOutputOption], idx: number) => (
                   <RadioInput
                    key={idx}
                    id={`output-options-${idx}`}
@@ -103,7 +105,7 @@ export default function useOutputOptions({
                 <label className={style['input-label']} htmlFor="output-options-child">
                   Select outputs:{' '}
                 </label>
-                {outputOptions[outputOption.name].children?.map((label, idx) => (
+                {outputOptions[outputOption.name].children?.map((label: React.ReactNode, idx: number) => (
                   <CheckboxInput
                    id={`output-options-child-${idx}`}
                    name="output-option-children"

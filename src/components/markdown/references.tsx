@@ -12,7 +12,7 @@ import References, {
 import macroPlugin from './macro-plugin';
 
 /** Register the `refs` macro allowing static reference lists. */
-macroPlugin.addMacro('refs', (content, props) => ({
+macroPlugin.addMacro('refs', (content: string, props: Record<string, unknown>) => ({
   type: 'StaticRefsNode',
   names: (
     content.split(/[\r\n]+/)
@@ -55,7 +55,7 @@ export function StaticRefsNode({names, as = 'ul', className, style}: StaticRefsN
 
 export interface OptReferencesProps {
   /** Heading level for the reference section. */
-  level?: number;
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Disable anchor links on the heading tag. */
   disableAnchor?: boolean;
   /** Title displayed above the references list. */
@@ -66,32 +66,38 @@ export interface OptReferencesProps {
  * Conditionally render the list of references if any have been registered
  * within the current {@link ReferenceContext}.
  */
-export default function OptReferences({
-  level,
-  disableAnchor,
-  referenceTitle
-}: OptReferencesProps) {
-  const {hasAnyReference} = React.useContext(ReferenceContext as any);
+  interface ReferenceContextValue {
+    hasAnyReference: (includeInlines?: boolean) => boolean;
+  }
+
+  export default function OptReferences({
+    level = 2,
+    disableAnchor,
+    referenceTitle
+  }: OptReferencesProps) {
+    const {hasAnyReference} = React.useContext(
+      ReferenceContext as React.Context<ReferenceContextValue>
+    );
   useAutoUpdate();
 
   if (hasAnyReference(/* includeInlines= */true)) {
     const hasFootnoteReferences = hasAnyReference(/* includeInlines= */false);
-    return <>
-      <LoadExternalRefData />
-      {hasFootnoteReferences ?
-        <Collapsable.Section
-          level={level}
-          alwaysCollapsable
-          data-section-reference="">
-          {({onLoad}: {onLoad: () => void}) => <>
-            <HeadingTag {...{disableAnchor, level}}>
-              {referenceTitle}
-            </HeadingTag>
-            <References onLoad={onLoad} />
-          </>}
-        </Collapsable.Section> :
-        null}
-    </>;
+      return <>
+        <LoadExternalRefData />
+        {hasFootnoteReferences ?
+          <Collapsable.Section
+            level={level}
+            alwaysCollapsable
+            data-section-reference="">
+            {() => <>
+              <HeadingTag {...{disableAnchor, level}}>
+                {referenceTitle}
+              </HeadingTag>
+              <References />
+            </>}
+          </Collapsable.Section> :
+          null}
+      </>;
   }
   return null;
 }

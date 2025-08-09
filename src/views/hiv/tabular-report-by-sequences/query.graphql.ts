@@ -1,9 +1,14 @@
 import gql from 'graphql-tag';
-import gql from 'graphql-tag';
 import { DocumentNode } from 'graphql';
 import { rootLevel, seqLevel, geneSeqLevel } from '../common-query.graphql';
 
-export function getExtraParams(/* subOptions */): string {
+/**
+ * Build extra GraphQL parameters for tabular reports.
+ *
+ * @param _subOptions - Unused sub-option list.
+ * @returns GraphQL variable definitions.
+ */
+export function getExtraParams(_subOptions?: unknown): string {
   return `
     $includeGenes: [EnumGene!]!,
     $algorithms: [ASIAlgorithm!],
@@ -11,7 +16,13 @@ export function getExtraParams(/* subOptions */): string {
   `;
 }
 
-export default function getQuery(/* subOptions */): DocumentNode {
+/**
+ * Construct the GraphQL document for tabular reports.
+ *
+ * @param _subOptions - Unused sub-option list.
+ * @returns Parsed GraphQL document.
+ */
+export default function getQuery(_subOptions?: unknown): DocumentNode {
   return gql`
     fragment TabularReportBySequences_Root on Root {
       ${rootLevel}

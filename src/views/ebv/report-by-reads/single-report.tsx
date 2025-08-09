@@ -1,4 +1,6 @@
-import React from 'react';
+import type {ReactElement} from 'react';
+import {memo, useMemo} from 'react';
+import type {ObservePayload} from '../../../utils/use-scroll-observer';
 import {
   // DRInterpretation, DRMutationScores,
   SeqSummary, // MutationStats,
@@ -22,7 +24,7 @@ interface UseCoveragesArg {
  * @returns Array of coverage descriptors.
  */
 function useCoverages({allReads}: UseCoveragesArg) {
-  return React.useMemo(
+  return useMemo(
     () => allReads.map(
       ({gene, position, totalReads}) => ({gene, position, coverage: totalReads})
     ),
@@ -36,8 +38,8 @@ interface SingleSeqReadsReportProps {
   output: string;
   name: string;
   index: number;
-  onObserve: (entry: Element) => void;
-  onDisconnect: (entry: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect: (payload: ObservePayload) => void;
 }
 
 /**
@@ -54,7 +56,7 @@ function SingleSeqReadsReport({
   index,
   onObserve,
   onDisconnect
-}: SingleSeqReadsReportProps): JSX.Element {
+}: SingleSeqReadsReportProps): ReactElement {
 
   const {
     strain: {display: strain} = {},
@@ -63,9 +65,9 @@ function SingleSeqReadsReport({
     validationResults
   } = sequenceReadsResult || {};
 
-  const isCritical = !!validationResults && validationResults.some(
-    ({level}) => level === 'CRITICAL'
-  );
+  const isCritical =
+    !!validationResults &&
+    validationResults.some(({level}: {level: string}) => level === 'CRITICAL');
 
   const coverages = useCoverages(inputSequenceReads);
 
@@ -115,7 +117,7 @@ function SingleSeqReadsReport({
 }
 
 
-export default React.memo(
+export default memo(
   SingleSeqReadsReport,
   (
     {

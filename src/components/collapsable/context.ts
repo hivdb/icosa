@@ -4,12 +4,12 @@ import React from 'react';
  * Runtime context used by the Collapsable components.
  */
 export class CollapsableContextValue {
-  #containerRef: React.RefObject<HTMLElement>;
+  #containerRef: React.RefObject<HTMLDivElement>;
   #collapsableLevels: string[];
   #collapsableAnchors: Record<string, boolean>;
 
   constructor(
-    containerRef: React.RefObject<HTMLElement>,
+    containerRef: React.RefObject<HTMLDivElement>,
     levels: string[]
   ) {
     this.#containerRef = containerRef;

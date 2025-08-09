@@ -45,10 +45,11 @@ const Link: React.FC<LinkProps> = ({
   }
   className = classNames(noDefaultStyle ? null : style.link, className);
   const Component: React.ElementType = to ? FoundLink : 'a';
+  const componentSpecificProps = to ? {to} : {};
   return (
     <Component
       {...props}
-      to={to}
+      {...componentSpecificProps}
       className={className}
       onClick={linkStyle === 'help' ? openInNewWindow : onClick}
     >

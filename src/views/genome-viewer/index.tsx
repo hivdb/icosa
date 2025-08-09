@@ -59,18 +59,19 @@ export default function GenomeViewerRoutes({
           );
         }}
       />
-      <Route
-        path=":name/"
-        render={({props}: RouteRenderArgs) => {
-          const {
-            match: {
-              params: {name}
+        <Route
+          path=":name/"
+          render={({props, match}: RouteRenderArgs) => {
+            if (!props) {
+              return null;
             }
-          } = props;
-          const presetLoader = makePresetLoader(name);
-          return <GenomeViewer {...props} presetLoader={presetLoader} />;
-        }}
-      />
+            const {
+              params: {name}
+            } = match;
+            const presetLoader = makePresetLoader(name);
+            return <GenomeViewer {...props} presetLoader={presetLoader} />;
+          }}
+        />
     </Route>
   );
 

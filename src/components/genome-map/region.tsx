@@ -212,24 +212,23 @@ export default function Region({
   }, [height, labelFontSize, labelIndent, offsetY, region, scaleX]);
 
   let {shapeType} = region;
+  let elemType: string = shapeType;
   let shapeProps: Record<string, unknown> | null = {};
   let labelProps: Record<string, unknown> = {};
   if (shapeType === 'rect') {
     shapeProps = rectProps;
     labelProps = rectLabelProps;
-  }
-  else if (shapeType === 'line') {
+  } else if (shapeType === 'line') {
     shapeProps = lineProps;
     labelProps = lineLabelProps;
-  }
-  else if (shapeType === 'wavy') {
-    shapeType = 'path';
+  } else if (shapeType === 'wavy') {
+    elemType = 'path';
     shapeProps = wavyProps;
   }
 
   return <>
     {shapeProps === null ? null : <g>
-      {React.createElement(shapeType, shapeProps)}
+      {React.createElement(elemType, shapeProps)}
       {labelText && <text {...labelProps}>{labelText}</text>}
     </g>}
   </>;

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Button from '../button';
+import Button, {ButtonSize, ButtonStyle} from '../button';
 
 import style from './style.module.scss';
 
@@ -16,11 +16,17 @@ export interface FileInputProps {
   multiple?: boolean;
   children?: React.ReactNode;
   hideSelected?: boolean;
-  btnSize?: string;
+  btnSize?: ButtonSize;
   onChange?: (files: File[]) => void;
-  btnStyle?: string;
+  btnStyle?: ButtonStyle;
 }
 
+/**
+ * Provide a styled file input with custom button and selected file display.
+ *
+ * @param props - {@link FileInputProps} describing input behaviour.
+ * @returns Rendered file input component.
+ */
 export default function FileInput({
   name,
   className,

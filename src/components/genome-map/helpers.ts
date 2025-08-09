@@ -1,5 +1,5 @@
 import sortBy from 'lodash/sortBy';
-import {scaleLinear} from 'd3-scale';
+import {scaleLinear, type ScaleLinear} from 'd3-scale';
 
 import type {MultiScale, PositionGroup, Position} from './types';
 
@@ -44,7 +44,7 @@ export function scaleMultipleLinears(
   domains: [number, number, number][],
   range: [number, number]
 ): MultiScale {
-  const scales = [] as ReturnType<typeof scaleLinear>[];
+  const scales: ScaleLinear<number, number>[] = [];
   const [rangeStart, rangeEnd] = range;
   const width = rangeEnd - rangeStart;
   const totalRatio = domains.reduce(
@@ -56,7 +56,7 @@ export function scaleMultipleLinears(
     const ratio = scaleRatio / totalRatio;
     const partWidth = Math.floor(width * ratio);
     scales.push(
-      scaleLinear()
+      scaleLinear<number, number>()
         .domain([domainStart, domainEnd])
         .range([rangeOffset, rangeOffset + partWidth])
     );
@@ -87,9 +87,9 @@ export function scaleMultipleLinears(
   ret.range = () => range;
   ret.invert = (x: number) => {
     for (const scale of scales) {
-      const [left, right] = scale.range();
+      const [left, right] = scale.range() as [number, number];
       if (x >= left && x < right) {
-        return scale.invert(x);
+        return scale.invert(x) as number;
       }
     }
     return undefined;
@@ -135,20 +135,20 @@ export function trimOverlaps(posGroup: PositionGroup, scaleX: MultiScale): Posit
     // Then we should remove them from one of the extendedXX
     extendedRight = extendedRight.filter(({pos}) => pos !== posMiddle);
   }
-  const extended = [...extendedLeft.reverse(), ...extendedRight];
-  for (const {turns} of extended) {
-    if (turns.length === 1) {
-      turns[0][1] = maxOffsetY;
+    const extended = [...extendedLeft.reverse(), ...extendedRight];
+    for (const pos of extended) {
+      const {turns} = pos;
+      if (turns.length === 1) {
+        turns[0][1] = maxOffsetY;
+      } else {
+        turns.push([turns[1][0], maxOffsetY, turns[1][2]]);
+      }
     }
-    else {
-      turns.push([turns[1][0], maxOffsetY, turns[1][2]]);
-    }
-  }
-  return {
-    ...posGroup,
-    positions: extended,
-    addOffsetY: maxOffsetY
-  };
+    return {
+      ...posGroup,
+      positions: extended,
+      addOffsetY: maxOffsetY
+    };
 
   /**
    * Helper that generates extended positions either to the left or the right
@@ -159,14 +159,14 @@ export function trimOverlaps(posGroup: PositionGroup, scaleX: MultiScale): Posit
    * @param halfFunc - Predicate selecting half of the positions to process.
    * @param shouldTurn - Determines when an extra turn should be inserted.
    */
-  function extendPositions(
-    positions: Position[],
-    direction: 1 | -1,
-    halfFunc: (pos: number) => boolean,
-    shouldTurn: (diff: number) => boolean
-  ): Position[] {
-    const extended: Position[] = [];
-    for (const {pos, ...posData} of positions) {
+    function extendPositions(
+      positions: Position[],
+      direction: 1 | -1,
+      halfFunc: (pos: number) => boolean,
+      shouldTurn: (diff: number) => boolean
+    ): Array<Position & {turns: [number, number, number][]}> {
+      const extended: Array<Position & {turns: [number, number, number][]}> = [];
+      for (const {pos, ...posData} of positions) {
       if (!halfFunc(pos)) {
         continue;
       }

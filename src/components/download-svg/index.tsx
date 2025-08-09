@@ -13,6 +13,12 @@ export interface DownloadSVGProps {
   [key: string]: any;
 }
 
+/**
+ * Provide a button that downloads an SVG element as a file.
+ *
+ * @param props - {@link DownloadSVGProps} describing target and options.
+ * @returns Button element triggering the download.
+ */
 export default function DownloadSVG({
   name = 'download-svg',
   target,
@@ -38,7 +44,7 @@ export default function DownloadSVG({
         }
         document.body.appendChild(container);
         const {source} = getSource(cloned as any, {css});
-        makeDownload(fileName, 'image/svg+xml', source);
+        makeDownload(fileName ?? 'download.svg', 'image/svg+xml', source);
         setTimeout(() => document.body.removeChild(container));
       }
     },

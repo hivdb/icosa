@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
 
-import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms from '../../../components/analyze-forms';
+import useBasePath from '../../../components/analyze-forms/use-base-path';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
@@ -39,7 +40,7 @@ function SierraForms({
   curAnalysis,
   match,
   router
-}: SierraFormsProps): JSX.Element {
+}: SierraFormsProps): ReactElement {
 
   const basePath = useBasePath(match.location);
   const title = (
@@ -86,12 +87,12 @@ function SierraForms({
          label: 'Machine-readable data (CSV/JSON)',
          subOptions: seqSubOptions,
          defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: Record<string, unknown>) => (
            <SeqTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...(props as any)} />
          )
        }
      }}
@@ -103,12 +104,12 @@ function SierraForms({
          label: 'Machine-readable data (FASTA/CSV/JSON)',
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: Record<string, unknown>) => (
            <ReadsTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...(props as any)} />
          )
        }
      }}
@@ -125,7 +126,7 @@ interface SierraFormsWithConfigProps {
 /**
  * Wrapper that injects configuration into {@link SierraForms}.
  */
-export default function SierraFormsWithConfig(props: SierraFormsWithConfigProps): JSX.Element {
+export default function SierraFormsWithConfig(props: SierraFormsWithConfigProps): ReactElement {
   return <ConfigContext.Consumer>
     {config => <SierraForms {...props} config={config} />}
   </ConfigContext.Consumer>;

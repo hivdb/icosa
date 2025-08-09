@@ -11,9 +11,10 @@ interface CommonProps extends React.HTMLAttributes<HTMLImageElement> {
 
 function Youtube({src, style, alt, ...props}: CommonProps) {
   const youtubeId = youtubeUrl.extractId(String(src));
+  const iframeProps = props as React.IframeHTMLAttributes<HTMLIFrameElement>;
   return (
     <iframe
-     {...props}
+     {...iframeProps}
      style={style}
      title={alt}
      src={`https://www.youtube.com/embed/${youtubeId}`}

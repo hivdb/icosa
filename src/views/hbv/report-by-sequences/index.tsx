@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import useApolloClient from '../apollo-client';
 import useExtendVariables from '../use-extend-variables';
 
@@ -32,7 +32,7 @@ function ReportBySequencesContainer({
   match,
   sequences,
   currentSelected
-}: ReportBySequencesContainerProps): JSX.Element {
+}: ReportBySequencesContainerProps): ReactElement | null {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
     console.log(
@@ -41,13 +41,16 @@ function ReportBySequencesContainer({
     );
   }
 
+  if (!config) {
+    return null;
+  }
+
   const client = useApolloClient({
     payload: sequences,
     config
   });
   const onExtendVariables = useExtendVariables({
-    config,
-    match
+    config: config as {allGenes: string[]}
   });
 
   return <SeqAnalysisLayout
@@ -65,7 +68,6 @@ function ReportBySequencesContainer({
       <SeqReports
        cmtVersion={config.cmtVersion}
        output={output}
-       match={match}
        {...props} />
     )}
   </SeqAnalysisLayout>;
@@ -83,7 +85,7 @@ interface WrapperProps {
  * @param props - {@link WrapperProps} containing router and match.
  * @returns The sequence report container.
  */
-export default function ReportBySequencesContainerWrapper(props: WrapperProps): JSX.Element {
+export default function ReportBySequencesContainerWrapper(props: WrapperProps): ReactElement {
   const {
     location: {
       pathname,

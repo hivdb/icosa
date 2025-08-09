@@ -78,7 +78,7 @@ interface SanitizeOptions {
   allowPositions?: boolean;
   defaultGene?: string;
   geneSynonyms: Record<string, string>;
-  geneReferences: Record<string, string>;
+  geneReferences: Record<string, string[]>;
   messages: Record<string, string>;
   removeErrors?: boolean;
 }
@@ -158,7 +158,7 @@ interface ParseValidateOptions {
   allowPositions?: boolean;
   defaultGene?: string;
   geneSynonyms: Record<string, string>;
-  geneReferences: Record<string, string>;
+  geneReferences: Record<string, string[]>;
   messages?: Record<string, string>;
 }
 

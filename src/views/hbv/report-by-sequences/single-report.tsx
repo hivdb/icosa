@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
+import type { ObservePayload } from '../../../utils/use-scroll-observer';
 
 import {
   ReportHeader,
@@ -17,8 +18,8 @@ interface SingleSequenceReportProps {
   sequenceResult?: any;
   output: string;
   index: number;
-  onObserve: (entry: Element) => void;
-  onDisconnect?: (entry: Element) => void;
+  onObserve: (payload: ObservePayload) => void;
+  onDisconnect?: (payload: ObservePayload) => void;
 }
 
 /**
@@ -34,7 +35,7 @@ function SingleSequenceReport({
   index,
   onObserve,
   onDisconnect
-}: SingleSequenceReportProps): JSX.Element {
+}: SingleSequenceReportProps): ReactElement {
 
   const {
     alignedGeneSequences,
@@ -54,7 +55,7 @@ function SingleSequenceReport({
       <RefContextWrapper>
         <ReportHeader
          output={output}
-         name={header}
+         name={header || ''}
          index={index}
          onObserve={onObserve}
          onDisconnect={onDisconnect} />

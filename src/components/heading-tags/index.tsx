@@ -1,21 +1,34 @@
-import classNames from 'classnames';
 import React from 'react';
+import classNames from 'classnames';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import Children from 'react-children-utilities';
 
 import style from './style.module.scss';
 
-
+/**
+ * Extract all text content from a React node.
+ *
+ * @param elem - Node whose textual children should be concatenated.
+ * @returns Plain text representation of the node.
+ */
 export function getChildrenText(elem: React.ReactNode): string {
   return Children.onlyText(elem);
 }
 
-
+/**
+ * Generate a stable anchor string for a heading element.
+ *
+ * When a {@link HeadingTag} element is provided, the function derives the
+ * anchor from its children; otherwise the provided node is used directly.
+ *
+ * @param elem - A heading element or node to derive the anchor from.
+ * @returns Sanitised anchor text.
+ */
 export function getAnchor(elem: React.ReactElement | React.ReactNode): string {
   if (React.isValidElement(elem) && elem.type === HeadingTag) {
-    elem = elem.props.children;
+    elem = (elem as React.ReactElement<{children?: React.ReactNode}>).props.children;
   }
-  return getChildrenText(elem)
+  return String(getChildrenText(elem))
     .toLowerCase()
     .replace(/[^\w-]+/g, '.');
 }
@@ -27,6 +40,12 @@ export interface HeadingTagProps extends React.HTMLAttributes<HTMLHeadingElement
   disableAnchor?: boolean;
 }
 
+/**
+ * Render a heading element with an optional self-referential anchor link.
+ *
+ * @param props - {@link HeadingTagProps} controlling appearance and behaviour.
+ * @returns Rendered heading element.
+ */
 export function HeadingTag({
   id,
   level,
@@ -59,22 +78,27 @@ export function HeadingTag({
     [anchor]
   );
 
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-  return (
-    <Tag
-     {...props}
-     ref={elemRef}
-     className={classNames(className, style['heading-tag'])}
-     id={anchor}>
-      {disableAnchor ? null :
-      <a
-       href={`#${anchor}`}
-       className={style['anchor-link']}
-       data-anchor-link="">
-        <FaLink name="linkify" />
-      </a>}
-      {children}
-    </Tag>
+  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  return React.createElement(
+    Tag,
+    {
+      ...props,
+      ref: elemRef,
+      className: classNames(className, style['heading-tag']),
+      id: anchor
+    },
+    disableAnchor
+      ? null
+      : React.createElement(
+          'a',
+          {
+            href: `#${anchor}`,
+            className: style['anchor-link'],
+            'data-anchor-link': ''
+          },
+          React.createElement(FaLink, {name: 'linkify'})
+        ),
+    children
   );
 
 }

@@ -66,8 +66,6 @@ function ReportByPatternsContainer({
       <PatternReports
        config={config}
        output={output}
-       match={match}
-       router={router}
        {...props} />
     )}
   </PatternAnalysisLayout>;

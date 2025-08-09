@@ -32,16 +32,16 @@ function getMutations({
   mutFilter,
   mutWithGene = true
 }: GetMutationsArgs): string[] {
-  let results = [];
+  let results: any[] = [];
   for (const geneSeq of geneSeqs.filter(
     ({gene: {name}}) => geneFilter ? geneFilter(name) : true
   )) {
     const gene = geneSeq.gene.name.replace(/^_/, '');
     const mutations = geneSeq.mutations
       .filter(
-        m => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
+        (m: any) => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
       )
-      .map(mut => ({...mut, gene}));
+      .map((mut: any) => ({...mut, gene}));
     results = [...results, ...mutations];
   }
   return results.map(
@@ -57,7 +57,7 @@ function getPermanentLink(seqName: string, geneSeqs: any[], patternsTo: string, 
   const link = new URL(patternsTo, window.location.href);
   const query = new URLSearchParams();
   query.set('name', seqName);
-  query.set('mutations', mutText);
+  query.set('mutations', mutText as any);
   link.search = query.toString();
   return link.toString();
 }
@@ -83,11 +83,11 @@ async function seqReadsSummary({
     'Sequence Name',
     'Genes',
     ...allGenes.reduce(
-      (acc, gene) => {
+      (acc: string[], gene: string) => {
         acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
         return acc;
       },
-      []
+      [] as string[]
     ),
     'Median Read Depth',
     'Permanent Link',
@@ -111,22 +111,22 @@ async function seqReadsSummary({
       allGeneSequenceReads: geneSeqs
     } = seqResult;
     let row = {
-      'Sequence Name': seqName,
-      'Genes': genes.map(({name}) => geneDisplay[name] || name),
-      ...allGenes.reduce(
-        (acc, gene) => {
-          acc[`${gene} Mutations`] = getMutations({
-            geneSeqs,
-            geneFilter: g => g === gene,
-            mutWithGene: false
-          });
-          acc[`# ${gene} Mutations`] = `${geneSeqs.find(
-            ({gene: {name}}) => name === gene
-          ).mutationCount}`;
-          return acc;
-        },
-        {}
-      ),
+        'Sequence Name': seqName,
+        'Genes': genes.map(({name}: any) => geneDisplay[name] || name),
+        ...allGenes.reduce(
+          (acc: Record<string, any>, gene: string) => {
+            acc[`${gene} Mutations`] = getMutations({
+              geneSeqs,
+              geneFilter: g => g === gene,
+              mutWithGene: false
+            });
+            acc[`# ${gene} Mutations`] = `${geneSeqs.find(
+              ({gene: {name}}: any) => name === gene
+            ).mutationCount}`;
+            return acc;
+          },
+          {}
+        ),
       'Median Read Depth': readDepthStats.median,
       'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
       'Mut Detection Threshold': `≥${minPrevalence * 100}%`,

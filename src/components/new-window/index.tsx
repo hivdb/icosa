@@ -78,7 +78,7 @@ export function useNewWindow(
   props: Record<string, any>,
   {name, onUnload, features}: UseNewWindowOptions
 ): UseNewWindowResult {
-  const childWindowRef = React.useRef<Window | null>();
+  const childWindowRef = React.useRef<Window | null>(null);
   const isChild = window.name === name;
 
   if (!isChild && !childWindowRef.current) {

@@ -63,10 +63,11 @@ const Button: React.FC<ButtonProps> = ({
   delete (componentProps as any).btnSize;
   delete (componentProps as any).btnHeight;
 
+  let componentSpecificProps: Record<string, unknown> = {};
   if (href || to) {
     Component = to ? Link : ExtLink;
+    componentSpecificProps = to ? {to} : {href};
     (componentProps as any).noDefaultStyle = true;
-    delete (componentProps as any).type;
   } else {
     (componentProps as any).type = type;
   }
@@ -74,10 +75,9 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <Component
       className={combinedClassName}
-      href={href}
-      to={to}
       disabled={disabled}
       role="button"
+      {...componentSpecificProps}
       {...componentProps}
     >
       <span>{children}</span>

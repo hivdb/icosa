@@ -1,5 +1,5 @@
-import React from 'react';
-import React from 'react';
+import type {ReactElement} from 'react';
+import {Fragment} from 'react';
 import {FaDownload} from '@react-icons/all-files/fa/FaDownload';
 
 import {
@@ -17,7 +17,17 @@ import SingleSeqReadsReport from './single-report';
 const pageTitlePrefix = 'Sequence Reads Analysis Report';
 
 
-function getPageTitle(sequenceReadsAnalysis, output) {
+/**
+ * Determine the page title for the reads report.
+ *
+ * @param sequenceReadsAnalysis - Array of analysis results including sequence names.
+ * @param output - Output mode, e.g. 'printable'.
+ * @returns Generated page title.
+ */
+function getPageTitle(
+  sequenceReadsAnalysis: Array<{name: string}>,
+  output: string
+): string {
   let pageTitle;
   if (
     output === 'printable' ||
@@ -35,13 +45,11 @@ function getPageTitle(sequenceReadsAnalysis, output) {
 
 interface SeqReadsReportsProps {
   output: string;
-  match: any;
-  router: any;
   loaded: boolean;
   allSequenceReads: any[];
-  currentSelected?: any;
+  currentSelected?: {index: number; name: string};
   sequenceReadsAnalysis: any[];
-  fetchAnother: () => void;
+  fetchAnother: (name: string, updateCurrentSelected: boolean) => Promise<void>;
 }
 
 /**
@@ -52,14 +60,12 @@ interface SeqReadsReportsProps {
  */
 function SeqReadsReports({
   output,
-  match,
-  router,
   loaded,
   allSequenceReads,
   currentSelected,
   sequenceReadsAnalysis,
   fetchAnother
-}: SeqReadsReportsProps): JSX.Element {
+}: SeqReadsReportsProps): ReactElement {
 
   const numSeqs = allSequenceReads.length;
 
@@ -73,7 +79,7 @@ function SeqReadsReports({
     inputObjs: allSequenceReads,
     loaded,
     output,
-    currentSelected,
+    currentSelected: currentSelected as {index: number; name: string},
     fetchAnother,
     children: <>
       <useReportPaginator.Button onClick={onDownload}>
@@ -106,21 +112,19 @@ function SeqReadsReports({
     }
     <main className={style.main} data-loaded={loaded}>
       {allSequenceReads.map((inputSeqReads, idx) => (
-        <React.Fragment key={idx}>
+        <Fragment key={idx}>
           <SingleSeqReadsReport
            key={idx}
            inputSequenceReads={inputSeqReads}
-           sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
-           onObserve={onObserve}
-           onDisconnect={onDisconnect}
-           output={output}
-           name={inputSeqReads.name}
-           index={idx}
-           match={match}
-           router={router} />
+          sequenceReadsResult={seqReadsResultLookup[inputSeqReads.name]}
+          onObserve={onObserve}
+          onDisconnect={onDisconnect}
+          output={output}
+          name={inputSeqReads.name}
+          index={idx} />
           {idx + 1 < sequenceReadsAnalysis.length ?
             <PageBreak /> : null}
-        </React.Fragment>
+        </Fragment>
       ))}
     </main>
   </>;

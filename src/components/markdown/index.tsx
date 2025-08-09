@@ -53,9 +53,9 @@ export interface ExtendedMarkdownProps {
   /** Title displayed above the references list. */
   referenceTitle?: string;
   /** Heading level for the references section. */
-  referenceHeadingTagLevel?: number;
+    referenceHeadingTagLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Optional component to load references asynchronously. */
-  refDataLoader?: React.ElementType;
+  refDataLoader?: React.ComponentType<any>;
   /** Prefix prepended to relative image sources. */
   imagePrefix?: string;
   /** Optional CMS prefix for tables. */
@@ -88,7 +88,7 @@ function ExtendedMarkdown({
   inline = false,
   tocClassName,
   disableHeadingTagAnchor = false,
-  referenceHeadingTagLevel = 2,
+    referenceHeadingTagLevel = 2,
   collapsableLevels,
   imagePrefix = '/',
   cmsPrefix,
@@ -122,23 +122,26 @@ function ExtendedMarkdown({
     ...generalRenderers,
     BadMacroNode,
     StaticRefsNode,
-    TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
-    GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
-    TOCNode: TOCNodeWrapper({className: tocClassName}),
+      TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
+      GenomeMapNode: GenomeMapNodeWrapper({genomeMaps: genomeMaps ?? {}}),
+      TOCNode: TOCNodeWrapper({className: tocClassName}),
     ...(inline ? {} : {root: RootWrapper}),
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers
   } as Record<string, any>;
-  mdProps.renderers = generalRenderers;
+  mdProps.renderers = generalRenderers ?? {};
   let jsx = (
     <OrigMarkdown
       {...mdProps}
       key={children as any}
       children={children as any}
-      renderers={renderers}
+      renderers={renderers as Record<string, unknown>}
       plugins={[macroPlugin.transformer]} />
   );
-  const refContext = useReference(refDataLoader, /* cacheKey = */ children);
+  const refContext = useReference(
+    refDataLoader as React.ComponentType<any> | undefined,
+    /* cacheKey = */ children
+  );
   if (displayReferences) {
     jsx = (
       <ReferenceContext.Provider value={refContext}>
@@ -152,7 +155,10 @@ function ExtendedMarkdown({
     );
   }
   if (collapsableLevels && collapsableLevels.length > 0) {
-    jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
+    const levels = collapsableLevels.map(
+      l => `h${l}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    );
+    jsx = <Collapsable levels={levels}>{jsx}</Collapsable>;
   }
   if (toc) {
     return (

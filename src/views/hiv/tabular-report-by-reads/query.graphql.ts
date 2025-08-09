@@ -1,12 +1,14 @@
 import gql from 'graphql-tag';
-import gql from 'graphql-tag';
 import { DocumentNode } from 'graphql';
 import { rootLevel, seqLevel, geneSeqLevel } from '../common-query.graphql';
 
 /**
  * Additional GraphQL parameters required by the query.
+ *
+ * @param _subOptions - Unused sub-option labels.
+ * @returns GraphQL variable definitions.
  */
-export function getExtraParams(/* subOptions */): string {
+export function getExtraParams(_subOptions?: unknown): string {
   return `
     $includeGenes: [EnumGene!]!,
     $algorithms: [ASIAlgorithm!],
