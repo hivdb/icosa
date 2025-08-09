@@ -5,15 +5,28 @@ import Children from 'react-children-utilities';
 
 import style from './style.module.scss';
 
-
+/**
+ * Extract all text content from a React node.
+ *
+ * @param elem - Node whose textual children should be concatenated.
+ * @returns Plain text representation of the node.
+ */
 export function getChildrenText(elem: React.ReactNode): string {
   return Children.onlyText(elem);
 }
 
-
+/**
+ * Generate a stable anchor string for a heading element.
+ *
+ * When a {@link HeadingTag} element is provided, the function derives the
+ * anchor from its children; otherwise the provided node is used directly.
+ *
+ * @param elem - A heading element or node to derive the anchor from.
+ * @returns Sanitised anchor text.
+ */
 export function getAnchor(elem: React.ReactElement | React.ReactNode): string {
   if (React.isValidElement(elem) && elem.type === HeadingTag) {
-    elem = (elem as React.ReactElement).props.children;
+    elem = (elem as React.ReactElement<{children?: React.ReactNode}>).props.children;
   }
   return String(getChildrenText(elem))
     .toLowerCase()
@@ -27,6 +40,12 @@ export interface HeadingTagProps extends React.HTMLAttributes<HTMLHeadingElement
   disableAnchor?: boolean;
 }
 
+/**
+ * Render a heading element with an optional self-referential anchor link.
+ *
+ * @param props - {@link HeadingTagProps} controlling appearance and behaviour.
+ * @returns Rendered heading element.
+ */
 export function HeadingTag({
   id,
   level,

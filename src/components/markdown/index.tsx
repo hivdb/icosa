@@ -53,7 +53,7 @@ export interface ExtendedMarkdownProps {
   /** Title displayed above the references list. */
   referenceTitle?: string;
   /** Heading level for the references section. */
-  referenceHeadingTagLevel?: number;
+    referenceHeadingTagLevel?: 1 | 2 | 3 | 4 | 5 | 6;
   /** Optional component to load references asynchronously. */
   refDataLoader?: React.ComponentType;
   /** Prefix prepended to relative image sources. */
@@ -88,7 +88,7 @@ function ExtendedMarkdown({
   inline = false,
   tocClassName,
   disableHeadingTagAnchor = false,
-  referenceHeadingTagLevel = 2,
+    referenceHeadingTagLevel = 2,
   collapsableLevels,
   imagePrefix = '/',
   cmsPrefix,
@@ -122,9 +122,9 @@ function ExtendedMarkdown({
     ...generalRenderers,
     BadMacroNode,
     StaticRefsNode,
-    TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
-    GenomeMapNode: GenomeMapNodeWrapper({genomeMaps}),
-    TOCNode: TOCNodeWrapper({className: tocClassName}),
+      TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
+      GenomeMapNode: GenomeMapNodeWrapper({genomeMaps: genomeMaps ?? {}}),
+      TOCNode: TOCNodeWrapper({className: tocClassName}),
     ...(inline ? {} : {root: RootWrapper}),
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers

@@ -2,6 +2,7 @@ import React from 'react';
 
 import macroPlugin from './macro-plugin';
 import GenomeMap from '../genome-map';
+import type {Preset} from '../genome-map/types';
 
 /**
  * Register the `genomemap` macro so markdown can render genome maps.
@@ -37,7 +38,7 @@ interface GenomeMapNodeProps {
 export default function GenomeMapNodeWrapper({genomeMaps}: GenomeMapNodeWrapperProps) {
   return ({mapName, props}: GenomeMapNodeProps) => {
     if (mapName in genomeMaps) {
-      const preset = genomeMaps[mapName];
+      const preset = genomeMaps[mapName] as Preset;
       return <GenomeMap {...props} preset={preset} />;
     }
     return <div>

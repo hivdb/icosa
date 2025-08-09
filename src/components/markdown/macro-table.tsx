@@ -11,7 +11,7 @@ import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
 import style from './style.module.scss';
 
 /** Register the `table` macro for markdown. */
-macroPlugin.addMacro('table', (content, props) => ({
+macroPlugin.addMacro('table', (content: string, props: Record<string, unknown>) => ({
   ...props,
   type: 'TableNode',
   tableName: content.trim()
@@ -54,10 +54,10 @@ function defaultRenderer(mdProps: any, cmsPrefix?: string) {
  */
 const renderFuncs: Record<string, any> = {
   default: defaultRenderer,
-  template: (tpl: string, mdProps: any, cmsPrefix?: string) => {
-    const renderTpl = createUnsafeRenderFromTpl(tpl, true);
-    return (...args: any[]) => defaultRenderer(mdProps, cmsPrefix)(renderTpl(...args));
-  },
+    template: (tpl: string, mdProps: any, cmsPrefix?: string) => {
+      const renderTpl = createUnsafeRenderFromTpl(tpl, true) as (...args: any[]) => any;
+      return (...args: any[]) => defaultRenderer(mdProps, cmsPrefix)(renderTpl(...args));
+    },
   nl2br(mdProps: any, cmsPrefix?: string) {
     return (value: any) => defaultRenderer(mdProps, cmsPrefix)(nl2brMdText(value));
   },
