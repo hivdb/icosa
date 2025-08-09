@@ -98,10 +98,11 @@ export default function NGSOptionsForm({
     'ngs2codfreq-primer-bed-input-desc'
   ], config?.messages);
 
-  const handleSaveInBrowserChange = React.useCallback(
-    event => onChange('saveInBrowser', event.currentTarget.checked),
-    [onChange]
-  );
+    /** Persist configuration changes in browser storage. */
+    const handleSaveInBrowserChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => onChange('saveInBrowser', event.currentTarget.checked),
+      [onChange]
+    );
 
   const handleDownload = React.useCallback(
     () => {
@@ -120,16 +121,19 @@ export default function NGSOptionsForm({
     [fastpConfig, cutadaptConfig, ivarConfig, primerType]
   );
 
-  const handleUpload = React.useCallback(
-    async ([file]) => {
-      const rawJSON = await readFile(file);
-      const payload = JSON.parse(rawJSON);
-      if (isMounted()) {
-        onChange('.', payload);
-      }
-    },
-    [isMounted, onChange]
-  );
+    /** Load a previously saved configuration file. */
+    const handleUpload = React.useCallback(
+      ([file]: File[]) => {
+        void (async () => {
+          const rawJSON = await readFile(file);
+          const payload = JSON.parse(rawJSON);
+          if (isMounted()) {
+            onChange('.', payload);
+          }
+        })();
+      },
+      [isMounted, onChange]
+    );
 
   const handleReset = React.useCallback(
     () => {

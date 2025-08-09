@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import ConfigContext from '../../../../utils/config-context';
-import {useCMS} from '../../../../utils/cms';
+import {useCMS, type CMSConfig} from '../../../../utils/cms';
 
 import Button from '../../../button';
 import FileInput from '../../../file-input';
@@ -16,18 +16,25 @@ import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
-function guess_strand(strand, name) {
-  if (strand === '+' || strand === '-') {
-    return strand;
-  }
-  else if (/forward|left|fwd|5-?end/i.test(name)) {
+  /**
+   * Infer the strand symbol from free-text description.
+   *
+   * @param strand - Raw strand value.
+   * @param name - Primer name used as fallback.
+   * @returns Standardized '+' or '-' strand designation.
+   */
+  function guess_strand(strand: string | undefined, name: string): '+' | '-' {
+    if (strand === '+' || strand === '-') {
+      return strand;
+    }
+    else if (/forward|left|fwd|5-?end/i.test(name)) {
+      return '+';
+    }
+    else if (/backward|reverse|right|bwd|rev|rvs|3-?end/i.test(name)) {
+      return '-';
+    }
     return '+';
   }
-  else if (/backward|reverse|right|bwd|rev|rvs|3-?end/i.test(name)) {
-    return '-';
-  }
-  return '+';
-}
 
 
 export interface PrimerLocationInputProps {
@@ -50,10 +57,11 @@ export default function PrimerLocationInput({
   );
   const [pendingItems, setPendingItems] = React.useState<PrimerBed[]>([]);
 
+  const cmsConfig = (config ?? {cmsStages: {}}) as CMSConfig;
   const [
     refSequenceText,
     isRefSeqPending
-  ] = useCMS(config.refSequencePath, config);
+  ] = useCMS(config?.refSequencePath ?? '', cmsConfig);
 
   const refSequence = React.useMemo(
     () => !isRefSeqPending && refSequenceText ?

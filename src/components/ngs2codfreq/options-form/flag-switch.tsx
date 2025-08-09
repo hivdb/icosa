@@ -23,13 +23,14 @@ export default function DisableFlagSwitch<T>({
   textChoices,
   children
 }: DisableFlagSwitchProps<T>) {
-  const handleChange = React.useCallback(
-    event => onChange(
-      name,
-      valueChoices[Number.parseInt(event.currentTarget.value)]
-    ),
-    [name, valueChoices, onChange]
-  );
+    /** Handle radio selection changes. */
+    const handleChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => onChange(
+        name,
+        valueChoices[Number.parseInt(event.currentTarget.value)]
+      ),
+      [name, valueChoices, onChange]
+    );
 
   return (
     <div className={style['fieldrow']}>

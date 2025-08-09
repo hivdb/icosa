@@ -25,22 +25,24 @@ export default function AdapterInput({
   children
 }: AdapterInputProps) {
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
-  const handleChange = React.useCallback(
-    event => {
-      const newValue = event.currentTarget.value;
-      onChange(name, newValue === '' ? autoValue : newValue);
-    },
-    [name, onChange, autoValue]
-  );
+    /** Handle text input changes for adapter sequence. */
+    const handleChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const newValue = event.currentTarget.value;
+        onChange(name, newValue === '' ? autoValue : newValue);
+      },
+      [name, onChange, autoValue]
+    );
 
-  const handleReset = React.useCallback(
-    event => (
-      event.currentTarget.checked ?
-        onChange(name, autoValue) :
-        textAreaRef.current?.focus()
-    ),
-    [name, onChange, autoValue]
-  );
+    /** Toggle between auto-detect and manual adapter input. */
+    const handleReset = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => (
+        event.currentTarget.checked ?
+          onChange(name, autoValue) :
+          textAreaRef.current?.focus()
+      ),
+      [name, onChange, autoValue]
+    );
 
   return (
     <div className={style['fieldrow']}>

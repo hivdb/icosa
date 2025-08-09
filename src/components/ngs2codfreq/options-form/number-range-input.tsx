@@ -30,26 +30,31 @@ export default function NumberRangeInput({
   disabled,
   children
 }: NumberRangeInputProps) {
-  const handleSelectAll = React.useCallback(
-    event => event.currentTarget.select(),
-    []
-  );
+    /** Select all text in the number input when clicked. */
+    const handleSelectAll = React.useCallback(
+      (event: React.MouseEvent<HTMLInputElement>) => event.currentTarget.select(),
+      []
+    );
 
-  const handleChange = React.useCallback(
-    event => onChange(
-      name,
-      Number.parseFloat(event.currentTarget.value)
-    ),
-    [name, onChange]
-  );
+    /** Propagate value changes from either the range or number input. */
+    const handleChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => onChange(
+        name,
+        Number.parseFloat(event.currentTarget.value)
+      ),
+      [name, onChange]
+    );
 
-  const handleReset = React.useCallback(
-    event => {
-      event.preventDefault();
-      onChange(name, defaultValue);
-    },
-    [defaultValue, name, onChange]
-  );
+    /** Reset the input back to its default value. */
+    const handleReset = React.useCallback(
+      (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        if (defaultValue !== undefined) {
+          onChange(name, defaultValue);
+        }
+      },
+      [defaultValue, name, onChange]
+    );
 
   return (
     <div className={style['fieldrow']}>
