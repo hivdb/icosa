@@ -1,11 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import makeClassNames from 'classnames';
 
-import {
-  fragmentOptionShape,
-  annotCategoryShape, curAnnotNameLookupShape,
-  annotShape, seqViewerSizeType
+import type {
+  FragmentOption,
+  AnnotCategory,
+  CurAnnotNameLookup,
+  Annotation,
+  SeqViewerSize
 } from '../../prop-types';
 
 import style from './style.module.scss';
@@ -14,30 +15,25 @@ import FragmentDropdown from './fragment-dropdown';
 import AnnotCategory from './annot-category';
 import FootnoteOpener from './footnote-opener';
 
+/** Props for {@link ViewerController}. */
+interface ViewerControllerProps {
+  className?: string;
+  fragmentOptions: FragmentOption[];
+  seqFragment: number[];
+  annotCategories: AnnotCategory[];
+  curAnnotNameLookup: CurAnnotNameLookup;
+  annotations: Annotation[];
+  seqViewerSize: SeqViewerSize;
+  hasFootnote: boolean;
+  onCurAnnotNameLookupChange: (lookup: CurAnnotNameLookup) => void;
+  onSeqFragmentChange: (fragmentName: string) => void;
+  onSeqViewerSizeChange: (size: SeqViewerSize) => void;
+  onOpenFootnote: () => void;
+}
 
-ViewerController.propTypes = {
-  className: PropTypes.string,
-  fragmentOptions: PropTypes.arrayOf(
-    fragmentOptionShape.isRequired
-  ).isRequired,
-  seqFragment: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  annotCategories: PropTypes.arrayOf(
-    annotCategoryShape.isRequired
-  ).isRequired,
-  curAnnotNameLookup: curAnnotNameLookupShape.isRequired,
-  annotations: PropTypes.arrayOf(
-    annotShape.isRequired
-  ).isRequired,
-  seqViewerSize: seqViewerSizeType.isRequired,
-  hasFootnote: PropTypes.bool.isRequired,
-  onCurAnnotNameLookupChange: PropTypes.func.isRequired,
-  onSeqFragmentChange: PropTypes.func.isRequired,
-  onSeqViewerSizeChange: PropTypes.func.isRequired,
-  onOpenFootnote: PropTypes.func.isRequired
-};
-
+/**
+ * Render controls for selecting fragments and annotations.
+ */
 export default function ViewerController({
   className,
   fragmentOptions,
@@ -51,7 +47,7 @@ export default function ViewerController({
   onSeqViewerSizeChange,
   onSeqFragmentChange,
   onOpenFootnote
-}) {
+}: ViewerControllerProps) {
 
   const mergedClassName = makeClassNames(
     style['viewer-controller'],

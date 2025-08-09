@@ -1,25 +1,29 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import capitalize from 'lodash/capitalize';
 
 import style from './style.module.scss';
 
 import Button from '../../../../components/button';
-import {seqViewerSizeType} from '../../prop-types';
+import type {SeqViewerSize} from '../../prop-types';
 
+interface SizeControllerProps {
+  /** Current sequence viewer size. */
+  size: SeqViewerSize;
+  /** Callback when a new size is selected. */
+  onChange: (size: SeqViewerSize) => void;
+}
 
-SizeController.propTypes = {
-  size: seqViewerSizeType.isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+/**
+ * Render buttons allowing the user to select the sequence viewer size.
+ */
 export default function SizeController({
   size: seqViewerSize,
   onChange
-}) {
+}: SizeControllerProps) {
 
   const handleChange = React.useCallback(
-    ({currentTarget: {value}}) => onChange(value),
+    ({currentTarget: {value}}: React.MouseEvent<HTMLButtonElement>) =>
+      onChange(value as SeqViewerSize),
     [onChange]
   );
 

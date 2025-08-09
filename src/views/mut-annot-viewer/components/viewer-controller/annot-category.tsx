@@ -1,48 +1,48 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import Dropdown from 'react-dropdown';
 import CheckboxInput from '../../../../components/checkbox-input';
 
-import {
-  annotShape,
-  curAnnotNamesArray,
-  annotCategoryShape
+import type {
+  Annotation,
+  CurAnnotNamesArray,
+  AnnotCategory as AnnotCategoryDef
 } from '../../prop-types';
 import LegendContext from '../legend-context';
 import {sentenceCase} from '../../utils';
 
 import style from './style.module.scss';
 
-
-function filterAnnotations(annots, {name: curCat}) {
+/**
+ * Filter annotations belonging to current category.
+ */
+function filterAnnotations(annots: Annotation[], {name: curCat}: AnnotCategoryDef) {
   return annots.filter(({category}) => category === curCat);
 }
 
-
-function getLabel({name, label}) {
+/**
+ * Resolve display label for annotation name.
+ */
+function getLabel({name, label}: {name: string; label?: string}) {
   return label ? label : sentenceCase(name);
 }
 
+interface AnnotCategoryProps {
+  annotCategory: AnnotCategoryDef;
+  curAnnotNames: CurAnnotNamesArray;
+  annotations: Annotation[];
+  onChange: (names: string[]) => void;
+}
 
-AnnotCategory.propTypes = {
-  annotCategory: annotCategoryShape.isRequired,
-  curAnnotNames: curAnnotNamesArray.isRequired,
-  annotations: PropTypes.arrayOf(
-    annotShape.isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
-AnnotCategory.defaultProps = {
-  curAnnotNames: []
-};
-
+/**
+ * Control for selecting annotations within a category.
+ */
 export default function AnnotCategory({
   annotCategory,
-  curAnnotNames,
+  curAnnotNames = [],
   annotations,
   onChange
-}) {
+}: AnnotCategoryProps) {
 
   const options = React.useMemo(
     () => {

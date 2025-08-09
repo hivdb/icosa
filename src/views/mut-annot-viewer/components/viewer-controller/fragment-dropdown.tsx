@@ -1,27 +1,27 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Dropdown from 'react-dropdown';
 
-import {fragmentOptionShape} from '../../prop-types';
+import type {FragmentOption} from '../../prop-types';
 
 import style from './style.module.scss';
 
+interface FragmentDropdownProps {
+  /** Available fragment options. */
+  fragmentOptions: FragmentOption[];
+  /** Currently selected fragment range. */
+  seqFragment: number[];
+  /** Callback when a new fragment is chosen. */
+  onChange: (fragmentName: string) => void;
+}
 
-FragmentDropdown.propTypes = {
-  fragmentOptions: PropTypes.arrayOf(
-    fragmentOptionShape.isRequired
-  ).isRequired,
-  seqFragment: PropTypes.arrayOf(
-    PropTypes.number.isRequired
-  ).isRequired,
-  onChange: PropTypes.func.isRequired
-};
-
+/**
+ * Dropdown control for selecting a sequence fragment region.
+ */
 export default function FragmentDropdown({
   fragmentOptions,
   seqFragment,
   onChange
-}) {
+}: FragmentDropdownProps) {
   const options = React.useMemo(
     () => fragmentOptions.map(({name, seqFragment}) => ({
       value: name,
@@ -41,7 +41,7 @@ export default function FragmentDropdown({
   );
 
   const handleChange = React.useCallback(
-    ({value}) => onChange(value),
+    ({value}: {value: string}) => onChange(value),
     [onChange]
   );
 
