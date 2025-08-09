@@ -79,10 +79,22 @@ function* pairingFiles<T>(filenames: T[]): Generator<[T, T], void, unknown> {
 }
 
 
+/**
+ * Infer the common prefix name for a FASTQ pair using the detected pattern.
+ *
+ * When only a single file is present, the file name (without extension) is
+ * returned directly. The function gracefully handles `null` entries within the
+ * pair.
+ *
+ * @param pair - FASTQ files in the pair.
+ * @param pattern - Pattern information describing how the pair was matched.
+ * @returns Suggested name for the pair.
+ */
 function suggestPairName({
-  pair: [{name: fileName}],
+  pair: [file],
   pattern: { delimiter, diffOffset, reverse }
 }: FastqPair): string {
+  const fileName = file?.name ?? '';
   let pairName = fileName.split(/\.fastq(?:\.gz)?/i)[0];
   if (reverse === -1) {
     // single strand
@@ -100,6 +112,13 @@ function suggestPairName({
 }
 
 
+/**
+ * Remove a file from the pair at a given index.
+ *
+ * @param allPairs - Mutable list of all FASTQ pairs.
+ * @param index - Index of the pair to update.
+ * @param fileName - Name of the file to remove.
+ */
 function removeFileUsingRef(
   allPairs: FastqPair[],
   index: number,
@@ -110,9 +129,9 @@ function removeFileUsingRef(
     allPairs.splice(index, 1);
   }
   else {
-    const newPairProps = {
+    const newPairProps: FastqPair = {
       pair: [
-        ...pairProps.pair.filter(f => f.name !== fileName),
+        ...pairProps.pair.filter(f => f && f.name !== fileName),
         null
       ],
       pattern: {
@@ -121,7 +140,8 @@ function removeFileUsingRef(
         posPairedMarker: -1,
         reverse: -1
       },
-      n: 1
+      n: 1,
+      name: ''
     };
     newPairProps.name = suggestPairName(newPairProps);
     allPairs[index] = newPairProps;
@@ -149,13 +169,16 @@ export function moveFile(
   if (targetPair.n === 2) {
     throw new Error('Target group is already paired.');
   }
+  const srcFile = srcPair.pair.find(f => f && f.name === srcFileName) ?? null;
   targetPair.pair = orderBy([
     targetPair.pair[0],
-    srcPair.pair.find(f => f.name === srcFileName)
-  ], ['name']);
-  for (const pattern of findPatterns(...targetPair.pair)) {
-    targetPair.pattern = pattern;
-    break;
+    srcFile
+  ], ['name']) as [File | null, File | null];
+  if (targetPair.pair[0] && targetPair.pair[1]) {
+    for (const pattern of findPatterns(targetPair.pair[0], targetPair.pair[1])) {
+      targetPair.pattern = pattern;
+      break;
+    }
   }
   targetPair.n = 2;
   targetPair.name = suggestPairName(targetPair);

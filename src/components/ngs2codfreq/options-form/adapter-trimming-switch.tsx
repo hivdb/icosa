@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import RadioInput from '../../radio-input';
 
 import style from './style.module.scss';
@@ -15,13 +14,14 @@ export default function AdapterTrimmingSwitch({
   disableAdapterTrimming,
   onChange
 }: AdapterTrimmingSwitchProps) {
-  const handleChange = React.useCallback(
-    event => onChange(
-      'fastpConfig.disabledAdapterTrimming',
-      event.currentTarget.value === 'no'
-    ),
-    [onChange]
-  );
+    /** Handle adapter trimming toggle. */
+    const handleChange = React.useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => onChange(
+        'fastpConfig.disabledAdapterTrimming',
+        event.currentTarget.value === 'no'
+      ),
+      [onChange]
+    );
 
   return (
     <div className={style['fieldrow']}>

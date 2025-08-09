@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 
 import fastq2codfreq, {restoreTask} from '../../utils/fastq2codfreq';
 
@@ -72,7 +71,7 @@ export default function NGS2CodFreq({
 }: NGS2CodFreqProps) {
 
   const [, forceUpdate] = React.useReducer(n => n + 1, 0);
-  const {current: progressLookup} = React.useRef({});
+  const {current: progressLookup} = React.useRef<Record<string, any>>({});
   const [options, setOptions, isOptionsDefault] = useOptions();
 
   React.useEffect(
@@ -105,7 +104,11 @@ export default function NGS2CodFreq({
     async (fastqPairs: FastqPair[]) => {
       if (fastqPairs.length > 0) {
         const {fastpConfig, cutadaptConfig, ivarConfig, primerType} = options;
-        const requestOptions = {fastpConfig};
+        const requestOptions: {
+          fastpConfig: typeof fastpConfig;
+          cutadaptConfig?: typeof cutadaptConfig;
+          ivarConfig?: typeof ivarConfig;
+        } = {fastpConfig};
         if (primerType === 'fasta') {
           requestOptions.cutadaptConfig = cutadaptConfig;
         }
