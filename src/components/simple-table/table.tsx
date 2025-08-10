@@ -8,7 +8,8 @@ import useRowSpanMatrix from './use-rowspan-matrix';
 import useSortState from './use-sort-state';
 import CellTh from './cell-th';
 import CellTd from './cell-td';
-import type ColumnDef from './column-def';
+import type ColumnDefClass from './column-def';
+type ColumnDef = InstanceType<typeof ColumnDefClass>;
 import type {SortState} from './types';
 
 interface Props {

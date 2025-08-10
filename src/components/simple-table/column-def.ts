@@ -203,6 +203,25 @@ export interface ColumnDefOptions {
  * Definition for a table column used by {@link SimpleTable}.
  */
 export default class ColumnDef {
+  name: string;
+  label: React.ReactNode;
+  exportLabel?: string;
+  decorator?: Decorator;
+  render: ColumnRender;
+  renderTpl?: string;
+  renderConfig: any;
+  exportCell?: ColumnExportCell;
+  sort: ColumnSort;
+  sortable: boolean;
+  textAlign: string;
+  nullsLast: boolean;
+  none: string;
+  multiCells: boolean;
+  rowSpanKey?: string;
+  rowSpanKeyGetter?: (row: any) => any;
+  headCellStyle: React.CSSProperties;
+  bodyCellStyle: React.CSSProperties;
+  bodyCellColSpan: number;
 
   /** Create a ColumnDef object
    *

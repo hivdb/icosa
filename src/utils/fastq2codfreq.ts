@@ -284,7 +284,7 @@ async function* fetchRunnerProgress(taskKey: string) {
       case 'progress': {
         const {count, total, fastqs} = event as any;
         const fnames = fastqs
-          .filter((fn): fn is string => Boolean(fn))
+          .filter((fn: string | null | undefined): fn is string => Boolean(fn))
           .map((fn: string) => {
             const parts = fn.split('/');
             return parts[parts.length - 1];

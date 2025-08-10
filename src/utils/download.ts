@@ -91,7 +91,8 @@ const utf8Encoder = new TextEncoder();
  * fallback anchor element.
  *
  * @param fileName - Suggested file name.
- * @param mediaType - MIME type of the data.
+ * @param mediaType - MIME type of the data or `null` to let the browser
+ *   auto-detect the type.
  * @param data - Blob or string content to download.
  * @param isBlob - When `true`, `data` is already a `Blob` instance.
  * @param fileHandle - Optional file handle obtained from picker.
@@ -101,7 +102,7 @@ const utf8Encoder = new TextEncoder();
  */
 export async function makeDownload(
   fileName: string,
-  mediaType: string,
+  mediaType: string | null,
   data: Blob | string,
   isBlob = false,
   fileHandle: any = null
@@ -126,7 +127,7 @@ export async function makeDownload(
   let blob: Blob;
   if (!isBlob) {
     const encoded = utf8Encoder.encode(data as string);
-    blob = new Blob([encoded], {type: mediaType});
+    blob = new Blob([encoded], {type: mediaType || undefined});
   }
   else {
     blob = data as Blob;
