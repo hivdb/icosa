@@ -29,14 +29,16 @@ export default function useAllSeqReads({defaultParams}: {defaultParams: any}) {
       } = {},
     },
   } = useRouter() as any;
-  let allOrigSeqReads: any[] = [];
-  let isPending = true;
-  try {
-    [allOrigSeqReads, isPending] = BigData.use(key);
-  }
-  catch (Error) {
-    // skip
-  }
+    let allOrigSeqReads: any[] = [];
+    let isPending = true;
+    try {
+      const [seqs, pending] = BigData.use(key) as [any[] | undefined, boolean];
+      allOrigSeqReads = seqs ?? [];
+      isPending = pending;
+    }
+    catch (Error) {
+      // skip
+    }
   return useAddParams({
     defaultParams,
     allSequenceReads: allOrigSeqReads,

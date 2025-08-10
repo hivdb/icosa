@@ -1,13 +1,13 @@
 import React from 'react';
-import GeneChart from './gene-chart';
+import GeneChart, {GeneChartProps} from './gene-chart';
 import AutofitGraph from '../autofit';
 
-export interface SeqReadsAnalysisQAChartProps {
-  /** Array of gene sequence read objects to plot. */
-  allGeneSequenceReads: Array<Record<string, any>>;
-  /** Output mode for rendering; "printable" disables resizing. */
-  output?: string;
-}
+  export interface SeqReadsAnalysisQAChartProps {
+    /** Array of gene sequence read objects to plot. */
+    allGeneSequenceReads: GeneChartProps[];
+    /** Output mode for rendering; "printable" disables resizing. */
+    output?: string;
+  }
 
 /**
  * Displays quality assessment charts for sequence reads.

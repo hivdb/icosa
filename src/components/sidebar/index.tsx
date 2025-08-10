@@ -25,23 +25,26 @@ function isPositionStickySupported() {
   return _isPositionStickySupported;
 }
 
-interface ItemLinkProps {
-  href?: string;
-  to?: string;
-  className?: string;
-  onClick?: () => void;
-  children: React.ReactNode;
-}
+  interface ItemLinkProps {
+    href?: string;
+    to?: string;
+    className?: string;
+    onClick?: () => void;
+    children: React.ReactNode;
+  }
 
-function ItemLink({
+  /**
+   * Render a sidebar link with consistent styling and title attribute.
+   */
+  function ItemLink({
   href,
   to,
   className,
   onClick,
   children
-}: ItemLinkProps) {
-  const title = children as any;
-  return (
+  }: ItemLinkProps) {
+    const title = children as any;
+    return (
     <Link
       noDefaultStyle
       className={className}
@@ -55,7 +58,28 @@ function ItemLink({
   );
 }
 
-export function SidebarItem() { return null; }
+  interface SidebarItemProps {
+    /** Display label shown inside the sidebar. */
+    children: React.ReactNode;
+    /** Unique item name used for selection. */
+    name?: string;
+    /** Target href for anchor navigation. */
+    href?: string;
+    /** Target location for router navigation. */
+    to?: string;
+    /** Click handler. */
+    onClick?: () => void;
+  }
+
+  /**
+   * Placeholder component representing a sidebar link item.
+   *
+   * The component itself renders nothing but allows React to carry props
+   * describing each sidebar entry.
+   */
+  export function SidebarItem({children}: SidebarItemProps): JSX.Element | null {
+    return <>{children}</>;
+  }
 
 interface SidebarProps {
   title: React.ReactNode;

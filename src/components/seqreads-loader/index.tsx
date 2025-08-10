@@ -11,20 +11,23 @@ export {useWhenNoSeqReads};
 
 interface SeqRead {name: string; [key: string]: any;}
 
-interface CurrentSelected {index: number; name: string;}
+  interface CurrentSelected {index: number; name: string;}
+  type MaybeCurrentSelected = CurrentSelected | Record<string, never>;
 
-function useCurrentSelected({
-  lazyLoad,
-  allSequenceReads
-}: {lazyLoad: boolean; allSequenceReads: SeqRead[]}) {
+  function useCurrentSelected({
+    lazyLoad,
+    allSequenceReads
+  }: {lazyLoad: boolean; allSequenceReads: SeqRead[]}): MaybeCurrentSelected {
   const {
     match: {location = {query: {}}}
   } = useRouter();
 
   return React.useMemo(
     () => {
-      if (!allSequenceReads || allSequenceReads.length === 0) { return {}; }
-      if (!lazyLoad) { return allSequenceReads[0]; }
+        if (!allSequenceReads || allSequenceReads.length === 0) {
+          return {} as Record<string, never>;
+        }
+        if (!lazyLoad) { return allSequenceReads[0]; }
 
       const name = (location as any).query.name;
       if (!name) {

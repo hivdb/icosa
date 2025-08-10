@@ -14,10 +14,17 @@ interface CurrentSelected {
   name: string;
 }
 
-function useCurrentSelected({lazyLoad, sequences}: {lazyLoad: boolean; sequences?: Sequence[]}) {
+type MaybeCurrentSelected = CurrentSelected | Record<string, never>;
+
+/**
+ * Determine the currently selected sequence from router state.
+ */
+function useCurrentSelected({lazyLoad, sequences}: {lazyLoad: boolean; sequences?: Sequence[]}): MaybeCurrentSelected {
   const { match: {location = {query: {}} as any} } = useRouter();
-  return React.useMemo<CurrentSelected | Record<string, never>>(() => {
-    if (!sequences || sequences.length === 0) { return {}; }
+  return React.useMemo<MaybeCurrentSelected>(() => {
+    if (!sequences || sequences.length === 0) {
+      return {} as Record<string, never>;
+    }
     if (!lazyLoad) { return {index: 0, name: sequences[0].header}; }
 
     const name = (location as any).query.name;
