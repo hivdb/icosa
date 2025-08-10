@@ -2,7 +2,7 @@ import React from 'react';
 import {Text} from '@vx/text';
 import {Group} from '@vx/group';
 import {AxisLeft, AxisBottom} from '@vx/axis';
-import {withTooltip, Tooltip, TooltipWithBounds} from '@vx/tooltip';
+import {withTooltip, Tooltip} from '@vx/tooltip';
 import {scaleBand, scaleLinear} from 'd3-scale';
 
 import {SitesType, Site} from './types';
@@ -64,7 +64,7 @@ export interface SequenceReadsHistogramProps {
   /** Total number of positions examined. */
   numPositions: number;
   /** Tooltip display helper. */
-  showTooltip?: React.ComponentProps<typeof TooltipWithBounds>['showTooltip'];
+  showTooltip?: (args: { tooltipData: any; tooltipTop: number; tooltipLeft: number }) => void;
   /** Tooltip hide helper. */
   hideTooltip?: () => void;
   /** Whether tooltip is open. */
@@ -137,16 +137,16 @@ function SequenceReadsHistogram({
     .padding(0.1)
     .rangeRound([0, xMax]);
 
-  const lowerYScale = scaleLinear()
+  const lowerYScale = scaleLinear<number>()
     .domain([0, yCutoff])
     .range([yMax, gapY + halfGapH]);
 
-  const upperYScale = scaleLinear()
+  const upperYScale = scaleLinear<number>()
     .domain([yCutoff, 100])
     .range([gapY - halfGapH, 0]);
 
 const combinedYScale = (value: number): number =>
-  value > yCutoff ? upperYScale(value) : lowerYScale(value);
+  (value > yCutoff ? upperYScale(value) : lowerYScale(value)) as number;
 
   const barWidth = xScale.bandwidth();
 
@@ -279,8 +279,8 @@ const combinedYScale = (value: number): number =>
       </svg>
       {tooltipOpen ? (
         <Tooltip
-          top={tooltipTop}
-          left={tooltipLeft}
+          top={tooltipTop ?? 0}
+          left={tooltipLeft ?? 0}
           style={{
             position: 'absolute',
             minWidth: 60,

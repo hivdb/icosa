@@ -21,18 +21,24 @@ interface CurrentSelected {
   name: string;
 }
 
+/**
+ * Derive the currently selected pattern based on the router state.
+ *
+ * @param opts - Contains lazy load flag and available patterns.
+ * @returns The selected pattern or an empty object when none is available.
+ */
 function useCurrentSelected({
   lazyLoad,
   patterns
-}: {lazyLoad: boolean; patterns: Pattern[]}) {
+}: {lazyLoad: boolean; patterns: Pattern[]}): CurrentSelected | Record<string, never> {
   const {
     match: {location = {query: {}}}
   } = useRouter();
 
   return React.useMemo<CurrentSelected | Record<string, never>>(
     () => {
-      if (!patterns || patterns.length === 0) { return {}; }
-      if (!lazyLoad) { return patterns[0]; }
+      if (!patterns || patterns.length === 0) { return {} as Record<string, never>; }
+      if (!lazyLoad) { return {index: 0, name: patterns[0].name}; }
 
       const name = (location as any).query.name;
       if (!name) {

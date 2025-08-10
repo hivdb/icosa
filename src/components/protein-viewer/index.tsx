@@ -5,6 +5,7 @@ import * as NGL from 'ngl';
 import {getColorInt} from '../../utils/colors';
 
 import type {View, PositionAnnot, ResidueAnnot, CameraState} from './types';
+import type { RepresentationDescriptor } from 'react-ngl';
 import {viewShape} from './prop-types';
 import ResidueLayer from './residue-layer';
 import CameraController from './camera-controller';
@@ -41,6 +42,9 @@ const defaultProps = {
  * @param props - {@link ProteinViewerProps}
  * @returns JSX element containing the stage and control widgets.
  */
+const StageAny = Stage as unknown as React.ComponentType<any>;
+const StructureComponentAny = StructureComponent as unknown as React.ComponentType<any>;
+
 export default function ProteinViewer({
   width = defaultProps.width,
   height = defaultProps.height,
@@ -72,14 +76,14 @@ export default function ProteinViewer({
     [positions, positionOffset]
   );
 
-  const reprList = React.useMemo(() => {
-    const hlAtom = residues.reduce<Record<number, string | number>>(
-      (acc, {resno, bgColor}) => {
-        acc[resno] = bgColor;
-        return acc;
-      },
-      {}
-    );
+  const reprList = React.useMemo<RepresentationDescriptor[]>(() => {
+      const hlAtom = residues.reduce<Record<number, string | number>>(
+        (acc, {resno, bgColor}) => {
+          acc[resno] = bgColor;
+          return acc;
+        },
+        {}
+      );
     const schemeId = NGL.ColormakerRegistry.addScheme(
       function(this: any) {
         this.atomColor = (atom: any) => {
@@ -92,40 +96,43 @@ export default function ProteinViewer({
         };
       }
     );
-    const seleSuffix = sele ? `AND ${sele}` : '';
-    return [
-      {
-        type: 'tube',
-        params: {
-          sele,
-          radius: .1,
-          color: 'white'
+      const seleSuffix = sele ? `AND ${sele}` : '';
+      const list: RepresentationDescriptor[] = [
+        {
+          type: 'tube',
+          params: {
+            sele: sele ?? '',
+            radius: 0.1,
+            color: 'white'
+          }
         }
-      },
-      ...(residues.length ? [{
-        type: 'spacefill',
-        params: {
-          sele: `(${Object.keys(hlAtom).join(' OR ')}) AND .CA ${seleSuffix}`,
-          radius: 1.8,
-          color: schemeId
-        }
-      }] : [])
-    ];
-  }, [residues, sele]);
+      ];
+      if (residues.length) {
+        list.push({
+          type: 'spacefill',
+          params: {
+            sele: `(${Object.keys(hlAtom).join(' OR ')}) AND .CA ${seleSuffix}`,
+            radius: 1.8,
+            color: schemeId as unknown as string
+          }
+        });
+      }
+      return list;
+    }, [residues, sele]);
 
   return React.useMemo(
     () => (
-      <Stage
-       key={`stage-${viewName}`}
-       width={width}
-       height={height}
-       params={{backgroundColor}}
-       cameraState={cameraState}
-       onCameraMove={handleCameraMove}>
-        <StructureComponent
-         key={`component-${viewName}`}
-         path={`rcsb://${pdb}`}
-         reprList={reprList}>
+        <StageAny
+         key={`stage-${viewName}`}
+         width={`${width}`}
+         height={`${height}`}
+         params={{backgroundColor}}
+         cameraState={cameraState}
+         onCameraMove={handleCameraMove}>
+        <StructureComponentAny
+          key={`component-${viewName}`}
+          path={`rcsb://${pdb}`}
+          reprList={reprList}>
           <ResidueLayer sele={sele} residues={residues} />
           <CameraController
            pdb={pdb}
@@ -137,8 +144,8 @@ export default function ProteinViewer({
            defaultCameraState={defaultCameraState}
            cameraState={cameraState}
            setCameraState={setCameraState} />
-        </StructureComponent>
-      </Stage>
+        </StructureComponentAny>
+      </StageAny>
     ),
     [
       sele,

@@ -6,7 +6,7 @@ import * as download from '../../utils/download';
 
 describe('useDownloadCodFreqs', () => {
   it('downloads single file', async () => {
-    const makeDownload = vi.spyOn(download, 'makeDownload').mockResolvedValue();
+    const makeDownload = vi.spyOn(download, 'makeDownload').mockResolvedValue(undefined);
     const data = [
       {
         name: 'sample.codfreq',
@@ -28,7 +28,7 @@ describe('useDownloadCodFreqs', () => {
   });
 
   it('zips multiple files', async () => {
-    const makeZip = vi.spyOn(download, 'makeZip').mockResolvedValue();
+    const makeZip = vi.spyOn(download, 'makeZip').mockResolvedValue(undefined);
     const data = [
       {
         name: 'a.codfreq',

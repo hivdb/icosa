@@ -41,10 +41,8 @@ const CodonReadsCoverage: React.FC<CodonReadsCoverageProps> = ({
         <CodonCoverageGraph
           containerWidth={width}
           genes={availableGenes}
-          {...{
-            codonReadsCoverage,
-            minPositionReads
-          }}
+          codonReadsCoverage={codonReadsCoverage}
+          minPositionReads={minPositionReads ?? 0}
         />
       </div>
     </section>
