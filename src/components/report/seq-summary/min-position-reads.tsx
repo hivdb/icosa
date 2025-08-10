@@ -36,14 +36,24 @@ function MinPositionReads({
 }: MinPositionReadsProps) {
   const {match, router} = useRouter();
   if (curValue === null || isNaN(curValue)) {
-    curValue = Number.parseFloat(match.location.query.posreads);
+    curValue = Number(match.location.query.posreads);
     if (isNaN(curValue)) {
       curValue = defaultValue;
     }
   }
 
+  const dropdownOptions = React.useMemo(
+    () => options.map(({label, value}) => ({label, value: String(value)})),
+    [options]
+  );
+
+  /**
+   * Handle updates to the minimum position reads threshold.
+   *
+   * @param value - Selected read depth as a string.
+   */
   const handleChange = React.useCallback(
-    ({value: posreads}) => {
+    ({value: posreads}: {value: string}) => {
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
       newLoc.query.posreads = posreads;
@@ -68,11 +78,11 @@ function MinPositionReads({
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown
-       value={options.find(({value}) => value === curValue)}
+       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
        placeholder="..."
-       options={options}
-       name="cutoff"
-       onChange={handleChange} />
+       options={dropdownOptions}
+       onChange={handleChange}
+      />
     </dd>
   </>;
 

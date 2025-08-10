@@ -3,8 +3,9 @@ import classNames from 'classnames';
 
 import useDownloadButton from './use-download-button';
 import SimpleTableTable from './table';
+import ColumnDef from './column-def';
 import style from './style.module.scss';
-export {default as ColumnDef} from './column-def';
+export {ColumnDef};
 
 interface Props {
   windowScroll?: boolean;

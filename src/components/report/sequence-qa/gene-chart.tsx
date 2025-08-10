@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {type ComponentProps} from 'react';
 import {AxisBottom} from '@vx/axis';
 import {Group} from '@vx/group';
 import {scaleBand, scaleLinear} from '@vx/scale';
-import {withTooltip, Tooltip, TooltipWithBoundsProps} from '@vx/tooltip';
+import {withTooltip, Tooltip, TooltipWithBounds} from '@vx/tooltip';
 import {range} from 'd3-array';
 
 import config from '../../../config';
@@ -45,10 +45,10 @@ const qaGroupAttributes = {
  * @returns Array of tick positions.
  */
 function ticks(start: number, end: number, tick: number): number[] {
-  let step = parseInt((end + 1 - start) / (tick - 1), 10);
-  step = parseInt((step + 3) / 5, 10) * 5;
+  let step = Math.floor((end + 1 - start) / (tick - 1));
+  step = Math.floor((step + 3) / 5) * 5;
   const r: number[] = [];
-  const istart = parseInt(start / 5, 10) * 5;
+  const istart = Math.floor(start / 5) * 5;
   const maxI = end - MAX_PROTEIN_SIZE / 80;
   for (let i = istart; i < maxI; i += step) {
     if (i > start) {
@@ -82,19 +82,28 @@ export interface Gene {
   length: number;
 }
 
-export interface GeneChartProps {
+interface TooltipHandlers {
+  showTooltip?: (
+    args: {
+      tooltipData: number;
+      tooltipTop?: number;
+      tooltipLeft?: number;
+    }
+  ) => void;
+  hideTooltip?: () => void;
+  tooltipOpen?: boolean;
+  tooltipData?: number;
+  tooltipTop?: number;
+  tooltipLeft?: number;
+}
+
+export interface GeneChartProps extends TooltipHandlers {
   firstAA: number;
   lastAA: number;
   gene: Gene;
   mutations: Mutation[];
   frameShifts?: FrameShift[];
   containerWidth: number;
-  showTooltip?: TooltipWithBoundsProps['showTooltip'];
-  hideTooltip?: () => void;
-  tooltipOpen?: boolean;
-  tooltipData?: number;
-  tooltipTop?: number;
-  tooltipLeft?: number;
 }
 
 /**
@@ -172,13 +181,13 @@ export function GeneChart({
     const width = Math.max(
       Math.sqrt(
         2 * (containerWidth - margin.left) * scale * lenAA -
-        Math.pow(scale * lenAA, 2)
+          Math.pow(scale * lenAA, 2)
       ),
       400
     );
 
     // roughly tick every 50px
-    const xAxisTickValues = ticks(fAA, lAA, parseInt(width / 50, 10));
+    const xAxisTickValues = ticks(fAA, lAA, Math.floor(width / 50));
     xAxisTickValues.push(fAA);
     xAxisTickValues.push(lAA);
 
@@ -261,7 +270,7 @@ export function GeneChart({
     range: [chartProps.firstAA, chartProps.width],
     domain: [chartProps.firstAA, chartProps.lastAA]
   });
-  const xScaleband = scaleBand({
+  const xScaleband = scaleBand<number>({
     range: [chartProps.firstAA, chartProps.width],
     domain: range(chartProps.firstAA, chartProps.lastAA + 1),
     padding: 0.15

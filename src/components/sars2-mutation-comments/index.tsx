@@ -7,7 +7,7 @@ import CheckboxInput from '../checkbox-input';
 
 import style from './style.module.scss';
 
-const useDisplayRefLink = createPersistedReducer(
+const useDisplayRefLink = createPersistedReducer<boolean, unknown>(
   '--sierra-report-display-reflink-opt'
 );
 

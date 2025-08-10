@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import ExtLink from '../../link/external';
 
 import Loader from '../../loader';
@@ -9,9 +8,11 @@ import style from './style.module.scss';
 
 interface OutbreakInfoProps {
   config: {
-    outbreakInfo: {lineages: {results: Array<{name: string; total_count: number}>}};
+    outbreakInfo: {
+      lineages: {results: Array<{name: string; total_count: number}>};
+    };
   };
-  asyncResultsURI?: string;
+  asyncResultsURI: string;
   lineage?: string;
   probability?: number | null;
   version?: string;
@@ -37,13 +38,12 @@ function useOutbreakInfo(props: OutbreakInfoProps) {
       }
     }
   } = props;
-  let data = [];
-  if (!error && !isPending) {
+  let data: Array<{name: string; total_count: number}> = [];
+  if (!error && !isPending && pangoData) {
     data = results.filter(
-      ({name}) => (
+      ({name}) =>
         name.toLocaleUpperCase('en-US') ===
-        pangoData.lineage.toLocaleUpperCase('en-US')
-      )
+        pangoData.lineage?.toLocaleUpperCase('en-US')
     );
   }
   return {data, error, isPending};
@@ -75,7 +75,7 @@ export default function OutbreakInfo(props: OutbreakInfoProps) {
         const url = new URL('https://outbreak.info/situation-reports');
         url.searchParams.append('pango', name);
         return <li key={name}>
-          <ExtLink href={url}>
+          <ExtLink href={url.toString()}>
             {name.toLocaleUpperCase('en-US')}{' '}
             (n={totalCount.toLocaleString('en-US')})
           </ExtLink>

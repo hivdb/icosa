@@ -14,6 +14,14 @@ interface SeqRead {name: string; [key: string]: any;}
   interface CurrentSelected {index: number; name: string;}
   type MaybeCurrentSelected = CurrentSelected | Record<string, never>;
 
+  /**
+   * Determine which sequence read is currently selected.
+   *
+   * @param lazyLoad - Whether sequence reads are loaded lazily via query.
+   * @param allSequenceReads - Array of available sequence reads.
+   * @returns The current selection with index and name or an empty object when
+   *   no reads are available.
+   */
   function useCurrentSelected({
     lazyLoad,
     allSequenceReads
@@ -27,7 +35,9 @@ interface SeqRead {name: string; [key: string]: any;}
         if (!allSequenceReads || allSequenceReads.length === 0) {
           return {} as Record<string, never>;
         }
-        if (!lazyLoad) { return allSequenceReads[0]; }
+        if (!lazyLoad) {
+          return {index: 0, name: allSequenceReads[0].name};
+        }
 
       const name = (location as any).query.name;
       if (!name) {
@@ -52,7 +62,7 @@ interface SeqReadsLoaderProps {
   childProps?: Record<string, unknown>;
   children: (args: {
     allSequenceReads: SeqRead[];
-    currentSelected: CurrentSelected;
+    currentSelected: MaybeCurrentSelected;
   }) => React.ReactElement;
 }
 
@@ -66,7 +76,8 @@ function SeqReadsLoader({
     defaultParams
   }) as [SeqRead[], boolean];
   const currentSelected = useCurrentSelected({
-    lazyLoad, allSequenceReads
+    lazyLoad,
+    allSequenceReads
   });
   if (isPending) {
     return <Loader modal />;

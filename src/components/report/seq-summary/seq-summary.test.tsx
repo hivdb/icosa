@@ -105,7 +105,14 @@ describe('Seq Summary components', () => {
   });
 
   test('OutbreakInfo shows lineage', () => {
-    render(<dl><OutbreakInfo config={{outbreakInfo:{lineages:{results:[{name:'B.1', total_count:1}]}}}} /></dl>);
+    render(
+      <dl>
+        <OutbreakInfo
+          asyncResultsURI="url"
+          config={{outbreakInfo: {lineages: {results: [{name: 'B.1', total_count: 1}]}}}}
+        />
+      </dl>
+    );
     expect(screen.getByText(/B.1/)).toBeInTheDocument();
   });
 

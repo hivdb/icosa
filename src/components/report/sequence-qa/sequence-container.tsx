@@ -4,7 +4,7 @@ import AutofitGraph from '../autofit';
 
   export interface SequenceAnalysisQAChartProps {
     /** Aligned gene sequences to visualise. */
-    alignedGeneSequences: GeneChartProps[];
+    alignedGeneSequences: Array<Omit<GeneChartProps, 'containerWidth'>>;
     /** Output mode for rendering; "printable" disables resizing. */
     output?: string;
   }

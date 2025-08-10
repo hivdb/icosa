@@ -4,7 +4,7 @@ import AutofitGraph from '../autofit';
 
   export interface SeqReadsAnalysisQAChartProps {
     /** Array of gene sequence read objects to plot. */
-    allGeneSequenceReads: GeneChartProps[];
+    allGeneSequenceReads: Array<Omit<GeneChartProps, 'containerWidth'>>;
     /** Output mode for rendering; "printable" disables resizing. */
     output?: string;
   }
@@ -36,14 +36,16 @@ export default function SeqReadsAnalysisQAChart({
   return (
     <AutofitGraph output={output} onResize={handleResize}>
       <h2>Sequence Reads Quality Assessment</h2>
-      {allGeneSequenceReads.map((props, idx) => (
-        <GeneChart
-          key={idx}
-          containerWidth={width}
-          frameShifts={[]}
-          {...props}
-        />
-      ))}
+      {allGeneSequenceReads.map(
+        ({frameShifts = [], ...rest}, idx) => (
+          <GeneChart
+            key={idx}
+            containerWidth={width}
+            frameShifts={frameShifts}
+            {...rest}
+          />
+        )
+      )}
     </AutofitGraph>
   );
 }

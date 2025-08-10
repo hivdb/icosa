@@ -8,30 +8,30 @@ import ConfigContext from '../../utils/config-context';
 import {includeFragment} from '../../utils/graphql-helper';
 import Button from '../button';
 import style from './style.module.scss';
-import DownloadCodFreqs from './download-codfreqs';
+import useDownloadCodFreqs from './download-codfreqs';
 import CodonReadsCoverage, {query as codonCovQuery} from './codon-coverage';
 import SubtypeRow from './subtype-row';
 
 const CUTOFF_OPTIONS = [
-  {value: 0.002, label: '0.2%'},
-  {value: 0.005, label: '0.5%'},
-  {value: 0.01, label: '1%'},
-  {value: 0.02, label: '2%'},
-  {value: 0.05, label: '5%'},
-  {value: 0.1, label: '10%'},
-  {value: 0.2, label: '20%'},
-  {value: 0.5, label: '50%'}
+  {value: '0.002', label: '0.2%'},
+  {value: '0.005', label: '0.5%'},
+  {value: '0.01', label: '1%'},
+  {value: '0.02', label: '2%'},
+  {value: '0.05', label: '5%'},
+  {value: '0.1', label: '10%'},
+  {value: '0.2', label: '20%'},
+  {value: '0.5', label: '50%'}
 ];
 
 const MINREADS_OPTIONS = [
-  {value: 1, label: '(all)'},
-  {value: 100, label: '100'},
-  {value: 200, label: '200'},
-  {value: 500, label: '500'},
-  {value: 1000, label: '1,000'},
-  {value: 2000, label: '2,000'},
-  {value: 5000, label: '5,000'},
-  {value: 10000, label: '10,000'}
+  {value: '1', label: '(all)'},
+  {value: '100', label: '100'},
+  {value: '200', label: '200'},
+  {value: '500', label: '500'},
+  {value: '1000', label: '1,000'},
+  {value: '2000', label: '2,000'},
+  {value: '5000', label: '5,000'},
+  {value: '10000', label: '10,000'}
 ];
 
 const query = gql`
@@ -110,16 +110,27 @@ export function SeqReadsSummary({
     output === 'printable' || config.showCodonCov
   );
 
-  const handleCutoffChange = ({value: cutoff}: {value: number}) => {
+  /**
+   * Update the mutation detection cutoff in the URL query params.
+   *
+   * @param value - Selected cutoff percentage represented as a string.
+   */
+  const handleCutoffChange = ({value}: {value: string}) => {
+    const cutoff = parseFloat(value);
     const newLoc = {...match.location};
     newLoc.query = newLoc.query ? newLoc.query : {};
     newLoc.query.cutoff = cutoff;
     router.push(newLoc);
   };
 
-  const handleMinPositionReadsChange = ({value}: {value: number}) => {
+  /**
+   * Update the minimum read depth in the URL query params.
+   *
+   * @param value - Selected minimum read depth as a string.
+   */
+  const handleMinPositionReadsChange = ({value}: {value: string}) => {
     const newLoc = {query: {}, ...match.location};
-    newLoc.query.rd = value;
+    newLoc.query.rd = parseInt(value, 10);
     router.push(newLoc);
   };
 
@@ -139,17 +150,19 @@ export function SeqReadsSummary({
 
   const disableBtns = availableGenes.length === 0;
 
-  let curCutoffOption: {value: number; label: string} | undefined;
+  const {onDownload} = useDownloadCodFreqs(allGeneSequenceReads);
+
+  let curCutoffOption: {value: string; label: string} | undefined;
   for (const option of CUTOFF_OPTIONS) {
-    if (option.value === minPrevalence) {
+    if (parseFloat(option.value) === minPrevalence) {
       curCutoffOption = option;
       break;
     }
   }
 
-  let curMinReadsDepthOption: {value: number; label: string} | undefined;
+  let curMinReadsDepthOption: {value: string; label: string} | undefined;
   for (const option of MINREADS_OPTIONS) {
-    if (option.value === minPositionReads) {
+    if (parseInt(option.value, 10) === minPositionReads) {
       curMinReadsDepthOption = option;
       break;
     }
@@ -174,7 +187,9 @@ export function SeqReadsSummary({
               SDRMs
             </Button>
           ) : null}
-          <DownloadCodFreqs />
+          <Button className={style.button} onClick={onDownload} disabled={disableBtns}>
+            Download CodFreqs
+          </Button>
           <Button
             className={style.button}
             onClick={toggleCodonCov}

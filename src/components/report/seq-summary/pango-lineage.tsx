@@ -4,6 +4,7 @@ import sleep from 'sleep-promise';
 
 import Loader from '../../loader';
 import useSmartAsync from '../../../utils/use-smart-async';
+import type {PromiseFn} from 'react-async';
 
 
 /**
@@ -40,6 +41,12 @@ interface PangoProps {
   asyncResultsURI: string;
 }
 
+/**
+ * Resolve PANGO lineage information via asynchronous results or remote fetch.
+ *
+ * @param args - PANGO query parameters and cached result data.
+ * @returns Asynchronous state containing lineage data.
+ */
 export function usePangoLineage({
   lineage,
   probability,
@@ -57,17 +64,19 @@ export function usePangoLineage({
           probability
         };
       }
-      else {
-        return await fetchPangolinResult(url);
-      }
+      return await fetchPangolinResult(url);
     },
     [loaded, version, lineage, probability]
-  );
+  ) as PromiseFn<{
+    loaded: boolean;
+    version: string | undefined;
+    lineage: string | undefined;
+    probability: number | null | undefined;
+  }>;
   return useSmartAsync({
     promiseFn: asyncFetch,
     url: asyncResultsURI
   });
-
 }
 
 interface PangoLineageComponentProps extends PangoProps {
@@ -94,12 +103,12 @@ export default function PangoLineage({
   else if (isPending) {
     child = <Loader inline />;
   }
-  else {
-    const {lineage, probability, version} = data;
-    child = `${lineage} (Prob=${
-      probability === null ? 'NA' : probability.toFixed(1)
-    }; ${version})`;
-  }
+    else {
+      const {lineage, probability = null, version} = data!;
+      child = `${lineage} (Prob=${
+        probability === null ? 'NA' : probability.toFixed(1)
+      }; ${version})`;
+    }
   return <>
     <dt>PANGO lineage:</dt>
     <dd>{child}</dd>

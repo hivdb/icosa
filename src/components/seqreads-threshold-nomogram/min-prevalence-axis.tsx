@@ -121,10 +121,14 @@ export default function MinPrevalenceAxis({
        strokeWidth={constants.strokeWidth}
       />
       {ticks.map(tick => (
-        <text
-         key={`tick-label-${tick}`}
-         x={axisLeft - constants.axisTickSize - constants.axisLabelFontSize / 3}
-         y={scale(tick) + constants.axisLabelFontSize / 3}
+          <text
+           key={`tick-label-${tick}`}
+           x={
+             axisLeft -
+             constants.axisTickSize -
+             constants.axisLabelFontSize / 3
+           }
+           y={scale(tick)! + constants.axisLabelFontSize / 3}
          fontSize={constants.axisLabelFontSize}
          fill="#000"
          textAnchor="end">

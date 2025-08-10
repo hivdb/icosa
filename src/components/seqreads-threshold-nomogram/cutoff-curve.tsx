@@ -29,7 +29,7 @@ export interface CutoffKeyPoint {
         .curve(curveStepBefore)
         // .curve(curveMonotoneX)
         .x(d => mixtureRateScale(d.mixtureRate))
-        .y(d => minPrevalenceScale(d.minPrevalence)),
+        .y(d => minPrevalenceScale(d.minPrevalence)!),
     [minPrevalenceScale, mixtureRateScale]
   );
 }
