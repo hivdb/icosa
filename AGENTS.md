@@ -83,6 +83,7 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 * **File extensions**: Prefer `.tsx` for React components; utilities may be `.ts`.
 * **Side effects**: Keep effects idempotent; clean up subscriptions/timers.
 * **Runtime types**: Where the boundary is dynamic (e.g., CMS/GraphQL), add light runtime guards (type predicates) around parsing.
+* **Typing**: Use TypeScript’s type system to ensure type safety. Avoid `any` unless absolutely necessary, and document why with a `@todo` comment. `@ts-nocheck` is not allowed.
 
 ---
 
