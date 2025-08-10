@@ -12,12 +12,12 @@ export default function memoize<
   const cachedMethod = memoizeFn(
     (self: unknown, args: Parameters<T>) => method.apply(self, args),
     {
-      serializer: ([self, args]: [any, Parameters<T>]) => {
+      serializer: (([self, args]: [any, Parameters<T>]) => {
         if (self === undefined) {
           return 'undefined';
         }
         return JSON.stringify([self.__hash__(), args]);
-      }
+      }) as any
     }
   );
   return function memoized(this: unknown, ...args: Parameters<T>): ReturnType<T> {

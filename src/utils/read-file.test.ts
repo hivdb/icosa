@@ -9,7 +9,9 @@ describe('readFile', () => {
   });
   it('reads gzip files', async () => {
     const g = gzip('hi');
-    const file = new File([g], 't.gz', {type: 'application/x-gzip'});
+    const file = new File([g.buffer as ArrayBuffer], 't.gz', {
+      type: 'application/x-gzip'
+    });
     await expect(readFile(file)).resolves.toBe('hi');
   });
 });

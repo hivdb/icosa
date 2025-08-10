@@ -1,24 +1,44 @@
 import React from 'react';
-import {routerShape, matchShape} from 'found';
-import React from 'react';
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
 import ConfigContext from '../../../utils/config-context';
 
-import AnalyzeForms, {useBasePath} from '../../../components/analyze-forms';
+import AnalyzeForms from '../../../components/analyze-forms';
+import useBasePath from '../../../components/analyze-forms/use-base-path';
 import Intro, {IntroHeader} from '../../../components/intro';
 import Markdown from '../../../components/markdown';
 
 import SeqTabularReports, {subOptions as seqSubOptions} from '../tabular-report-by-sequences';
 import ReadsTabularReports, {subOptions as readsSubOptions} from '../tabular-report-by-reads';
 
-
-function loadExampleCodonReads(examples, config) {
+/**
+ * Expand example codon read links using the CMS base URL.
+ *
+ * @param examples - Array of relative URLs to codon read examples.
+ * @param config - Global configuration object containing link prefixes.
+ * @returns Absolute URLs for each example.
+ */
+function loadExampleCodonReads(examples: string[], config: any): string[] {
   return examples.map(url => getFullLink(url, config));
 }
 
-function loadExampleFasta(examples, config) {
-  return examples.map(({url, title}) => ({
+interface ExampleFasta {
+  url: string;
+  title: string;
+}
+
+/**
+ * Expand example FASTA links using the CMS base URL.
+ *
+ * @param examples - Array of FASTA example descriptors.
+ * @param config - Global configuration object.
+ * @returns Array of example descriptors with absolute URLs.
+ */
+function loadExampleFasta(
+  examples: ExampleFasta[],
+  config: any
+): ExampleFasta[] {
+  return examples.map(({ url, title }) => ({
     url: getFullLink(url, config),
     title
   }));
@@ -90,12 +110,13 @@ function SierraForms({
          label: 'Machine-readable data (CSV/JSON)',
          subOptions: seqSubOptions,
          defaultSubOptions: seqSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: any) => (
            <SeqTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...props}
+           />
          )
        }
      }}
@@ -107,12 +128,13 @@ function SierraForms({
          label: "Machine-readable data (FASTA/CSV/JSON)",
          children: readsSubOptions,
          defaultChildren: readsSubOptions.map((_, idx) => idx),
-         renderer: props => (
+         renderer: (props: any) => (
            <ReadsTabularReports
             patternsTo={patternsTo}
             sequencesTo={sequencesTo}
             readsTo={readsTo}
-            {...props} />
+            {...props}
+           />
          )
        }
      }}

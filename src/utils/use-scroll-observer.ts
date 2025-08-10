@@ -73,13 +73,14 @@ export default function useScrollObserver({
 
   const getNodeAndDirection = React.useCallback(
     ({
-      boundingClientRect: {y: currentY},
+      boundingClientRect: { y: currentY },
       intersectionRatio: currentRatio,
       isIntersecting,
-      target: {
-        dataset: {scrollObserveIndex: index, scrollObserveName: name}
-      }
+      target
     }: IntersectionObserverEntry) => {
+      const element = target as HTMLElement;
+      const name = element.dataset.scrollObserveName!;
+      const index = Number(element.dataset.scrollObserveIndex!);
       // see https://stackoverflow.com/a/51976805
       const previousY = self.current.previousYs[name] || 0;
       const previousRatio = self.current.previousRatios[name] || 0;
@@ -116,17 +117,21 @@ export default function useScrollObserver({
 
       let observedNodes = entries
         .map(getNodeAndDirection)
-        .filter(({direction}) => !!direction) as Array<{
+        .filter(({ direction }) => !!direction) as Array<{
           node: HTMLElement | null;
           name: string;
           index: number;
-          direction: string | null;
+          direction: 'asc' | 'desc' | null;
         }>;
-      const {direction} = observedNodes[0] || {};
+      const { direction } = observedNodes[0] || {};
       if (!direction) {
         return;
       }
-      observedNodes = orderBy(observedNodes, ['index'], [direction]);
+      observedNodes = orderBy(
+        observedNodes,
+        ['index'],
+        [direction as 'asc' | 'desc']
+      );
 
       for (const {node, name} of observedNodes) {
         await asyncLoadNewItem(name, /* updateCurrentSelected = */true);

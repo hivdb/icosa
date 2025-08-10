@@ -96,19 +96,19 @@ function suggestPairName({
 }: FastqPair): string {
   const fileName = file?.name ?? '';
   let pairName = fileName.split(/\.fastq(?:\.gz)?/i)[0];
-  if (reverse === -1) {
-    // single strand
+  if (reverse === -1 || !delimiter) {
+    // Single-end reads or missing delimiter; return raw name
     return pairName;
   }
-  pairName = pairName.split(delimiter);
+  let chunks = pairName.split(delimiter);
   if (reverse) {
-    pairName.reverse();
+    chunks = chunks.reverse();
   }
-  pairName.splice(diffOffset, 1);
+  chunks.splice(diffOffset, 1);
   if (reverse) {
-    pairName.reverse();
+    chunks = chunks.reverse();
   }
-  return pairName.join(delimiter);
+  return chunks.join(delimiter);
 }
 
 
@@ -129,11 +129,11 @@ function removeFileUsingRef(
     allPairs.splice(index, 1);
   }
   else {
+    const remaining = pairProps.pair.find(
+      f => f && f.name !== fileName
+    ) ?? null;
     const newPairProps: FastqPair = {
-      pair: [
-        ...pairProps.pair.filter(f => f && f.name !== fileName),
-        null
-      ],
+      pair: [remaining, null],
       pattern: {
         delimiter: null,
         diffOffset: -1,

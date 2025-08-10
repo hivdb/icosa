@@ -296,7 +296,7 @@ export async function saveAllFiles(taskKey: string, {onAddFile, onFinish}: any) 
 
 
 export async function downloadCodfreqs(taskKey: string) {
-  let resp;
+  let resp: Response | undefined;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs-zip`, {
       method: 'POST',
@@ -307,17 +307,19 @@ export async function downloadCodfreqs(taskKey: string) {
   } catch (e) {
     handleResponseError(e);
   }
-  makeDownload(
-    'codfreqs.zip',
-    'application/zip',
-    await resp.blob(),
-    true
-  );
+  if (resp) {
+    makeDownload(
+      'codfreqs.zip',
+      'application/zip',
+      await resp.blob(),
+      true
+    );
+  }
 }
 
 
 async function fetchCodfreqs(taskKey: string) {
-  let resp;
+  let resp: Response | undefined;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs`, {
       method: 'POST',
@@ -327,6 +329,9 @@ async function fetchCodfreqs(taskKey: string) {
     });
   } catch (e) {
     handleResponseError(e);
+  }
+  if (!resp || !resp.body) {
+    throw new Error('Invalid codfreqs response');
   }
   const beginMarker = '"codfreqs": [';
   const sepMarker = ', ';
@@ -431,7 +436,7 @@ export async function * restoreTask(taskKey: string) {
       };
     }
   }
-  catch (e) {
+  catch (e: any) {
     if (/this task is not triggered yet/.test(e.message)) {
       yield {
         loaded,

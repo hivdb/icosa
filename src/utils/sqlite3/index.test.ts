@@ -2,7 +2,7 @@ import {renderHook} from '@testing-library/react';
 import {describe, expect, it, vi} from 'vitest';
 
 vi.mock('./worker', () => ({default: vi.fn()}));
-vi.mock('sql.js/dist/sql-wasm.wasm', () => ({}), {virtual: true});
+vi.mock('sql.js/dist/sql-wasm.wasm', () => ({}));
 
 import {loadBinary, useQuery} from './index';
 
