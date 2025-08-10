@@ -97,7 +97,6 @@ function Paginator({
   const navRef = useWheelEvent({
     childItems,
     displayNums,
-    currentSelected: currentSelected || '',
     resetScrollOffset,
     onScroll
   });

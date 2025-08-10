@@ -16,6 +16,17 @@ export interface NGSResultsProps {
 }
 
 /** Display progress and downloadable results of the NGS pipeline. */
+/**
+ * Display progress and allow downloading results produced by the NGS pipeline.
+ * Provides buttons for fetching codfreq files, analyzing them in-app and
+ * exporting all related files.
+ *
+ * @param props - Component properties
+ * @param props.taskKey - Key identifying the current task
+ * @param props.progressLookup - Map of step ids to progress info
+ * @param props.className - Optional BEM class suffix
+ * @param props.onAnalyze - Callback invoked when the analyze button is clicked
+ */
 export default function NGSResults({
   taskKey,
   progressLookup,
@@ -34,19 +45,21 @@ export default function NGSResults({
     isDownloading
   } = useDownload({
     name: 'fastq2codfreq_results',
+    suffix: '',
+    types: [],
     multiple: true
   });
 
   const onDownload = React.useCallback(
-    e => {
+    (e?: React.MouseEvent<HTMLButtonElement>) => {
       e && e.preventDefault();
-      downloadCodfreqs(taskKey);
+      downloadCodfreqs(taskKey || '');
     },
     [taskKey]
   );
 
   const onDownloadRawFiles = React.useCallback(
-    async e => {
+    async (e?: React.MouseEvent<HTMLButtonElement>) => {
       e && e.preventDefault();
       if (!window.showDirectoryPicker) {
         if (!window.confirm(
@@ -60,13 +73,13 @@ export default function NGSResults({
         }
       }
       await onInit();
-      saveAllFiles(taskKey, {onAddFile, onFinish});
+      saveAllFiles(taskKey || '', {onAddFile, onFinish});
     },
     [taskKey, onInit, onAddFile, onFinish]
   );
 
   const handleAnalyze = React.useCallback(
-    e => {
+    (e?: React.MouseEvent<HTMLButtonElement>) => {
       e && e.preventDefault();
       onAnalyze && onAnalyze(codfreqs);
     },
@@ -85,7 +98,7 @@ export default function NGSResults({
         <li
          key={step}
          data-step="step"
-         style={{'--percent': count / total}}>
+         style={{['--percent' as any]: count / total}}>
           <div className={classNames(
             style['result-desc'],
             className ? `${className}__result-desc` : null
