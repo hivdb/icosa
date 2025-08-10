@@ -58,23 +58,23 @@ export default function useTabularReports({
       for (const idx of (subOptionIndices || children || [])) {
         const processor = subOptionProcessors[idx];
         for (
-          const {
-            folder,
-            tableName,
-            header,
-            rows,
-            payload,
-            fileExt = '.csv',
-            mimeType = 'text/csv',
-            missing = 'NA'
-          }
-          of
-          await processor({
-            allGenes,
-            config,
-            ...props
-          })
-        ) {
+            const {
+              folder,
+              tableName,
+              header = [],
+              rows = [],
+              payload,
+              fileExt = '.csv',
+              mimeType = 'text/csv',
+              missing = 'NA'
+            }
+            of
+            await processor({
+              allGenes,
+              config,
+              ...props
+            })
+          ) {
           let data = payload;
           if (!data) {
             const csvHeader = header.join(',');

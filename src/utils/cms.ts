@@ -17,7 +17,7 @@ export function useCMS(
   resourceName: string,
   localConfig: CMSConfig
 ): [string | Error | null, boolean, boolean] {
-  const [payload, setPayload] = useState<[string | Error | null, boolean, boolean]>([null, true, null]);
+    const [payload, setPayload] = useState<[string | Error | null, boolean, boolean]>([null, true, false]);
 
   useEffect(
     () => {

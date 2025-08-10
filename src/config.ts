@@ -207,10 +207,10 @@ const config: Config = {
       name: 'unusualSites',
       label: '# Other Mutations',
       query: 'unusualSites',
-      formatter: (count, total) => (
-        `${count} (${(count / total * 100).toFixed(1)}%)`
-      )
-    },
+        formatter: (count: number, total: number) => (
+          `${count} (${(count / total * 100).toFixed(1)}%)`
+        )
+      },
     {
       name: 'dividingLine1',
       type: 'dividingLine'

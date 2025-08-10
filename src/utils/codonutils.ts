@@ -1,4 +1,4 @@
-const CODON_TABLE = {
+const CODON_TABLE: Record<string, string> = {
   'TTT': 'F',
   'TTC': 'F',
   'TTA': 'L',

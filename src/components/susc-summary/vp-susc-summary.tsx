@@ -74,8 +74,8 @@ function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
         )
       ],
       [] as VpSuscSummaryRow[]
-    )
-    .filter(({displayOrder}) => displayOrder !== null);
+      )
+      .filter((row: VpSuscSummaryRow) => row.displayOrder !== null);
 }
 
 function renderPcntBar(_: unknown, row: VpSuscSummaryRow) {
@@ -102,9 +102,9 @@ function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
         render: (mutations: any, {variant}: any) => (
           <CellMutations {...{mutations, variant}} />
         ),
-        bodyCellStyle: {
-          '--desktop-max-width': '14rem'
-        },
+          bodyCellStyle: {
+            '--desktop-max-width': '14rem'
+          } as React.CSSProperties,
         sort: [({mutations}: any) => [
           mutations.length,
           ...mutations.map(({position, AAs}: any) => [position, AAs])
@@ -155,7 +155,11 @@ interface VaccPlasmaSuscSummaryTableProps {
 }
 
 const VaccPlasmaSuscSummaryTable: React.FC<VaccPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
-  const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
+    const normalizedRows = rows.map(row => ({
+      ...row,
+      displayOrder: row.displayOrder ?? 0
+    }));
+    const {rows: displayRows, button, expanded} = useToggleDisplay(normalizedRows);
   const columnDefs = useColumnDefs({openRefInNewWindow});
 
   if (rows.length > 0) {

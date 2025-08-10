@@ -16,10 +16,10 @@ export function isBigData(key: unknown): boolean {
  *
  * @returns Randomly generated key string.
  */
-function randomKey(): string {
-  const key = parseInt(Math.random() * 0x7fffffff, 10).toString(36);
-  return '000000'.slice(key.length) + key;
-}
+  function randomKey(): string {
+    const key = Math.floor(Math.random() * 0x7fffffff).toString(36);
+    return '000000'.slice(key.length) + key;
+  }
 
 /**
  * Load data from localforage when the key is a BigData key.
@@ -95,10 +95,10 @@ function useBigData<T = unknown>(key: string): [T | undefined, boolean] {
   if (!key) {
     throw new Error('key is empty');
   }
-  const {data, error, isPending} = useSmartAsync<T>({
-    promiseFn: load,
-    key
-  });
+    const {data, error, isPending} = useSmartAsync<T>({
+      promiseFn: () => load<T>(key) as Promise<T>,
+      key
+    });
   if (error) {
     throw new Error(error.message);
   }

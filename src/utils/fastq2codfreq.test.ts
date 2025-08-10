@@ -19,4 +19,27 @@ describe('fastq2codfreq', () => {
     await f2c.downloadCodfreqs('key');
     expect(spy).toHaveBeenCalled();
   });
+
+  it('saveAllFiles fetches all remote files', async () => {
+    const fileBlob = new Blob();
+    const firstFetch = {
+      json: async () => ({
+        isTruncated: false,
+        files: [{fileName: 'a.txt', url: 'http://example.com/a.txt'}]
+      })
+    };
+    const secondFetch = {blob: async () => fileBlob};
+    vi.spyOn(global, 'fetch')
+      .mockResolvedValueOnce(firstFetch as any)
+      .mockResolvedValueOnce(secondFetch as any);
+    const onAddFile = vi.fn();
+    const onFinish = vi.fn();
+    await f2c.saveAllFiles('task', {onAddFile, onFinish});
+    expect(onAddFile).toHaveBeenCalledWith({
+      fileName: 'a.txt',
+      data: fileBlob,
+      isBlob: true
+    });
+    expect(onFinish).toHaveBeenCalled();
+  });
 });
