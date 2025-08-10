@@ -109,6 +109,11 @@ interface UseRowSpanMatrixArgs {
 
 /**
  * Calculate a rowspan matrix used to merge neighbouring cells.
+ *
+ * @param columnDefs - Definitions describing each column including rowspan
+ *   behavior.
+ * @param data - Table row data.
+ * @returns Matrix of rowspan values matching the table shape.
  */
 export default function useRowSpanMatrix({
   columnDefs,
@@ -149,7 +154,7 @@ export default function useRowSpanMatrix({
       let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns as any);
       const groupStack: RowSpanGroup[] = [];
       do {
-        const {subGroups} = curGroup!;
+        const subGroups: RowSpanGroup[] | undefined = curGroup!.subGroups;
         if (subGroups && subGroups.length > 0) {
           groupStack.push(curGroup!);
           curGroup = subGroups.shift()!;

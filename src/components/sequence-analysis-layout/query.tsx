@@ -109,9 +109,11 @@ export default function SequenceAnalysisQuery({
       inputObjs: sequences,
       initOffset,
       initLimit,
-      client,
-      currentSelected,
-      onExtendVariables,
+        client,
+        currentSelected: currentSelected
+          ? { index: currentSelected.index }
+          : { index: 0 },
+        onExtendVariables,
       maxPerRequest,
       mainInputName: 'sequences',
       inputUniqKeyName: 'header',

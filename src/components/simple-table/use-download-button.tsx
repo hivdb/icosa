@@ -4,7 +4,8 @@ import startCase from 'lodash/startCase';
 import {FaCaretUp} from '@react-icons/all-files/fa/FaCaretUp';
 import {FaCaretDown} from '@react-icons/all-files/fa/FaCaretDown';
 
-import type ColumnDef from './column-def';
+import type ColumnDefClass from './column-def';
+type ColumnDef = InstanceType<typeof ColumnDefClass>;
 
 import {dumpCSV, dumpTSV, dumpExcelSimple} from '../../utils/sheet-utils';
 import {makeDownload} from '../../utils/download';
@@ -59,18 +60,17 @@ interface DefaultDownloadOptionArgs {
 function useDefaultDownloadOption({onSave}: DefaultDownloadOptionArgs) {
 
   const load = React.useCallback(
-    () => {
-      let opt = window.localStorage.getItem(KEY_DEFAULT_DOWNLOAD_OPT);
-      if (!DOWNLOAD_OPTS.includes(opt)) {
-        opt = DEFAULT_DOWNLOAD_OPT;
-      }
-      return opt;
+    (): DownloadOpt => {
+      const stored = window.localStorage.getItem(KEY_DEFAULT_DOWNLOAD_OPT) as DownloadOpt | null;
+      return stored && DOWNLOAD_OPTS.includes(stored as DownloadOpt)
+        ? stored
+        : DEFAULT_DOWNLOAD_OPT;
     },
     []
   );
 
   const save = React.useCallback(
-    opt => {
+    (opt: DownloadOpt) => {
       window.localStorage.setItem(KEY_DEFAULT_DOWNLOAD_OPT, opt);
       window.dispatchEvent(new Event(OPT_CHANGE_EVENT));
       onSave();
@@ -125,14 +125,13 @@ function useOptMenu() {
   );
 
   const condHideDownloadOptMenu = React.useCallback(
-    (evt: MouseEvent) => {
-      window.test = evt.target;
-      if (!(evt.target as HTMLElement).closest('*[data-ignore-global-click]')) {
-        closeOptMenu();
-      }
-    },
-    [closeOptMenu]
-  );
+      (evt: MouseEvent) => {
+        if (!(evt.target as HTMLElement).closest('*[data-ignore-global-click]')) {
+          closeOptMenu();
+        }
+      },
+      [closeOptMenu]
+    );
 
   React.useEffect(() => {
     document.addEventListener(
@@ -153,11 +152,17 @@ function useOptMenu() {
 interface UseDownloadButtonArgs {
   columnDefs: ColumnDef[];
   sheetName: string;
-  tableRef: React.RefObject<HTMLElement>;
+  tableRef: React.RefObject<HTMLElement> | React.MutableRefObject<HTMLElement | null>;
 }
 
 /**
  * Provide download and copy-to-clipboard helpers for a table element.
+ *
+ * @param columnDefs - Definitions describing each column in the table.
+ * @param sheetName - Sheet name used when exporting to Excel.
+ * @param tableRef - Ref to the table container element.
+ * @returns Object containing the React element for the buttons and a flag
+ *   indicating whether copy/export is in progress.
  */
 export default function useDownloadButton({
   columnDefs,
@@ -174,7 +179,7 @@ export default function useDownloadButton({
   });
 
   const readTableData = React.useCallback(
-    async (): Promise<any[][]> => {
+  async (): Promise<any[][]> => {
       setCopying(true);
       await sleep(600);
       try {
@@ -186,7 +191,7 @@ export default function useDownloadButton({
           if (row.dataset.skipCopy) {
             continue;
           }
-          if (row.parentElement.tagName === 'THEAD') {
+          if (row.parentElement?.tagName === 'THEAD') {
             for (let i = 0; i < columnDefs.length; i ++) {
               const cell = row.cells[i];
               const colDef = columnDefs[i];
@@ -259,7 +264,7 @@ export default function useDownloadButton({
   );
 
   const handleCopy = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement> | null) => {
+    async (e: React.MouseEvent<HTMLElement> | null) => {
       e && e.preventDefault();
       const content = await readTableData();
       navigator.clipboard.writeText(dumpTSV(content));
@@ -269,7 +274,7 @@ export default function useDownloadButton({
   );
 
   const handleDownloadCSV = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement> | null) => {
+    async (e: React.MouseEvent<HTMLElement> | null) => {
       e && e.preventDefault();
       const content = await readTableData();
       makeDownload(
@@ -283,7 +288,7 @@ export default function useDownloadButton({
   );
 
   const handleDownloadExcel = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement> | null) => {
+    async (e: React.MouseEvent<HTMLElement> | null) => {
       e && e.preventDefault();
       const content = await readTableData();
       const xlsxBlob = dumpExcelSimple(

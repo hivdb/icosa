@@ -3,9 +3,8 @@ import classNames from 'classnames';
 
 import useDownloadButton from './use-download-button';
 import SimpleTableTable from './table';
-import style from './style.module.scss';
 import ColumnDef from './column-def';
-
+import style from './style.module.scss';
 export {ColumnDef};
 
 interface Props {
@@ -118,9 +117,9 @@ export default function SimpleTable({
      data-no-header-overlapping={
       noHeaderOverlapping === false ? undefined : ''
      }
-     style={{
-       '--mobile-label-width': mobileLabelWidth
-     }}
+    style={{
+      '--mobile-label-width': mobileLabelWidth
+    } as React.CSSProperties}
      className={classNames(
        style['simple-table-container'],
        className ? `${className}__container` : null

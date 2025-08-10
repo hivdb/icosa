@@ -7,7 +7,7 @@ import CheckboxInput from '../checkbox-input';
 
 import style from './style.module.scss';
 
-const useDisplayRefLink = createPersistedReducer(
+const useDisplayRefLink = createPersistedReducer<boolean, unknown>(
   '--sierra-report-display-reflink-opt'
 );
 
@@ -27,10 +27,10 @@ interface MutationCommentProps {
 function MutationComment({triggeredMutations, comment}: MutationCommentProps) {
   const [config, loading] = ConfigContext.use() as any;
   const geneDisplay = loading ? {} : config.geneDisplay;
-  const muts = shortenMutList(triggeredMutations).map(({
-    gene: {name: geneName},
-    text
-  }) => (
+    const muts = shortenMutList(triggeredMutations as any).map(({
+      gene: {name: geneName},
+      text
+    }) => (
     geneName === 'S' ? text : `${geneDisplay[geneName] || geneName}:${text}`
   ));
   return <li key={muts.join('+')}>
@@ -59,7 +59,7 @@ function SARS2MutationComments({mutationComments}: SARS2MutationCommentsProps) {
   const [
     displayRefLink,
     toggleDisplayRefLink
-  ] = useDisplayRefLink((display: boolean) => !display, true);
+    ] = useDisplayRefLink((state: boolean, _action: unknown) => !state, true);
   if (mutationComments.length > 0) {
     return <div className={style['mutation-comments-container']}>
       <ul

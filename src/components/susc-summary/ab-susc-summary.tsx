@@ -16,7 +16,7 @@ import {
 import LabelAntibodies from './label-antibodies';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
-import MismatchMutations from './mismatch-mutations';
+import MismatchMutations, {MismatchRow} from './mismatch-mutations';
 import useToggleDisplay from './toggle-display';
 import type {Antibody, AbSuscSummaryRow} from './types';
 import style from './style.module.scss';
@@ -58,11 +58,11 @@ function renderFold(resultItem?: {cumulativeFold: {median: number}; cumulativeCo
  */
 function findComboAntibodies(antibodySuscSummary: any[]): Antibody[][] {
   const combos: Antibody[][] = [];
-  for (const {itemsByAntibody} of antibodySuscSummary) {
+  for (const {itemsByAntibody} of antibodySuscSummary as Array<{itemsByAntibody: {antibodies: Antibody[]}[]}> ) {
     for (const {antibodies} of itemsByAntibody) {
       if (antibodies.length > 1) {
         combos.push(sortBy(
-          antibodies.map(({name, abbrName, priority}) => ({
+          antibodies.map(({name, abbrName, priority}: Antibody) => ({
             name, abbrName, priority
           })),
           ['priority']
@@ -126,18 +126,18 @@ function buildPayload(antibodySuscSummary: any[]): AbSuscSummaryRow[] {
  */
 function getAntibodyColumns(antibodies: Antibody[], antibodySuscSummary: any[]): Antibody[][] {
   const comboAntibodies = findComboAntibodies(antibodySuscSummary);
-  antibodies = antibodies.map(({name, abbrName, priority}) => [
+  let columns: Antibody[][] = antibodies.map(({name, abbrName, priority}) => [
     {name, abbrName, priority}
   ]);
-  antibodies = sortBy(antibodies, ['[0].priority']);
+  columns = sortBy(columns, ['[0].priority']);
   for (const abs of comboAntibodies) {
     const maxAb = maxBy(abs, 'priority') as Antibody;
-    const idx = antibodies.findIndex(a => (
+    const idx = columns.findIndex(a => (
       a[a.length - 1].name === maxAb.name
     ));
-    antibodies.splice(idx + 1, 0, abs);
+    columns.splice(idx + 1, 0, abs);
   }
-  return antibodies;
+  return columns;
 }
 
 /** Build column definitions for antibody susceptibility table */
@@ -152,7 +152,7 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}: {antibodyColumns: 
         ),
         bodyCellStyle: {
           '--desktop-max-width': '14rem'
-        },
+        } as React.CSSProperties,
         sort: [({mutations}: any) => [
           mutations.length,
           ...mutations.map(({position, AAs}: any) => [position, AAs])
@@ -179,7 +179,7 @@ function useColumnDefs({antibodyColumns, openRefInNewWindow}: {antibodyColumns: 
 
 interface AntibodySuscSummaryTableProps {
   /** Data rows */
-  rows: AbSuscSummaryRow[];
+  rows: Array<AbSuscSummaryRow & {displayOrder: number}>;
   /** Column definitions for antibodies */
   antibodyColumns: Antibody[][];
   /** Open references in new window */
@@ -218,9 +218,9 @@ const AntibodySuscSummaryTable: React.FC<AntibodySuscSummaryTableProps> = ({
             ≥25-fold
           </span>
         </p>
-        <MismatchMutations rows={displayRows} />
+        <MismatchMutations rows={displayRows as MismatchRow[]} />
         <Markdown escapeHtml={false}>
-          {config.messages['mab-footnote']}
+          {config?.messages['mab-footnote'] ?? ''}
         </Markdown>
       </div>}
     </>;
@@ -228,7 +228,7 @@ const AntibodySuscSummaryTable: React.FC<AntibodySuscSummaryTableProps> = ({
   else {
     return loading ? null : (
       <Markdown escapeHtml={false}>
-        {config.messages['no-mab-susc-result']}
+        {config?.messages['no-mab-susc-result'] ?? ''}
       </Markdown>
     );
   }
@@ -257,7 +257,7 @@ function AntibodySuscSummary({
     [antibodies, itemsByVariantOrMutations]
   );
   const payload = React.useMemo(
-    () => buildPayload(itemsByVariantOrMutations),
+    () => buildPayload(itemsByVariantOrMutations) as Array<AbSuscSummaryRow & {displayOrder: number}>,
     [itemsByVariantOrMutations]
   );
 

@@ -1,12 +1,12 @@
 import {render, screen} from '@testing-library/react';
-import ValidationReport from './validation-report';
+import ValidationReport, {ValidationResult} from './validation-report';
 
 describe('ValidationReport', () => {
   test('sorts validation results by severity', () => {
-    const results = [
-      {level: 'WARNING', message: 'warn'},
-      {level: 'CRITICAL', message: 'crit'}
-    ];
+      const results: ValidationResult[] = [
+        {level: 'WARNING', message: 'warn'},
+        {level: 'CRITICAL', message: 'crit'}
+      ];
     render(<ValidationReport validationResults={results} />);
     const items = screen.getAllByRole('listitem');
     expect(items[0].textContent).toContain('Critical');

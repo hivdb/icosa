@@ -116,8 +116,13 @@ function SimpleTableCellTh({
   const curIndex = columns.findIndex(c => c.name === name);
   const curDirection = curIndex > -1 ? columns[curIndex].direction : null;
 
-  const sortByColumns = React.useCallback(
-    async reset => {
+    /**
+     * Apply sorting for the current column and update sort state.
+     *
+     * @param reset - When true, clears sorting for the column.
+     */
+    const sortByColumns = React.useCallback(
+      async (reset: boolean) => {
       // make a copy to prevent pollute original `columns`
       const newColumns = [...columns];
       let {sortedData} = sortState;
@@ -174,14 +179,17 @@ function SimpleTableCellTh({
     [sortByColumns]
   );
 
-  const handleReset = React.useCallback(
-    e => {
-      e && e.preventDefault();
-      e && e.stopPropagation();
-      sortByColumns(true);
-    },
-    [sortByColumns]
-  );
+    /**
+     * Reset sorting when the header cell is double-clicked.
+     */
+    const handleReset = React.useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        sortByColumns(true);
+      },
+      [sortByColumns]
+    );
 
   return React.useMemo(
     () => (

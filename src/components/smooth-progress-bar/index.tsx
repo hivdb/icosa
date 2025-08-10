@@ -12,6 +12,18 @@ export interface SmoothProgressBarProps {
   [key: string]: any;
 }
 
+/**
+ * Display a progress bar that advances smoothly toward the next reported
+ * progress value while data is loading.
+ *
+ * @param loaded - Whether the loading process has completed.
+ * @param progressText - Renderer for the textual progress indicator.
+ * @param progress - Current progress value.
+ * @param nextProgress - Upcoming progress target reported by the backend.
+ * @param total - Total number of steps.
+ * @param props - Additional props passed to the underlying progress bar.
+ * @returns Progress bar element with smooth interpolation.
+ */
 export default function SmoothProgressBar({
   loaded,
   progressText,
@@ -48,7 +60,7 @@ export default function SmoothProgressBar({
     return () => clearTimeout(id);
   }, [loaded, nextProgress, estProgress]);
 
-  const completed = parseInt((estProgress / total) * 100, 10);
+  const completed = Math.round((estProgress / total) * 100);
   return (
     <div
       className={style['progress-bar-container']}

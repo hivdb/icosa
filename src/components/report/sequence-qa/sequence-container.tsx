@@ -1,13 +1,13 @@
 import React from 'react';
-import GeneChart from './gene-chart';
+import GeneChart, {GeneChartProps} from './gene-chart';
 import AutofitGraph from '../autofit';
 
-export interface SequenceAnalysisQAChartProps {
-  /** Aligned gene sequences to visualise. */
-  alignedGeneSequences: Array<Record<string, any>>;
-  /** Output mode for rendering; "printable" disables resizing. */
-  output?: string;
-}
+  export interface SequenceAnalysisQAChartProps {
+    /** Aligned gene sequences to visualise. */
+    alignedGeneSequences: Array<Omit<GeneChartProps, 'containerWidth'>>;
+    /** Output mode for rendering; "printable" disables resizing. */
+    output?: string;
+  }
 
 /**
  * Displays quality assessment charts for aligned sequences.

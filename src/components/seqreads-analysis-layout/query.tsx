@@ -124,9 +124,11 @@ export default function SeqReadsAnalysisQuery({
       inputObjs: allSequenceReads,
       initOffset,
       initLimit,
-      client,
-      currentSelected,
-      onExtendVariables: onSeqReadsExtendVariables,
+        client,
+        currentSelected: currentSelected
+          ? { index: currentSelected.index }
+          : { index: 0 },
+        onExtendVariables: onSeqReadsExtendVariables,
       maxPerRequest,
       mainInputName: 'allSequenceReads',
       inputUniqKeyName: 'name',

@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import React from 'react';
 
 import constants from './constants';
 
@@ -38,54 +36,64 @@ export default function ThresholdLine({
   color
 }: ThresholdLineProps): JSX.Element {
   const uniqId = `threshold-${direction}-${thresholdCmp}${threshold}`;
-  const lineProps = {
+  const lineProps: React.SVGProps<SVGLineElement> = {
     strokeDasharray,
     stroke: color,
     strokeWidth: constants.strokeWidth
   };
-  const rectProps = {
+  const rectProps: React.SVGProps<SVGRectElement> = {
     fill: `url(#${uniqId})`,
-    opacity: .2
+    opacity: 0.2
   };
-  const gradientProps = {id: uniqId};
+  const gradientProps: React.SVGProps<SVGLinearGradientElement> = {id: uniqId};
   if (direction === 'horizontal') {
-    lineProps.y1 = scaleY(threshold);
-    lineProps.y2 = lineProps.y1;
-    [lineProps.x1, lineProps.x2] = scaleX.range();
-    rectProps.x = lineProps.x1;
-    rectProps.width = lineProps.x2 - lineProps.x1;
+    const y = scaleY(threshold) as number;
+    lineProps.y1 = y;
+    lineProps.y2 = y;
+    const [x1, x2] = scaleX.range() as [number, number];
+    lineProps.x1 = x1;
+    lineProps.x2 = x2;
+    rectProps.x = x1;
+    rectProps.width = x2 - x1;
     gradientProps.x1 = 0;
     gradientProps.x2 = 0;
     if (thresholdCmp === '>') {
-      rectProps.y = scaleY.range()[1];
-      rectProps.height = lineProps.y1 - rectProps.y;
+      const y0 = (scaleY.range() as [number, number])[1];
+      rectProps.y = y0;
+      rectProps.height = y - y0;
       gradientProps.y1 = 1;
       gradientProps.y2 = 0;
     }
     else {
-      rectProps.y = lineProps.y1;
-      rectProps.height = scaleY.range()[0] - rectProps.y;
+      const y0 = (scaleY.range() as [number, number])[0];
+      rectProps.y = y;
+      rectProps.height = y0 - y;
       gradientProps.y1 = 0;
       gradientProps.y2 = 1;
     }
   }
   else {
-    lineProps.x1 = scaleX(threshold);
-    lineProps.x2 = lineProps.x1;
-    [lineProps.y1, lineProps.y2] = scaleY.range();
-    rectProps.y = lineProps.y2;
-    rectProps.height = lineProps.y1 - lineProps.y2;
+    const x = scaleX(threshold) as number;
+    lineProps.x1 = x;
+    lineProps.x2 = x;
+    const [y1, y2] = scaleY.range() as [number, number];
+    lineProps.y1 = y1;
+    lineProps.y2 = y2;
+    rectProps.y = y2;
+    rectProps.height = y1 - y2;
     gradientProps.y1 = 0;
     gradientProps.y2 = 0;
     if (thresholdCmp === '>') {
-      rectProps.x = lineProps.x1;
-      rectProps.width = scaleX.range()[1] - rectProps.x;
+      rectProps.x = x;
+      const xMax = (scaleX.range() as [number, number])[1];
+      rectProps.width = xMax - x;
       gradientProps.x1 = 0;
       gradientProps.x2 = 1;
     }
     else {
-      rectProps.x = scaleX.range()[0];
-      rectProps.width = lineProps.x1 - rectProps.x;
+      const x0 = (scaleX.range() as [number, number])[0];
+      rectProps.x = x0;
+      rectProps.width = x - x0;
       gradientProps.x2 = 0;
       gradientProps.x1 = 1;
     }

@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import React, {useState} from 'react';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 
@@ -73,11 +72,11 @@ function Subtype({bestMatchingSubtype, subtypes = []}: SubtypeProps) {
               referenceCountry: country,
               referenceYear: year
             }, idx) => (
-              <li
-               key={idx} className={
-                vnum === bestMatchingVnum ?
-                  style['best-match'] : null
-              }>
+                <li
+                 key={idx} className={
+                  vnum === bestMatchingVnum ?
+                    style['best-match'] : undefined
+                }>
                 <ExtLink
                  title="Open corresponding Genbank page"
                  href={`${NUCCORE_PREFIX}${vnum}`}>
@@ -95,7 +94,12 @@ function Subtype({bestMatchingSubtype, subtypes = []}: SubtypeProps) {
     </dd>
   ];
 
-  function toggleSubtypeDetails(e) {
+  /**
+   * Toggle visibility of the subtype details list.
+   *
+   * @param e - Optional click event from the subtype link.
+   */
+  function toggleSubtypeDetails(e?: React.MouseEvent<HTMLAnchorElement>) {
     e && e.preventDefault();
     setShowSubtypeDetails(!showSubtypeDetails);
   }

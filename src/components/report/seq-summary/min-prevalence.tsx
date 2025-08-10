@@ -42,11 +42,17 @@ function MinPrevalence({
     }
   }
 
+  const dropdownOptions = React.useMemo(
+    () => options.map(({label, value}) => ({label, value: String(value)})),
+    [options]
+  );
+
   const handleChange = React.useCallback(
-    ({value: cutoff}) => {
+    ({value: cutoff}: {value: string}) => {
+      const numCutoff = parseFloat(cutoff);
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
-      newLoc.query.cutoff = cutoff;
+      newLoc.query.cutoff = String(numCutoff);
       router.push(newLoc);
     },
     [match.location, router]
@@ -68,11 +74,11 @@ function MinPrevalence({
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown
-       value={options.find(({value}) => value === curValue)}
+       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
        placeholder="..."
-       options={options}
-       name="cutoff"
-       onChange={handleChange} />
+       options={dropdownOptions}
+       onChange={handleChange}
+      />
     </dd>
   </>;
 

@@ -92,21 +92,21 @@ export default function SeqReadsThresholdNomogram({
        direction="vertical"
        threshold={mixtureRateThreshold}
        thresholdCmp="<"
-       scaleX={mixtureRateScale}
-       scaleY={minPrevalenceScale}
+       scaleX={(v: number) => mixtureRateScale(v)}
+       scaleY={(v: number) => minPrevalenceScale(v)!}
        color="#cf0a17" />
       <ThresholdLine
        direction="horizontal"
        threshold={minPrevalenceThreshold}
        thresholdCmp=">"
-       scaleX={mixtureRateScale}
-       scaleY={minPrevalenceScale}
+       scaleX={(v: number) => mixtureRateScale(v)}
+       scaleY={(v: number) => minPrevalenceScale(v)!}
        color="#1c75d4" />
       <ActualThreshold
        thresholdX={mixtureRateActual}
        thresholdY={minPrevalenceActual}
-       scaleX={mixtureRateScale}
-       scaleY={minPrevalenceScale} />
+       scaleX={(v: number) => mixtureRateScale(v)}
+       scaleY={(v: number) => minPrevalenceScale(v)!} />
     </svg>
   );
 }
