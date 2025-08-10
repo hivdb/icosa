@@ -25,7 +25,11 @@ export interface InlineRefProps {
  * reference once it becomes available.
  */
 export default function InlineRef({ name, identifier, ...ref }: InlineRefProps) {
-  const { getReference, setReference } = React.useContext(ReferenceContext);
+  const reference = React.useContext(ReferenceContext);
+  if (!reference) {
+    return null;
+  }
+  const { getReference, setReference } = reference;
 
   useAutoUpdate();
 

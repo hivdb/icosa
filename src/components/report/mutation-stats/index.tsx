@@ -53,6 +53,7 @@ export default function MutationStats({
       <h2>Multi-threshold mutation summary table</h2>
       <div className={style['report-mutation-stats-inner']}>
         <StatTable
+          numPositions={(histogram as any).numPositions ?? 0}
           {...histogram}
           {...{match, router}}
           currentCutoff={curCutoff ?? 0}

@@ -30,7 +30,10 @@ function RefLinkInternal({
     setRefObj(refObj);
   }, [name, ref, setReference]);
 
-  let number, itemId, linkId, loaded = false;
+  let number: number | undefined;
+  let itemId: string | undefined;
+  let linkId: string | undefined;
+  let loaded = false;
   if (refObj) {
     number = refObj.number;
     itemId = refObj.itemId;
@@ -136,6 +139,9 @@ export interface RefLinkProps extends BuildRefProps {
 
 export default function RefLink({ group, name, identifier, ...props }: RefLinkProps) {
   const refContext = React.useContext(ReferenceContext);
+  if (!refContext) {
+    return null;
+  }
 
   if (identifier && identifier.toLocaleLowerCase().endsWith('#inline')) {
     identifier = identifier.slice(0, identifier.length - 7);

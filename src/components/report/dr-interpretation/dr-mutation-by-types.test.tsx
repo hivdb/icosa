@@ -11,8 +11,8 @@ import DRMutationByTypes from './dr-mutation-by-types';
 describe('DRMutationByTypes', () => {
   const gene = {name: 'PR'};
   const mutationsByTypes = [
-    {mutationType: 'Major', mutations: [{text: 'A23B', isUnsequenced: false}]},
-    {mutationType: 'Dosage', mutations: [{text: 'X', isUnsequenced: false}]}
+    {mutationType: 'Major', mutations: [{text: 'A23B', isUnsequenced: false, AAs: 'A23B', reference: '', position: 23}]},
+    {mutationType: 'Dosage', mutations: [{text: 'X', isUnsequenced: false, AAs: 'X', reference: '', position: 1}]}
   ];
 
   it('renders mutation list and skips dosage type', async () => {

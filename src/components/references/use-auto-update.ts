@@ -6,7 +6,7 @@ import ReferenceContext from './reference-context';
  * that its data has changed.
  */
 export default function useAutoUpdate(): void {
-  const { listenOnUpdate } = React.useContext(ReferenceContext);
+  const ctx = React.useContext(ReferenceContext);
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
-  React.useMemo(() => listenOnUpdate(forceUpdate), [listenOnUpdate]);
+  React.useMemo(() => ctx?.listenOnUpdate(forceUpdate), [ctx, forceUpdate]);
 }

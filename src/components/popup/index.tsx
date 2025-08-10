@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import ReactJSPopup from 'reactjs-popup';
 
+type PopupPosition = `${'top' | 'right' | 'bottom' | 'left'} center`;
+
 import style from './style.module.scss';
 
 
@@ -31,12 +33,12 @@ export function HoverPopup({
   const classNameArr = className ? className.split(/\s+/) : [];
   classNameArr.push(style['icosa-popup']);
 
-  const positions = React.useMemo(
+  const positions = React.useMemo<PopupPosition[]>(
     () => {
       let curPos = position;
-      const positions = [];
+      const positions: PopupPosition[] = [];
       for (let i = 0; i < 4; i ++) {
-        positions.push(`${curPos} center`);
+        positions.push(`${curPos} center` as PopupPosition);
         curPos = POSITION_NEXT[curPos];
       }
       return positions;

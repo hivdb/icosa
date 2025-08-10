@@ -16,8 +16,8 @@ function highlight(comment: string, highlightText: string[]): string {
     hl = hl.replace(/^([A-Z])(\d+)([A-Z]+)$/, '\\b$1$2\\S*[$3]\\S*\\b');
     return hl;
   }).join('|');
-  hls = new RegExp(`(${hls})`, 'g');
-  return comment.replaceAll(hls, '**$1**');
+  const pattern = new RegExp(`(${hls})`, 'g');
+  return comment.replaceAll(pattern, '**$1**');
 }
 
 interface MutationComment {
@@ -84,7 +84,10 @@ export default function DRCommentByTypes({
                       <Markdown inline escapeHtml={false} displayReferences={false}>
                         {highlight(
                           cmts[0].text,
-                          cmts.reduce((l, cmt) => l.concat(cmt.highlightText), [])
+                          cmts.reduce<string[]>(
+                            (l, cmt) => l.concat(cmt.highlightText),
+                            []
+                          )
                         )}
                       </Markdown>
                     </li>

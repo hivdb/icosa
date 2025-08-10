@@ -1,16 +1,16 @@
 import React, {ReactNode, useContext, useEffect, useMemo} from 'react';
 import {useStage} from 'react-ngl';
-import {Shape} from 'ngl';
+import { Shape } from 'ngl';
 
 /** Context carrying the NGL Shape used for temporary buffers */
-const BufferShapeContext = React.createContext<Shape | undefined>(undefined);
+const BufferShapeContext = React.createContext<any>(undefined);
 
 /**
  * Access the shared NGL {@link Shape} for buffer drawings.
  *
  * @returns NGL Shape used for buffer representations or undefined when not mounted.
  */
-export function useBufferShape(): Shape | undefined {
+export function useBufferShape(): any {
   return useContext(BufferShapeContext);
 }
 

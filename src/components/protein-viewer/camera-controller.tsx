@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
 import {useStage, useComponent, Position, Rotation} from 'react-ngl';
 
-import Select from '../select';
+import Select, { SelectOption } from '../select';
 import Button from '../button';
 import {makeDownload} from '../../utils/download';
 import useMounted from '../../utils/use-mounted';
@@ -122,7 +122,11 @@ export default function CameraController({
   );
 
   const handleSelectView = useCallback(
-    ({value}: {value: string}) => setView(views.find(({name}) => name === value) as View),
+    (value: SelectOption | null) => {
+      if (value) {
+        setView(views.find(({name}) => name === value.value) as View);
+      }
+    },
     [views, setView]
   );
 

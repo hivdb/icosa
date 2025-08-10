@@ -6,12 +6,12 @@ vi.mock('./inline-reference', () => ({ default: () => <div data-testid="inline-r
 vi.mock('./build-ref', () => ({ __esModule: true, default: (ref: any) => <span>{ref.title}</span> }));
 vi.mock('./style.module.scss', () => ({ __esModule: true, default: { 'ref-link': 'ref-link', 'ref-popup': 'ref-popup' } }));
 import RefLink from './reference-link';
-import ReferenceContext from './reference-context';
+import ReferenceContext, { ReferenceObject } from './reference-context';
 
 describe('RefLink', () => {
   it('renders InlineRef when identifier ends with #inline', () => {
     render(
-      <ReferenceContext.Provider value={{}}>
+      <ReferenceContext.Provider value={new ReferenceObject({})}>
         <RefLink identifier="foo#inline" />
       </ReferenceContext.Provider>
     );

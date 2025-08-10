@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 
 import References, { ReferenceContext, useReference } from './index';
+import { ReferenceObject } from './reference-context';
 import InlineRef from './inline-reference';
 import LoadReferences from './load-references';
 import RefDefinition from './reference-definition';
@@ -52,14 +53,15 @@ describe('references components', () => {
   });
 
   it('registers definition using RefDefinition', async () => {
-    const setReference = vi.fn();
+    const context = new ReferenceObject({});
+    const spy = vi.spyOn(context, 'setReference');
     render(
-      <ReferenceContext.Provider value={{ setReference }}>
+      <ReferenceContext.Provider value={context}>
         <RefDefinition authors="Doe" year="2020" title="Study" />
       </ReferenceContext.Provider>
     );
     await waitFor(() => {
-      expect(setReference).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

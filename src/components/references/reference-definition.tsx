@@ -29,11 +29,11 @@ export default function RefDefinition({
     myName = `${authors?.split(' ', 2)[0]}${year}`;
   }
 
-  const { setReference } = React.useContext(ReferenceContext as any);
+  const reference = React.useContext(ReferenceContext);
 
   React.useEffect(() => {
-    setReference(myName, ref, /* incr= */ false);
-  }, [myName, ref, setReference]);
+    reference?.setReference(myName, ref, /* incr= */ false);
+  }, [myName, ref, reference]);
 
   return <></>;
 }

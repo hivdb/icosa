@@ -3,11 +3,8 @@ import { AxisBottom, AxisLeft } from '@vx/axis';
 import { Group } from '@vx/group';
 import { Line } from '@vx/shape';
 import { scaleBand, scaleLinear } from '@vx/scale';
-import {
-  withTooltip,
-  Tooltip,
-  WithTooltipProvidedProps
-} from '@vx/tooltip';
+import { withTooltip, Tooltip } from '@vx/tooltip';
+import type { WithTooltipProvidedProps } from '@vx/tooltip/lib/enhancers/withTooltip';
 import { range } from 'd3-array';
 import { FaAngleDoubleRight } from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
@@ -23,7 +20,8 @@ const colors = {
   stroke: '#ffffff', // white
   fill: '#24b298', // jungleGreen
   fillTrimmed: '#bbbbbb', // silver
-  dashedDividingLine: '#1c1b1c' // thunder
+  dashedDividingLine: '#1c1b1c', // thunder
+  dividingLine: '#1c1b1c'
 };
 
 const margin = { top: 10, right: 0, bottom: 40, left: 40 };
@@ -38,10 +36,10 @@ const height = 420;
  * @returns Array of tick values
  */
 function ticks(start: number, end: number, tick: number): number[] {
-  let step = parseInt((end + 1 - start) / (tick - 1), 10);
-  step = parseInt((step + 3) / 5, 10) * 5;
+  let step = Math.floor((end + 1 - start) / (tick - 1));
+  step = Math.floor((step + 3) / 5) * 5;
   const r: number[] = [];
-  const istart = parseInt(start / 5, 10) * 5;
+  const istart = Math.floor(start / 5) * 5;
   for (let i = istart; i < end - 7; i += step) {
     if (i > start) {
       r.push(i);
@@ -66,13 +64,19 @@ interface GraphProps {
   yAxisTickValues: number[];
 }
 
-interface CodonCoverageProps
-  extends WithTooltipProvidedProps<{ position: string; totalReads: number }> {
+interface TooltipInfo {
+  position: string;
+  totalReads: number;
+}
+
+interface CodonCoverageOwnProps {
   genes: Genes;
   codonReadsCoverage: CodonReadsCoverage;
   containerWidth: number;
   minPositionReads: number;
 }
+
+type CodonCoverageProps = CodonCoverageOwnProps & WithTooltipProvidedProps<TooltipInfo>;
 
 /**
  * Visualize codon read coverage for each gene as a bar chart.
@@ -142,7 +146,7 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
       400
     );
     xAxisTickValues.push(geneOffset);
-    const yAxisTickValues = ticks(0, yMax, parseInt(height / 20, 10));
+      const yAxisTickValues = ticks(0, yMax, Math.floor(height / 20));
     yAxisTickValues.push(0);
     return {
       data: barData,
@@ -223,8 +227,8 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
         <svg width={width} height={height + margin.top + margin.bottom}>
           <Group top={margin.top} left={0}>
             {genePosRanges.map(([gene, start, end], idx) => {
-              const x0 = xScale(start);
-              const x1 = xScale(end);
+              const x0 = xScale(start) ?? 0;
+              const x1 = xScale(end) ?? 0;
               return (
                 <rect
                   strokeDasharray="3,3"
@@ -238,7 +242,7 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
               );
             })}
             {data.map((d, i) => {
-              const barHeight = yMax - yPoint(d);
+              const barHeight = yMax - (yPoint(d) ?? 0);
               return (
                 <rect
                   key={`bar-${i}`}
@@ -273,7 +277,7 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
               if (value === 1) {
                 return null;
               }
-              const x = xScale(value);
+              const x = xScale(value) ?? 0;
               return (
                 <Line
                   strokeDasharray="3,3"
@@ -288,7 +292,7 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
             <Line
               strokeDasharray="5,5"
               from={{ x: 0, y: yCutoff }}
-              to={{ x: xScale(lastPos), y: yCutoff }}
+              to={{ x: xScale(lastPos) ?? 0, y: yCutoff }}
               strokeWidth={1}
               stroke={colors.dashedDividingLine}
             />
@@ -301,9 +305,10 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
             tickStroke={colors.dividingLine}
             tickValues={xAxisTickValues}
             tickFormat={(pos) => {
+              const posNum = Number(pos);
               for (const [gene, start, end] of genePosRanges) {
-                if (pos >= start && pos < end) {
-                  const relPos = pos - start + 1;
+                if (posNum >= start && posNum < end) {
+                  const relPos = posNum - start + 1;
                   return `${gene}:${relPos}`;
                 }
               }
@@ -311,8 +316,8 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
             tickLabelProps={(val) => ({
               fontSize: 11,
               textAnchor: 'start',
-              transform: `rotate(90 ${xScale(val as number) + barWidth / 2} 15.5)`
-            })}
+                transform: `rotate(90 ${(xScale(val as number) ?? 0) + barWidth / 2} 15.5)`
+              })}
           />
         </svg>
       </div>
@@ -331,12 +336,12 @@ const CodonCoverageGraph: React.FC<CodonCoverageProps> = ({
             color: 'black'
           }}
         >
-          Codon Position {tooltipData.position}{' '}
-          (n={tooltipData.totalReads.toLocaleString()})
+          Codon Position {tooltipData?.position}{' '}
+          (n={tooltipData?.totalReads.toLocaleString()})
         </Tooltip>
       )}
     </>
   );
 };
 
-export default withTooltip<CodonCoverageProps, { position: string; totalReads: number }>(CodonCoverageGraph);
+export default withTooltip<CodonCoverageOwnProps, TooltipInfo>(CodonCoverageGraph);
