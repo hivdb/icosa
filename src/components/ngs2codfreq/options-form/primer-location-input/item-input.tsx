@@ -89,6 +89,9 @@ export default function PrimerBedItemInput({
       const rightTrim = primerLen - leftTrim - primer.length;
       pointer = pointer.slice(leftTrim, pointer.length - rightTrim);
       const match = new RegExp(`([${symbol}]+)`).exec(pointer);
+      if (!match) {
+        return null;
+      }
       const left = match.index;
       const right = left + match[1].length;
       return <>
@@ -105,28 +108,25 @@ export default function PrimerBedItemInput({
   );
 
   const handleSelectAll = React.useCallback(
-    event => event.currentTarget.select(),
+    (event: React.MouseEvent<HTMLInputElement>) => event.currentTarget.select(),
     []
   );
 
   const handleStartChange = React.useCallback(
-    event => setUnsavedStart(
-      Number.parseInt(event.currentTarget.value)
-    ),
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setUnsavedStart(Number.parseInt(event.currentTarget.value)),
     []
   );
 
   const handleEndChange = React.useCallback(
-    event => setUnsavedEnd(
-      Number.parseInt(event.currentTarget.value)
-    ),
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setUnsavedEnd(Number.parseInt(event.currentTarget.value)),
     []
   );
 
   const handleStrandChange = React.useCallback(
-    event => setUnsavedStrand(
-      event.currentTarget.value
-    ),
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setUnsavedStrand(event.currentTarget.value as '+' | '-'),
     []
   );
 

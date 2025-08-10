@@ -5,6 +5,7 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import {H3} from '../../heading-tags';
 import CheckboxInput from '../../checkbox-input';
 import GenomeMap from '../../genome-map';
+import type {Preset} from '../../genome-map/types';
 import verticalTabsStyle, {useToggleTabs} from '../../vertical-tabs-style';
 import ConfigContext from '../../../utils/config-context';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
@@ -73,81 +74,99 @@ function MutationViewer({
     defaultView
   );
   const presets = React.useMemo(
-    () => origPresets.filter(
-      ({strainOnly}) => !strainOnly || strainOnly.includes(strain)
-    ),
+    () =>
+      origPresets.filter(
+        (
+          { strainOnly }: { strainOnly?: string[] }
+        ) => !strainOnly || strainOnly.includes(strain ?? '')
+      ),
     [origPresets, strain]
   );
 
 
-  const payloads = React.useMemo(
-    () => presets.map(({
-      name: curName,
-      highlightGenes,
-      preset: {minHeight, regions, ...otherPreset}
-    }) => {
-      const presetPosStart = Math.min(...regions.map(({posStart}) => posStart));
-      const presetPosEnd = Math.max(...regions.map(({posEnd}) => posEnd));
-      const unseqRegions = (
-        noUnseqRegions ? [] :
-          getUnsequencedRegions({
-            strain,
-            allGeneSeqs,
-            geneDefs: genes,
-            knownRegions: regions,
-            minPos: presetPosStart,
-            maxPos: presetPosEnd
-          })
-      );
-      const positions = getGenomeMapPositions({
-        strain,
-        allGeneSeqs,
-        geneDefs: genes,
-        highlightGenes,
-        highlightUnusualMutation,
-        highlightDRM,
-        minPos: presetPosStart,
-        maxPos: presetPosEnd
-      });
-      const unseqPosCount = unseqRegions.reduce(
-        (acc, {posStart, posEnd}) => (
-          (posStart <= presetPosEnd && posEnd >= presetPosStart) ? (
-            acc + 1 +
-            Math.min(posEnd, presetPosEnd) -
-            Math.max(posStart, presetPosStart)
-          ) : acc
-        ),
-        0
-      );
-      return {
+  interface Payload extends Preset {
+    hasCoverage: boolean;
+  }
+
+  const payloads: Payload[] = React.useMemo(
+    () =>
+      presets.map(({
         name: curName,
-        label: '',
-        hasCoverage: noUnseqRegions ?
-          positions.some(({pos}) => (
-            pos >= presetPosStart && pos <= presetPosEnd
-          )) :
-          unseqPosCount < 1 + presetPosEnd - presetPosStart,
-        ...otherPreset,
-        regions: [
-          ...regions,
-          ...unseqRegions
-        ],
-        height: minHeight,
-        positionGroups: [{
-          name: 'NA',
-          label: '',
-          positions
-        }],
-        coverages: getCoverages({
-          strain,
-          coverages,
+        highlightGenes,
+        preset: { minHeight, regions, ...otherPreset }
+      }: {
+        name: string;
+        highlightGenes?: string[];
+        preset: {
+          minHeight: number;
+          regions: Array<{ posStart: number; posEnd: number }>;
+          [key: string]: unknown;
+        };
+      }) => {
+        const presetPosStart = Math.min(
+          ...regions.map(({ posStart }: { posStart: number }) => posStart)
+        );
+        const presetPosEnd = Math.max(
+          ...regions.map(({ posEnd }: { posEnd: number }) => posEnd)
+        );
+        const unseqRegions = noUnseqRegions
+          ? []
+            : getUnsequencedRegions({
+              strain: strain ?? '',
+              allGeneSeqs,
+              geneDefs: genes,
+              knownRegions: regions,
+              minPos: presetPosStart,
+              maxPos: presetPosEnd
+            });
+        const positions = getGenomeMapPositions({
+          strain: strain ?? '',
+          allGeneSeqs,
           geneDefs: genes,
+          highlightGenes: highlightGenes ?? [],
+          highlightUnusualMutation,
+          highlightDRM,
           minPos: presetPosStart,
-          maxPos: presetPosEnd,
-          coverageUpperLimit
-        })
-      };
-    }),
+          maxPos: presetPosEnd
+        });
+        const unseqPosCount = unseqRegions.reduce(
+          (
+            acc: number,
+            { posStart, posEnd }: { posStart: number; posEnd: number }
+          ) =>
+            posStart <= presetPosEnd && posEnd >= presetPosStart
+              ? acc + 1 + Math.min(posEnd, presetPosEnd) - Math.max(posStart, presetPosStart)
+              : acc,
+          0
+        );
+        return {
+          name: curName,
+          label: '',
+          hasCoverage: noUnseqRegions
+            ? positions.some(
+                ({ pos }: { pos: number }) => pos >= presetPosStart && pos <= presetPosEnd
+              )
+            : unseqPosCount < 1 + presetPosEnd - presetPosStart,
+          ...otherPreset,
+          regions: [...regions, ...unseqRegions],
+          height: minHeight,
+          positionGroups: [
+            {
+              name: 'NA',
+              label: '',
+              positions
+            }
+          ],
+          coverages: getCoverages({
+            strain: strain ?? '',
+            coverages,
+            geneDefs: genes,
+            minPos: presetPosStart,
+            maxPos: presetPosEnd,
+            coverageUpperLimit
+          })
+        } as Payload;
+      }),
     [
       strain,
       allGeneSeqs,
@@ -162,14 +181,16 @@ function MutationViewer({
   );
 
   const showAll = React.useMemo(
-    () => payloads.every(({hasCoverage}) => !hasCoverage),
+    () => payloads.every(({ hasCoverage }: { hasCoverage: boolean }) => !hasCoverage),
     [payloads]
   );
 
   React.useEffect(
     () => {
       if (!showAll && !payloads[selectedIndex].hasCoverage) {
-        setSelectedIndex(payloads.findIndex(({hasCoverage}) => hasCoverage));
+        setSelectedIndex(
+          payloads.findIndex(({ hasCoverage }: { hasCoverage: boolean }) => hasCoverage)
+        );
       }
     },
     [showAll, payloads, selectedIndex]
@@ -178,7 +199,7 @@ function MutationViewer({
   const [tabsExpanded, togglerNode, resetExpansion] = useToggleTabs();
 
   const handleSelect = React.useCallback(
-    idx => {
+    (idx: number) => {
       resetExpansion();
       setSelectedIndex(idx);
     },
@@ -210,14 +231,17 @@ function MutationViewer({
          onSelect={handleSelect}
          selectedIndex={selectedIndex}>
           <TabList>
-            {presets.map(({name, label}, idx) => (
+            {presets.map((
+              {name, label}: {name: string; label: string},
+              idx: number
+            ) => (
               <Tab
                data-hide={!showAll && !payloads[idx].hasCoverage}
                key={`tab-${name}`}>{label} ({name})</Tab>
             ))}
           </TabList>
           {togglerNode}
-          {payloads.map(payload => (
+          {payloads.map((payload: Payload) => (
             <TabPanel
              data-hide={!showAll && !payload.hasCoverage}
              key={`tabpanel-${payload.name}`}>
@@ -228,7 +252,11 @@ function MutationViewer({
             </TabPanel>
           ))}
         </Tabs> :
-        presets.map(({name, label}, idx) => (
+        presets.map(
+          (
+            {name, label}: {name: string; label: string},
+            idx: number
+          ) => (
           <section
            key={`section=${name}`}
            data-hide={!showAll && !payloads[idx].hasCoverage}

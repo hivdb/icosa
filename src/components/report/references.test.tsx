@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import ReferencesSection, {RefContextWrapper} from './references';
 import ConfigContext from '../../utils/config-context';
 import {ReferenceContext} from '../references';
+import {ReferenceObject} from '../references/reference-context';
 
 test('RefContextWrapper renders children after config load', async () => {
   render(
@@ -22,7 +23,7 @@ test('ReferencesSection renders when references exist', () => {
     hasAnyReference: () => true,
     listenOnUpdate: () => undefined,
     ensureLoaded: (cb: any) => cb({getLinkedReferences: () => []})
-  };
+  } as unknown as ReferenceObject;
   render(
     <ReferenceContext.Provider value={ctx}>
       <ReferencesSection />
@@ -36,7 +37,7 @@ test('ReferencesSection returns null when no references', () => {
     hasAnyReference: () => false,
     listenOnUpdate: () => undefined,
     ensureLoaded: (cb: any) => cb({getLinkedReferences: () => []})
-  };
+  } as unknown as ReferenceObject;
   const {container} = render(
     <ReferenceContext.Provider value={ctx}>
       <ReferencesSection />

@@ -5,8 +5,8 @@ import useValidation from './use-validation';
 describe('primer location useValidation', () => {
   it('detects invalid start and end positions', () => {
     const primers: PrimerBed[] = [
-      { name: 'p1', start: -1, end: 5 },
-      { name: 'p2', start: 3, end: 2 }
+      { idx: 0, region: 'r', name: 'p1', start: -1, end: 5, score: 60, strand: '+' },
+      { idx: 1, region: 'r', name: 'p2', start: 3, end: 2, score: 60, strand: '+' }
     ];
     const { result } = renderHook(() =>
       useValidation(primers, 'ACGTACGTACGT')
@@ -15,7 +15,9 @@ describe('primer location useValidation', () => {
   });
 
   it('returns no errors for valid primers', () => {
-    const primers: PrimerBed[] = [{ name: 'p1', start: 0, end: 3 }];
+    const primers: PrimerBed[] = [
+      { idx: 0, region: 'r', name: 'p1', start: 0, end: 3, score: 60, strand: '+' }
+    ];
     const { result } = renderHook(() =>
       useValidation(primers, 'ACGTACGT')
     );

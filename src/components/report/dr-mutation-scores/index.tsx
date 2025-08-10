@@ -93,7 +93,7 @@ function DRClassMutScores({drugClass, scores, disabledDrugs = []}: DRClassMutSco
         .map(({drug}) => ({name: drug.name, label: drug.displayAbbr}))
     ],
     [disabledDrugSet, drugClass.name, scores]
-  );
+  ) as Array<{name: string; label: string; render?: (rule: string) => React.ReactNode}>;
 
   const data = React.useMemo(() => scoresToTableData(scores), [scores]);
   if (data.length <= 2) {

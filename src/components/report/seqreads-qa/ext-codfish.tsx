@@ -25,7 +25,7 @@ export interface ExtCodfishRow {
   isUnusual: boolean;
   isApobecMutation: boolean;
   isApobecDRM: boolean;
-  accumScore?: number;
+  accumScore: number;
 }
 
 /**
@@ -69,7 +69,8 @@ export function prepareData(allGeneSequenceReads: any[]): ExtCodfishRow[] {
           isDRM: scr.isDRM,
           isUnusual: scr.isUnusual,
           isApobecMutation: scr.isApobecMutation,
-          isApobecDRM: scr.isApobecDRM
+          isApobecDRM: scr.isApobecDRM,
+          accumScore: 0
         });
       }
     }

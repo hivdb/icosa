@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import Select from '../../select';
+import Select, {SelectOption} from '../../select';
 
 import useScrollObserver from '../../../utils/use-scroll-observer';
 
@@ -45,8 +45,8 @@ function ReportPaginator({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [fixed, handleWindowScroll] = React.useReducer(
     () => {
-      const {top} = containerRef.current.getBoundingClientRect();
-      const newFixed = top === 0;
+      const rect = containerRef.current?.getBoundingClientRect();
+      const newFixed = rect ? rect.top === 0 : false;
       return newFixed;
     },
     false
@@ -60,7 +60,11 @@ function ReportPaginator({
   }, [handleWindowScroll]);
 
   const handleChange = React.useCallback(
-    ({value}: {value: string}) => onSelect(value),
+    (value: SelectOption | null) => {
+      if (value) {
+        onSelect(value.value as string);
+      }
+    },
     [onSelect]
   );
 
@@ -128,14 +132,23 @@ interface UseReportPaginatorOptions {
  * @param options - Configuration including data sources and callbacks.
  * @returns Handlers for observing nodes and the paginator element.
  */
-function useReportPaginator({
+interface UseReportPaginatorHook {
+  (options: UseReportPaginatorOptions): {
+    onObserve: ReturnType<typeof useScrollObserver>['onObserve'];
+    onDisconnect: ReturnType<typeof useScrollObserver>['onDisconnect'];
+    paginator: JSX.Element;
+  };
+  Button: typeof Button;
+}
+
+const useReportPaginator = (({
   inputObjs,
   loaded,
   output,
   currentSelected,
   fetchAnother,
   children
-}: UseReportPaginatorOptions) {
+}: UseReportPaginatorOptions) => {
   const resetPaginatorScrollOffset = React.useCallback(
     () => {
       const event = new Event('--sierra-paginator-reset-scroll');
@@ -172,7 +185,7 @@ function useReportPaginator({
        children={children} />
     )
   };
-}
+}) as UseReportPaginatorHook;
 
 useReportPaginator.Button = Button;
 

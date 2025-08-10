@@ -1,4 +1,4 @@
-import React from 'react';
+import {useCallback} from 'react';
 import memoize from 'lodash/memoize';
 import sleep from 'sleep-promise';
 
@@ -54,8 +54,13 @@ export function usePangoLineage({
   loaded,
   asyncResultsURI
 }: PangoProps) {
-  const asyncFetch = React.useCallback(
-    async ({url}: {url: string}) => {
+  const asyncFetch = useCallback<PromiseFn<{
+    loaded: boolean;
+    version: string | undefined;
+    lineage: string | undefined;
+    probability: number | null | undefined;
+  }>>(async (props) => {
+    const {url = ''} = props as {url?: string};
       if (loaded) {
         return {
           loaded: true,
@@ -67,12 +72,7 @@ export function usePangoLineage({
       return await fetchPangolinResult(url);
     },
     [loaded, version, lineage, probability]
-  ) as PromiseFn<{
-    loaded: boolean;
-    version: string | undefined;
-    lineage: string | undefined;
-    probability: number | null | undefined;
-  }>;
+  );
   return useSmartAsync({
     promiseFn: asyncFetch,
     url: asyncResultsURI

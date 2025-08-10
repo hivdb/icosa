@@ -1,5 +1,4 @@
-import React from 'react';
-import React from 'react';
+import {useCallback, memo} from 'react';
 import {useRouter} from 'found';
 import Dropdown from 'react-dropdown';
 import {HoverPopup} from '../../popup';
@@ -37,15 +36,25 @@ function MaxMixtureRate({
   maxMixtureRate: curValue
 }: MaxMixtureRateProps) {
   const {match, router} = useRouter();
-  if (isNaN(curValue)) {
-    curValue = Number.parseFloat(match.location.query.mixrate);
-    if (isNaN(curValue)) {
-      curValue = defaultValue;
-    }
+  if (typeof curValue !== 'number' || Number.isNaN(curValue)) {
+    const queryValue = match.location.query.mixrate;
+    const parsed =
+      typeof queryValue === 'string' ? Number.parseFloat(queryValue) : NaN;
+    curValue = Number.isNaN(parsed) ? defaultValue : parsed;
   }
 
-  const handleChange = React.useCallback(
-    ({value: mixrate}) => {
+  const dropdownOptions = options.map(({label, value}) => ({
+    label,
+    value: String(value)
+  }));
+
+  /**
+   * Update router query with new maximum mixture rate threshold.
+   *
+   * @param mixrate - Selected mixture rate as a string.
+   */
+  const handleChange = useCallback(
+    ({value: mixrate}: {value: string}) => {
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
       newLoc.query.mixrate = mixrate;
@@ -70,15 +79,13 @@ function MaxMixtureRate({
     </dt>
     <dd className={style['has-dropdown']} data-wide-dropdown>
       <Dropdown
-       value={options.find(({value}) => value === curValue)}
+       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
        placeholder="..."
-       options={options}
-       name="cutoff"
+       options={dropdownOptions}
        onChange={handleChange} />
     </dd>
   </>;
 
 }
 
-
-export default MaxMixtureRate;
+export default memo(MaxMixtureRate);

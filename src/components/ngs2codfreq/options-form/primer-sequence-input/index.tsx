@@ -13,7 +13,7 @@ import useValidation from './use-validation';
 import style from '../style.module.scss';
 
 
-function detectHeaderType(header) {
+function detectHeaderType(header: string): PrimerSeq['type'] {
   if (/forward|left|fwd|5-?end/i.test(header)) {
     return 'five-end';
   }
@@ -45,12 +45,12 @@ export default function PrimerSequenceInput({
   const errors = useValidation(value);
 
   const handleChange = React.useCallback(
-    (item: PrimerSeq, isNew: boolean, isRemove = false) => {
+    (item: PrimerSeq | {idx: number}, isNew: boolean, isRemove = false) => {
       const newValue = [...value];
       if (isNew) {
         if (!isRemove) {
           // add a new item
-          newValue.push(item);
+          newValue.push(item as PrimerSeq);
         }
         // remove the pending item
         const newPendingItems = [...pendingItems];
@@ -68,7 +68,7 @@ export default function PrimerSequenceInput({
         }
         else {
           // replace an item
-          newValue[idx] = item;
+          newValue[idx] = item as PrimerSeq;
         }
       }
       onChange(name, newValue);
@@ -92,11 +92,11 @@ export default function PrimerSequenceInput({
 
   const handleAddNew = React.useCallback(
     () => {
-      const newPendingItems = [...pendingItems, {
+      const newPendingItems: PrimerSeq[] = [...pendingItems, {
         idx: autoIncr,
         header: `Primer-${autoIncr + 1}`,
         sequence: '',
-        type: 'both-end'
+        type: 'both-end' as const
       }];
       setAutoIncr(autoIncr + 1);
       setPendingItems(newPendingItems);

@@ -1,5 +1,3 @@
-import React from 'react';
-import React from 'react';
 import style from './style.module.scss';
 
 /**
@@ -27,7 +25,7 @@ export interface MedianReadDepthProps {
 export default function MedianReadDepth({
   config: {
     listReadDepthByGene = [],
-    geneDisplay
+    geneDisplay = {}
   },
   readDepthStats: {median: globalRD},
   geneSeqs

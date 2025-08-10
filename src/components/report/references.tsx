@@ -56,11 +56,11 @@ export default function ReferencesSection() {
     [dispatchDisplay]
   );
 
-  const {hasAnyReference} = React.useContext(ReferenceContext);
+  const refContext = React.useContext(ReferenceContext);
 
   useAutoUpdate();
 
-  if (hasAnyReference()) {
+  if (refContext?.hasAnyReference()) {
     return (
       <ReportSection
         title="References"

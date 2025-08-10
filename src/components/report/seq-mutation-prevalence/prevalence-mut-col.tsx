@@ -21,12 +21,15 @@ export default function PrevalenceMutCol({
   mutation,
   row
 }: PrevalenceMutColProps) {
-  let [pos, aas, cons] = parseMutation(
+  const [pos, aasRaw, consRaw] = parseMutation(
     mutation
       .replace('Deletion', 'del')
       .replace('Insertion', 'ins')
   );
-  const consPosLen = 1 + pos.toString().length;
+  const posNum = pos ? Number(pos) : 0;
+  let aas = aasRaw ?? '';
+  const cons = consRaw ?? '';
+  const consPosLen = 1 + posNum.toString().length;
   const spaces = '      '.slice(0, consPosLen);
   const isParent = 'children' in row;
   const isIndel = /^(ins|del)$|-|_/.test(aas);
@@ -41,7 +44,7 @@ export default function PrevalenceMutCol({
     ) {
       return <span>
         <Icon className={style['expand-btn']} />
-        {cons}{pos}{aas}
+        {cons}{posNum}{aas}
       </span>;
     }
     else { // aas.length > 2 or no-cons mixture
@@ -49,7 +52,7 @@ export default function PrevalenceMutCol({
       let aaList = new Array(...aas.replace(cons, ''));
       const consPrefix = aas.length === aaList.length ? '' : cons;
       const firstAA = aaList.shift();
-      display.push(`${cons}${pos}${consPrefix}${firstAA}`);
+      display.push(`${cons}${posNum}${consPrefix}${firstAA}`);
       for (let aa of aaList) {
         display.push(<br key={aa} />);
         display.push(`${spaces}${aa}`);

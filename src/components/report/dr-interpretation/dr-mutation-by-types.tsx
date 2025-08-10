@@ -10,6 +10,9 @@ import style from './style.module.scss';
 interface MutationItem {
   text: string;
   isUnsequenced: boolean;
+  AAs: string;
+  reference: string;
+  position: number;
   [key: string]: any;
 }
 
@@ -42,9 +45,11 @@ export default function DRMutationByTypes({gene, mutationsByTypes}: DRMutationBy
       <dl>
         {mutationsByTypes.reduce<React.ReactNode[]>((r, {mutationType, mutations}) => {
           mutations = shortenMutationList(mutations.filter(mut => !mut.isUnsequenced));
-          let muts: React.ReactNode | React.ReactNode[] = mutations.map((mut, idx) => (
-            <Mutation key={idx} {...mut} gene={gene.name} config={config} />
-          ));
+          let muts: React.ReactNode | React.ReactNode[] = mutations.map(
+            (mut, idx) => (
+              <Mutation key={idx} {...mut} gene={gene.name} config={config as any} />
+            )
+          );
           if ((muts as React.ReactNode[]).length === 0) {
             muts = 'None';
           }

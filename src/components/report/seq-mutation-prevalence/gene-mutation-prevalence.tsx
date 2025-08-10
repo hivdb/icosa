@@ -100,7 +100,7 @@ export default function GeneMutationPrevalence({
   const colDefs = useColumnDefs(subtypeStats, gene);
 
   const handleRowClick = React.useCallback(
-    (curRow) => {
+    (curRow: any) => {
       const {rowId, children, showChildren} = curRow;
       if (children) {
         let newDisplayData;
@@ -134,14 +134,9 @@ export default function GeneMutationPrevalence({
 
   return (
     <ReportSection
-     title={<>
-       Mutation percentage according to subtype
-       and {drugClass} treatment
-     </>}
+     title={`Mutation percentage according to subtype and ${drugClass} treatment`}
      className={style['gene-mutation-prevalence']}
      data-drug-class={drugClass}>
-      <h2>
-      </h2>
       <SimpleTable
        disableCopy
        className={style['gene-mutation-prevalence-table']}
