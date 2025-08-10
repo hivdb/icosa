@@ -44,7 +44,7 @@ export default function PrevalenceData({
   row
 }: PrevalenceDataProps) {
   const handleLinkClick = React.useCallback(
-    e => e.stopPropagation(),
+    (e: React.MouseEvent) => e.stopPropagation(),
     []
   );
 
@@ -69,7 +69,7 @@ export default function PrevalenceData({
       {(() => percents
         .map(([aa, pcnt], idx) => {
           const isZero = parseInt(String(pcnt), 10) === 0;
-          pcnt = renderPercentage(pcnt as number);
+          const displayPcnt = renderPercentage(pcnt);
           if (aa === cons) {
             return null;
           }
@@ -84,7 +84,7 @@ export default function PrevalenceData({
                onClick={handleLinkClick}
                href={`${urlBase}&pos=${pos}&cons=${cons}&aa=${aa}`}
                title={aa}>
-                {pcnt}
+                {displayPcnt}
               </Link>}
             </div>
           );

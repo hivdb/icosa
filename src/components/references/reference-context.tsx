@@ -6,7 +6,7 @@ import PromiseComponent from '../../utils/promise-component';
  * Maintains a collection of reference objects and provides helper methods
  * for components to register and retrieve bibliographic references.
  */
-class ReferenceObject {
+export class ReferenceObject {
   // private fields
   #references: Record<string, any>;
   #refNames: string[];

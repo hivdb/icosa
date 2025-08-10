@@ -25,22 +25,22 @@ import ThresholdNomogramReal from './threshold-nomogram';
 import GenotypeReal from './genotype';
 
 
-const SDRMs = () => null;
-const DownloadConsensus = () => null;
-const PrettyPairwise = () => null;
-const InlineGeneRange = () => null;
-const MultilineGeneRange = () => null;
-const GeneMutations = () => null;
-const Subtype = () => null;
-const PangoLineage = () => null;
-const OutbreakInfo = () => null;
-const MaxMixtureRate = () => null;
-const MinPrevalence = () => null;
-const MinCodonReads = () => null;
-const MinPositionReads = () => null;
-const MedianReadDepth = () => null;
-const ThresholdNomogram = () => null;
-const Genotype = () => null;
+const SDRMs: React.FC = () => null;
+const DownloadConsensus: React.FC = () => null;
+const PrettyPairwise: React.FC = () => null;
+const InlineGeneRange: React.FC = () => null;
+const MultilineGeneRange: React.FC = () => null;
+const GeneMutations: React.FC = () => null;
+const Subtype: React.FC = () => null;
+const PangoLineage: React.FC = () => null;
+const OutbreakInfo: React.FC = () => null;
+const MaxMixtureRate: React.FC = () => null;
+const MinPrevalence: React.FC = () => null;
+const MinCodonReads: React.FC = () => null;
+const MinPositionReads: React.FC = () => null;
+const MedianReadDepth: React.FC = () => null;
+const ThresholdNomogram: React.FC = () => null;
+const Genotype: React.FC = () => null;
 
 /**
  * Properties for the {@link SeqSummary} component.
@@ -64,7 +64,8 @@ interface SeqSummaryProps {
   allGeneSequenceReads?: any[];
   availableGenes?: any[];
   pangolin?: any;
-  readDepthStats?: any[];
+  /** Summary of read depth across all genes. */
+  readDepthStats?: {median: number} | null;
   mixtureRate?: number;
   actualMinPrevalence?: number;
   minPositionReads?: number;
@@ -117,9 +118,9 @@ function SeqSummary({
 
   const disableSDRMs = !availableGenes || availableGenes.length === 0;
   const disablePrettyPairwise = disableSDRMs;
-  const childArray = (
-    children instanceof Array ? children : [children]
-  ).filter(Boolean);
+    const childArray = (
+      children instanceof Array ? children : [children]
+    ).filter(Boolean) as React.ReactElement[];
 
   const togglePrettyPairwise = React.useCallback(() => {
     setShowPrettyPairwise(!showPrettyPairwise);
@@ -131,7 +132,7 @@ function SeqSummary({
 
   const body = <>
     <div className={style['desc-list']}>
-      <dl style={{'--title-width': titleWidth}}>
+        <dl style={{['--title-width' as any]: titleWidth}}>
         {geneSeqs.map((geneSeq, idx) => {
           return <React.Fragment key={idx}>
             {childArray.some(child => child.type === MultilineGeneRange) && (
@@ -153,12 +154,17 @@ function SeqSummary({
             return <SubtypeReal {...{key, bestMatchingSubtype, subtypes}} />;
           }
 
-          else if (child.type === MedianReadDepth) {
-            return (
-              <MedianReadDepthReal
-               {...{key, config, readDepthStats, geneSeqs}} />
-            );
-          }
+            else if (child.type === MedianReadDepth) {
+              return (
+                <MedianReadDepthReal
+                 {...{
+                   key,
+                   config,
+                   readDepthStats: readDepthStats ?? {median: 0},
+                   geneSeqs
+                 }} />
+              );
+            }
 
           else if (child.type === PangoLineage) {
             return (
@@ -201,27 +207,23 @@ function SeqSummary({
             );
           }
 
-          else if (child.type === MinCodonReads) {
-            return (
-              <MinCodonReadsReal
-               key={key}
-               match={match}
-               router={router}
-               config={config}
-               {...{minCodonReads}} />
-            );
-          }
+            else if (child.type === MinCodonReads) {
+              return (
+                <MinCodonReadsReal
+                 key={key}
+                 config={config}
+                 {...{minCodonReads}} />
+              );
+            }
 
-          else if (child.type === MinPositionReads) {
-            return (
-              <MinPositionReadsReal
-               key={key}
-               match={match}
-               router={router}
-               config={config}
-               {...{minPositionReads}} />
-            );
-          }
+            else if (child.type === MinPositionReads) {
+              return (
+                <MinPositionReadsReal
+                 key={key}
+                 config={config}
+                 {...{minPositionReads}} />
+              );
+            }
 
           else if (showSDRMs && child.type === SDRMs) {
             return <SDRMList {...{key, geneSeqs, config}} />;
@@ -237,10 +239,10 @@ function SeqSummary({
     {childArray.some(child => child.type === ThresholdNomogram) &&
       <ThresholdNomogramReal {...{
         cutoffKeyPoints,
-        maxMixtureRate,
-        minPrevalence,
-        mixtureRate,
-        actualMinPrevalence
+        maxMixtureRate: maxMixtureRate ?? 0,
+        minPrevalence: minPrevalence ?? 0,
+        mixtureRate: mixtureRate ?? 0,
+        actualMinPrevalence: actualMinPrevalence ?? 0
       }} />}
   </>;
 
@@ -260,11 +262,11 @@ function SeqSummary({
         )}
         {childArray.some(child => child.type === DownloadConsensus) && (
           <DownloadConsensusReal {...{
-            name,
-            assembledConsensus,
-            maxMixtureRate,
-            minPrevalence,
-            minPositionReads
+            name: name ?? '',
+            assembledConsensus: assembledConsensus ?? '',
+            maxMixtureRate: maxMixtureRate ?? 0,
+            minPrevalence: minPrevalence ?? 0,
+            minPositionReads: minPositionReads ?? 0
           }} />
         )}
       </div>
@@ -279,13 +281,34 @@ const MemoSeqSummary = React.memo(
   ({name: prevName}, {name: nextName}) => prevName === nextName
 );
 
-interface SeqSummaryWrapperProps extends Omit<SeqSummaryProps, 'config' | 'match' | 'router'> {}
+interface SeqSummaryWrapperProps
+  extends Omit<SeqSummaryProps, 'config' | 'match' | 'router'> {}
+
+interface SeqSummaryWrapperComponent
+  extends React.FC<SeqSummaryWrapperProps> {
+  SDRMs: React.FC<any>;
+  DownloadConsensus: React.FC<any>;
+  PrettyPairwise: React.FC<any>;
+  MultilineGeneRange: React.FC<any>;
+  InlineGeneRange: React.FC<any>;
+  GeneMutations: React.FC<any>;
+  Subtype: React.FC<any>;
+  PangoLineage: React.FC<any>;
+  OutbreakInfo: React.FC<any>;
+  MedianReadDepth: React.FC<any>;
+  MaxMixtureRate: React.FC<any>;
+  MinPrevalence: React.FC<any>;
+  MinCodonReads: React.FC<any>;
+  MinPositionReads: React.FC<any>;
+  ThresholdNomogram: React.FC<any>;
+  Genotype: React.FC<any>;
+}
 
 /**
  * Wrapper around {@link SeqSummary} that injects configuration and routing
  * context.
  */
-function SeqSummaryWrapper(props: SeqSummaryWrapperProps) {
+const SeqSummaryWrapper: SeqSummaryWrapperComponent = (props) => {
   const {match, router} = useRouter();
   return <ConfigContext.Consumer>
     {config => (
@@ -296,39 +319,23 @@ function SeqSummaryWrapper(props: SeqSummaryWrapperProps) {
        router={router} />
     )}
   </ConfigContext.Consumer>;
-}
+};
 
-SeqSummaryWrapper.SDRMs =
-  SeqSummaryWrapper.SDRMs || SDRMs;
-SeqSummaryWrapper.DownloadConsensus =
-  SeqSummaryWrapper.DownloadConsensus || DownloadConsensus;
-SeqSummaryWrapper.PrettyPairwise =
-  SeqSummaryWrapper.PrettyPairwise || PrettyPairwise;
-SeqSummaryWrapper.MultilineGeneRange =
-  SeqSummaryWrapper.MultilineGeneRange || MultilineGeneRange;
-SeqSummaryWrapper.InlineGeneRange =
-  SeqSummaryWrapper.InlineGeneRange || InlineGeneRange;
-SeqSummaryWrapper.GeneMutations =
-  SeqSummaryWrapper.GeneMutations || GeneMutations;
-SeqSummaryWrapper.Subtype =
-  SeqSummaryWrapper.Subtype || Subtype;
-SeqSummaryWrapper.PangoLineage =
-  SeqSummaryWrapper.PangoLineage || PangoLineage;
-SeqSummaryWrapper.OutbreakInfo =
-  SeqSummaryWrapper.OutbreakInfo || OutbreakInfo;
-SeqSummaryWrapper.MedianReadDepth =
-  SeqSummaryWrapper.MedianReadDepth || MedianReadDepth;
-SeqSummaryWrapper.MaxMixtureRate =
-  SeqSummaryWrapper.MaxMixtureRate || MaxMixtureRate;
-SeqSummaryWrapper.MinPrevalence =
-  SeqSummaryWrapper.MinPrevalence || MinPrevalence;
-SeqSummaryWrapper.MinCodonReads =
-  SeqSummaryWrapper.MinCodonReads || MinCodonReads;
-SeqSummaryWrapper.MinPositionReads =
-  SeqSummaryWrapper.MinPositionReads || MinPositionReads;
-SeqSummaryWrapper.ThresholdNomogram =
-  SeqSummaryWrapper.ThresholdNomogram || ThresholdNomogram;
-SeqSummaryWrapper.Genotype =
-  SeqSummaryWrapper.Genotype || Genotype;
+SeqSummaryWrapper.SDRMs = SDRMs;
+SeqSummaryWrapper.DownloadConsensus = DownloadConsensus;
+SeqSummaryWrapper.PrettyPairwise = PrettyPairwise;
+SeqSummaryWrapper.MultilineGeneRange = MultilineGeneRange;
+SeqSummaryWrapper.InlineGeneRange = InlineGeneRange;
+SeqSummaryWrapper.GeneMutations = GeneMutations;
+SeqSummaryWrapper.Subtype = Subtype;
+SeqSummaryWrapper.PangoLineage = PangoLineage;
+SeqSummaryWrapper.OutbreakInfo = OutbreakInfo;
+SeqSummaryWrapper.MedianReadDepth = MedianReadDepth;
+SeqSummaryWrapper.MaxMixtureRate = MaxMixtureRate;
+SeqSummaryWrapper.MinPrevalence = MinPrevalence;
+SeqSummaryWrapper.MinCodonReads = MinCodonReads;
+SeqSummaryWrapper.MinPositionReads = MinPositionReads;
+SeqSummaryWrapper.ThresholdNomogram = ThresholdNomogram;
+SeqSummaryWrapper.Genotype = Genotype;
 
 export default SeqSummaryWrapper;

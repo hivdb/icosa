@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import classNames from 'classnames';
 
 import {moveFile, removeFile, splicePair, type FastqPair} from '../fastq-pairs';
@@ -8,7 +7,7 @@ import FASTQPairItem from './item';
 import useUndoHistory from './undo-history';
 
 
-function calcStep(distance) {
+function calcStep(distance: number) {
   let direction = 1;
   if (distance < 0) {
     direction = -1;
@@ -24,6 +23,15 @@ export interface PreviewFilesProps {
   className?: string;
 }
 
+/**
+ * Display a list of FASTQ file pairs that can be reordered, renamed or split.
+ * Drag-and-drop is supported for rearranging single-read files.
+ *
+ * @param props - Component properties
+ * @param props.fastqPairs - Current FASTQ pairs to display
+ * @param props.onChange - Callback invoked when the pairs change
+ * @param props.className - Optional BEM class suffix for styling
+ */
 export default function PreviewFiles({fastqPairs, onChange, className}: PreviewFilesProps) {
 
   const listRef = React.useRef<HTMLUListElement>(null);
@@ -45,14 +53,14 @@ export default function PreviewFiles({fastqPairs, onChange, className}: PreviewF
   );
 
   const handleDragStart = React.useCallback(
-    file => {
+    (file: File) => {
       setCurDragFile(file);
     },
     [setCurDragFile]
   );
 
   const handleDrag = React.useCallback(
-    (event: React.DragEvent<HTMLUListElement>) => {
+    (event: React.DragEvent<HTMLElement>) => {
       const {top, bottom} = listRef.current!.getBoundingClientRect();
       const listHeight = bottom - top;
       const offsetY = event.clientY - top;

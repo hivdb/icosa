@@ -20,6 +20,17 @@ export interface PrimerSeqItemInputProps {
   onChange: (value: PrimerSeq | {idx: number}, isNew: boolean, isRemove?: boolean) => void;
 }
 
+/**
+ * Render a single primer sequence input row allowing users to edit header,
+ * sequence and end type. It tracks unsaved values internally and notifies the
+ * parent when changes are persisted or items removed.
+ *
+ * @param props - Component props
+ * @param props.isNew - Whether this row represents a newly added primer
+ * @param props.name - Base name for form fields
+ * @param props.value - Current primer values
+ * @param props.onChange - Callback fired when the primer is saved or removed
+ */
 export default function PrimerSeqItemInput({
   isNew = false,
   name,
@@ -54,12 +65,14 @@ export default function PrimerSeqItemInput({
   } = useEndsType(unsavedSeq, setUnsavedSeq);
 
   const handleSeqChange = React.useCallback(
-    event => setUnsavedSeq(event.currentTarget.value),
+    (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setUnsavedSeq(event.currentTarget.value),
     []
   );
 
   const handleTypeChange = React.useCallback(
-    event => setUnsavedType(event.currentTarget.value),
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setUnsavedType(event.currentTarget.value as PrimerSeq['type']),
     []
   );
 
@@ -193,7 +206,7 @@ export default function PrimerSeqItemInput({
          htmlFor={`${name}-${idx}-three-end-type`}>
           3′ end trimming type:
         </label>
-        {['regular', 'anchored', 'non-internal'].map(
+        {(['regular', 'anchored', 'non-internal'] as const).map(
           trimmingType => (
             <HoverPopup
              noUnderline
@@ -233,7 +246,7 @@ export default function PrimerSeqItemInput({
          htmlFor={`${name}-${idx}-five-end-type`}>
           5′ end trimming type:
         </label>
-        {['regular', 'anchored', 'non-internal'].map(
+        {(['regular', 'anchored', 'non-internal'] as const).map(
           trimmingType => (
             <HoverPopup
              noUnderline

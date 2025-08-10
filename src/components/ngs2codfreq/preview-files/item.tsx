@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import classNames from 'classnames';
 import {FaRegFileAlt} from '@react-icons/all-files/fa/FaRegFileAlt';
 import {FaTimesCircle} from '@react-icons/all-files/fa/FaTimesCircle';
@@ -16,12 +15,26 @@ interface FASTQItemProps {
   index: number;
   className?: string;
   onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
-  onDrag: (e: React.DragEvent<HTMLLIElement>) => void;
+  onDrag: (e: React.DragEvent<HTMLElement>) => void;
   onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
   onRemove: (args: {index: number; fileName: string}) => void;
   draggable?: boolean;
 }
 
+/**
+ * Render a list item representing a single FASTQ file. Handles dragging
+ * metadata and removal of the file from its pair.
+ *
+ * @param props - Component props
+ * @param props.file - The file represented by this item
+ * @param props.index - Index of the FASTQ pair in the list
+ * @param props.className - Optional BEM class suffix
+ * @param props.onDragStart - Callback when drag begins
+ * @param props.onDrag - Callback for drag over events
+ * @param props.onDragEnd - Callback when dragging ends
+ * @param props.onRemove - Callback to remove the file
+ * @param props.draggable - Whether dragging is enabled
+ */
 function FASTQItem({
   file,
   index,
@@ -75,8 +88,8 @@ function FASTQItem({
         className ? `${className}__file-name` : null
       )}>{file.name}</span>
       {draggable ? (
-        <FaArrowsAlt
-         alt="move to merge with another single-read sequence"
+      <FaArrowsAlt
+         aria-label="move to merge with another single-read sequence"
          title="move to merge with another single-read sequence"
          className={classNames(
            style.move,
@@ -84,7 +97,7 @@ function FASTQItem({
          )} />
       ) : null}
       <FaTimesCircle
-       alt="remove this file"
+       aria-label="remove this file"
        title="remove this file"
        onClick={handleRemove}
        className={classNames(
@@ -103,7 +116,7 @@ export interface FASTQPairItemProps {
   index: number;
   className?: string;
   onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
-  onDrag: (e: React.DragEvent<HTMLLIElement>) => void;
+  onDrag: (e: React.DragEvent<HTMLElement>) => void;
   onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
   curDragFile: File | null;
   onSplit: (idx: number) => void;
@@ -113,6 +126,25 @@ export interface FASTQPairItemProps {
   draggable?: boolean;
 }
 
+/**
+ * Display a pair (or single) of FASTQ files with controls for naming, splitting
+ * and drag-and-drop reordering between pairs.
+ *
+ * @param props - Component props
+ * @param props.name - Pair name
+ * @param props.pair - The two files comprising the pair
+ * @param props.n - Number of files in the pair
+ * @param props.index - Position of the pair in the list
+ * @param props.onDragStart - Handler for beginning a drag on a file
+ * @param props.onDrag - Handler for drag movements
+ * @param props.onDragEnd - Handler for drag completion
+ * @param props.curDragFile - File currently being dragged
+ * @param props.onSplit - Callback to split the pair
+ * @param props.onMove - Callback when a file is moved into this pair
+ * @param props.onNameChange - Callback when pair name changes
+ * @param props.onRemove - Callback to remove a file
+ * @param props.draggable - Whether drag operations are enabled
+ */
 export default function FASTQPairItem({
   name,
   pair,
@@ -168,7 +200,7 @@ export default function FASTQPairItem({
        value={name} />
       {n === 2 ? (
         <AiOutlineSplitCells
-         alt="Split to two single-read sequences"
+         aria-label="Split to two single-read sequences"
          title="Split to two single-read sequences"
          className={style.split}
          onClick={handleSplit} />

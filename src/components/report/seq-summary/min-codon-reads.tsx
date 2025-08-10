@@ -1,4 +1,4 @@
-import React from 'react';
+import {memo, useCallback} from 'react';
 import {useRouter} from 'found';
 import Dropdown from 'react-dropdown';
 
@@ -31,15 +31,25 @@ function MinCodonReads({
   minCodonReads: curValue
 }: MinCodonReadsProps) {
   const {match, router} = useRouter();
-  if (curValue === null || isNaN(curValue)) {
-    curValue = Number.parseFloat(match.location.query.cdreads);
-    if (isNaN(curValue)) {
-      curValue = defaultValue;
-    }
+  if (curValue === null || Number.isNaN(curValue)) {
+    const queryValue = match.location.query.cdreads;
+    const parsed =
+      typeof queryValue === 'string' ? Number.parseFloat(queryValue) : NaN;
+    curValue = Number.isNaN(parsed) ? defaultValue : parsed;
   }
 
-  const handleChange = React.useCallback(
-    ({value: cdreads}) => {
+  const dropdownOptions = options.map(({label, value}) => ({
+    label,
+    value: String(value)
+  }));
+
+  /**
+   * Update router query with new minimum codon reads threshold.
+   *
+   * @param value - Selected threshold as a string.
+   */
+  const handleChange = useCallback(
+    ({value: cdreads}: {value: string}) => {
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
       newLoc.query.cdreads = cdreads;
@@ -54,14 +64,13 @@ function MinCodonReads({
     </dt>
     <dd className={style['has-dropdown']}>
       <Dropdown
-       value={options.find(({value}) => value === curValue)}
+       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
        placeholder="..."
-       options={options}
-       name="cutoff"
+       options={dropdownOptions}
        onChange={handleChange} />
     </dd>
   </>;
 
 }
 
-export default React.memo(MinCodonReads);
+export default memo(MinCodonReads);

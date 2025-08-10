@@ -30,6 +30,7 @@ test('prepareData flattens codon reads', () => {
   const rows = prepareData(input);
   expect(rows[0].gene).toBe('POL');
   expect(rows[0].pos).toBe(1);
+  expect(typeof rows[0].accumScore).toBe('number');
 });
 
 test('prepareOutput creates CSV string', () => {

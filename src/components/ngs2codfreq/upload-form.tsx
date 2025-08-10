@@ -78,7 +78,7 @@ export default function NGSUploadForm({
   );
 
   const handleSubmit = useCallback(
-    e => {
+    (e?: React.FormEvent<HTMLFormElement>) => {
       e && e.preventDefault();
       onSubmit && onSubmit(fastqPairs);
     },
@@ -86,7 +86,7 @@ export default function NGSUploadForm({
   );
 
   const handleReset = useCallback(
-    e => {
+    (e?: React.FormEvent<HTMLFormElement>) => {
       e && e.preventDefault();
       setFastqPairs([]);
     },
@@ -128,7 +128,7 @@ export default function NGSUploadForm({
               style['placeholder'],
               className ? `${className}__placeholder` : null
             )}>
-              {config.messages['ngs2codfreq-placeholder'] ||
+              {config?.messages['ngs2codfreq-placeholder'] ??
                '<ngs2codfreq-placeholder>'}
             </div>
             <button

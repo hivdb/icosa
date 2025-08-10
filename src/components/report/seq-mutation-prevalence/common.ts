@@ -56,7 +56,9 @@ function mutationPrevalencesToTableData(
   }] of prevalences.entries()) {
     const row = toTableRow(text, triplet, matched, allSubtypes);
     const children: any[] = [];
-    for (const {AA, subtypes} of [...others].sort(({AA: a1}, {AA: a2}) => a1 > a2)) {
+    for (const {AA, subtypes} of [...others].sort(
+      ({AA: a1}, {AA: a2}) => a1.localeCompare(a2)
+    )) {
       const child = toTableRow(
         `${reference}${position}${AA}`,
         '',
@@ -90,7 +92,7 @@ function toTableRow(
   }
   for (
     let {AA, subtypes} of
-    [...subtypesForAAs].sort(({AA: a1}, {AA: a2}) => a1 > a2)
+    [...subtypesForAAs].sort(({AA: a1}, {AA: a2}) => a1.localeCompare(a2))
   ) {
     for (const {
       subtype: {name},

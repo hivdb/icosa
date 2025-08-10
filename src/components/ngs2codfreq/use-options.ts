@@ -11,7 +11,7 @@ import {
   type NGSOptions
 } from './options-form/types';
 
-const usePersistedOptions = createPersistedState(
+const usePersistedOptions = createPersistedState<Partial<NGSOptions>>(
   '--ngs2codfreq-persisted-settings-' +
   window.location.pathname
     .replace(/(?:\/ngs2codfreq|\/by-reads).*$/, '')

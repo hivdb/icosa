@@ -16,6 +16,9 @@ export interface PresetSelectionProps {
 
 /**
  * Dropdown component used to select a predefined genome view preset.
+ *
+ * @param props - {@link PresetSelectionProps} configuring the dropdown.
+ * @returns Wrapped dropdown allowing preset selection.
  */
 const PresetSelection: React.FC<PresetSelectionProps> = ({
   options,
@@ -28,17 +31,15 @@ const PresetSelection: React.FC<PresetSelectionProps> = ({
   );
 
   return (
-    <div className={style['preset-selection']}>
-      <label htmlFor="genome-map-preset">Genome View:</label>
+    <label className={style['preset-selection']}>
+      <span>Genome View:</span>
       <Dropdown
         value={current}
         placeholder="Choose a genome view..."
         options={options}
-        id="genome-map-preset"
-        name="genome-map-preset"
         onChange={handleChange}
       />
-    </div>
+    </label>
   );
 };
 

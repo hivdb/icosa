@@ -64,20 +64,22 @@ export default function PrimerLocationInput({
   ] = useCMS(config?.refSequencePath ?? '', cmsConfig);
 
   const refSequence = React.useMemo(
-    () => !isRefSeqPending && refSequenceText ?
-      parseFasta(refSequenceText, 'ref')[0].sequence : null,
+    () =>
+      !isRefSeqPending && typeof refSequenceText === 'string'
+        ? parseFasta(refSequenceText, 'ref')[0].sequence
+        : null,
     [refSequenceText, isRefSeqPending]
   );
 
   const errors = useValidation(value, refSequence);
 
   const handleChange = React.useCallback(
-    (item: PrimerBed, isNew: boolean, isRemove = false) => {
+    (item: PrimerBed | {idx: number}, isNew: boolean, isRemove = false) => {
       const newValue = [...value];
       if (isNew) {
         if (!isRemove) {
           // add a new item
-          newValue.push(item);
+          newValue.push(item as PrimerBed);
         }
         // remove the pending item
         const newPendingItems = [...pendingItems];
@@ -95,7 +97,7 @@ export default function PrimerLocationInput({
         }
         else {
           // replace an item
-          newValue[idx] = item;
+          newValue[idx] = item as PrimerBed;
         }
       }
       onChange(name, newValue);
@@ -119,19 +121,19 @@ export default function PrimerLocationInput({
 
   const handleAddNew = React.useCallback(
     () => {
-      const newPendingItems = [...pendingItems, {
+      const newPendingItems: PrimerBed[] = [...pendingItems, {
         idx: autoIncr,
-        region: config.refSequenceName || '<Unknown>',
+        region: config?.refSequenceName || '<Unknown>',
         start: -1,
         end: -1,
         name: `Primer-${autoIncr + 1}`,
         score: 60,
-        strand: '+'
+        strand: '+' as const
       }];
       setAutoIncr(autoIncr + 1);
       setPendingItems(newPendingItems);
     },
-    [pendingItems, autoIncr, config.refSequenceName]
+    [pendingItems, autoIncr, config?.refSequenceName]
   );
 
   const handleUpload = React.useCallback(
@@ -148,12 +150,14 @@ export default function PrimerLocationInput({
         const rawBed = await readFile(file);
         for (const row of rawBed.split(/[\r\n]+/g)) {
           const [, start, end, name,, strand] = row.split('\t');
-          if (!isNaN(start) && !isNaN(end)) {
+          const startNum = Number(start);
+          const endNum = Number(end);
+          if (!Number.isNaN(startNum) && !Number.isNaN(endNum)) {
             newItems.push({
-              idx: newAutoIncr ++,
-              region: config.refSequenceName || '<Unknown>',
-              start: Number.parseInt(start),
-              end: Number.parseInt(end),
+              idx: newAutoIncr++,
+              region: config?.refSequenceName || '<Unknown>',
+              start: startNum,
+              end: endNum,
               name: name || `Primer-${autoIncr + 1}`,
               score: 60,
               // drop invalid strand
@@ -169,7 +173,7 @@ export default function PrimerLocationInput({
       onChange(name, [...value, ...newItems]);
       setAutoIncr(newAutoIncr);
     },
-    [autoIncr, onChange, name, value, config.refSequenceName, isMounted]
+    [autoIncr, onChange, name, value, config?.refSequenceName, isMounted]
   );
 
   return <div className={style['scroll']}>
@@ -178,27 +182,27 @@ export default function PrimerLocationInput({
     </ul> : null}
     {isRefSeqPending ?
       <Loader inline /> : <>
-        {value.map(
-          item => (
-            <ItemInput
-             key={`primer-bed-${item.idx}`}
-             name={name}
-             value={item}
-             refSequence={refSequence}
-             onChange={handleChange} />
-          )
-        )}
-        {pendingItems.map(
-          item => (
-            <ItemInput
-             isNew
-             key={`primer-bed-${item.idx}`}
-             name={name}
-             value={item}
-             refSequence={refSequence}
-             onChange={handleChange} />
-          )
-        )}
+          {value.map(
+            item => (
+              <ItemInput
+               key={`primer-bed-${item.idx}`}
+               name={name}
+               value={item}
+               refSequence={refSequence ?? ''}
+               onChange={handleChange} />
+            )
+          )}
+          {pendingItems.map(
+            item => (
+              <ItemInput
+               isNew
+               key={`primer-bed-${item.idx}`}
+               name={name}
+               value={item}
+               refSequence={refSequence ?? ''}
+               onChange={handleChange} />
+            )
+          )}
         <div className={style['fieldrow']}>
           <div className={style['fieldlabel']} />
           <div className={classNames(

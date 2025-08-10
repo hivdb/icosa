@@ -2,7 +2,7 @@ import React from 'react';
 import {Text} from '@vx/text';
 import {Group} from '@vx/group';
 import {AxisLeft, AxisBottom} from '@vx/axis';
-import {withTooltip, Tooltip, TooltipWithBoundsProps} from '@vx/tooltip';
+import {withTooltip, Tooltip, TooltipWithBounds} from '@vx/tooltip';
 import {scaleBand, scaleLinear} from 'd3-scale';
 
 import {SitesType, Site} from './types';
@@ -23,7 +23,7 @@ const colors = {
  * @param d - Site object containing percentage boundaries.
  * @returns Percent label string.
  */
-function getPercent(d: Site | {percent: string}): string {
+function getPercent(d: Omit<Site, 'count'> | {percent: string}): string {
   if ('percent' in d) {
     return d.percent;
   }
@@ -64,7 +64,7 @@ export interface SequenceReadsHistogramProps {
   /** Total number of positions examined. */
   numPositions: number;
   /** Tooltip display helper. */
-  showTooltip?: TooltipWithBoundsProps['showTooltip'];
+  showTooltip?: React.ComponentProps<typeof TooltipWithBounds>['showTooltip'];
   /** Tooltip hide helper. */
   hideTooltip?: () => void;
   /** Whether tooltip is open. */
@@ -145,8 +145,8 @@ function SequenceReadsHistogram({
     .domain([yCutoff, 100])
     .range([gapY - halfGapH, 0]);
 
-  const combinedYScale = (value: number) =>
-    value > yCutoff ? upperYScale(value) : lowerYScale(value);
+const combinedYScale = (value: number): number =>
+  value > yCutoff ? upperYScale(value) : lowerYScale(value);
 
   const barWidth = xScale.bandwidth();
 
@@ -193,7 +193,7 @@ function SequenceReadsHistogram({
         <Group top={margin.top} left={margin.left}>
           {chartData.map((group, idx) => {
             const x = xScale(getPercent(group)) ?? 0;
-            const y = combinedYScale(group.pcntUnusualSites);
+            const y = combinedYScale(group.pcntUnusualSites ?? 0);
             let gap: React.ReactNode = null;
             if (y < gapY) {
               gap = (
@@ -226,7 +226,7 @@ function SequenceReadsHistogram({
                   width={barWidth}
                   height={yMax - y}
                   fill={colors.pcntUnusualSites}
-                  value={group.pcntUnusualSites}
+                  data-value={group.pcntUnusualSites}
                 />
                 {gap}
               </Group>

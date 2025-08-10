@@ -7,6 +7,11 @@ interface UseWheelEventProps {
   onScroll: (steps: number) => void;
 }
 
+/**
+ * Hook to attach a non-passive wheel event listener for paginator navigation.
+ * Converts wheel movement into scrolling steps and exposes a ref to attach to
+ * the navigable element.
+ */
 export default function useWheelEvent({
   childItems,
   displayNums,
@@ -21,22 +26,14 @@ export default function useWheelEvent({
       if (!elem) {
         return;
       }
-      elem.addEventListener(
-        'wheel',
-        handleWheel,
-        {passive: false}
-      );
+      elem.addEventListener('wheel', handleWheel as EventListener, {passive: false} as AddEventListenerOptions);
       window.addEventListener(
         '--sierra-paginator-reset-scroll',
         resetScrollOffset,
         false
       );
       return () => {
-        elem.removeEventListener(
-          'wheel',
-          handleWheel,
-          {passive: false}
-        );
+        elem.removeEventListener('wheel', handleWheel as EventListener, {passive: false} as AddEventListenerOptions);
         window.removeEventListener(
           '--sierra-paginator-reset-scroll',
           resetScrollOffset,

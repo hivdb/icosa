@@ -42,12 +42,13 @@ function calcUnseqRegionOffsetY(
 ): number {
   const regionSize = posEnd - posStart;
   const maxAllowedOverlap = regionSize / 10;
-  let offsetY = GMRegion.defaultProps.offsetY;
+  const defaultOffsetY = 0;
+  let offsetY = defaultOffsetY;
   for (const {
     shapeType,
     posStart: krPosStart,
     posEnd: krPosEnd,
-    offsetY: krOffsetY = GMRegion.defaultProps.offsetY
+    offsetY: krOffsetY = defaultOffsetY
   } of knownRegions) {
     if (shapeType !== 'rect') {
       // only need to avoid rect shapes
@@ -265,16 +266,19 @@ export function getCoverages({
     maxPos,
     Math.max(...geneDefs.map(({ range }: any) => range[1]))
   );
-  geneDefs = geneDefs.reduce((acc: any, geneDef: any) => {
-    acc[geneDef.gene] = geneDef;
-    return acc;
-  }, {});
+  const geneDefMap: Record<string, any> = geneDefs.reduce(
+    (acc: Record<string, any>, geneDef: any) => {
+      acc[geneDef.gene] = geneDef;
+      return acc;
+    },
+    {}
+  );
   const results: Array<{ position: number; coverage: number }> = [];
   for (const { gene, position, coverage } of coverages) {
-    if (!(gene in geneDefs)) {
+    if (!(gene in geneDefMap)) {
       continue;
     }
-    const geneDef = geneDefs[gene];
+    const geneDef = geneDefMap[gene];
     const { rangeByStrain, readingFrame } = geneDef;
     const range = geneDef.range ? geneDef.range : rangeByStrain[strain];
     const absNAPos = convertAAPosToAbsNAPos(position, range[0], readingFrame);

@@ -1,4 +1,4 @@
-import React from 'react';
+import {memo, useCallback, useMemo} from 'react';
 import {useRouter} from 'found';
 import Dropdown from 'react-dropdown';
 import {HoverPopup} from '../../popup';
@@ -35,14 +35,14 @@ function MinPositionReads({
   minPositionReads: curValue
 }: MinPositionReadsProps) {
   const {match, router} = useRouter();
-  if (curValue === null || isNaN(curValue)) {
-    curValue = Number(match.location.query.posreads);
-    if (isNaN(curValue)) {
-      curValue = defaultValue;
-    }
+  if (typeof curValue !== 'number' || Number.isNaN(curValue)) {
+    const queryValue = match.location.query.posreads;
+    const parsed =
+      typeof queryValue === 'string' ? Number(queryValue) : NaN;
+    curValue = Number.isNaN(parsed) ? defaultValue : parsed;
   }
 
-  const dropdownOptions = React.useMemo(
+  const dropdownOptions = useMemo(
     () => options.map(({label, value}) => ({label, value: String(value)})),
     [options]
   );
@@ -52,7 +52,7 @@ function MinPositionReads({
    *
    * @param value - Selected read depth as a string.
    */
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     ({value: posreads}: {value: string}) => {
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
@@ -88,4 +88,4 @@ function MinPositionReads({
 
 }
 
-export default React.memo(MinPositionReads);
+export default memo(MinPositionReads);

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import {FC, useEffect, useMemo, useRef} from 'react';
 import { Group } from '@vx/group';
 import { Line } from '@vx/shape';
 import { AxisLeft, AxisBottom } from '@vx/axis';
@@ -38,19 +38,28 @@ export interface CodfishGraphProps {
  * @param props - {@link CodfishGraphProps} component properties
  * @returns Rendered JSX element
  */
-const CodfishGraph: React.FC<CodfishGraphProps> = ({ extCodfish }) => {
+const CodfishGraph: FC<CodfishGraphProps> = ({extCodfish}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const bars = useMemo(
     () =>
-      extCodfish.map((r) => ({
-        value: r.pcnt,
-        mutation: `${r.gene}:${r.ref}${r.pos}${r.aa}$$${r.cd}`,
-        color: colorPalettes[r.isUnusual ? 1 : 0],
-        accumScore: r.accumScore,
-        codon: r.cd,
-        footnote: r.isDRM ? '*' : null
-      })),
+      extCodfish.map(
+        (r): {
+          value: number;
+          mutation: string;
+          color: string;
+          accumScore: number;
+          codon: string;
+          footnote: string | null;
+        } => ({
+          value: r.pcnt,
+          mutation: `${r.gene}:${r.ref}${r.pos}${r.aa}$$${r.cd}`,
+          color: colorPalettes[r.isUnusual ? 1 : 0],
+          accumScore: r.accumScore,
+          codon: r.cd,
+          footnote: r.isDRM ? '*' : null
+        })
+      ),
     [extCodfish]
   );
 
@@ -85,7 +94,7 @@ const CodfishGraph: React.FC<CodfishGraphProps> = ({ extCodfish }) => {
         <Group top={margin.top} left={margin.left}>
           {bars.map(({ value, mutation, color, footnote }, idx) => {
             const x = xScale(mutation) ?? 0;
-            const y = yScale(value);
+            const y = yScale(value) as number;
             return (
               <Group key={idx} top={0} left={x}>
                 <rect x={0} y={y} width={barWidth} height={yMax - y} fill={color} />
@@ -131,7 +140,7 @@ const CodfishGraph: React.FC<CodfishGraphProps> = ({ extCodfish }) => {
           left={margin.left}
           scale={yScale}
           tickValues={yTicks}
-          tickFormat={(value) => `${Number((value * 100).toPrecision(1))}%`}
+          tickFormat={(value) => `${Number(((value as number) * 100).toPrecision(1))}%`}
           tickLabelProps={() => ({
             fontSize: 12,
             textAnchor: 'end',

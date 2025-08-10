@@ -2,7 +2,7 @@ import React from 'react';
 import gql from 'graphql-tag';
 
 import StatTable from './stat-table';
-import ValidationReport from '../validation-report';
+import ValidationReport, {ValidationResult} from '../validation-report';
 // import StatHistogram from './stat-histogram';
 import config from '../../../config';
 
@@ -28,7 +28,7 @@ export interface MutationStatsProps {
   /** Currently selected minimum prevalence cutoff. */
   minPrevalence?: number;
   /** Validation results for the sequence reads. */
-  validationResults?: Record<string, any>;
+  validationResults?: ValidationResult[];
   /** Router used to navigate when cutoff is changed. */
   router: { push: (loc: any) => void };
   /** Match object describing current location. */
@@ -55,10 +55,10 @@ export default function MutationStats({
         <StatTable
           {...histogram}
           {...{match, router}}
-          currentCutoff={curCutoff}
+          currentCutoff={curCutoff ?? 0}
         />
         <ValidationReport
-          {...{validationResults}}
+          validationResults={validationResults ?? []}
           placeholder="No validation issue was found for the sequence reads."
         />
       </div>
