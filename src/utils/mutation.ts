@@ -203,17 +203,17 @@ export function parseAndValidateMutation(
     };
   }
   if (
-    !(gene in geneReferences) &&
-    !(gene in geneSynonyms)
+    !gene ||
+    (!(gene in geneReferences) && !(gene in geneSynonyms))
   ) {
-    const tryMatchGene = (
+    const upperGene = (gene ?? '').toUpperCase();
+    const tryMatchGene =
       Object.keys(geneReferences).find(
-        myGene => gene.toUpperCase() === myGene.toUpperCase()
+        myGene => upperGene === myGene.toUpperCase()
       ) ||
       Object.keys(geneSynonyms).find(
-        myGene => gene.toUpperCase() === myGene.toUpperCase()
-      )
-    );
+        myGene => upperGene === myGene.toUpperCase()
+      );
     if (!tryMatchGene) {
       errors.push(
         getMessage('mut-input-error-invalid-gene', messages)

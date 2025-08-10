@@ -98,9 +98,9 @@ function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
         render: (mutations: any, {variant}: any) => (
           <CellMutations {...{mutations, variant}} />
         ),
-        bodyCellStyle: {
-          '--desktop-max-width': '14rem'
-        },
+          bodyCellStyle: {
+            '--desktop-max-width': '14rem'
+          } as React.CSSProperties,
         sort: [({mutations}: any) => [
           mutations.length,
           ...mutations.map(({position, AAs}: any) => [position, AAs])
@@ -143,8 +143,12 @@ interface ConvPlasmaSuscSummaryTableProps {
   openRefInNewWindow?: boolean;
 }
 
-const ConvPlasmaSuscSummaryTable: React.FC<ConvPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
-  const {rows: displayRows, button, expanded} = useToggleDisplay(rows);
+  const ConvPlasmaSuscSummaryTable: React.FC<ConvPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
+    const normalizedRows = rows.map(row => ({
+      ...row,
+      displayOrder: row.displayOrder ?? 0
+    }));
+    const {rows: displayRows, button, expanded} = useToggleDisplay(normalizedRows);
   const columnDefs = useColumnDefs({openRefInNewWindow});
 
   if (rows.length > 0) {

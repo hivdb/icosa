@@ -66,38 +66,39 @@ export interface OptReferencesProps {
  * Conditionally render the list of references if any have been registered
  * within the current {@link ReferenceContext}.
  */
-  interface ReferenceContextValue {
-    hasAnyReference: (includeInlines?: boolean) => boolean;
-  }
+export default function OptReferences({
+  level = 2,
+  disableAnchor,
+  referenceTitle
+}: OptReferencesProps): JSX.Element | null {
+  const refContext = React.useContext(ReferenceContext);
+  const hasAnyReference = refContext?.hasAnyReference ?? (() => false);
 
-  export default function OptReferences({
-    level = 2,
-    disableAnchor,
-    referenceTitle
-  }: OptReferencesProps) {
-    const {hasAnyReference} = React.useContext(
-      ReferenceContext as React.Context<ReferenceContextValue>
-    );
   useAutoUpdate();
 
-  if (hasAnyReference(/* includeInlines= */true)) {
-    const hasFootnoteReferences = hasAnyReference(/* includeInlines= */false);
-      return <>
+  if (hasAnyReference(true)) {
+    const hasFootnoteReferences = hasAnyReference(false);
+    return (
+      <>
         <LoadExternalRefData />
-        {hasFootnoteReferences ?
+        {hasFootnoteReferences ? (
           <Collapsable.Section
             level={level}
             alwaysCollapsable
-            data-section-reference="">
-            {() => <>
-              <HeadingTag {...{disableAnchor, level}}>
-                {referenceTitle}
-              </HeadingTag>
-              <References />
-            </>}
-          </Collapsable.Section> :
-          null}
-      </>;
+            data-section-reference=""
+          >
+            {() => (
+              <>
+                <HeadingTag {...{ disableAnchor, level }}>
+                  {referenceTitle}
+                </HeadingTag>
+                <References />
+              </>
+            )}
+          </Collapsable.Section>
+        ) : null}
+      </>
+    );
   }
   return null;
 }

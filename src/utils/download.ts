@@ -8,10 +8,26 @@ declare global {
     showDirectoryPicker?: (options?: any) => Promise<any>;
   }
 
-  interface Navigator {
-    msSaveOrOpenBlob?: (blob: Blob, fileName: string) => void;
+    interface Navigator {
+      msSaveOrOpenBlob?: (blob: Blob, fileName: string) => void;
+    }
   }
-}
+
+  interface FilePickerAcceptType {
+    description?: string;
+    accept: Record<string, string[]>;
+  }
+
+  interface SaveFilePickerOptions {
+    suggestedName?: string;
+    types?: FilePickerAcceptType[];
+  }
+
+  interface DirectoryPickerOptions {
+    startIn: string;
+    mode: 'read' | 'readwrite';
+    id?: string;
+  }
 
 /**
  * Show a file picker dialog when supported by the browser.
@@ -42,14 +58,17 @@ export async function makeZip(
 ): Promise<any> {
   const zip = new JSZip();
   const reports = zip.folder(fileName.replace(/\.zip$/, ''));
-  files.forEach(({folder, fileName, data}) => {
-    if (folder) {
-      reports.folder(folder).file(fileName, data as any);
-    }
-    else {
-      reports.file(fileName, data as any);
-    }
-  });
+  if (!reports) {
+    throw new Error('Unable to create zip folder');
+  }
+    files.forEach(({folder, fileName, data}) => {
+      if (folder) {
+        reports.folder(folder)?.file(fileName, data as any);
+      }
+      else {
+        reports.file(fileName, data as any);
+      }
+    });
   return zip
     .generateAsync({
       type: 'blob',
@@ -223,14 +242,14 @@ export function useDownload({name, suffix, types, multiple = true}: UseDownloadA
   const onInit = React.useCallback(
     async () => {
       if (multiple && window.showDirectoryPicker) {
-        const dirOpt = {startIn: 'downloads', mode: 'readwrite'};
+        const dirOpt: DirectoryPickerOptions = {startIn: 'downloads', mode: 'readwrite'};
         if (name) {
           dirOpt.id = name;
         }
         state.current.dirHandle = await window.showDirectoryPicker(dirOpt);
       }
       else if (window.showSaveFilePicker) {
-        const fileOpt = {};
+        const fileOpt: SaveFilePickerOptions = {};
         if (multiple) {
           fileOpt.suggestedName = name + '.zip';
           fileOpt.types = [{
@@ -243,7 +262,9 @@ export function useDownload({name, suffix, types, multiple = true}: UseDownloadA
           fileOpt.suggestedName = name + suffix;
           fileOpt.types = types;
         }
-        fileOpt.suggestedName = cleanFileName(fileOpt.suggestedName);
+        if (fileOpt.suggestedName) {
+          fileOpt.suggestedName = cleanFileName(fileOpt.suggestedName);
+        }
         state.current.fileHandle = await window.showSaveFilePicker(fileOpt);
       }
       else if (multiple) {

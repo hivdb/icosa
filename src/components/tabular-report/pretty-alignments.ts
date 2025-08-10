@@ -43,13 +43,13 @@ export default function prettyAlignments({
       ...refAAs.map((_, pos0) => `${pos0 + 1}`)
     ];
     const rows: Record<string, string>[] = [
-      {
-        'Sequence Name': 'Ref Sequence',
-        ...refAAs.reduce((acc, aa, pos0) => {
-          acc[`${pos0 + 1}`] = aa;
-          return acc;
-        }, {})
-      }
+        {
+          'Sequence Name': 'Ref Sequence',
+          ...refAAs.reduce<Record<string, string>>((acc, aa, pos0) => {
+            acc[`${pos0 + 1}`] = String(aa);
+            return acc;
+          }, {})
+        }
     ];
     const seqResults = (sequenceAnalysis || sequenceReadsAnalysis) as any[];
     for (const seqResult of seqResults) {
@@ -60,9 +60,9 @@ export default function prettyAlignments({
       const geneSeq = (
         seqResult.alignedGeneSequences ||
         seqResult.allGeneSequenceReads
-      ).find(
-        ({gene: {name}}) => name === geneKey
-      );
+        ).find(
+          ({gene}: {gene: {name: string}}) => gene.name === geneKey
+        );
       if (geneSeq) {
         const {mutations, unsequencedRegions: unseqs} = geneSeq;
         for (const {posStart, posEnd} of unseqs.regions) {

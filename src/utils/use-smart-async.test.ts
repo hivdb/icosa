@@ -3,6 +3,9 @@
 // stable. Once the underlying issue is resolved this test should be
 // re-enabled.
 import {describe, it} from 'vitest';
+import {renderHook, waitFor} from '@testing-library/react';
+
+import useSmartAsync from './use-smart-async';
 
 // FIXME: This test intermittently hangs in the test runner and is temporarily
 // disabled. Once the underlying issue with useSmartAsync or the test

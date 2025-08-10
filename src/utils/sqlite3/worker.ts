@@ -1,3 +1,5 @@
+/// <reference lib="WebWorker" />
+
 import initSqlJs from 'sql.js';
 import sqlWASM from 'sql.js/dist/sql-wasm.wasm';
 
@@ -10,7 +12,7 @@ let db: any;
  *
  * @param SQL - Initialized sql.js module.
  */
-function onModuleReady(SQL: any) {
+function onModuleReady(this: MessageEvent, SQL: any) {
   function createDb(data?: Uint8Array) {
     if (db != null) db.close();
     db = new SQL.Database(data);
@@ -18,13 +20,13 @@ function onModuleReady(SQL: any) {
   }
 
   let buff: ArrayBuffer | undefined; let data: any; let result: any;
-  data = (this as any)["data"];
+  data = (this as MessageEvent)["data"];
   const config = data["config"] ? data["config"] : {};
   switch (data && data["action"]) {
     case "open":
       buff = data["buffer"];
       createDb(buff && new Uint8Array(buff));
-      return postMessage({
+      return self.postMessage({
         id: data["id"],
         ready: true
       });
@@ -35,7 +37,7 @@ function onModuleReady(SQL: any) {
       if (!data["sql"]) {
         throw new Error("exec: Missing query string");
       }
-      return postMessage({
+      return self.postMessage({
         id: data["id"],
         results: db.exec(data["sql"], data["params"], config)
       });
@@ -44,14 +46,14 @@ function onModuleReady(SQL: any) {
         createDb();
       }
       const callback = function callback(row: any) {
-        return postMessage({
+        return self.postMessage({
           id: data["id"],
           row,
           finished: false
         });
       };
       const done = function done() {
-        return postMessage({
+        return self.postMessage({
           id: data["id"],
           finished: true
         });
@@ -64,15 +66,15 @@ function onModuleReady(SQL: any) {
         buffer: buff
       };
       try {
-        return postMessage(result, [result]);
+        return self.postMessage(result, [result.buffer as ArrayBuffer]);
       } catch (error) {
-        return postMessage(result);
+        return self.postMessage(result);
       }
     case "close":
       if (db) {
         db.close();
       }
-      return postMessage({
+      return self.postMessage({
         id: data["id"]
       });
     default:
@@ -80,9 +82,9 @@ function onModuleReady(SQL: any) {
   }
 }
 
-function onError(err: any) {
-  return postMessage({
-    id: (this as any)["data"]["id"],
+function onError(this: MessageEvent, err: any) {
+  return self.postMessage({
+    id: (this as MessageEvent)["data"]["id"],
     error: err["message"]
   });
 }
@@ -96,3 +98,5 @@ if (typeof importScripts === "function") {
       .catch(onError.bind(event));
   };
 }
+
+export default {} as any;

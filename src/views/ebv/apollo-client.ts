@@ -9,9 +9,15 @@ import {
 // import {HttpLink} from 'apollo-link-http';
 
 
+/**
+ * Construct a new Apollo client instance for EBV queries.
+ *
+ * @param config - Runtime configuration containing the GraphQL URI.
+ * @returns A freshly created {@link ApolloClient} instance.
+ */
 function buildClient(config: any): ApolloClient<any> {
-  // avoid using ApolloProvider, instead providing a fresh client
-  // to SequenceAnalysisLayout at each time. The cache can be very
+  // Avoid using ApolloProvider, instead providing a fresh client
+  // to SequenceAnalysisLayout each time. The cache can be very
   // tricky to handle when making multiple independent queries.
   const apolloClient = new ApolloClient({
     link: new HttpLink({uri: config.graphqlURI}),
@@ -24,10 +30,10 @@ function buildClient(config: any): ApolloClient<any> {
             sequenceAnalysis: {
               keyArgs: false,
               merge: (existing = [], incoming) => {
-                const merged = {};
+                const merged: Record<string, unknown> = {};
                 for (const seq of [...existing, ...incoming]) {
-                  const {inputSequence: {header}} = seq;
-                  merged[header] = seq;
+                  const { inputSequence: { header } } = seq as any;
+                  merged[header as string] = seq;
                 }
                 return Array.from(Object.values(merged));
               }

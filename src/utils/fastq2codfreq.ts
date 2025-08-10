@@ -1,12 +1,61 @@
-import axios from 'axios';
+import axios, {type AxiosResponse} from 'axios';
 import sleep from 'sleep-promise';
 
 import {makeDownload} from './download';
 
 const API_SERVER = 'https://codfreq-api.hivdb.org';
 
+/**
+ * Shape of the server response when a new task is created.
+ */
+interface CreateTaskResponse {
+  taskKey: string;
+  lastUpdatedAt: string;
+  status: string;
+}
 
-function handleResponseError(e: any) {
+/**
+ * Metadata returned for uploading a file directly to the server.
+ */
+interface PresignedPost {
+  url: string;
+  fields: Record<string, string>;
+}
+
+/**
+ * Representation of a FASTQ file pair.
+ */
+interface FilePair {
+  name: string;
+  pair: (File | null)[];
+  n: number;
+}
+
+/**
+ * Tuple used internally to track upload progress.
+ */
+type UploadProgressTuple = [number, Promise<UploadProgressTuple> | null];
+
+/**
+ * A batch of log events emitted by the runner.
+ */
+interface RunnerLogEntry {
+  ecsTaskId: string;
+  events: {timestamp: number; [key: string]: any}[];
+}
+
+interface RunnerLogsResponse {
+  status: string;
+  taskEvents: RunnerLogEntry[];
+}
+
+/**
+ * Normalize server errors to a standard {@link Error} instance.
+ *
+ * @param e - Axios error object thrown by the request.
+ * @throws Error wrapping the server response.
+ */
+function handleResponseError(e: any): never {
   if (!e.response || !e.response.data) {
     throw e;
   }
@@ -14,36 +63,53 @@ function handleResponseError(e: any) {
   throw new Error(`Server rejected our request: ${error}`);
 }
 
-
-async function createTask(options: any) {
-  let resp;
+/**
+ * Create a new asynchronous processing task on the server.
+ *
+ * @param options - Task configuration to send to the server.
+ * @returns The task key and initial metadata.
+ */
+async function createTask(options: unknown): Promise<CreateTaskResponse> {
+  let resp: AxiosResponse<CreateTaskResponse> | undefined;
   try {
-    resp = await axios.post(`${API_SERVER}/create-task`, {
+    resp = await axios.post<CreateTaskResponse>(`${API_SERVER}/create-task`, {
       options
     });
   } catch (e) {
     handleResponseError(e);
   }
-  const {
-    taskKey,
-    lastUpdatedAt,
-    status
-  } = resp.data;
+  if (!resp) {
+    throw new Error('No response received from create-task endpoint');
+  }
+  const {taskKey, lastUpdatedAt, status} = resp.data;
   return {taskKey, lastUpdatedAt, status};
 }
 
 
-async function * uploadFile(file: any, url: string, fields: Record<string, any>) {
+/**
+ * Upload a single file to the server while yielding progress updates.
+ *
+ * @param file - File object to upload.
+ * @param url - Presigned POST URL.
+ * @param fields - Form fields required by the presigned POST.
+ * @yields Progress information for the upload.
+ */
+async function* uploadFile(
+  file: File,
+  url: string,
+  fields: Record<string, string>
+): AsyncGenerator<{step: string; description: string; count: number; total: number}> {
   const formData = new FormData();
   for (const name in fields) {
     formData.append(name, fields[name]);
   }
   formData.append('file', file);
   const fileSize = file.size;
-  let progress = new Promise(resolve => axios
+  let progress: Promise<UploadProgressTuple> | null = new Promise(resolve => axios
     .post(url, formData, {
       onUploadProgress: evt => {
-        const nextProgress = new Promise(nextResolve => {
+        let nextProgress: Promise<UploadProgressTuple>;
+        nextProgress = new Promise<UploadProgressTuple>(nextResolve => {
           if (evt.loaded >= fileSize) {
             return;
           }
@@ -57,23 +123,20 @@ async function * uploadFile(file: any, url: string, fields: Record<string, any>)
         });
       }
     })
-    .then(() => resolve([1, null]))
+    .then(() => resolve([fileSize, null]))
     .catch((e) => handleResponseError(e)));
   let prevCount = 0;
-  while (progress !== null) {
-    const payload = await progress;
-    const count = payload[0];
-    progress = payload[1];
-    if (count < fileSize) {
-      if (count > prevCount) {
-        yield {
-          step: `upload:${file.name}`,
-          description: `Uploading ${file.name}...`,
-          count,
-          total: fileSize
-        };
-        prevCount = count;
-      }
+    while (progress !== null) {
+      const [count, nextProgress]: UploadProgressTuple = await progress;
+      progress = nextProgress;
+    if (count < fileSize && count > prevCount) {
+      yield {
+        step: `upload:${file.name}`,
+        description: `Uploading ${file.name}...`,
+        count,
+        total: fileSize
+      };
+      prevCount = count;
     }
   }
   yield {
@@ -85,27 +148,37 @@ async function * uploadFile(file: any, url: string, fields: Record<string, any>)
 }
 
 
-async function * uploadFiles(taskKey: string, filePairs: any[]) {
-  const files = filePairs.reduce(
+/**
+ * Upload all FASTQ files for the task, yielding progress events for each.
+ *
+ * @param taskKey - Identifier of the server-side task.
+ * @param filePairs - Collection of FASTQ file pairs to upload.
+ */
+async function* uploadFiles(
+  taskKey: string,
+  filePairs: FilePair[]
+): AsyncGenerator<{step: string; description: string; count: number; total: number}> {
+  const files = filePairs.reduce<File[]>(
     (acc, {pair}) => [
       ...acc,
-      ...pair.filter(f => f)
+      ...pair.filter((f): f is File => Boolean(f))
     ],
     []
   );
   const fileNames = files.map(({name}) => name);
-  let resp;
+  let resp: AxiosResponse<{presignedPosts: PresignedPost[]}> | undefined;
   try {
-    resp = await axios.post(
+    resp = await axios.post<{presignedPosts: PresignedPost[]}>(
       `${API_SERVER}/direct-upload`,
       {taskKey, fileNames}
     );
   } catch (e) {
     handleResponseError(e);
   }
-  const {
-    presignedPosts
-  } = resp.data;
+  if (!resp) {
+    throw new Error('No response received from direct-upload endpoint');
+  }
+  const {presignedPosts} = resp.data;
   yield {
     step: 'upload-credential',
     description: 'Retriving uploading credential...',
@@ -122,11 +195,22 @@ async function * uploadFiles(taskKey: string, filePairs: any[]) {
 }
 
 
-async function triggerRunner(taskKey: string, filePairs: any[], runners: any) {
+/**
+ * Ask the server to start processing the uploaded files.
+ *
+ * @param taskKey - Task identifier returned by {@link createTask}.
+ * @param filePairs - Files that have been uploaded for the task.
+ * @param runners - Runner configuration object passed through to the API.
+ */
+async function triggerRunner(
+  taskKey: string,
+  filePairs: FilePair[],
+  runners: unknown
+): Promise<void> {
   const pairInfo = filePairs.map(
     ({name, pair, n}) => ({
       name,
-      pair: pair.map(f => f ? f.name : null),
+      pair: pair.map(f => (f ? f.name : null)),
       n
     })
   );
@@ -148,13 +232,18 @@ async function triggerRunner(taskKey: string, filePairs: any[], runners: any) {
 }
 
 
-async function * fetchRunnerProgress(taskKey: string) {
-  let prevCounts = {};
-  for await (const event of fetchRunnerLogs(taskKey)) {
+/**
+ * Stream progress events emitted by the server while processing files.
+ *
+ * @param taskKey - Identifier of the task whose progress is being tracked.
+ */
+async function* fetchRunnerProgress(taskKey: string) {
+  let prevCounts: Record<string, number> = {};
+  for await (const event of fetchRunnerLogs(taskKey) as AsyncGenerator<any>) {
     const {op, numTasks, ecsTaskId} = event;
     switch (op) {
       case 'preprocess': {
-        const {status, query} = event;
+        const {status, query} = event as any;
         let qname = query.split('/');
         qname = qname[qname.length - 1];
         yield {
@@ -166,7 +255,7 @@ async function * fetchRunnerProgress(taskKey: string) {
         break;
       }
       case 'trim': {
-        const {status, command, query} = event;
+        const {status, command, query} = event as any;
         let qname = query.split('/');
         qname = qname[qname.length - 1];
         yield {
@@ -178,7 +267,7 @@ async function * fetchRunnerProgress(taskKey: string) {
         break;
       }
       case 'alignment': {
-        const {status, query, target} = event;
+        const {status, query, target} = event as any;
         let qname = query.split('/');
         qname = qname[qname.length - 1];
         yield {
@@ -193,11 +282,13 @@ async function * fetchRunnerProgress(taskKey: string) {
         break;
       }
       case 'progress': {
-        const {count, total, fastqs} = event;
-        const fnames = fastqs.filter(fn => fn).map(fn => {
-          fn = fn.split('/');
-          return fn[fn.length - 1];
-        });
+        const {count, total, fastqs} = event as any;
+        const fnames = fastqs
+          .filter((fn): fn is string => Boolean(fn))
+          .map((fn: string) => {
+            const parts = fn.split('/');
+            return parts[parts.length - 1];
+          });
         const fnamesText = fnames.join(', ');
         if (count > (prevCounts[fnamesText] || 0)) {
           yield {
@@ -219,24 +310,32 @@ async function * fetchRunnerProgress(taskKey: string) {
 }
 
 
-async function * fetchRunnerLogs(taskKey: string) {
-  let startTime = undefined;
+/**
+ * Fetch log events from the server, yielding them as they arrive.
+ *
+ * @param taskKey - Identifier of the task.
+ */
+async function* fetchRunnerLogs(taskKey: string): AsyncGenerator<{ecsTaskId: string; numTasks: number; [key: string]: any}> {
+  let startTime: number[] | undefined;
   while (true) {
-    let resp;
+    let resp: AxiosResponse<RunnerLogsResponse> | undefined;
     try {
-      resp = await axios.post(`${API_SERVER}/fetch-runner-logs`, {
+      resp = await axios.post<RunnerLogsResponse>(`${API_SERVER}/fetch-runner-logs`, {
         taskKey,
         ...(startTime ? {startTime: startTime.join(',')} : {})
       });
     } catch (e) {
       handleResponseError(e);
     }
+    if (!resp) {
+      throw new Error('No response received from fetch-runner-logs endpoint');
+    }
     const {status, taskEvents} = resp.data;
     const numTasks = taskEvents.length;
-    const newStartTime = [];
+    const newStartTime: number[] = [];
     for (let i = 0; i < numTasks; i ++) {
-      const curStartTs = startTime ? startTime[i] : 1;
-      const {ecsTaskId, events} = taskEvents[i];
+      const curStartTs: number = startTime ? startTime[i] : 1;
+      const {ecsTaskId, events}: RunnerLogEntry = taskEvents[i];
       for (const event of events) {
         if (event.timestamp < curStartTs) {
           continue;
@@ -262,10 +361,22 @@ async function * fetchRunnerLogs(taskKey: string) {
 }
 
 
-export async function saveAllFiles(taskKey: string, {onAddFile, onFinish}: any) {
-  let resp;
-  let nextToken;
-  let isTruncated;
+/**
+ * Download all files associated with a task and forward them to callbacks.
+ *
+ * @param taskKey - Identifier of the task to download files from.
+ * @param handlers - Callback hooks for each file and completion.
+ */
+export async function saveAllFiles(
+  taskKey: string,
+  {onAddFile, onFinish}: {
+    onAddFile: (args: {fileName: string; data: Blob; isBlob: boolean}) => Promise<void> | void;
+    onFinish: () => void;
+  }
+): Promise<void> {
+  let resp: Response | undefined;
+  let nextToken: string | undefined;
+  let isTruncated: boolean | undefined;
   do {
     try {
       resp = await fetch(`${API_SERVER}/fetch-allfiles`, {
@@ -278,7 +389,14 @@ export async function saveAllFiles(taskKey: string, {onAddFile, onFinish}: any) 
     } catch (e) {
       handleResponseError(e);
     }
-    const payload = await resp.json();
+    if (!resp) {
+      throw new Error('No response received from fetch-allfiles endpoint');
+    }
+    const payload: {
+      isTruncated: boolean;
+      nextToken?: string;
+      files: {fileName: string; url: string}[];
+    } = await resp.json();
     isTruncated = payload.isTruncated;
     nextToken = payload.nextToken;
     for (const {fileName, url} of payload.files) {
@@ -294,9 +412,13 @@ export async function saveAllFiles(taskKey: string, {onAddFile, onFinish}: any) 
   onFinish();
 }
 
-
-export async function downloadCodfreqs(taskKey: string) {
-  let resp;
+/**
+ * Trigger download of codfreq results as a ZIP archive.
+ *
+ * @param taskKey - Identifier of the task whose results to download.
+ */
+export async function downloadCodfreqs(taskKey: string): Promise<void> {
+  let resp: Response | undefined;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs-zip`, {
       method: 'POST',
@@ -307,17 +429,19 @@ export async function downloadCodfreqs(taskKey: string) {
   } catch (e) {
     handleResponseError(e);
   }
-  makeDownload(
-    'codfreqs.zip',
-    'application/zip',
-    await resp.blob(),
-    true
-  );
+  if (resp) {
+    makeDownload(
+      'codfreqs.zip',
+      'application/zip',
+      await resp.blob(),
+      true
+    );
+  }
 }
 
 
 async function fetchCodfreqs(taskKey: string) {
-  let resp;
+  let resp: Response | undefined;
   try {
     resp = await fetch(`${API_SERVER}/fetch-codfreqs`, {
       method: 'POST',
@@ -327,6 +451,9 @@ async function fetchCodfreqs(taskKey: string) {
     });
   } catch (e) {
     handleResponseError(e);
+  }
+  if (!resp || !resp.body) {
+    throw new Error('Invalid codfreqs response');
   }
   const beginMarker = '"codfreqs": [';
   const sepMarker = ', ';
@@ -431,7 +558,7 @@ export async function * restoreTask(taskKey: string) {
       };
     }
   }
-  catch (e) {
+  catch (e: any) {
     if (/this task is not triggered yet/.test(e.message)) {
       yield {
         loaded,

@@ -38,7 +38,7 @@ const MAX_WORKERS = (() => {
   if (workers < 1) {
     workers = 1;
   }
-  const ram = window.navigator.deviceMemory;
+  const ram = (window.navigator as any).deviceMemory;
   if (ram) {
     workers = Math.min(workers, Math.ceil(ram / 0.5));
   }
@@ -54,7 +54,9 @@ async function createClient(
   dbName: string,
   baseURI = BASE_URI
 ): Promise<[Worker, () => void]> {
-  let worker: Worker | null, onRelease: (idx: number) => void, curIdx: number;
+  let worker: Worker | null = null,
+    onRelease: (idx: number) => void,
+    curIdx: number;
   const dbURI = `https://${baseURI}/${dbName}/${dbName}-${dbVersion}.db`;
   WORKER_POOL[dbURI] = WORKER_POOL[dbURI] || {
     pool: new Array<Worker|null>(MAX_WORKERS).fill(null),
@@ -62,7 +64,7 @@ async function createClient(
     locks: new Array(MAX_WORKERS).fill(null) as any
   };
   const {pool, totalWorkers, locks} = WORKER_POOL[dbURI];
-  do {
+  while (!worker) {
     curIdx = locks.findIndex(lock => lock === null);
     if (curIdx > -1 && pool[curIdx] !== null) {
       worker = pool[curIdx];
@@ -88,18 +90,16 @@ async function createClient(
 
       const {payload} = await loadBinary(dbURI);
 
-      const promise = new Promise(
-        resolve => {
+        const promise = new Promise<Worker>(resolve => {
           newWorker.addEventListener('message', handleMessage);
 
-          function handleMessage({data}: {data: any}) {
+          function handleMessage({ data }: { data: any }) {
             if (data.id === 1 && data.ready) {
               newWorker.removeEventListener('message', handleMessage);
               resolve(newWorker);
             }
           }
-        }
-      );
+        });
 
       newWorker.postMessage({
         id: 1,
@@ -130,11 +130,11 @@ async function createClient(
       );
     }
     break;
-  } while (!worker);
+  }
 
-  return [await worker, () => {
-    pool[curIdx] = worker;
-    onRelease(curIdx);
+  return [worker!, () => {
+      pool[curIdx] = worker;
+      onRelease(curIdx);
     // eslint-disable-next-line no-console
     console.debug(
       'SQLite pool: Put worker back' +
@@ -142,12 +142,10 @@ async function createClient(
     );
   }];
 
-  function updateLocks(idx) {
-    locks[idx] = new Promise(
-      resolve => {
-        onRelease = resolve;
-      }
-    );
+  function updateLocks(idx: number) {
+    locks[idx] = new Promise(resolve => {
+      onRelease = resolve;
+    });
   }
 
 }
@@ -161,38 +159,35 @@ const execSQL = memoize(
       releaseWorker
     ] = await createClient(dbVersion, dbName, baseURI);
 
-    const myId = parseInt(
-      Math.random() * (Number.MAX_SAFE_INTEGER - 1)
-    ) + 1;
+    const myId =
+      Math.floor(Math.random() * (Number.MAX_SAFE_INTEGER - 1)) + 1;
 
-    const promise = new Promise(
-      resolve => {
-        worker.addEventListener('message', handleMessage);
+    const promise = new Promise<any[]>(resolve => {
+      worker.addEventListener('message', handleMessage);
 
-        function handleMessage({data: {id, results, error}}: {data: any}) {
-          if (id === myId) {
-            if (error) {
-              console.error(sql, params, error);
-            }
-            worker.removeEventListener('message', handleMessage);
-            releaseWorker();
-            const end = new Date().getTime();
-            if (process.env.NODE_ENV !== 'production') {
-              // eslint-disable-next-line no-console
-              console.debug(
-                `${results && results.length > 0 ?
-                  `${results[0].values.length} returned` :
-                  'SQL was executed'} in ${end - start}ms:`,
-                sql,
-                params,
-                results
-              );
-            }
-            resolve(results);
+      function handleMessage({ data: { id, results, error } }: { data: any }) {
+        if (id === myId) {
+          if (error) {
+            console.error(sql, params, error);
           }
+          worker.removeEventListener('message', handleMessage);
+          releaseWorker();
+          const end = new Date().getTime();
+          if (process.env.NODE_ENV !== 'production') {
+            // eslint-disable-next-line no-console
+            console.debug(
+              `${results && results.length > 0
+                ? `${results[0].values.length} returned`
+                : 'SQL was executed'} in ${end - start}ms:`,
+              sql,
+              params,
+              results
+            );
+          }
+          resolve(results);
         }
       }
-    );
+    });
 
     worker.postMessage({
       id: myId,
@@ -244,7 +239,10 @@ export function useQuery({
   if (!skip && !baseURI) {
     throw new Error('Required parameter "baseURI" is empty');
   }
-  const [[resQueryString, res], setRes] = React.useState([null, null]);
+  const [[resQueryString, res], setRes] = React.useState<[string | null, any]>([
+    null,
+    null
+  ]);
   const queryString = React.useMemo(
     () => JSON.stringify({sql, params, dbVersion, dbName, baseURI}),
     [sql, params, dbVersion, dbName, baseURI]
@@ -257,14 +255,19 @@ export function useQuery({
       }
       let mounted = true;
       setRes([null, null]);
-      execSQL(JSON.parse(queryString))
-        .then(res => mounted && setRes([queryString, res]));
-      return () => mounted = false;
-    },
-    [
-      setRes,
-      queryString,
-      skip
+        execSQL(JSON.parse(queryString)).then(res => {
+          if (mounted) {
+            setRes([queryString, res]);
+          }
+        });
+        return () => {
+          mounted = false;
+        };
+      },
+      [
+        setRes,
+        queryString,
+        skip
     ]
   );
 
@@ -282,21 +285,21 @@ export function useQuery({
             isPending: false
           };
         }
-        let [{
-          columns,
-          values
-        }] = res;
+        let [{ columns, values }] = res as any;
         if (camel) {
-          columns = columns.map(col => camelCase(col));
+          columns = (columns as string[]).map(col => camelCase(col));
         }
 
         return {
-          payload: values.map(record => (
-            columns.reduce((acc, col, idx) => {
-              acc[col] = record[idx];
-              return acc;
-            }, {})
-          )),
+          payload: (values as any[]).map((record: any[]) =>
+            (columns as string[]).reduce<Record<string, any>>(
+              (acc: Record<string, any>, col: string, idx: number) => {
+                acc[col] = record[idx];
+                return acc;
+              },
+              {}
+            )
+          ),
           isPending: false
         };
       }

@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 
 import ConfigContext from '../../utils/config-context';
 
@@ -32,7 +31,7 @@ export default function PrintHeader({curAnalysis}: PrintHeaderProps): JSX.Elemen
 
   const [config, isPending] = ConfigContext.use();
 
-  if (!isPending) {
+  if (!isPending && config) {
     title = config.messages[`${curAnalysis}-report-title`];
   }
 

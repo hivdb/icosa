@@ -29,18 +29,19 @@ export interface MismatchMutationsProps {
  */
 export default function MismatchMutations({ rows }: MismatchMutationsProps) {
   const variantRows = React.useMemo(
-    () =>
-      rows
-        .filter(({ variant }) => variant !== null)
-        .map(({
-          variant: { name },
-          variantMatchingMutations,
-          variantExtraMutations,
-          variantMissingMutations,
-        }) => {
-          const matchingMutations = shortenMutationList(
-            variantMatchingMutations
-          ).map(({ text }) => text);
+      () =>
+        rows
+          .filter((row): row is MismatchRow & {variant: Variant} => row.variant !== null)
+          .map(({
+            variant,
+            variantMatchingMutations,
+            variantExtraMutations,
+            variantMissingMutations,
+          }) => {
+            const {name} = variant;
+            const matchingMutations = shortenMutationList(
+              variantMatchingMutations
+            ).map(({ text }) => text);
           const extraMutations = shortenMutationList(variantExtraMutations).map(
             ({ text }) => text
           );
