@@ -129,8 +129,7 @@ function ExtendedMarkdown({
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers
   } as Record<string, any>;
-  /* c8 ignore next */
-  mdProps.renderers = generalRenderers ?? {};
+  mdProps.renderers = generalRenderers;
   let jsx = (
     <OrigMarkdown
       {...mdProps}
@@ -173,8 +172,20 @@ function ExtendedMarkdown({
   return jsx;
 }
 export {ExtendedMarkdown};
-export default React.memo(
-  ExtendedMarkdown,
-  /* c8 ignore next */
-  ({children: prev}, {children: next}: ExtendedMarkdownProps) => prev === next
-);
+/**
+ * Compare two sets of props to determine if memoized rendering can be skipped.
+ * Only the `children` field is relevant because the output is entirely derived
+ * from the markdown string.
+ *
+ * @param prev - Previous props.
+ * @param next - Next props.
+ * @returns `true` when the markdown source is identical.
+ */
+export function areChildrenEqual(
+  {children: prev}: ExtendedMarkdownProps,
+  {children: next}: ExtendedMarkdownProps
+): boolean {
+  return prev === next;
+}
+
+export default React.memo(ExtendedMarkdown, areChildrenEqual);

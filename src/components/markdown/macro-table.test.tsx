@@ -1,5 +1,10 @@
 import {render, screen} from '@testing-library/react';
-import TableNodeWrapper, {buildColumnDefs, expandMultiCells} from './macro-table';
+import TableNodeWrapper, {
+  buildColumnDefs,
+  expandMultiCells,
+  InlineParagraph,
+  tableMacro
+} from './macro-table';
 
 describe('macro-table utilities', () => {
   it('builds columns and expands data', () => {
@@ -31,11 +36,14 @@ describe('macro-table utilities', () => {
     built[2].render(row.c3, row, {}, {joinBy: ', '});
     built[2].render(undefined, row, {}, {joinBy: ', '});
     built[3].render(row.c4, row, {}, {});
+    built[3].render([{doi: '10', firstAuthor: {surname: 'Foo'}, year: 2020, journal: 'J', journalShort: 'Jr'}], row, {}, {});
+    built[3].render([{freeText: 'free'}], row, {}, {});
     built[4].render(row.c5, row, {}, {});
     built[4].render([{name: 'Drug', ec50: '2'}], row, {}, {});
     built[4].render('invalid' as any, row, {}, {});
     built[5].render(row.c6, row, {}, {});
     built[6].render(row.c7, row, {}, {});
+    built[6].render(false, row, {}, {});
     built[7].render(row.c8, row, {}, {});
     built[3].sort?.([{references: [{firstAuthor: {surname: 'B'}, year: 2020}]}], 'references');
     built[6].sort?.([{c7: '2'}, {c7: '1'}], 'c7');
@@ -54,5 +62,19 @@ describe('TableNodeWrapper', () => {
     const Wrapper2 = TableNodeWrapper({tables: {}, mdProps: {renderers: {}}});
     render(<Wrapper2 tableName="missing" />);
     expect(screen.getByText(/table data of missing is not found/)).toBeTruthy();
+  });
+
+  it('renders InlineParagraph without wrapper', () => {
+    const {container} = render(<InlineParagraph>text</InlineParagraph>);
+    expect(container.textContent).toBe('text');
+    expect(container.querySelector('p')).toBeNull();
+  });
+
+  it('builds TableNode from macro handler', () => {
+    expect(tableMacro(' name ', {foo: 1})).toEqual({
+      foo: 1,
+      type: 'TableNode',
+      tableName: 'name'
+    });
   });
 });

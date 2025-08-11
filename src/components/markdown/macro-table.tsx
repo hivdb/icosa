@@ -4,21 +4,28 @@ import nestedGet from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 import OrigMarkdown from 'react-markdown/with-html';
 
-/* c8 ignore next */
 import macroPlugin from './macro-plugin';
 import SimpleTable, {ColumnDef} from '../simple-table';
 import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
 
 import style from './style.module.scss';
 
-/** Register the `table` macro for markdown. */
-/* c8 ignore start */
-macroPlugin.addMacro('table', (content: string, props: Record<string, unknown>) => ({
-  ...props,
-  type: 'TableNode',
-  tableName: content.trim()
-}));
-/* c8 ignore end */
+/**
+ * Macro handler converting `table` directives into {@link TableNode} objects.
+ *
+ * @param content - Inner text of the macro indicating the table name.
+ * @param props - Additional properties defined on the macro tag.
+ * @returns AST node consumed by {@link TableNodeWrapper}.
+ */
+export function tableMacro(content: string, props: Record<string, unknown>) {
+  return {
+    ...props,
+    type: 'TableNode',
+    tableName: content.trim()
+  } as const;
+}
+
+macroPlugin.addMacro('table', tableMacro);
 
 /**
  * Convert new line characters to `<br/>` in markdown text.
@@ -216,8 +223,7 @@ interface InlineParagraphProps {
 }
 
 /** Simple paragraph renderer used inside tables to avoid wrapping. */
-/* c8 ignore next 3 */
-function InlineParagraph({children}: InlineParagraphProps) {
+export function InlineParagraph({children}: InlineParagraphProps) {
   return <>{children}</>;
 }
 

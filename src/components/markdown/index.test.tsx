@@ -1,5 +1,5 @@
 import {render} from '@testing-library/react';
-import ExtendedMarkdown from './index';
+import ExtendedMarkdown, {areChildrenEqual} from './index';
 
 describe('ExtendedMarkdown', () => {
   it('renders TOC, collapsable sections and references', () => {
@@ -11,8 +11,8 @@ describe('ExtendedMarkdown', () => {
     );
     expect(container.querySelector('#_toc')).not.toBeNull();
     expect(container.querySelector('[class*="collapse-h2"]')).not.toBeNull();
-    // invoke memo comparator for coverage
-    expect((ExtendedMarkdown as any).compare({children: 'a'}, {children: 'a'})).toBe(true);
+    expect(areChildrenEqual({children: 'a'} as any, {children: 'a'} as any)).toBe(true);
+    expect(areChildrenEqual({children: 'a'} as any, {children: 'b'} as any)).toBe(false);
   });
 
   it('renders inline markdown without references or heading anchors', () => {
@@ -25,4 +25,5 @@ describe('ExtendedMarkdown', () => {
     expect(container.querySelector('h1 a')).toBeNull();
     expect(container.querySelector('p')).toBeNull();
   });
+
 });
