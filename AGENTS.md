@@ -51,6 +51,8 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 
 * Add or update tests for changed code. Favor **component tests** with @testing-library/react and **unit tests** for utilities.
 * If you must temporarily comment out a failing test to unblock CI, leave a **clear TODO** with rationale and a pointer to an issue/PR.
+* The Markdown renderer under `src/components/markdown` must maintain **100% test coverage**.
+* Never use `/* c8 ignore */` comments to skip covering large sections of code—write tests instead.
 
 ---
 

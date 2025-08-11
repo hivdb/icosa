@@ -1,5 +1,9 @@
 import React from 'react';
-import OrigMarkdown from 'react-markdown/with-html';
+import OrigMarkdown from 'react-markdown';
+import htmlParser from 'react-markdown/plugins/html-parser';
+// The html-parser plugin replicates the deprecated `with-html` entry by
+// allowing raw HTML inside markdown documents.
+const parseHtml = htmlParser({isValidNode: () => true});
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
@@ -19,6 +23,16 @@ import macroPlugin, {BadMacroNode} from './macro-plugin';
 import TableNodeWrapper from './macro-table';
 import GenomeMapNodeWrapper from './macro-genome-map';
 import TOCNodeWrapper from './macro-toc';
+
+/**
+ * Normalize markdown children by concatenating arrays into a single string.
+ *
+ * @param children - Raw markdown content or array of fragments.
+ * @returns A single markdown string.
+ */
+export function normalizeChildren(children: string | string[]): string {
+  return Array.isArray(children) ? children.join('') : children;
+}
 
 /**
  * Structure of a table referenced by markdown macros.
@@ -99,12 +113,12 @@ function ExtendedMarkdown({
   renderers: addRenderers = {},
   ...props
 }: ExtendedMarkdownProps) {
-  if (children instanceof Array) {
-    children = children.join('');
-  }
+  children = normalizeChildren(children);
   const mdProps: any = {
     parserOptions: {footnotes: true},
     transformLinkUri: false,
+    escapeHtml: false,
+    astPlugins: [parseHtml],
     ...props
   };
   const generalRenderers = {
@@ -129,7 +143,7 @@ function ExtendedMarkdown({
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers
   } as Record<string, any>;
-  mdProps.renderers = generalRenderers ?? {};
+  mdProps.renderers = generalRenderers;
   let jsx = (
     <OrigMarkdown
       {...mdProps}
@@ -171,8 +185,21 @@ function ExtendedMarkdown({
   }
   return jsx;
 }
+export {ExtendedMarkdown};
+/**
+ * Compare two sets of props to determine if memoized rendering can be skipped.
+ * Only the `children` field is relevant because the output is entirely derived
+ * from the markdown string.
+ *
+ * @param prev - Previous props.
+ * @param next - Next props.
+ * @returns `true` when the markdown source is identical.
+ */
+export function areChildrenEqual(
+  {children: prev}: ExtendedMarkdownProps,
+  {children: next}: ExtendedMarkdownProps
+): boolean {
+  return prev === next;
+}
 
-export default React.memo(
-  ExtendedMarkdown,
-  ({children: prev}, {children: next}: ExtendedMarkdownProps) => prev === next
-);
+export default React.memo(ExtendedMarkdown, areChildrenEqual);

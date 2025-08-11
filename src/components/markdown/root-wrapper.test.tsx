@@ -29,4 +29,13 @@ describe('root-wrapper utilities', () => {
     const result = renderRoot({children: nodes as any});
     expect(React.Children.count((result as any).props.children)).toBe(1);
   });
+
+  it('returns early when heading below min level', () => {
+    const nodes = [
+      <HeadingTag level={1} key="h1">H1</HeadingTag>
+    ];
+    const [sections, endIdx] = groupSections(nodes as any, 0, 2);
+    expect(sections.length).toBe(0);
+    expect(endIdx).toBe(-1);
+  });
 });

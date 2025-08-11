@@ -5,18 +5,21 @@ import GenomeMap from '../genome-map';
 import type {Preset} from '../genome-map/types';
 
 /**
- * Register the `genomemap` macro so markdown can render genome maps.
+ * Build an AST node descriptor for the `genomemap` macro.
+ *
  * @param content - Macro content containing the name of the genome map.
  * @param props - Additional properties to pass to the GenomeMap component.
- * @returns A node descriptor consumed by the macro plugin.
+ * @returns Node descriptor consumed by the macro plugin.
  */
-macroPlugin.addMacro('genomemap', (content: string, props: Record<string, unknown>) => {
+export function genomemapMacro(content: string, props: Record<string, unknown>) {
   return {
     type: 'GenomeMapNode',
     mapName: content.trim(),
     props
   };
-});
+}
+
+macroPlugin.addMacro('genomemap', genomemapMacro);
 
 interface GenomeMapNodeWrapperProps {
   /** Mapping of genome map name to preset configuration. */

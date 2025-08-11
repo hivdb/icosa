@@ -11,16 +11,26 @@ import References, {
 
 import macroPlugin from './macro-plugin';
 
-/** Register the `refs` macro allowing static reference lists. */
-macroPlugin.addMacro('refs', (content: string, props: Record<string, unknown>) => ({
-  type: 'StaticRefsNode',
-  names: (
-    content.split(/[\r\n]+/)
-      .map(n => n.trim())
-      .filter(n => n.length > 0)
-  ),
-  ...props
-}));
+/**
+ * Build an AST node descriptor for the `refs` macro allowing static lists.
+ *
+ * @param content - Newline separated reference names.
+ * @param props - Additional properties to mix into the node.
+ * @returns Node descriptor consumed by the macro plugin.
+ */
+export function refsMacro(content: string, props: Record<string, unknown>) {
+  return {
+    type: 'StaticRefsNode',
+    names: (
+      content.split(/[\r\n]+/)
+        .map(n => n.trim())
+        .filter(n => n.length > 0)
+    ),
+    ...props
+  };
+}
+
+macroPlugin.addMacro('refs', refsMacro);
 
 export interface StaticRefsNodeProps {
   /** List of reference names to render. */

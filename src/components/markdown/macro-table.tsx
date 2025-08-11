@@ -10,12 +10,22 @@ import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
 
 import style from './style.module.scss';
 
-/** Register the `table` macro for markdown. */
-macroPlugin.addMacro('table', (content: string, props: Record<string, unknown>) => ({
-  ...props,
-  type: 'TableNode',
-  tableName: content.trim()
-}));
+/**
+ * Macro handler converting `table` directives into {@link TableNode} objects.
+ *
+ * @param content - Inner text of the macro indicating the table name.
+ * @param props - Additional properties defined on the macro tag.
+ * @returns AST node consumed by {@link TableNodeWrapper}.
+ */
+export function tableMacro(content: string, props: Record<string, unknown>) {
+  return {
+    ...props,
+    type: 'TableNode',
+    tableName: content.trim()
+  } as const;
+}
+
+macroPlugin.addMacro('table', tableMacro);
 
 /**
  * Convert new line characters to `<br/>` in markdown text.
@@ -142,7 +152,7 @@ const sortFuncs: Record<string, any> = {
  * @param cmsPrefix - Optional CMS prefix.
  * @returns Array of {@link ColumnDef} objects.
  */
-function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: string) {
+export function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: string) {
   const objs: ColumnDef[] = [];
   const colHeaderRenderer = renderFuncs.nl2br(mdProps);
   for (const colDef of columnDefs) {
@@ -176,7 +186,7 @@ function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: string) {
  * @param columnDefs - Processed column definitions.
  * @returns Expanded data array.
  */
-function expandMultiCells(data: any[], columnDefs: any[]) {
+export function expandMultiCells(data: any[], columnDefs: any[]) {
   let expandTarget: string | null = null;
   for (const {name, multiCells} of columnDefs) {
     if (!multiCells) {
@@ -213,7 +223,7 @@ interface InlineParagraphProps {
 }
 
 /** Simple paragraph renderer used inside tables to avoid wrapping. */
-function InlineParagraph({children}: InlineParagraphProps) {
+export function InlineParagraph({children}: InlineParagraphProps) {
   return <>{children}</>;
 }
 
