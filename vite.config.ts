@@ -39,7 +39,8 @@ export default defineConfig({
         'src/shims/react-tabs-style.scss'
       ),
       'ngl': path.resolve(__dirname, 'src/shims/ngl.ts'),
-      'react-ngl': path.resolve(__dirname, 'src/shims/react-ngl.tsx')
+      'react-ngl': path.resolve(__dirname, 'src/shims/react-ngl.tsx'),
+      'src/components/genome-map': path.resolve(__dirname, 'src/shims/genome-map.tsx')
     }
   }
 });

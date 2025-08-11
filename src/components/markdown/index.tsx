@@ -25,6 +25,16 @@ import GenomeMapNodeWrapper from './macro-genome-map';
 import TOCNodeWrapper from './macro-toc';
 
 /**
+ * Normalize markdown children by concatenating arrays into a single string.
+ *
+ * @param children - Raw markdown content or array of fragments.
+ * @returns A single markdown string.
+ */
+export function normalizeChildren(children: string | string[]): string {
+  return Array.isArray(children) ? children.join('') : children;
+}
+
+/**
  * Structure of a table referenced by markdown macros.
  */
 interface MarkdownTable {
@@ -103,9 +113,7 @@ function ExtendedMarkdown({
   renderers: addRenderers = {},
   ...props
 }: ExtendedMarkdownProps) {
-  if (children instanceof Array) {
-    children = children.join('');
-  }
+  children = normalizeChildren(children);
   const mdProps: any = {
     parserOptions: {footnotes: true},
     transformLinkUri: false,

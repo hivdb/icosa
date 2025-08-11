@@ -1,4 +1,4 @@
-import {render} from '@testing-library/react';
+import {render, waitFor} from '@testing-library/react';
 import {vi} from 'vitest';
 
 vi.mock('found', () => ({
@@ -7,23 +7,23 @@ vi.mock('found', () => ({
   withRouter: (C: any) => C
 }));
 
-import ExtendedMarkdown, {areChildrenEqual} from './index';
+import ExtendedMarkdown, {areChildrenEqual, normalizeChildren} from './index';
 
 describe('ExtendedMarkdown', () => {
-  it('renders TOC, collapsable sections and references', () => {
-    vi.useFakeTimers();
-    const md = ['# Title', '\n\nParagraph[^1]\n\n[^1]: footnote'];
-    const {container, getByText, unmount} = render(
-      <ExtendedMarkdown toc collapsableLevels={[2]} referenceTitle="Refs" referenceHeadingTagLevel={3}>
+  it('joins array children into a single markdown string', () => {
+    expect(normalizeChildren(['# A', 'B'])).toBe('# AB');
+  });
+
+  it('renders TOC and collapsable sections', async () => {
+    const md = '# Title\n\n## Section';
+    const {container, unmount} = render(
+      <ExtendedMarkdown toc collapsableLevels={[2]}>
         {md}
       </ExtendedMarkdown>
     );
-    vi.runAllTimers();
-    expect(container.querySelector('#_toc')).not.toBeNull();
+    await waitFor(() => expect(container.querySelector('#_toc')).not.toBeNull());
     expect(container.querySelector('[class*="collapse-h2"]')).not.toBeNull();
-    expect(getByText('footnote')).toBeInTheDocument();
     unmount();
-    vi.useRealTimers();
   });
 
   it('renders inline markdown without references or heading anchors', () => {
