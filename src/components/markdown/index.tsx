@@ -1,5 +1,9 @@
 import React from 'react';
-import OrigMarkdown from 'react-markdown/with-html';
+import OrigMarkdown from 'react-markdown';
+import htmlParser from 'react-markdown/plugins/html-parser';
+// The html-parser plugin replicates the deprecated `with-html` entry by
+// allowing raw HTML inside markdown documents.
+const parseHtml = htmlParser({isValidNode: () => true});
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
@@ -105,6 +109,8 @@ function ExtendedMarkdown({
   const mdProps: any = {
     parserOptions: {footnotes: true},
     transformLinkUri: false,
+    escapeHtml: false,
+    astPlugins: [parseHtml],
     ...props
   };
   const generalRenderers = {

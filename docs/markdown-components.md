@@ -7,8 +7,8 @@ repositories as well.
 
 ## Renderer customisations
 
-The component wraps `react-markdown/with-html` and applies several changes to
-the upstream renderer:
+The component wraps `react-markdown` with its built-in HTML parser plugin and
+applies several changes to the upstream renderer:
 
 * **Raw HTML allowed** – HTML is not escaped and the optional `escapeHtml`
   flag in page settings can further disable sanitisation.
