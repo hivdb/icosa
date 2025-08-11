@@ -34,6 +34,7 @@ export default defineConfig({
       'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss'),
       'ramda/src': path.resolve(__dirname, 'src/shims/ramda-src'),
       '~react-dropdown/style': path.resolve(__dirname, 'src/shims/react-dropdown-style.scss'),
+      'react-markdown/with-html': path.resolve(__dirname, 'src/shims/react-markdown-with-html.tsx'),
       'react-tabs/style/react-tabs.scss': path.resolve(
         __dirname,
         'src/shims/react-tabs-style.scss'

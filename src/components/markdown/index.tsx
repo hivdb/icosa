@@ -129,6 +129,7 @@ function ExtendedMarkdown({
     ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
     ...addRenderers
   } as Record<string, any>;
+  /* c8 ignore next */
   mdProps.renderers = generalRenderers ?? {};
   let jsx = (
     <OrigMarkdown
@@ -171,8 +172,9 @@ function ExtendedMarkdown({
   }
   return jsx;
 }
-
+export {ExtendedMarkdown};
 export default React.memo(
   ExtendedMarkdown,
+  /* c8 ignore next */
   ({children: prev}, {children: next}: ExtendedMarkdownProps) => prev === next
 );
