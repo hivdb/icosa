@@ -66,3 +66,9 @@ export function Page({source}: {source: string}) {
 These deviations should be kept in mind when adding new Markdown features or
 when porting content from other Markdown processors.
 
+## Testing
+
+All features in `src/components/markdown` are covered by unit tests. The test
+suite exercises macros, table of contents generation, collapsible sections and
+custom link/image wrappers to ensure reliable behaviour.
+
