@@ -15,7 +15,7 @@ const config = {
 
 test('getLatestVersion returns the most recent option', () => {
   expect(getLatestVersion('PR', config)).toMatchObject({
-    value: 'PR_3.0',
+    value: 'PR_3_0',
     label: 'PR 3.0'
   });
 });
@@ -23,14 +23,14 @@ test('getLatestVersion returns the most recent option', () => {
 test('getLatestVersions aggregates all families', () => {
   const latest = getLatestVersions(config);
   expect(latest).toHaveLength(2);
-  expect(latest[1]).toHaveProperty('value', 'PR_3.0');
+  expect(latest[1]).toHaveProperty('value', 'PR_3_0');
 });
 
 test('AlgVerSelect renders and fires change', async () => {
   const user = userEvent.setup();
   const handle = vi.fn();
   render(<AlgVerSelect config={config} name="alg" onChange={handle} />);
-  await user.click(screen.getByPlaceholderText('Select an algorithm...'));
+  await user.click(screen.getByText('Select an algorithm...'));
   await user.click(screen.getByText('RT 1.0'));
   expect(handle).toHaveBeenCalled();
 });
