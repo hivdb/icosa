@@ -1,4 +1,5 @@
-import {render, waitFor} from '@testing-library/react';
+import {render, waitFor, screen} from '@testing-library/react';
+import '@testing-library/jest-dom';
 import {vi} from 'vitest';
 
 vi.mock('found', () => ({
@@ -8,6 +9,7 @@ vi.mock('found', () => ({
 }));
 
 import ExtendedMarkdown, {areChildrenEqual, normalizeChildren} from './index';
+import type {Preset} from '../genome-map/types';
 
 describe('ExtendedMarkdown', () => {
   it('joins array children into a single markdown string', () => {
@@ -55,6 +57,55 @@ describe('ExtendedMarkdown', () => {
     const em = container.querySelector('#html-test');
     expect(em?.tagName).toBe('EM');
     expect(em?.textContent).toBe('raw');
+  });
+
+  it('parses table macro and renders table data', () => {
+    const tables = {
+      sample: {
+        columnDefs: [{name: 'c1'}],
+        data: [{c1: 'unique-table-data'}],
+        references: ''
+      }
+    };
+    render(
+      <ExtendedMarkdown tables={tables} displayReferences={false} inline>
+        {'[table]\nsample\n[/table]'}
+      </ExtendedMarkdown>
+    );
+    expect(screen.getByText('unique-table-data')).toBeInTheDocument();
+  });
+
+  it('parses genomemap macro and renders genome map', () => {
+    const preset: Preset = {
+      name: 'foo',
+      label: 'Foo',
+      width: 200,
+      height: 100,
+      paddingTop: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+      domains: [{posStart: 0, posEnd: 10, scaleRatio: 1}],
+      positionGroups: [{name: 'g', positions: []}],
+      regions: [],
+      hidePositionAxis: true
+    };
+    const {container} = render(
+      <ExtendedMarkdown genomeMaps={{foo: preset}} displayReferences={false} inline>
+        {'[genomemap]\nfoo\n[/genomemap]'}
+      </ExtendedMarkdown>
+    );
+    expect(container.querySelector('svg')).not.toBeNull();
+  });
+
+  it('parses toc macro and renders table of contents', () => {
+    const {container} = render(
+      <ExtendedMarkdown displayReferences={false} inline>
+        {'[toc]\n## Section\n[/toc]'}
+      </ExtendedMarkdown>
+    );
+    const toc = container.querySelector('#_toc');
+    expect(toc).not.toBeNull();
+    expect(toc?.textContent).toContain('Section');
   });
 
 });
