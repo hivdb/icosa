@@ -21,4 +21,22 @@ describe('MarkdownLink', () => {
     const link = getByTestId('found-link');
     expect(link).toHaveAttribute('href', '/about');
   });
+
+  it('honors explicit target prop', () => {
+    const {container} = render(<MarkdownLink href="/home" target="_self">Home</MarkdownLink>);
+    const anchor = container.querySelector('a');
+    expect(anchor).toHaveAttribute('target', '_self');
+  });
+
+  it('parses bang-prefixed link syntax', () => {
+    const {getByTestId} = render(<MarkdownLink href="!link: /test">Test</MarkdownLink>);
+    const link = getByTestId('found-link');
+    expect(link).toHaveAttribute('href', '/test');
+  });
+
+  it('handles bang syntax without href', () => {
+    const {container} = render(<MarkdownLink href="!link:">Empty</MarkdownLink>);
+    const anchor = container.querySelector('a');
+    expect(anchor).toHaveAttribute('href', '');
+  });
 });
