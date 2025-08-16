@@ -90,6 +90,7 @@ function SinglePatternReport({
         {isCritical || !displayDRInterpretation ? null :
           drugResistance.map((geneDR, idx) => <React.Fragment key={idx}>
             <DRInterpretation
+             suppressLevels={!displayMutationScores.includes(geneDR.gene.name)}
              {...{geneDR, output, disabledDrugs, strain}} />
             {displayMutationScores.includes(geneDR.gene.name) ?
               <DRMutationScores

@@ -34,6 +34,7 @@ function ReportByPatternsContainer({
   patterns,
   currentSelected
 }) {
+  console.log(config);
 
   if (!isPending && patterns.length === 0) {
     router.replace({
@@ -57,6 +58,7 @@ function ReportByPatternsContainer({
    lazyLoad={lazyLoad}
    extraParams={`
      $includeGenes: [EnumGene!]!,
+     $drmAlgorithm: ASIAlgorithm,
      $algorithms: [ASIAlgorithm!],
      $customAlgorithms: [CustomASIAlgorithm!]
    `}
