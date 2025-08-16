@@ -33,8 +33,8 @@ export function SectionInner({
   children,
   match,
   alwaysCollapsable = false,
-  registerCollapsableAnchor,
-  getClosestCollapsableAnchor,
+  registerCollapsableAnchor = () => {},
+  getClosestCollapsableAnchor = () => ({anchor: null, shouldCollapseOther: false}),
   ...props
 }: SectionInnerProps) {
   const sectionRef = React.useRef<HTMLElement>(null);

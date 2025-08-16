@@ -11,14 +11,6 @@ export default defineConfig({
   server: {
     port: 3009
   },
-  resolve: {
-    alias: {
-      // Ramda's ESM build does not expose "src" to the exports
-      // field. Provide shims so dependencies requesting
-      // "ramda/src/*" continue to work under vitest.
-      'ramda/src': path.resolve(__dirname, 'src/shims/ramda-src')
-    }
-  },
   test: {
     globals: true,
     environment: 'jsdom',

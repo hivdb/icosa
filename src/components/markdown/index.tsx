@@ -1,9 +1,5 @@
 import React from 'react';
-import OrigMarkdown from 'react-markdown';
-import htmlParser from 'react-markdown/plugins/html-parser';
-// The html-parser plugin replicates the deprecated `with-html` entry by
-// allowing raw HTML inside markdown documents.
-const parseHtml = htmlParser({isValidNode: () => true});
+import OrigMarkdown from 'react-markdown/with-html';
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
@@ -81,6 +77,11 @@ export interface ExtendedMarkdownProps {
   /** Table data available for the `table` macro. */
   tables?: Record<string, MarkdownTable>;
   /**
+   * Whether to escape HTML in markdown content.
+   * Defaults to `true` for security reasons.
+   */
+  escapeHtml?: boolean;
+  /**
    * Any additional props are forwarded to `react-markdown`.
    */
   [key: string]: any;
@@ -111,14 +112,14 @@ function ExtendedMarkdown({
   refDataLoader,
   displayReferences = true,
   renderers: addRenderers = {},
+  escapeHtml = true,
   ...props
 }: ExtendedMarkdownProps) {
   children = normalizeChildren(children);
   const mdProps: any = {
     parserOptions: {footnotes: true},
     transformLinkUri: false,
-    escapeHtml: false,
-    astPlugins: [parseHtml],
+    escapeHtml,
     ...props
   };
   const generalRenderers = {

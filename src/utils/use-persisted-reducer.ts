@@ -1,4 +1,6 @@
-import createPersistedState from 'use-persisted-state/src';
+import createPersistedState from '@plq/use-persisted-state';
+import {Storage} from '@plq/use-persisted-state/lib/@types/storage';
+import localStorage from '@plq/use-persisted-state/lib/storages/local-storage';
 
 /**
  * Create a reducer hook whose state is persisted via `use-persisted-state`.
@@ -9,16 +11,16 @@ import createPersistedState from 'use-persisted-state/src';
  */
 export default function createPersistedReducer<S, A>(
   key: string,
-  provider?: any
+  provider: Storage = localStorage
 ) {
-  const usePersistedState = createPersistedState<S>(key, provider);
+  const [usePersistedState] = createPersistedState(key, provider);
 
   return (
     reducer: (state: S, action: A) => S,
     initArg: S,
     init: (arg: S) => S = val => val
   ): [S, (action: A) => void] => {
-    const [state, setPersistedState] = usePersistedState(init(initArg));
+    const [state, setPersistedState] = usePersistedState(key, init(initArg));
     return [state, (action: A) => {
       const newState = reducer(state, action);
       setPersistedState(newState);

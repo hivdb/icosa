@@ -267,7 +267,7 @@ table.simple-table {
             $cell-padding-v: 0.5rem;
             display: inline-block;
             text-align: left;
-            width: css-max(80%, calc(100% - var(--mobile-label-width)));
+            width: max(80%, calc(100% - var(--mobile-label-width)));
             box-sizing: border-box;
             padding: $cell-padding-v 1rem;
             background-color: $mobile-bgcolor;

@@ -1,8 +1,8 @@
-@use "normalize-scss/sass/normalize" as *;
+@use "normalize-scss/sass/normalize" as normalize;
 @use "./colors" as *;
 @use "./constants" as *;
 
-@include normalize();
+@include normalize.normalize();
 
 html {
   font-weight: 400;

@@ -1,5 +1,5 @@
 import React from 'react';
-import createGlobalState from 'use-persisted-state/src/createGlobalState';
+import createGlobalState from '../../utils/create-global-state';
 import {FaEllipsisH} from '@react-icons/all-files/fa/FaEllipsisH';
 import Link from '../link';
 import ExtLink from '../link/external';
@@ -12,7 +12,7 @@ const GLOBAL_STATE_KEY = '--susc-summary-toggle-cell-references';
 
 /**
  * Hook managing global expansion state for reference lists.
- * The state is shared across component instances using `use-persisted-state`.
+ * The state is shared across component instances using `create-global-state`.
  *
  * @returns Tuple containing the current expansion state and a toggle function.
  */

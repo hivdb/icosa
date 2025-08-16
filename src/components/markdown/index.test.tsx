@@ -50,7 +50,7 @@ describe('ExtendedMarkdown', () => {
 
   it('renders raw HTML when embedded in markdown', () => {
     const {container} = render(
-      <ExtendedMarkdown inline displayReferences={false}>
+      <ExtendedMarkdown inline displayReferences={false} escapeHtml={false}>
         {'<em id="html-test">raw</em>'}
       </ExtendedMarkdown>
     );

@@ -2,7 +2,8 @@ import React from 'react';
 import set from 'lodash/set';
 import isEqual from 'lodash/isEqual';
 import {useState, useCallback, useMemo} from 'react';
-import createPersistedState from 'use-persisted-state/src';
+import createPersistedState from '@plq/use-persisted-state';
+import localStorage from '@plq/use-persisted-state/lib/storages/local-storage';
 
 import {
   defaultFastpConfig,
@@ -11,11 +12,12 @@ import {
   type NGSOptions
 } from './options-form/types';
 
-const usePersistedOptions = createPersistedState<Partial<NGSOptions>>(
+const [usePersistedOptions] = createPersistedState(
   '--ngs2codfreq-persisted-settings-' +
   window.location.pathname
     .replace(/(?:\/ngs2codfreq|\/by-reads).*$/, '')
-    .replaceAll('/', '-')
+    .replaceAll('/', '-'),
+  localStorage
 );
 
 
@@ -29,7 +31,7 @@ const usePersistedOptions = createPersistedState<Partial<NGSOptions>>(
  * boolean indicating whether the options are still at their default values.
  */
 export default function useOptions(): [NGSOptions, (key: string, value: any) => void, boolean] {
-  const [persistedOptions, setPersistedOptions] = usePersistedOptions({});
+  const [persistedOptions, setPersistedOptions] = usePersistedOptions('persisted-options', {});
   const [options, setOptions] = useState<NGSOptions>({
     fastpConfig: {...defaultFastpConfig},
     cutadaptConfig: {...defaultCutadaptConfig},

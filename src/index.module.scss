@@ -1,5 +1,6 @@
-@use "./styles/default-colors" as *;
+@use "./styles/globals" as globals;
+@use "./styles/default-colors" as default-colors;
 
 body {
-  @include default-color;
+  @include default-colors.default-color;
 }
