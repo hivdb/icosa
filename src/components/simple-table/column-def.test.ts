@@ -1,4 +1,4 @@
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, vi} from 'vitest';
 
 import ColumnDef, {createUnsafeRenderFromTpl} from './column-def';
 
@@ -23,5 +23,36 @@ describe('ColumnDef', () => {
   it('creates render function from unsafe template', () => {
     const fn = createUnsafeRenderFromTpl('Hello ${cellData}');
     expect(fn('World', {}, {}, {})).toBe('Hello World');
+  });
+
+  it('escapes html when requested', () => {
+    const fn = createUnsafeRenderFromTpl('<b>${cellData}</b>', true);
+    expect(fn('<script>', {}, {}, {})).toBe('<b>&lt;script&gt;</b>');
+  });
+
+  it('supports exportRaw and array sort keys', () => {
+    const col = new ColumnDef({
+      name: 'obj',
+      exportRaw: true,
+      decorator: (v: number) => v * 2,
+      sort: ['k']
+    });
+    const rows = [{obj: {k: 2}}, {obj: {k: 1}}];
+    const cell = col.exportCell!(1, {obj: 1});
+    expect(cell).toBe(2);
+    const sorted = col.sort(rows, 'obj');
+    expect(sorted[0].obj.k).toBe(1);
+  });
+
+  it('handles empty values and custom sort', () => {
+    const sortFn = vi.fn(rows => rows);
+    const col = new ColumnDef({
+      name: 'n',
+      none: 'N/A',
+      sort: sortFn
+    });
+    expect(col.render('', {}, {}, {})).toBe('N/A');
+    col.sort([{n: 1}], 'n');
+    expect(sortFn).toHaveBeenCalled();
   });
 });

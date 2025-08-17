@@ -22,6 +22,12 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    // Enable coverage reports via V8 instrumentation.
+    coverage: {
+      provider: 'v8',
+      reports: ['text', 'json', 'html'],
+      exclude: ['src/components/simple-table/types.ts']
+    },
     css: {
       preprocessorOptions: {
         scss: {

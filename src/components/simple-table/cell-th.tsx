@@ -57,7 +57,14 @@ function moveNullsLast(data: any[], name: string) {
   return [...nonNulls, ...nulls];
 }
 
-function applySorts(data: any[], columns: SortColumn[]) {
+/**
+ * Apply column sort descriptors to a dataset.
+ *
+ * @param data - Rows to be sorted.
+ * @param columns - Active sort columns.
+ * @returns A new array sorted according to the descriptors.
+ */
+export function applySorts(data: any[], columns: SortColumn[]) {
   let sortedData = [...data];
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
