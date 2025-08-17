@@ -1,4 +1,4 @@
-@import "../../../styles/dropdown";
+@use "../../../styles/dropdown" as *;
 
 .sierra-genome-map-tabs {
   --tab-width: 10rem !important;

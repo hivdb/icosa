@@ -1,9 +1,9 @@
-@import "../ext";
-@import "../../../styles/tabs";
-@import "../../../styles/mixins";
-@import "../../../styles/colors";
-@import "../../../styles/dropdown";
-@import "../../../styles/functions";
+@use "../ext" as *;
+@use "../../../styles/tabs" as *;
+@use "../../../styles/mixins" as *;
+@use "../../../styles/colors" as *;
+@use "../../../styles/dropdown" as *;
+@use "../../../styles/functions" as *;
 
 .seq-summary {
   @extend %report-section;
@@ -15,8 +15,8 @@
 }
 
 .desc-list {
+  max-width: max(60%, 1400px);
   @include desc-list(var(--title-width), $overflow: visible);
-  max-width: css-max(60%, 1400px);
   .has-dropdown {
     @extend %small-dropdown;
     :global .Dropdown-root {
@@ -140,7 +140,7 @@ ul.subtype-details {
   clear: both;
   z-index: -1;
   > svg {
-    max-width: css-min(#{$nomogram-width}, calc(100% - #{$nomogram-min-left}));
+    max-width: min(#{$nomogram-width}, calc(100% - #{$nomogram-min-left}));
     position: absolute;
     right: 0;
     bottom: -1rem;
@@ -153,7 +153,7 @@ ul.subtype-details {
       display: block;
       margin-left: auto;
       margin-right: auto;
-      max-width: css-min(#{$nomogram-width}, 100%);
+      max-width: min(#{$nomogram-width}, 100%);
       left: 0;
     }
   }

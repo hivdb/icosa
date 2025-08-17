@@ -1,4 +1,4 @@
-@import "../ext";
+@use "../ext" as *;
 
 .report-seqreads-qa {
   @extend %report-section;

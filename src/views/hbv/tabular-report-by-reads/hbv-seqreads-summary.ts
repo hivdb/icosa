@@ -1,0 +1,149 @@
+/** Join array values in a row into comma-separated strings. */
+function joinCols(row: Record<string, any>): void {
+  for (const col of Object.keys(row)) {
+    if (row[col] instanceof Array) {
+      if (row[col].length > 0) {
+        row[col] = row[col].join(',');
+      }
+      else if (col in row) {
+        row[col] = 'None';
+      }
+    }
+  }
+}
+
+interface GetMutationsArgs {
+  geneSeqs: any[];
+  geneFilter?: (name: string) => boolean;
+  mutFilter?: (m: any) => boolean;
+  mutWithGene?: boolean;
+}
+
+/**
+ * Extract mutation texts from gene sequences.
+ */
+function getMutations({
+  geneSeqs,
+  geneFilter,
+  mutFilter,
+  mutWithGene = true
+}: GetMutationsArgs): string[] {
+  let results: any[] = [];
+  for (const geneSeq of geneSeqs.filter(
+    ({gene: {name}}) => geneFilter ? geneFilter(name) : true
+  )) {
+    const gene = geneSeq.gene.name.replace(/^_/, '');
+    const mutations = geneSeq.mutations
+      .filter(
+        (m: any) => !m.isUnsequenced && (mutFilter ? mutFilter(m) : true)
+      )
+      .map((mut: any) => ({...mut, gene}));
+    results = [...results, ...mutations];
+  }
+  return results.map(
+    ({gene, text}) => (
+      mutWithGene ? `${gene}:${text}` : text
+    )
+  );
+}
+
+function getPermanentLink(seqName: string, geneSeqs: any[], patternsTo: string, geneFilter: any): string {
+  const mutText = getMutations({geneSeqs, geneFilter});
+  const link = new URL(patternsTo, window.location.href);
+  const query = new URLSearchParams();
+  query.set('name', seqName);
+  query.set('mutations', mutText as any);
+  link.search = query.toString();
+  return link.toString();
+}
+
+interface SeqReadsSummaryArgs {
+  sequenceReadsAnalysis: any[];
+  config: any;
+  patternsTo: string;
+}
+
+/**
+ * Build sequence reads summary tables for tabular report.
+ */
+async function seqReadsSummary({
+  sequenceReadsAnalysis,
+  config,
+  patternsTo
+}: SeqReadsSummaryArgs): Promise<any[]> {
+  const rows: any[] = [];
+  const {allGenes, geneDisplay} = config;
+  let header = [
+    'Sequence Name',
+    'Genes',
+    'Genotype',
+    ...allGenes.reduce(
+      (acc: string[], gene: string) => {
+        acc.push(`${gene} Mutations`, `# ${gene} Mutations`);
+        return acc;
+      },
+      [] as string[]
+    ),
+    'Median Read Depth',
+    'Permanent Link',
+    'Minimum Read Depth',
+    'NA Mixture Threshold',
+    'Mut Detection Threshold',
+    'NA Mixture - Actual',
+    'Mut Detection - Actual'
+  ];
+
+  for (const seqResult of sequenceReadsAnalysis) {
+    const {
+      name: seqName,
+      readDepthStats = {},
+      availableGenes: genes,
+      maxMixtureRate,
+      minPrevalence,
+      mixtureRate,
+      actualMinPrevalence,
+      minPositionReads,
+      bestMatchingSubtype: {display: genotype},
+      allGeneSequenceReads: geneSeqs
+    } = seqResult;
+    let row: Record<string, any> = {
+      'Sequence Name': seqName,
+      'Genes': genes.map(({name}: any) => geneDisplay[name] || name),
+      'Genotype': genotype,
+      ...allGenes.reduce(
+        (acc: Record<string, any>, gene: string) => {
+          acc[`${gene} Mutations`] = getMutations({
+            geneSeqs,
+            geneFilter: (g: string) => g === gene,
+            mutWithGene: false
+          });
+          acc[`# ${gene} Mutations`] = `${geneSeqs.find(
+            ({gene: {name}}: any) => name === gene
+          ).mutationCount}`;
+          return acc;
+        },
+        {}
+      ),
+      'Median Read Depth': readDepthStats.median,
+      'NA Mixture Threshold': `≤${maxMixtureRate * 100}%`,
+      'Mut Detection Threshold': `≥${minPrevalence * 100}%`,
+      'NA Mixture - Actual':
+      `${(mixtureRate * 100).toFixed(3)}%`,
+      'Mut Detection - Actual':
+      `${(actualMinPrevalence * 100).toFixed(1)}%`,
+      'Minimum Read Depth': minPositionReads,
+      'Permanent Link': getPermanentLink(
+        seqName,
+        geneSeqs,
+        patternsTo,
+        () => true
+      )
+    };
+    joinCols(row);
+    rows.push(row);
+  }
+  return [{tableName: 'sequenceSummaries', header, rows}];
+}
+
+export default seqReadsSummary;
+

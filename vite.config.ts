@@ -1,0 +1,43 @@
+import {defineConfig} from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  esbuild: {
+    loader: 'tsx',
+    include: /src\/.*\.[tj]sx?$/
+  },
+  server: {
+    port: 3009
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    // Enable coverage reports via V8 instrumentation.
+    coverage: {
+      provider: 'v8',
+      reports: ['text', 'json', 'html'],
+      exclude: ['src/components/simple-table/types.ts']
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          quietDeps: true
+        }
+      }
+    },
+    alias: {
+      'flexbox-grid-mixins': path.resolve(__dirname, 'src/shims/flexbox-grid-mixins.scss'),
+      'placeholder-loading/src/scss/placeholder-loading': path.resolve(__dirname, 'src/shims/placeholder-loading.scss'),
+      'ramda/src': path.resolve(__dirname, 'src/shims/ramda-src'),
+      '~react-dropdown/style': path.resolve(__dirname, 'src/shims/react-dropdown-style.scss'),
+      'react-tabs/style/react-tabs.scss': path.resolve(
+        __dirname,
+        'src/shims/react-tabs-style.scss'
+      ),
+      'ngl': path.resolve(__dirname, 'src/shims/ngl.ts'),
+      'react-ngl': path.resolve(__dirname, 'src/shims/react-ngl.tsx')
+    }
+  }
+});

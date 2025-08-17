@@ -1,5 +1,5 @@
-@import "../../styles";
-@import "./variables";
+@use "../../styles" as *;
+@use "./variables" as *;
 
 .paginator-container {
   @extend %paginator-variables;
@@ -196,7 +196,7 @@
 }
 
 .paginator-container > .scrollbar-container {
-  margin-top: calc(- #{$item-size} / 3);
+  margin-top: calc(-#{$item-size} / 3);
   position: relative;
   z-index: 1;
   cursor: pointer;

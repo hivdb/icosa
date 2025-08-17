@@ -10,7 +10,7 @@ $hover-opacity: .9;
 $client-width: var(--display-nums) #{'*'} #{$item-outer-size};
 $scrollbar-step-width: #{$client-width} #{'/'} #{$total};
 $scrollbar-offset: #{$scrollbar-step-width} #{'*'} #{$scroll-offset};
-$scrollbar-width: css-max(
+$scrollbar-width: max(
   3em,
   calc(
     #{$scrollbar-step-width} *
@@ -18,7 +18,7 @@ $scrollbar-width: css-max(
   )
 );
 $desc-width: #{$item-size} #{'*'} 9;
-$desc-margin-left-main: css-min(
+$desc-margin-left-main: min(
   calc(
     #{$item-size} - #{$desc-width} / 2 +
     #{$item-outer-size} *
@@ -32,7 +32,7 @@ $desc-margin-left-main: css-min(
 $desc-margin-left: calc(
   #{$item-size} *
   #{$hover-offset} #{"+"}
-  css-max(
+  max(
     0px, var(--margin-left-main)
   )
 );

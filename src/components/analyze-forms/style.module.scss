@@ -1,7 +1,7 @@
-@import "../../styles";
-@import "../../styles/tabs";
-@import "../../styles/dropdown";
-@import "../../styles/functions";
+@use "../../styles" as *;
+@use "../../styles/tabs" as *;
+@use "../../styles/dropdown" as *;
+@use "../../styles/functions" as *;
 
 
 .analyze-form-tabs {
@@ -86,13 +86,13 @@
   .analyze-ngs2codfreq {
     &:global(__form), &:global(__results-container) {
       display: flex;
-      flex-basis: css-max(32%, 32rem);
+      flex-basis: max(32%, 32rem);
       flex-direction: column;
       margin-left: 1rem;
       &:first-child {
-        flex-basis: css-max(40%, 20rem);
+        flex-basis: max(40%, 20rem);
         margin-left: 0;
-        margin-right: css-min(10%, 4rem);
+        margin-right: min(10%, 4rem);
       }
       @media only screen and (max-width: 900px) {
         margin-left: 0;

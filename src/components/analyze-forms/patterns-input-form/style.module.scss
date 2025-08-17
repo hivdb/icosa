@@ -1,6 +1,6 @@
-@import "../../../styles";
-@import "../../../styles/tabs";
-@import "../../../styles/dropdown";
+@use "../../../styles" as *;
+@use "../../../styles/tabs" as *;
+@use "../../../styles/dropdown" as *;
 
 .patterns-input-container {
   // @include grid($flex-wrap: wrap, $gutter: 18px);

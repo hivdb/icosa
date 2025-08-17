@@ -1,0 +1,237 @@
+import React from 'react';
+import classNames from 'classnames';
+import ConfigContext from '../../../../utils/config-context';
+import {useCMS, type CMSConfig} from '../../../../utils/cms';
+
+import Button from '../../../button';
+import FileInput from '../../../file-input';
+import Loader from '../../../loader';
+import {type PrimerBed} from '../types';
+import {parseFasta} from '../../../../utils/fasta';
+import readFile from '../../../../utils/read-file';
+import useMounted from '../../../../utils/use-mounted';
+
+import ItemInput from './item-input';
+import useValidation from './use-validation';
+import style from '../style.module.scss';
+
+
+  /**
+   * Infer the strand symbol from free-text description.
+   *
+   * @param strand - Raw strand value.
+   * @param name - Primer name used as fallback.
+   * @returns Standardized '+' or '-' strand designation.
+   */
+  function guess_strand(strand: string | undefined, name: string): '+' | '-' {
+    if (strand === '+' || strand === '-') {
+      return strand;
+    }
+    else if (/forward|left|fwd|5-?end/i.test(name)) {
+      return '+';
+    }
+    else if (/backward|reverse|right|bwd|rev|rvs|3-?end/i.test(name)) {
+      return '-';
+    }
+    return '+';
+  }
+
+
+export interface PrimerLocationInputProps {
+  name: string;
+  value: PrimerBed[];
+  onChange: (name: string, value: PrimerBed[]) => void;
+}
+
+export default function PrimerLocationInput({
+  name,
+  value,
+  onChange
+}: PrimerLocationInputProps) {
+  const [config] = ConfigContext.use();
+  const isMounted = useMounted();
+  const [autoIncr, setAutoIncr] = React.useState(
+    value.length > 0 ? Math.max(
+      ...value.map(({idx}) => idx)
+    ) + 1 : 0
+  );
+  const [pendingItems, setPendingItems] = React.useState<PrimerBed[]>([]);
+
+  const cmsConfig = (config ?? {cmsStages: {}}) as CMSConfig;
+  const [
+    refSequenceText,
+    isRefSeqPending
+  ] = useCMS(config?.refSequencePath ?? '', cmsConfig);
+
+  const refSequence = React.useMemo(
+    () =>
+      !isRefSeqPending && typeof refSequenceText === 'string'
+        ? parseFasta(refSequenceText, 'ref')[0].sequence
+        : null,
+    [refSequenceText, isRefSeqPending]
+  );
+
+  const errors = useValidation(value, refSequence);
+
+  const handleChange = React.useCallback(
+    (item: PrimerBed | {idx: number}, isNew: boolean, isRemove = false) => {
+      const newValue = [...value];
+      if (isNew) {
+        if (!isRemove) {
+          // add a new item
+          newValue.push(item as PrimerBed);
+        }
+        // remove the pending item
+        const newPendingItems = [...pendingItems];
+        newPendingItems.splice(
+          newPendingItems.findIndex(({idx}) => idx === item.idx),
+          1
+        );
+        setPendingItems(newPendingItems);
+      }
+      else {
+        const idx = newValue.findIndex(({idx}) => idx === item.idx);
+        if (isRemove) {
+          // remove an item
+          newValue.splice(idx, 1);
+        }
+        else {
+          // replace an item
+          newValue[idx] = item as PrimerBed;
+        }
+      }
+      onChange(name, newValue);
+    },
+    [pendingItems, name, value, onChange]
+  );
+
+  const handleReset = React.useCallback(
+    () => {
+      if (window.confirm(
+        'This operation will irrecoverably remove all primer ' +
+        'sequences. Please confirm:'
+      )) {
+        setAutoIncr(0);
+        setPendingItems([]);
+        onChange(name, []);
+      }
+    },
+    [name, onChange]
+  );
+
+  const handleAddNew = React.useCallback(
+    () => {
+      const newPendingItems: PrimerBed[] = [...pendingItems, {
+        idx: autoIncr,
+        region: config?.refSequenceName || '<Unknown>',
+        start: -1,
+        end: -1,
+        name: `Primer-${autoIncr + 1}`,
+        score: 60,
+        strand: '+' as const
+      }];
+      setAutoIncr(autoIncr + 1);
+      setPendingItems(newPendingItems);
+    },
+    [pendingItems, autoIncr, config?.refSequenceName]
+  );
+
+  const handleUpload = React.useCallback(
+    async (files: File[]) => {
+      const newItems: PrimerBed[] = [];
+      let newAutoIncr = autoIncr;
+      for (const file of files) {
+        if (
+          !file ||
+          !(/^text\/.+$|^application\/x-gzip$|^$/.test(file.type))
+        ) {
+          continue;
+        }
+        const rawBed = await readFile(file);
+        for (const row of rawBed.split(/[\r\n]+/g)) {
+          const [, start, end, name,, strand] = row.split('\t');
+          const startNum = Number(start);
+          const endNum = Number(end);
+          if (!Number.isNaN(startNum) && !Number.isNaN(endNum)) {
+            newItems.push({
+              idx: newAutoIncr++,
+              region: config?.refSequenceName || '<Unknown>',
+              start: startNum,
+              end: endNum,
+              name: name || `Primer-${autoIncr + 1}`,
+              score: 60,
+              // drop invalid strand
+              strand: guess_strand(strand, name)
+            });
+          }
+        }
+      }
+
+      if (!isMounted()) {
+        return;
+      }
+      onChange(name, [...value, ...newItems]);
+      setAutoIncr(newAutoIncr);
+    },
+    [autoIncr, onChange, name, value, config?.refSequenceName, isMounted]
+  );
+
+  return <div className={style['scroll']}>
+    {errors ? <ul className={style['fielderrors']}>
+      {errors.map((error, idx) => <li key={idx}>{error}</li>)}
+    </ul> : null}
+    {isRefSeqPending ?
+      <Loader inline /> : <>
+          {value.map(
+            item => (
+              <ItemInput
+               key={`primer-bed-${item.idx}`}
+               name={name}
+               value={item}
+               refSequence={refSequence ?? ''}
+               onChange={handleChange} />
+            )
+          )}
+          {pendingItems.map(
+            item => (
+              <ItemInput
+               isNew
+               key={`primer-bed-${item.idx}`}
+               name={name}
+               value={item}
+               refSequence={refSequence ?? ''}
+               onChange={handleChange} />
+            )
+          )}
+        <div className={style['fieldrow']}>
+          <div className={style['fieldlabel']} />
+          <div className={classNames(
+            style['fieldinput'],
+            style['primer-sequence-buttons']
+          )}>
+            <FileInput
+             multiple
+             hideSelected
+             btnStyle="info"
+             accept=".bed,.gz"
+             onChange={handleUpload}>
+              Upload BED
+            </FileInput>
+            <span className={style.or}> or </span>
+            <Button
+             btnStyle="primary"
+             onClick={handleAddNew}>
+              {value.length + pendingItems.length === 0 ?
+                'Add one primer' : 'Add more primer'}
+            </Button>
+            <Button
+             disabled={value.length + pendingItems.length === 0}
+             btnStyle="light"
+             onClick={handleReset}>
+              Reset
+            </Button>
+          </div>
+        </div>
+      </>}
+  </div>;
+}

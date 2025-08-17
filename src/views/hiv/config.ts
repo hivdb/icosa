@@ -1,0 +1,54 @@
+/**
+ * Default configuration for the HIV views.
+ * Values are largely driven by the deployment environment and CMS settings.
+ */
+const NODE_ENV = window.__NODE_ENV;
+
+const config: Record<string, any> = {
+  configFromURL: (
+    'https://s3-us-west-2.amazonaws.com/cms.hivdb.org/localhost/' +
+    'pages/sierra-hivpol.json'
+  ),
+  graphqlURI: (
+    NODE_ENV === 'production' ?
+      '/graphql' :
+      'http://localhost:8111/sierra/rest/graphql'),
+  server_host: (
+    NODE_ENV === 'production' ?
+      '' : 'http://localhost:8111'
+  ),
+  cmsStages: {
+    'hivdb.stanford.edu': 'cms.hivdb.org/prod',
+    'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
+    'staging2.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging2',
+    '*': 's3-us-west-2.amazonaws.com/cms.hivdb.org/localhost'
+  },
+  mutationTypesByGenes: {
+    PR: {
+      Major: 'Major',
+      Accessory: 'Accessory',
+      Other: 'Other'
+    },
+    RT: {
+      NRTI: 'NRTI',
+      NNRTI: 'NNRTI',
+      Other: 'Other'
+    },
+    IN: {
+      Major: 'Major',
+      Accessory: 'Accessory',
+      Other: 'Other'
+    }
+  },
+  maxProteinSize: 560, // RT protein
+  seqReadsCodonCovBgColors: {
+    RdRP: '#f0f0f0',
+    S: '#ffffff'
+  },
+  showCodonCov: true,
+  showLowAbundanceMutsChart: true,
+  sdrmButton: false,
+  showMutationsInSummary: true
+};
+
+export default config;

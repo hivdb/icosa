@@ -1,5 +1,5 @@
-@import "./colors";
-@import "./table";
+@use "./colors" as *;
+@use "./table" as *;
 
 .griddle-container {
   line-height: 1.5;

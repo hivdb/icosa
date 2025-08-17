@@ -1,8 +1,8 @@
-@import "./colors";
+@use "react-dropdown/style.css";
+@use "./colors" as *;
 
 %base-dropdown {
   :global {
-    @import "~react-dropdown/style";
     .Dropdown-control {
       background-color: color(dropdown-bg);
       border-radius: 0;

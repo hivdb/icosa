@@ -1,6 +1,6 @@
-@import "../../../components/link/extension";
-@import "~flexbox-grid-mixins";
-@import "../../../styles";
+@use "../../../components/link/extension" as *;
+@use "flexbox-grid-mixins" as *;
+@use "../../../styles" as *;
 
 .analyze-form-desc a {
   @extend %link;

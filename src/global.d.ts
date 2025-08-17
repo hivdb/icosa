@@ -1,0 +1,26 @@
+/// <reference types="vite/client" />
+
+declare module '*.module.scss' {
+  const classes: { readonly [key: string]: string };
+  export default classes;
+}
+
+declare module 'found/RouterContext';
+declare module './views/mut-annot-viewer' {
+  const value: any;
+  export default value;
+}
+declare module './views/mut-annot-viewer/*' {
+  const value: any;
+  export default value;
+}
+
+interface Window {
+  /** Node environment string injected at build time */
+  __NODE_ENV?: string;
+}
+
+declare namespace JSX {
+  export import IntrinsicElements = React.JSX.IntrinsicElements
+  export import Element = React.JSX.Element
+}

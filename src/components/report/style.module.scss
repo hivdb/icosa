@@ -1,7 +1,8 @@
-@import "./ext";
-@import "../../styles/tabs";
-@import "../../styles/colors";
-@import "../../styles/dropdown";
+@use "./ext" as *;
+@use "../../styles/tabs" as *;
+@use "../../styles/colors" as *;
+@use "../../styles/dropdown" as *;
+@use "../../styles/mixins" as *;
 
 .link-style {
   color: color(link-text);
@@ -84,8 +85,8 @@ ul.subtype-details {
   @extend %report-section;
 
   .desc-list {
-    @include desc-list(18rem, $overflow: visible);
     max-width: 60%;
+    @include desc-list(18rem, $overflow: visible);
     .has-dropdown {
       @extend %small-dropdown;
       :global .Dropdown-root {
@@ -280,12 +281,12 @@ section.alg-comparison {
   table.dr-level {
     float: left;
     margin-left: -1rem;
-    @media only screen and (min-width: 640px) {
-      margin-right: 15%;
-    };
     border-collapse: collapse;
     line-height: 1.5;
     border-spacing: 0;
+    @media only screen and (min-width: 640px) {
+      margin-right: 15%;
+    }
     caption {
       font-weight: 700;
       border-bottom: 1px solid color(dividing-line);

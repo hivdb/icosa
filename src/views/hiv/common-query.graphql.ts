@@ -1,0 +1,166 @@
+// Shared GraphQL fragments used across multiple HIV views.
+
+/**
+ * Root level fragment describing global metadata returned from the API.
+ */
+export const rootLevel: string = `
+  currentVersion {
+    display
+  }
+
+  # TODO: hivseq only
+  mutationPrevalenceSubtypes {
+    name
+    stats(includeGenes: $includeGenes) {
+      gene {name}
+      totalNaive
+      totalTreated
+    }
+  }
+`;
+
+/**
+ * Fragment used for sequence-level information.
+ */
+export const seqLevel: string = `
+
+  # TODO: hivseq only
+  mutationPrevalences(includeGenes: $includeGenes) {
+    boundMutation {
+      gene {name}
+      text
+      position
+      reference
+      triplet
+    }
+    matched {
+      AA
+      subtypes {
+        subtype {name}
+        percentageNaive
+        percentageTreated
+      }
+    }
+    others {
+      AA
+      subtypes {
+        subtype {name}
+        percentageNaive
+        percentageTreated
+      }
+    }
+  }
+
+  # TODO: hivalg only
+  algorithmComparison(
+    algorithms: $algorithms,
+    customAlgorithms: $customAlgorithms
+  ) {
+    drugClass { name }
+    drugScores {
+      drug { name displayAbbr }
+      algorithm
+      SIR
+      interpretation
+      explanation
+    }
+  }
+
+  drugResistance(includeGenes: $includeGenes) {
+    algorithm {
+      text
+      family
+      version
+      publishDate
+    }
+    gene {
+       name
+       drugClasses { name fullName }
+    }
+    levels: drugScores {
+      drugClass { name }
+      drug { name displayAbbr fullName }
+      text
+    }
+    mutationsByTypes {
+      drugClass { name }
+      mutationType
+      mutations {
+        text
+        AAs
+        reference
+        position
+        isUnusual
+        isApobecMutation
+        isApobecDRM
+        isDRM
+        DRMDrugClass {
+          name
+          fullName
+        }
+        isUnsequenced
+        totalReads
+        allAAReads {
+          aminoAcid
+          numReads
+          percent
+        }
+      }
+    }
+    commentsByTypes {
+      commentType
+      comments {
+        name
+        text
+        highlightText
+        boundMutation { position text }
+      }
+    }
+    drugScores {
+      drugClass { name }
+      drug { name displayAbbr }
+      score
+      level
+      text
+      SIR
+      partialScores {
+        mutations { text }
+        score
+      }
+    }
+  }
+`;
+
+/**
+ * Fragment capturing per-gene sequence data.
+ */
+export const geneSeqLevel: string = `
+  gene { name length }
+  mutations {
+    text
+    AAs
+    unusualAAs
+    reference
+    position
+    primaryType
+    isApobecMutation
+    hasStop
+    isUnsequenced
+    isUnusual
+    isAmbiguous
+    isDRM
+    DRMDrugClass {
+      name
+      fullName
+    }
+    totalReads
+    triplet
+    allAAReads {
+      aminoAcid
+      numReads
+      percent
+    }
+  }
+`;
+
+// Fragments exported individually above

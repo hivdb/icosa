@@ -1,7 +1,7 @@
-@import "../../styles";
-@import "../../styles/tabs";
-@import "../../styles/dropdown";
-@import "../../styles/functions";
+@use "../../styles" as *;
+@use "../../styles/tabs" as *;
+@use "../../styles/dropdown" as *;
+@use "../../styles/functions" as *;
 
 
 .mutation-main-input-with-columns {
@@ -49,8 +49,8 @@
   .mutation-prefills {
     display: flex;
     flex-direction: column;
-    min-width: css-max(18%, 18rem);
-    max-width: css-max(18%, 18rem);
+    min-width: max(18%, 18rem);
+    max-width: max(18%, 18rem);
     margin-right: 1rem;
     > select {
       @extend %input-general;

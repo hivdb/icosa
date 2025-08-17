@@ -1,0 +1,117 @@
+import React from 'react';
+import useExtendVariables from '../use-extend-variables';
+import useApolloClient from '../apollo-client';
+
+import ConfigContext from '../../../utils/config-context';
+import SeqReadsLoader, {useWhenNoSeqReads} from '../../../components/seqreads-loader';
+import SeqReadsAnalysisLayout from
+  '../../../components/seqreads-analysis-layout';
+
+import query from './query.graphql';
+import SeqReadsReports from './reports';
+
+interface ReportByReadsContainerProps {
+  /** Configuration object. */
+  config: Record<string, any>;
+  /** Router instance for navigation. */
+  router: any;
+  /** Match object describing the current route. */
+  match: any;
+  /** Whether to lazy load results. */
+  lazyLoad: boolean;
+  /** Output mode such as printable. */
+  output?: string;
+  /** Collection of all sequence reads. */
+  allSequenceReads: any[];
+  /** Currently selected sequence read. */
+  currentSelected?: any;
+}
+
+/**
+ * Render sequence read analysis reports.
+ *
+ * @param props - {@link ReportByReadsContainerProps} configuration.
+ * @returns Rendered layout for sequence read reports.
+ */
+function ReportByReadsContainer({
+  config,
+  router,
+  match,
+  lazyLoad,
+  output,
+  allSequenceReads,
+  currentSelected
+}: ReportByReadsContainerProps): React.ReactElement {
+  const client = useApolloClient({
+    payload: allSequenceReads,
+    config: config as any
+  });
+  const onExtendVariables = useExtendVariables({
+    config,
+    match
+  });
+
+  return <SeqReadsAnalysisLayout
+   query={query}
+   client={client}
+   allSequenceReads={allSequenceReads}
+   currentSelected={currentSelected}
+   renderPartialResults={output !== 'printable'}
+   lazyLoad={lazyLoad}
+   extraParams="$drdbVersion: String!, $cmtVersion: String!"
+   onExtendVariables={onExtendVariables}>
+    {props => (
+      <SeqReadsReports
+       cmtVersion={config?.cmtVersion}
+       output={output}
+       {...props} />
+    )}
+  </SeqReadsAnalysisLayout>;
+
+}
+
+interface WrapperProps {
+  /** Router instance used for navigation. */
+  router: any;
+  /** Route match object with location information. */
+  match: any;
+}
+
+/**
+ * Wrapper to load configuration and sequence reads before rendering.
+ *
+ * @param props - {@link WrapperProps} with routing information.
+ * @returns The reads report container.
+ */
+export default function ReportByReadsContainerWrapper(props: WrapperProps): React.ReactElement {
+  const {
+    location: {
+      pathname,
+      query: {output = 'default'} = {},
+    } = {},
+  } = props.match;
+  const lazyLoad = output !== 'printable';
+
+  useWhenNoSeqReads(() => props.router.replace({
+    pathname: pathname.replace(/report\/*$/, '')
+  }));
+
+  return (
+    <ConfigContext.Consumer>
+      {config => (
+        <SeqReadsLoader lazyLoad={lazyLoad}>
+          {({allSequenceReads, currentSelected}) => (
+            <ReportByReadsContainer
+             {...props}
+             output={output}
+             lazyLoad={lazyLoad}
+             allSequenceReads={allSequenceReads}
+             currentSelected={currentSelected}
+             config={config} />
+          )}
+        </SeqReadsLoader>
+      )}
+    </ConfigContext.Consumer>
+  );
+}
+

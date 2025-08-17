@@ -1,4 +1,4 @@
-@import "../../styles";
+@use "../../styles" as *;
 
 .progress-bar-container {
   &[data-loaded="true"] {

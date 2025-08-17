@@ -1,4 +1,4 @@
-@import '../../../styles/colors';
+@use '../../../styles/colors' as *;
 
 header.report-header {
   color: color(seq-title);

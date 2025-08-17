@@ -1,5 +1,5 @@
-@import "../../styles/dropdown";
-@import "../../styles/functions";
+@use "../../styles/dropdown" as *;
+@use "../../styles/functions" as *;
 
 .genome-viewer {
   
