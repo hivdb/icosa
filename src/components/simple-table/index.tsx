@@ -72,23 +72,20 @@ export default function SimpleTable({
     [setEnableRowSpan, copying]
   );
 
-  React.useEffect(
-    () => {
-      if (!tableRef.current) {
-        return;
-      }
-      const elem = tableRef.current;
-      const hCells = Array.from(elem.querySelectorAll(
-        ':scope > div > table > thead > tr > th[data-column]'
-      ));
-      setMobileLabelWidth(
-        `${
-          Math.max(...hCells.map(th => th.textContent.length)) * 0.55
-        }rem`
-      );
-    },
-    []
-  );
+    React.useEffect(
+      () => {
+        const elem = tableRef.current!;
+        const hCells = Array.from(elem.querySelectorAll(
+          ':scope > div > table > thead > tr > th[data-column]'
+        ));
+        setMobileLabelWidth(
+          `${
+            Math.max(...hCells.map(th => th.textContent.length)) * 0.55
+          }rem`
+        );
+      },
+      []
+    );
 
   const onBeforeSort = React.useCallback(
     () => setSorting(true),
