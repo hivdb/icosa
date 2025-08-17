@@ -8,9 +8,12 @@ function Dummy() {
 }
 
 test('NewWindowRoute wraps component with popup path', () => {
-  const element = (
-    <NewWindowRoute pathPrefix="test" overrideProps={{foo: 'bar'}} Component={Dummy} />
-  ) as any;
+  // Call the component as a function to obtain the Route element it returns.
+  const element = (NewWindowRoute({
+    pathPrefix: 'test',
+    overrideProps: {foo: 'bar'},
+    Component: Dummy
+  } as any)) as any;
   expect(element.props.path).toBe('test/popup/');
   const Child = element.props.render({props: {a: 1}});
   render(Child);

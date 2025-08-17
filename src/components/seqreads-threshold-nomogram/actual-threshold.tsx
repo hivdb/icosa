@@ -10,9 +10,9 @@ export interface ActualThresholdProps {
   /** Y coordinate of the applied mutation detection threshold. */
   thresholdY: number;
   /** Scaling function converting mixture rate to SVG x position. */
-  scaleX: (value: number) => number;
+  scaleX: (value: number) => number | undefined;
   /** Scaling function converting prevalence to SVG y position. */
-  scaleY: (value: number) => number;
+  scaleY: (value: number) => number | undefined;
 }
 
 /**
@@ -28,8 +28,8 @@ export default function ActualThreshold({
   scaleX,
   scaleY
 }: ActualThresholdProps): JSX.Element {
-  const cx = scaleX(thresholdX);
-  const cy = scaleY(thresholdY);
+  const cx = scaleX(thresholdX)!;
+  const cy = scaleY(thresholdY)!;
   const {
     strokeWidth,
     actualThresholdArrowLineSize: lineSize,

@@ -15,7 +15,9 @@ test('selecting preset updates router path', async () => {
     />
   );
   const user = userEvent.setup();
-  await user.click(screen.getByPlaceholderText('Choose a gene to view...'));
+  // react-dropdown renders placeholder as a div, not an input attribute.
+  // Click the visible placeholder text to open the menu.
+  await user.click(screen.getByText('Choose a gene to view...'));
   await user.click(screen.getByText('Foo'));
   expect(push).toHaveBeenCalledWith('/viewer/foo/');
 });

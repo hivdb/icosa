@@ -123,9 +123,9 @@ export const defaultIvarConfig: IvarConfig = {
 
 /** Union of all configuration types. */
 export interface NGSOptions {
-  fastpConfig: FastpConfig;
-  cutadaptConfig: CutadaptConfig;
-  ivarConfig: IvarConfig;
-  saveInBrowser: boolean;
-  primerType: 'fasta' | 'bed' | 'off';
+  fastpConfig?: FastpConfig;
+  cutadaptConfig?: CutadaptConfig;
+  ivarConfig?: IvarConfig;
+  saveInBrowser?: boolean;
+  primerType?: 'fasta' | 'bed' | 'off';
 }

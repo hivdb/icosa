@@ -7,13 +7,11 @@ import {renderHook, waitFor} from '@testing-library/react';
 
 import useSmartAsync from './use-smart-async';
 
-// FIXME: This test intermittently hangs in the test runner and is temporarily
-// disabled. Once the underlying issue with useSmartAsync or the test
-// environment is resolved, the test should be re-enabled.
-describe.skip('useSmartAsync', () => {
+describe('useSmartAsync', () => {
   it('returns stable async result', async () => {
+    const promiseFn = async () => 42;
     const {result} = renderHook(() =>
-      useSmartAsync<number>({promiseFn: async () => 42})
+      useSmartAsync<number>({promiseFn, key: 'testKey'})
     );
     await waitFor(() => expect(result.current.isPending).toBe(false));
     expect(result.current.data).toBe(42);

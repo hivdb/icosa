@@ -1,14 +1,16 @@
 import React from 'react';
+import type {ScaleLinear} from 'd3-scale';
+import type {ScaleFn as MixtureRateScaleFn} from './mixture-rate-axis';
 
 import constants from './constants';
 
 export interface ThresholdLineProps {
   /** Orientation of the threshold line. */
   direction: 'horizontal' | 'vertical';
-  /** Scale converting values to x positions. */
-  scaleX: any;
-  /** Scale converting values to y positions. */
-  scaleY: any;
+  /** Scale converting mixture rate values to x positions. */
+  scaleX: MixtureRateScaleFn;
+  /** Scale converting minimum prevalence values to y positions. */
+  scaleY: ScaleLinear<number, number>;
   /** Threshold value on the corresponding axis. */
   threshold: number;
   /** Comparison operator indicating the shaded region. */

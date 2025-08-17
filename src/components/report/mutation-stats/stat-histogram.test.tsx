@@ -13,5 +13,6 @@ test('renders histogram bars for provided data', () => {
     numPositions: 100
   };
   const {container} = render(<SequenceReadsHistogram {...props} />);
-  expect(container.querySelectorAll('rect[value]').length).toBe(1);
+  // The component annotates bars with a data-value attribute for testing/tooltip
+  expect(container.querySelectorAll('rect[data-value]').length).toBe(1);
 });

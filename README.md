@@ -45,3 +45,29 @@ yarn && yarn start
 ```
 
 This command will host a service on http://localhost:3009. It requires [Sierra-HIV](https://github.com/hivdb/sierra)/[Sierra-SARS2](https://github.com/hivdb/sierra-sars2) running as the backends for running/developing the HIV/SARS-CoV-2 Sequence Analysis Programs.
+
+## Testing & Coverage
+
+Run tests with Vitest:
+
+```bash
+yarn test
+```
+
+Generate coverage reports (text summary + lcov) using c8:
+
+```bash
+yarn coverage
+```
+
+Generate an HTML coverage report:
+
+```bash
+yarn coverage:html
+```
+
+Optionally enforce minimum coverage thresholds:
+
+```bash
+yarn coverage:check
+```

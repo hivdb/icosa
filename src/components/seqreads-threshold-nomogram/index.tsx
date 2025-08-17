@@ -92,24 +92,23 @@ export default function SeqReadsThresholdNomogram({
        direction="vertical"
        threshold={mixtureRateThreshold}
        thresholdCmp="<"
-       scaleX={(v: number) => mixtureRateScale(v)}
-       scaleY={(v: number) => minPrevalenceScale(v)!}
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale}
        color="#cf0a17" />
       <ThresholdLine
        direction="horizontal"
        threshold={minPrevalenceThreshold}
        thresholdCmp=">"
-       scaleX={(v: number) => mixtureRateScale(v)}
-       scaleY={(v: number) => minPrevalenceScale(v)!}
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale}
        color="#1c75d4" />
       <ActualThreshold
        thresholdX={mixtureRateActual}
        thresholdY={minPrevalenceActual}
-       scaleX={(v: number) => mixtureRateScale(v)}
-       scaleY={(v: number) => minPrevalenceScale(v)!} />
+       scaleX={mixtureRateScale}
+       scaleY={minPrevalenceScale} />
     </svg>
   );
 }
 
 export type {CutoffKeyPoint} from './cutoff-curve';
-

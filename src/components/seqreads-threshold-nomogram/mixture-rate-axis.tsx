@@ -16,7 +16,12 @@ export interface UseMixtureRateScaleArgs {
  * @param args - {@link UseMixtureRateScaleArgs} containing width and ticks.
  * @returns Scaling function mapping mixture rates to x positions.
  */
-  type ScaleFn = ((v: number) => number) & {
+  /**
+   * Function-like scale returned by {@link useMixtureRateScale}.
+   * It maps a numeric mixture rate to an x-position and exposes
+   * `domain()` and `range()` similar to d3 scales.
+   */
+  export type ScaleFn = ((v: number) => number) & {
     domain: () => number[];
     range: () => [number, number];
   };

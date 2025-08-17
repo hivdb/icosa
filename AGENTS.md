@@ -41,11 +41,29 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 * Command:
 
   ```bash
-  yarn test -- --no-file-parallelism
+  yarn test
+  ```
+* JSDOM is configured; SCSS shims for problematic packages are mapped in `vite.config.ts`.
+
+### Coverage
+
+* Generate coverage (text summary + lcov) with **c8**:
+
+  ```bash
+  yarn coverage
   ```
 
-  Use `--no-file-parallelism` to reduce memory usage.
-* JSDOM is configured; SCSS shims for problematic packages are mapped in `vite.config.ts`.
+* Generate an HTML coverage report:
+
+  ```bash
+  yarn coverage:html
+  ```
+
+* Check minimum coverage thresholds:
+
+  ```bash
+  yarn coverage:check
+  ```
 
 ### Coverage Expectations
 
@@ -98,7 +116,7 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 ## PR Checklist
 
 * [ ] Branched from `codex/convert-codebase-to-typescript-and-react-19` and PR targets the **same** branch.
-* [ ] All new/changed code has tests; CI with `yarn test -- --no-file-parallelism` passes.
+* [ ] All new/changed code has tests; CI with `yarn test` passes.
 * [ ] `yarn build` passes.
 * [ ] Added/updated docstrings (args/returns) for touched surfaces.
 * [ ] Left TODOs for any intentional test skips with context and next steps.

@@ -1,5 +1,7 @@
+import {useMemo} from 'react';
 import localforage from 'localforage';
 import useSmartAsync from './use-smart-async';
+import {PromiseFn} from 'react-async';
 
 /**
  * Determine whether a given key references a BigData record.
@@ -95,10 +97,11 @@ function useBigData<T = unknown>(key: string): [T | undefined, boolean] {
   if (!key) {
     throw new Error('key is empty');
   }
-    const {data, error, isPending} = useSmartAsync<T>({
-      promiseFn: () => load<T>(key) as Promise<T>,
-      key
-    });
+  const {data, error, isPending} = useSmartAsync<T>({
+    // @ts-expect-error AsyncProps accepts arbitrary keys
+    promiseFn: load as PromiseFn<T>,
+    key
+  });
   if (error) {
     throw new Error(error.message);
   }

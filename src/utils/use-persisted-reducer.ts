@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import createPersistedState from '@plq/use-persisted-state';
 import {Storage} from '@plq/use-persisted-state/lib/@types/storage';
 import localStorage from '@plq/use-persisted-state/lib/storages/local-storage';
@@ -25,5 +26,5 @@ export default function createPersistedReducer<S, A>(
       const newState = reducer(state, action);
       setPersistedState(newState);
     }];
-  };
+  }
 }
