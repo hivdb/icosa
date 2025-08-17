@@ -1,6 +1,8 @@
-@use "normalize-scss/sass/normalize" as normalize;
 @use "./colors" as *;
-@use "./constants" as *;
+@use "./constants" as const;
+@use "normalize-scss/sass/normalize" as normalize with (
+  $base-font-family: const.$base-font-family
+);
 
 @include normalize.normalize();
 
@@ -8,16 +10,16 @@ html {
   font-weight: 400;
   color: color(body-text);
   background-color: color(body-bg);
-  font-size: $global-font-size;
+  font-size: const.$global-font-size;
   scroll-behavior: smooth;
-  --mobile-main-content-width: #{$mobile-main-content-width};
-  --mobile-main-content-max-width: #{$mobile-main-content-max-width};
+  --mobile-main-content-width: #{const.$mobile-main-content-width};
+  --mobile-main-content-max-width: #{const.$mobile-main-content-max-width};
 }
 
 body {
   overflow-x: hidden; // disallow horizontal scrolling
   font-weight: 400;
-  font-size: $global-font-size;
+  font-size: const.$global-font-size;
 }
 
 input:required:invalid {
@@ -48,7 +50,7 @@ input:required:invalid {
 
   html, body {
     font-weight: 400;
-    font-size: $print-font-size;
+    font-size: const.$print-font-size;
     color: black;
   }
 }
