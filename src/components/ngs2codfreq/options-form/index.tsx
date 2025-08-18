@@ -76,17 +76,17 @@ export default function NGSOptionsForm({
     disableTrimPolyG,
     disableQualityFiltering,
     disableLengthFiltering
-  },
+  } = defaultFastpConfig,
   cutadaptConfig: {
     primerSeqs,
     errorRate,
     noIndels,
     times,
     minOverlap
-  },
+  } = defaultCutadaptConfig,
   ivarConfig: {
     primerBeds
-  },
+  } = defaultIvarConfig,
   primerType,
   saveInBrowser,
   onChange

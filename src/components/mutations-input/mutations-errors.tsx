@@ -94,7 +94,7 @@ export interface UseMutationErrorsOptions {
   allowPositions?: boolean;
   defaultGene?: string;
   geneSynonyms?: Record<string, string>;
-  geneReferences?: Record<string, string[]>;
+  geneReferences?: Record<string, string>;
   messages: Record<string, string>;
   parentClassName?: string;
   mutations: string[];

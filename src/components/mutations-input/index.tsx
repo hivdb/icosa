@@ -14,8 +14,8 @@ export interface MutationsConfig {
   mutationSplitGeneInput?: boolean;
   /** Suggested mutations grouped by gene */
   mutationSuggestions?: Array<{ gene: string; mutations: Array<[number, Iterable<string>]> }>;
-  /** Mapping of gene names to reference sequences */
-  geneReferences: Record<string, string[]>;
+  /** Mapping of gene names to reference sequence strings */
+  geneReferences: Record<string, string>;
   /** Mapping of gene names to display names */
   geneDisplay: Record<string, string>;
   /** Mapping of gene synonyms to canonical names */

@@ -14,7 +14,7 @@ export interface MutationSuggestOptionsProps {
   /** Configuration including references and display names */
   config: {
     allowPositions?: boolean;
-    geneReferences: Record<string, string[]>;
+    geneReferences: Record<string, string>;
     geneDisplay: Record<string, string>;
     messages: Record<string, string>;
   };

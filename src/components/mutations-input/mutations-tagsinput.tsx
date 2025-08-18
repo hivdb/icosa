@@ -18,7 +18,7 @@ export interface MutationsTagsInputProps {
     allowPositions?: boolean;
     mutationDefaultGene?: string;
     geneSynonyms?: Record<string, string>;
-    geneReferences: Record<string, string[]>;
+    geneReferences: Record<string, string>;
     messages: Record<string, string>;
   };
   /** Restrict inputs to a specific gene */

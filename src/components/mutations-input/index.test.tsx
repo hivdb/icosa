@@ -35,7 +35,7 @@ describe('MutationsInput', () => {
         gene: 'g',
         mutations: [[1, ['A'] as Iterable<string>]]
       }],
-      geneReferences: { g: ['A'] },
+      geneReferences: { g: 'A' },
       geneDisplay: { g: 'G' },
       geneSynonyms: {},
       messages: {}

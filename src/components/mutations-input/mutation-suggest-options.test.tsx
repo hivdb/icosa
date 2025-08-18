@@ -22,7 +22,7 @@ import MutationSuggestOptions from './mutation-suggest-options';
 describe('MutationSuggestOptions', () => {
   it('invokes onChange when an option selected', () => {
     const onChange = vi.fn();
-    const config = {geneReferences: {gene: ['A']}, geneDisplay: {gene: 'Gene'}, messages: {}};
+    const config = {geneReferences: {gene: 'A'}, geneDisplay: {gene: 'Gene'}, messages: {}};
     render(
       <MutationSuggestOptions
         gene="gene"
