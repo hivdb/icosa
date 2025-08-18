@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import classNames from 'classnames';
 
 import macroPlugin from './macro-plugin';
@@ -9,25 +10,19 @@ import BasicTOC from '../toc';
  *
  * @param content - Inner markdown content of the TOC block.
  * @param props - Additional properties for the TOC component.
- * @param helpers - Transformer and position utilities from remark-macro.
- * @returns Node descriptor consumed by the macro plugin.
+ * @param helpers - Reserved (legacy); ignored in the modern path.
+ * @returns Node descriptor consumed by the macro plugin carrying a `markdown` field.
  */
 export function tocMacro(
   content: string,
   props: Record<string, unknown>,
-  helpers: { parseBlock?: (md: string) => any[]; transformer?: { tokenizeBlock: (c: string, now: any) => any }; eat?: { now: () => any } }
+  _helpers: { parseBlock?: (md: string) => any[] }
 ) {
-  // Prefer modern parseBlock helper; fall back to legacy tokenizeBlock when available
-  let children: any[] = [];
-  if (helpers?.parseBlock) {
-    children = helpers.parseBlock(content) ?? [];
-  } else if (helpers?.transformer && helpers?.eat) {
-    children = helpers.transformer.tokenizeBlock(content, helpers.eat.now());
-  }
+  // Pass raw markdown through as a prop; we’ll render it at component time
   return {
     type: 'TOCNode',
     props,
-    children,
+    markdown: content,
   } as const;
 }
 
@@ -38,19 +33,18 @@ interface TOCNodeWrapperProps {
 }
 
 interface TOCNodeProps {
-  children?: React.ReactNode;
+  markdown?: string;
   props: {
     className?: string;
     [key: string]: unknown;
   };
+  children?: React.ReactNode;
 }
 
 export default function TOCNodeWrapper({className: globalClassName}: TOCNodeWrapperProps) {
-  return ({children, props: {className, ...props}}: TOCNodeProps) => (
-    <BasicTOC
-     {...props}
-     className={classNames(className, globalClassName)}>
-      {children}
+  return ({ markdown = '', props: { className, ...props } }: TOCNodeProps) => (
+    <BasicTOC {...props} className={classNames(className, globalClassName)}>
+      <ReactMarkdown>{markdown}</ReactMarkdown>
     </BasicTOC>
   );
 }

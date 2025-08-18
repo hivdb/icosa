@@ -35,9 +35,35 @@ function linterFn(tree: any, file: any) {
   });
 }
 
+function toKebab(input: string): string {
+  return input
+    // Handle consecutive capitals followed by a lowercase (e.g., TOCNode -> TOC-Node)
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1-$2')
+    // Handle standard lower-to-upper boundaries
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/_/g, '-')
+    .toLowerCase();
+}
+
+function ensureHName(node: any) {
+  if (!node || typeof node !== 'object') return node;
+  const type = node.type;
+  // If consumer didn't set an hName, infer a custom tag for react-markdown >= v6
+  if (!node.data || !node.data.hName) {
+    node.data = node.data || {};
+    if (typeof type === 'string') {
+      node.data.hName = `macro-${toKebab(type)}`;
+    }
+  }
+  // Expose node fields as hProperties so components receive them as props
+  const { children, type: _t, position: _p, data: _d, ...rest } = node;
+  node.data.hProperties = { ...(node.data.hProperties || {}), ...rest };
+  return node;
+}
+
 function processInline(eat: any, value: string, { $, macro, props }: any, helpers: MacroHelpers) {
   const propsHash = props ? parseProps(props) : {};
-  const astNode = macro.fn(propsHash, helpers);
+  const astNode = ensureHName(macro.fn(propsHash, helpers));
   // legacy eat API
   astNode ? eat($)(astNode) : eat($);
 }
@@ -71,7 +97,7 @@ function processBlock(
   }
 
   const propsHash = props ? parseProps(props) : {};
-  const astNode = macro.fn(children.join('\n'), propsHash, helpers);
+  const astNode = ensureHName(macro.fn(children.join('\n'), propsHash, helpers));
   astNode ? eat(body.join('\n'))(astNode) : eat(body.join('\n'));
 }
 
@@ -129,9 +155,15 @@ export default function RemarkMacro() {
         const macro = macros[macroName];
         if (!macro) return;
 
+        function toText(n: any): string {
+          if (!n) return '';
+          if (typeof n.value === 'string') return String(n.value);
+          if (Array.isArray(n.children)) return n.children.map(toText).join('\n');
+          return '';
+        }
         const text = parent.children
           .slice(index)
-          .map((n: any) => ('value' in n ? n.value : ''))
+          .map((n: any) => toText(n))
           .join('\n');
 
         const helpers: MacroHelpers = {

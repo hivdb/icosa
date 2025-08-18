@@ -18,9 +18,8 @@ describe('TOCNodeWrapper', () => {
   });
 
   it('registers toc macro', () => {
-    const mockTransformer = {tokenizeBlock: (c: string) => [{type: 'text', value: c}]};
-    const node = tocMacro('content', {}, {transformer: mockTransformer, eat: {now: () => {}}});
-    expect(node.children).toEqual([{type: 'text', value: 'content'}]);
+    const node = tocMacro('content', {}, {} as any);
+    expect((node as any).markdown).toBe('content');
     expect(node.type).toBe('TOCNode');
   });
 });

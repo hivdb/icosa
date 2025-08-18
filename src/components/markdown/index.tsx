@@ -1,5 +1,7 @@
 import React from 'react';
-import OrigMarkdown from 'react-markdown/with-html';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
@@ -52,8 +54,8 @@ export interface ExtendedMarkdownProps {
   tocClassName?: string;
   /** Render markdown inline without block level wrapper. */
   inline?: boolean;
-  /** Additional renderer components for react-markdown. */
-  renderers?: Record<string, any>;
+  /** Additional components mapping for react-markdown. */
+  components?: Record<string, any>;
   /** Levels to be wrapped by collapsable sections. */
   collapsableLevels?: number[];
   /** Disable anchor links on heading tags. */
@@ -111,47 +113,54 @@ function ExtendedMarkdown({
   genomeMaps,
   refDataLoader,
   displayReferences = true,
-  renderers: addRenderers = {},
+  components: addComponents = {},
   escapeHtml = true,
   ...props
 }: ExtendedMarkdownProps) {
   children = normalizeChildren(children);
   const mdProps: any = {
-    parserOptions: {footnotes: true},
-    transformLinkUri: false,
-    escapeHtml,
+    urlTransform: (url: string) => url,
+    remarkPlugins: [macroPlugin.attacher, remarkGfm],
+    rehypePlugins: escapeHtml ? [] : [rehypeRaw],
     ...props
   };
-  const generalRenderers = {
-    link: MarkdownLink,
-    image: ImageWrapper({imagePrefix}),
-    footnote: RefLink,
-    footnoteReference: RefLink,
-    footnoteDefinition: RefDefinition,
-    ...(noHeadingStyle ? null : {
-      heading: MdHeadingTag(disableHeadingTagAnchor)
-    }),
-    ...addRenderers
+  // Base components used across both inline and block rendering
+  const generalComponents = {
+    a: MarkdownLink,
+    img: ImageWrapper({imagePrefix}),
+    // Hook our custom macro nodes via tag names from remark-macro shim
+    'macro-bad-macro-node': BadMacroNode,
+    'macro-static-refs-node': StaticRefsNode,
+    'macro-table-node': TableNodeWrapper({ tables, mdProps, cmsPrefix }),
+    'macro-genome-map-node': GenomeMapNodeWrapper({ genomeMaps: genomeMaps ?? {} }),
+    'macro-toc-node': TOCNodeWrapper({ className: tocClassName }),
+    ...(noHeadingStyle
+      ? {}
+      : {
+          h1: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 1, children })}</>,
+          h2: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 2, children })}</>,
+          h3: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 3, children })}</>,
+          h4: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 4, children })}</>,
+          h5: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 5, children })}</>,
+          h6: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 6, children })}</>
+        }),
+    ...addComponents
   } as Record<string, any>;
-  const renderers = {
-    ...generalRenderers,
-    BadMacroNode,
-    StaticRefsNode,
-      TableNode: TableNodeWrapper({tables, mdProps, cmsPrefix}),
-      GenomeMapNode: GenomeMapNodeWrapper({genomeMaps: genomeMaps ?? {}}),
-      TOCNode: TOCNodeWrapper({className: tocClassName}),
-    ...(inline ? {} : {root: RootWrapper}),
-    ...(inline ? {paragraph: ({children}: any) => <>{children}</>} : null),
-    ...addRenderers
+
+  const components = {
+    ...generalComponents,
+    ...(inline ? {} : { root: RootWrapper }),
+    ...(inline ? { p: ({ children }: any) => <>{children}</> } : null)
   } as Record<string, any>;
-  mdProps.renderers = generalRenderers;
+
   let jsx = (
-    <OrigMarkdown
+    <ReactMarkdown
       {...mdProps}
+      components={components}
       key={children as any}
-      children={children as any}
-      renderers={renderers as Record<string, unknown>}
-      plugins={[macroPlugin.transformer]} />
+    >
+      {children as any}
+    </ReactMarkdown>
   );
   const refContext = useReference(
     refDataLoader as React.ComponentType<any> | undefined,

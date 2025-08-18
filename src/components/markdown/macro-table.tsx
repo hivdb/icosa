@@ -2,7 +2,7 @@ import React from 'react';
 import toPath from 'lodash/toPath';
 import nestedGet from 'lodash/get';
 import sortBy from 'lodash/sortBy';
-import OrigMarkdown from 'react-markdown/with-html';
+import ReactMarkdown from 'react-markdown';
 
 import macroPlugin from './macro-plugin';
 import SimpleTable, {ColumnDef} from '../simple-table';
@@ -52,7 +52,7 @@ function defaultRenderer(mdProps: any, cmsPrefix?: string) {
   return (value: any) => {
     if (typeof value === 'string') {
       value = value.replace(/\$\$CMS_PREFIX\$\$/g, cmsPrefix ?? '');
-      return <OrigMarkdown {...mdProps} source={value} />;
+      return <ReactMarkdown {...mdProps}>{value}</ReactMarkdown>;
     }
     return value;
   };
@@ -236,7 +236,7 @@ interface TableProps {
   noHeaderOverlapping?: boolean;
   windowScroll?: boolean;
   references?: any;
-  mdProps: {renderers?: Record<string, any>; [key: string]: any};
+  mdProps: {components?: Record<string, any>; [key: string]: any};
   cmsPrefix?: string;
   tableScrollStyle?: React.CSSProperties;
   tableStyle?: React.CSSProperties;
@@ -254,16 +254,16 @@ export function Table({
   noHeaderOverlapping,
   windowScroll,
   references,
-  mdProps: {renderers, ...mdProps},
+  mdProps: {components, ...mdProps},
   cmsPrefix,
   tableScrollStyle = {},
   tableStyle = {}
 }: TableProps) {
-  renderers = {
-    ...renderers,
-    paragraph: InlineParagraph
+  components = {
+    ...components,
+    p: InlineParagraph
   };
-  columnDefs = buildColumnDefs(columnDefs, {...mdProps, renderers}, cmsPrefix);
+  columnDefs = buildColumnDefs(columnDefs, {...mdProps, components}, cmsPrefix);
   data = expandMultiCells(data, columnDefs);
 
   return <>
@@ -278,10 +278,12 @@ export function Table({
       tableStyle={tableStyle}
       columnDefs={columnDefs}
       data={data} />
-    <OrigMarkdown
+    <ReactMarkdown
       {...mdProps}
-      renderers={renderers}
-      source={references} />
+      components={components}
+    >
+      {references}
+    </ReactMarkdown>
   </>;
 }
 

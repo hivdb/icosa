@@ -18,7 +18,7 @@ describe('macro-table utilities', () => {
       {name: 'c7', render: 'checkMark', sort: 'numeric'},
       {name: 'c8', renderTpl: '{{it.value}}'}
     ];
-    const built = buildColumnDefs(columnDefs, {renderers: {}}, '/cms');
+    const built = buildColumnDefs(columnDefs, {components: {}}, '/cms');
     const row = {
       c1: 'a\nb',
       c2: 'x\ny',
@@ -56,10 +56,10 @@ describe('macro-table utilities', () => {
 describe('TableNodeWrapper', () => {
   it('renders table data or error message', () => {
     const tables = {sample: {columnDefs: [{name: 'c1'}], data: [{c1: 'v'}], references: ''}};
-    const Wrapper = TableNodeWrapper({tables, mdProps: {renderers: {}}});
+    const Wrapper = TableNodeWrapper({tables, mdProps: {components: {}}});
     render(<Wrapper tableName="sample" compact lastCompact noHeaderOverlapping windowScroll />);
     expect(screen.getByText('v')).toBeTruthy();
-    const Wrapper2 = TableNodeWrapper({tables: {}, mdProps: {renderers: {}}});
+    const Wrapper2 = TableNodeWrapper({tables: {}, mdProps: {components: {}}});
     render(<Wrapper2 tableName="missing" />);
     expect(screen.getByText(/table data of missing is not found/)).toBeTruthy();
   });
