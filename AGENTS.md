@@ -26,7 +26,7 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 ## General Requirements
 
 * **React components**: If any component is a **class**, convert it to a **function component**.
-* **Package manager**: Use **yarn** (v1.x is pinned in the branch).
+* **Package manager**: Use **Yarn 4** (Berry, node-modules linker). Ensure your local Yarn matches `packageManager` in `package.json`.
 * **Tests**: For any `js/ts/tsx` code you modify, **add/update tests** to improve or maintain coverage. **Fix** failing tests.
 * **Comments/Docstrings**: Add **verbose JSDoc/TS docstrings** for all edited functions, classes, and methods; document **args** and **returns**.
 * **3rd‑party CSS shims (tests only)**: If a dependency’s CSS breaks Vitest, **shim it only for tests** (don’t remove it from runtime). There are existing SCSS shims under `src/shims/`—add more if needed.
@@ -125,7 +125,13 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 
 ## Notes for Local Dev
 
-* Node 22 and Yarn (v1) are used in this branch.
+* Node 22 and Yarn 4 are used in this branch.
+* Yarn is configured via `.yarnrc.yml` with `nodeLinker: node-modules`.
+* Common Yarn 4 commands:
+  - Install: `yarn install`
+  - Check outdated: `npm outdated --json > /tmp/outdated.json || true`
+  - Upgrade (respecting ranges): `yarn up <pkg...>`
+  - Upgrade to latest: `yarn up <pkg...>@latest`
 * Dev server (if applicable): `yarn dev` -> [http://localhost:3009](http://localhost:3009)
 
 ---
