@@ -57,12 +57,17 @@ export interface NGSOptionsFormProps extends NGSOptions {
 }
 
 /** Form allowing the user to configure trimming/filtering options. */
-export default function NGSOptionsForm({
-  isDefault,
-  fastpConfig,
-  cutadaptConfig,
-  ivarConfig,
-  fastpConfig: {
+export default function NGSOptionsForm(props: NGSOptionsFormProps) {
+  const {
+    isDefault,
+    fastpConfig,
+    cutadaptConfig,
+    ivarConfig,
+    primerType,
+    saveInBrowser,
+    onChange
+  } = props;
+  const {
     includeUnmerged,
     qualifiedQualityPhred,
     unqualifiedPercentLimit,
@@ -76,21 +81,15 @@ export default function NGSOptionsForm({
     disableTrimPolyG,
     disableQualityFiltering,
     disableLengthFiltering
-  } = defaultFastpConfig,
-  cutadaptConfig: {
+  } = (fastpConfig ?? defaultFastpConfig) as FastpConfig;
+  const {
     primerSeqs,
     errorRate,
     noIndels,
     times,
     minOverlap
-  } = defaultCutadaptConfig,
-  ivarConfig: {
-    primerBeds
-  } = defaultIvarConfig,
-  primerType,
-  saveInBrowser,
-  onChange
-}: NGSOptionsFormProps) {
+  } = (cutadaptConfig ?? defaultCutadaptConfig) as CutadaptConfig;
+  const { primerBeds } = (ivarConfig ?? defaultIvarConfig) as IvarConfig;
   const isMounted = useMounted();
   const [config] = ConfigContext.use();
   const [fastaDesc, bedDesc] = useMessages([

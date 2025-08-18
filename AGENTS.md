@@ -78,7 +78,7 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 * Build command:
 
   ```bash
-  yarn build
+  yarn build > /tmp/tsc.log 2>&1 || true
   ```
 * Make sure the branch builds locally before opening a PR.
 

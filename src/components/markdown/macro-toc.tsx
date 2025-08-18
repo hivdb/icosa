@@ -15,12 +15,19 @@ import BasicTOC from '../toc';
 export function tocMacro(
   content: string,
   props: Record<string, unknown>,
-  {transformer, eat}: {transformer: {tokenizeBlock: (c: string, now: any) => any}; eat: {now: () => any}}
+  helpers: { parseBlock?: (md: string) => any[]; transformer?: { tokenizeBlock: (c: string, now: any) => any }; eat?: { now: () => any } }
 ) {
+  // Prefer modern parseBlock helper; fall back to legacy tokenizeBlock when available
+  let children: any[] = [];
+  if (helpers?.parseBlock) {
+    children = helpers.parseBlock(content) ?? [];
+  } else if (helpers?.transformer && helpers?.eat) {
+    children = helpers.transformer.tokenizeBlock(content, helpers.eat.now());
+  }
   return {
     type: 'TOCNode',
     props,
-    children: transformer.tokenizeBlock(content, eat.now())
+    children,
   } as const;
 }
 

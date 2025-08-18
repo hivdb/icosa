@@ -1,5 +1,5 @@
 import React from 'react';
-import RemarkMacro from 'remark-macro';
+import RemarkMacro from '../../vendor/remark-macro';
 
 const macro = RemarkMacro();
 export default macro;
