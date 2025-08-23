@@ -31,3 +31,5 @@ dist/
 
 *.log
 .yarn
+
+.codex

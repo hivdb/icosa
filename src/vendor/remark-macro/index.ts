@@ -101,6 +101,14 @@ function processBlock(
   astNode ? eat(body.join('\n'))(astNode) : eat(body.join('\n'));
 }
 
+/**
+ * remark-macro compatibility shim.
+ *
+ * Provides an API to register macros and a remark attacher compatible with
+ * both legacy (parser tokenizers) and modern (AST transform) pipelines.
+ *
+ * @returns An object with `addMacro(name, fn, inline?)` and `attacher`.
+ */
 export default function RemarkMacro() {
   const macros: MacroRegistry = {};
 
@@ -155,16 +163,34 @@ export default function RemarkMacro() {
         const macro = macros[macroName];
         if (!macro) return;
 
-        function toText(n: any): string {
-          if (!n) return '';
-          if (typeof n.value === 'string') return String(n.value);
-          if (Array.isArray(n.children)) return n.children.map(toText).join('\n');
-          return '';
+        // Compute the original markdown tail starting from the macro's first character.
+        // This preserves punctuation and formatting markers (e.g., **, ##, backticks).
+        const fileValue: string = typeof file?.value === 'string' ? String(file.value) : String(file || '');
+        let text: string;
+        // Precompute 0-based line start offsets to translate (line, column) -> absolute offset.
+        const lineStarts: number[] = [0];
+        for (let i = 0; i < fileValue.length; i++) {
+          if (fileValue.charCodeAt(i) === 10 /* '\n' */) lineStarts.push(i + 1);
         }
-        const text = parent.children
-          .slice(index)
-          .map((n: any) => toText(n))
-          .join('\n');
+        const startPos = first?.position?.start;
+        const macroStartAbs = startPos
+          ? (lineStarts[Math.max(0, (startPos.line || 1) - 1)] ?? 0) + Math.max(0, (startPos.column || 1) - 1)
+          : 0;
+        if (startPos && fileValue) {
+          text = fileValue.slice(macroStartAbs);
+        } else {
+          // Fallback: best-effort text extraction from AST nodes (may drop markdown syntax).
+          function toText(n: any): string {
+            if (!n) return '';
+            if (typeof n.value === 'string') return String(n.value);
+            if (Array.isArray(n.children)) return n.children.map(toText).join('\n');
+            return '';
+          }
+          text = parent.children
+            .slice(index)
+            .map((n: any) => toText(n))
+            .join('\n');
+        }
 
         const helpers: MacroHelpers = {
           badNode: (msg: string, ruleId?: string) => makeBadNode(this, msg, ruleId),
@@ -183,12 +209,30 @@ export default function RemarkMacro() {
 
         // Use legacy processors to parse body bounds
         const eat = (consumed: string) => (replacement?: any) => {
-          // Remove consumed paragraph(s) and insert replacement node
-          // Best effort: assume single paragraph consumption here
+          // Remove all nodes from the macro start up to the end of `consumed` slice
+          if (!consumed || typeof consumed !== 'string') return;
+          const startAbs = macroStartAbs;
+          const endAbs = startAbs + consumed.length;
+          // Determine how many siblings to remove starting at `index`
+          let removeCount = 0;
+          for (let i = index; i < parent.children.length; i++) {
+            const child = parent.children[i];
+            const cStart = child?.position?.start;
+            const cEnd = child?.position?.end;
+            if (!cStart || !cEnd) break;
+            const childStartAbs = (lineStarts[Math.max(0, (cStart.line || 1) - 1)] ?? 0) + Math.max(0, (cStart.column || 1) - 1);
+            const childEndAbs = (lineStarts[Math.max(0, (cEnd.line || 1) - 1)] ?? 0) + Math.max(0, (cEnd.column || 1) - 1);
+            // Stop once we've moved past the consumed region
+            if (childStartAbs >= endAbs) break;
+            removeCount += 1;
+            // If this child ends at or beyond endAbs, we've covered the range
+            if (childEndAbs >= endAbs) break;
+          }
+          if (removeCount <= 0) removeCount = 1; // always remove at least the current paragraph
           if (replacement) {
-            parent.children.splice(index, 1, replacement);
+            parent.children.splice(index, removeCount, replacement);
           } else {
-            parent.children.splice(index, 1);
+            parent.children.splice(index, removeCount);
           }
         };
 

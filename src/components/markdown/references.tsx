@@ -19,22 +19,23 @@ import macroPlugin from './macro-plugin';
  * @returns Node descriptor consumed by the macro plugin.
  */
 export function refsMacro(content: string, props: Record<string, unknown>) {
-  return {
+  const val = {
     type: 'StaticRefsNode',
-    names: (
+    names: JSON.stringify(
       content.split(/[\r\n]+/)
         .map(n => n.trim())
         .filter(n => n.length > 0)
     ),
     ...props
   };
+  return val;
 }
 
 macroPlugin.addMacro('refs', refsMacro);
 
 export interface StaticRefsNodeProps {
-  /** List of reference names to render. */
-  names: string[];
+  /** List of reference names to render, JSON encoded. */
+  names: string;
   /** HTML tag to render as, defaults to `ul`. */
   as?: 'ul' | 'ol';
   /** Optional CSS class name. */
@@ -48,6 +49,7 @@ export interface StaticRefsNodeProps {
  * using {@link InlineRef}.
  */
 export function StaticRefsNode({names, as = 'ul', className, style}: StaticRefsNodeProps) {
+  const parsedNames: string[] = JSON.parse(names);
   if (as !== 'ul' && as !== 'ol') {
     as = 'ul';
   }
@@ -55,7 +57,7 @@ export function StaticRefsNode({names, as = 'ul', className, style}: StaticRefsN
   return React.createElement(
     as,
     {className, style},
-    names.map(name => (
+    parsedNames.map(name => (
       <li key={name}>
         <InlineRef name={name} />
       </li>
