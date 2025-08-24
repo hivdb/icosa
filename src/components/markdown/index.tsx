@@ -5,22 +5,12 @@ import rehypeRaw from 'rehype-raw';
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
-import {
-  ReferenceContext,
-  useReference,
-  RefLink,
-  RefDefinition
-} from '../references';
+import { ReferenceContext, useReference } from '../references';
 
-import MarkdownLink from './link';
-import OptReferences, {StaticRefsNode} from './references';
-import MdHeadingTag from './heading-tags';
-import RootWrapper from './root-wrapper';
-import ImageWrapper from './image-wrapper';
-import macroPlugin, {BadMacroNode} from './macro-plugin';
-import TableNodeWrapper from './macro-table';
-import GenomeMapNodeWrapper from './macro-genome-map';
-import TOCNodeWrapper from './macro-toc';
+import OptReferences from './references';
+import macroPlugin from './macro-plugin';
+import footnoteReferencePlugin from './footnote-plugin';
+import buildMarkdownComponents from './components-factory';
 
 /**
  * Normalize markdown children by concatenating arrays into a single string.
@@ -120,38 +110,23 @@ function ExtendedMarkdown({
   children = normalizeChildren(children);
   const mdProps: any = {
     urlTransform: (url: string) => url,
-    remarkPlugins: [macroPlugin.attacher, remarkGfm],
+    // Order matters: GFM parses footnotes; our plugin converts them to ref-link elements.
+    remarkPlugins: [macroPlugin.attacher, remarkGfm, footnoteReferencePlugin],
     rehypePlugins: escapeHtml ? [] : [rehypeRaw],
     ...props
   };
-  // Base components used across both inline and block rendering
-  const generalComponents = {
-    a: MarkdownLink,
-    img: ImageWrapper({imagePrefix}),
-    // Hook our custom macro nodes via tag names from remark-macro shim
-    'macro-bad-macro-node': BadMacroNode,
-    'macro-static-refs-node': StaticRefsNode,
-    'macro-table-node': TableNodeWrapper({ tables, mdProps, cmsPrefix }),
-    'macro-genome-map-node': GenomeMapNodeWrapper({ genomeMaps: genomeMaps ?? {} }),
-    'macro-toc-node': TOCNodeWrapper({ className: tocClassName }),
-    ...(noHeadingStyle
-      ? {}
-      : {
-          h1: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 1, children })}</>,
-          h2: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 2, children })}</>,
-          h3: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 3, children })}</>,
-          h4: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 4, children })}</>,
-          h5: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 5, children })}</>,
-          h6: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 6, children })}</>
-        }),
-    ...addComponents
-  } as Record<string, any>;
-
-  const components = {
-    ...generalComponents,
-    ...(inline ? {} : { root: RootWrapper }),
-    ...(inline ? { p: ({ children }: any) => <>{children}</> } : null)
-  } as Record<string, any>;
+  const components = buildMarkdownComponents({
+    inline,
+    imagePrefix,
+    noHeadingStyle,
+    disableHeadingTagAnchor,
+    tocClassName,
+    tables,
+    mdProps,
+    cmsPrefix,
+    genomeMaps,
+    addComponents
+  });
 
   let jsx = (
     <ReactMarkdown

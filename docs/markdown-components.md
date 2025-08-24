@@ -43,17 +43,114 @@ export function Page({source}: {source: string}) {
   tables={tablePresets}
   genomeMaps={mapPresets}
 >
-  {`{{table example}}
+  {`[table]
+example
+[/table]
 
-{{genome-map mapA}}`}
+[genomemap]
+mapA
+[/genomemap]`}
 </Markdown>
 ```
 
 * `toc` generates an automatic table of contents via the `AutoTOC` component.
 * `collapsableLevels` wraps the specified heading levels in collapsible
   sections.
-* `tables` and `genomeMaps` supply presets referenced by the `{{table name}}`
-  and `{{genome-map name}}` macros.
+* `tables` and `genomeMaps` supply presets referenced by the `[table]...[/table]`
+  and `[genomemap]...[/genomemap]` macros.
+
+## Macros
+
+The Markdown renderer supports a small set of block macros. Macros must be
+placed on their own lines and use square‑bracket tags with an opening and
+closing form. Optional properties can be provided on the opening tag.
+
+- General form: `[name optional, props]` on a line, followed by the macro body
+  (if any), then a closing tag `[/name]` on its own line.
+
+Supported macros:
+
+### [table]…[/table]
+
+Renders a table from a named preset provided via the `tables` prop.
+
+- Syntax:
+  ```
+  [table compact, lastCompact]
+  presetName
+  [/table]
+  ```
+- Body: the first non‑empty line inside the block is treated as the table name.
+- Props (all optional):
+  - `compact`: when present, renders the table in compact mode.
+  - `lastCompact`: when present, renders the last row compacted.
+  - `noHeaderOverlapping`: prevents header overlap.
+  - `windowScroll`: uses window scroll instead of container scroll.
+
+The table preset must exist in the `tables` object passed to `<Markdown />` and
+contain `columnDefs` and `data`. Column renderers support helpers like `nl2br`,
+`template`, `join`, `nowrap`, and more based on the application’s SimpleTable.
+
+Example:
+
+```
+[table compact]
+sample
+[/table]
+```
+
+### [genomemap]…[/genomemap]
+
+Embeds a genome map from a named preset provided via the `genomeMaps` prop.
+
+- Syntax:
+  ```
+  [genomemap]
+  presetName
+  [/genomemap]
+  ```
+- Body: the preset name.
+- Props: any additional attributes placed on the opening tag are forwarded to
+  the GenomeMap component (e.g., `className="my-map"`).
+
+### [toc]…[/toc]
+
+Renders a table of contents for the markdown embedded inside the macro block.
+This is separate from the global `toc` flag, which builds a TOC for the entire
+document.
+
+- Syntax:
+  ```
+  [toc className="my-toc"]
+  ## Section A
+  ### Subsection
+  [/toc]
+  ```
+- Props: attributes on the opening tag (e.g., `className`) are forwarded to the
+  TOC component.
+
+### [refs]…[/refs]
+
+Renders a static list of references by name, using the same reference store as
+footnote citations. Each non‑empty line in the body is treated as a reference
+name and resolved via `<InlineRef />`.
+
+- Syntax:
+  ```
+  [refs as="ol" className="my-refs"]
+  Foo
+  Bar
+  Baz
+  [/refs]
+  ```
+- Props:
+  - `as`: either `ul` or `ol` (defaults to `ul` on invalid input).
+  - `className`, `style`: forwarded to the list element.
+
+Notes:
+- Footnote citations use standard GFM footnote syntax `[^Name]` and are not a
+  macro. Inline expansions are supported via `[^Name#inline]`.
+-
 
 ## Differences from CommonMark and GitHub Flavored Markdown
 
@@ -71,4 +168,3 @@ when porting content from other Markdown processors.
 All features in `src/components/markdown` are covered by unit tests. The test
 suite exercises macros, table of contents generation, collapsible sections and
 custom link/image wrappers to ensure reliable behaviour.
-

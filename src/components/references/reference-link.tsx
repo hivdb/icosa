@@ -25,10 +25,25 @@ function RefLinkInternal({
   const linkRef = React.useRef<HTMLAnchorElement>(null);
   const [refObj, setRefObj] = React.useState<any>();
 
+  // Build a stable key for the reference metadata to avoid ref identity churn
+  const refKey = React.useMemo(() => {
+    const entries = Object.entries(ref || {}).filter(([k, v]) => (
+      k !== 'children' && typeof v !== 'function'
+    ));
+    try {
+      return JSON.stringify(Object.fromEntries(entries));
+    } catch (_e) {
+      // best-effort fallback
+      return entries.map(([k, v]) => `${k}:${String(v)}`).join('|');
+    }
+  }, [ref]);
+
+  // Register the reference once per (name, refKey) change to prevent infinite loops
   React.useEffect(() => {
-    const refObj = setReference(name, ref, /* incr= */ true);
-    setRefObj(refObj);
-  }, [name, ref, setReference]);
+    const ro = setReference(name, ref, /* incr= */ true);
+    setRefObj(ro);
+    // Only re-run when the reference identity actually changes
+  }, [name, refKey, setReference]);
 
   let number: number | undefined;
   let itemId: string | undefined;

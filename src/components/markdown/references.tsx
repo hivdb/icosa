@@ -21,11 +21,10 @@ import macroPlugin from './macro-plugin';
 export function refsMacro(content: string, props: Record<string, unknown>) {
   const val = {
     type: 'StaticRefsNode',
-    names: JSON.stringify(
-      content.split(/[\r\n]+/)
-        .map(n => n.trim())
-        .filter(n => n.length > 0)
-    ),
+    names: content
+      .split(/[\r\n]+/)
+      .map(n => n.trim())
+      .filter(n => n.length > 0),
     ...props
   };
   return val;
@@ -35,7 +34,7 @@ macroPlugin.addMacro('refs', refsMacro);
 
 export interface StaticRefsNodeProps {
   /** List of reference names to render, JSON encoded. */
-  names: string;
+  names: string[];
   /** HTML tag to render as, defaults to `ul`. */
   as?: 'ul' | 'ol';
   /** Optional CSS class name. */
@@ -49,7 +48,7 @@ export interface StaticRefsNodeProps {
  * using {@link InlineRef}.
  */
 export function StaticRefsNode({names, as = 'ul', className, style}: StaticRefsNodeProps) {
-  const parsedNames: string[] = JSON.parse(names);
+  const parsedNames: string[] = names;
   if (as !== 'ul' && as !== 'ol') {
     as = 'ul';
   }

@@ -20,12 +20,17 @@ describe('markdown references utilities', () => {
       setReference: () => null,
       listenOnUpdate: () => () => {}
     };
-    render(
+    const { container } = render(
       <ReferenceContext.Provider value={ctx}>
         <StaticRefsNode names={['foo']} />
       </ReferenceContext.Provider>
     );
+    const list = screen.getByRole('list');
+    expect(list.tagName).toBe('UL');
     expect(screen.getAllByRole('listitem')).toHaveLength(1);
+    // Ensure items are under the same list element
+    const items = Array.from(list.querySelectorAll('li'));
+    expect(items).toHaveLength(1);
   });
 
   it('registers refs macro', () => {
@@ -39,12 +44,13 @@ describe('markdown references utilities', () => {
       setReference: () => null,
       listenOnUpdate: () => () => {}
     };
-    render(
+    const { container } = render(
       <ReferenceContext.Provider value={ctx}>
         <StaticRefsNode names={['foo']} as={'div' as any} />
       </ReferenceContext.Provider>
     );
-    expect(screen.getByRole('list')).toBeTruthy();
+    const list = screen.getByRole('list');
+    expect(list.tagName).toBe('UL');
   });
 
   it('conditionally renders references', () => {
@@ -57,12 +63,17 @@ describe('markdown references utilities', () => {
       refDataLoader: null,
       listenOnUpdate: () => () => {}
     };
-    render(
+    const { container } = render(
       <ReferenceContext.Provider value={ctx}>
         <OptReferences level={2} referenceTitle="Refs" />
       </ReferenceContext.Provider>
     );
-    expect(screen.getByText('Refs')).toBeTruthy();
+    const heading = screen.getByRole('heading', { name: 'Refs' });
+    expect(heading).toBeTruthy();
+    // Verify the heading resides above the references list
+    const section = heading.closest('section') ?? heading.parentElement!;
+    const list = section.querySelector('ol,ul');
+    expect(list).not.toBeNull();
   });
 
   it('handles case without footnote references', () => {

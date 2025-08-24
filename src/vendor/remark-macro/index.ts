@@ -57,7 +57,13 @@ function ensureHName(node: any) {
   }
   // Expose node fields as hProperties so components receive them as props
   const { children, type: _t, position: _p, data: _d, ...rest } = node;
-  node.data.hProperties = { ...(node.data.hProperties || {}), ...rest };
+  // Attach flattened props for react-markdown, but also keep a __raw copy
+  // so complex values (like arrays) survive any downstream tokenization.
+  node.data.hProperties = {
+    ...(node.data.hProperties || {}),
+    ...rest,
+    __raw: rest
+  };
   return node;
 }
 
@@ -112,49 +118,17 @@ function processBlock(
 export default function RemarkMacro() {
   const macros: MacroRegistry = {};
 
-  function transformNodes(this: any, eat: any, value: string, silent: boolean) {
-    if (!value.trim().startsWith('[')) return;
-    const match = macroRegex.exec(value);
-    if (!match || match.index !== 0 || silent) return;
-
-    const $ = match[0];
-    const spaces = typeof match[1] === 'undefined' ? '' : match[1];
-    const macroName = match[2].trim();
-    const props = match[3];
-    const macro = macros[macroName];
-    if (!macro) return;
-
-    const helpers: MacroHelpers = {
-      transformer: this,
-      eat,
-      badNode: (msg: string, ruleId?: string) => makeBadNode(this, msg, ruleId),
-      parseBlock: undefined, // only provided in modern path
-    };
-
-    if (macro.inline) return processInline(eat, value, { $, macro, props }, helpers);
-    return processBlock(eat, value, { $, spaces, macroName, macro, props }, helpers);
-  }
-
-  function attacher(this: any) {
-    // Legacy remark (react-markdown v4) path: patch Parser prototype
-    const Parser = this.Parser as any;
-    if (Parser && Parser.prototype && Parser.prototype.blockTokenizers) {
-      const { blockMethods, blockTokenizers } = Parser.prototype;
-      blockMethods.splice(blockMethods.indexOf('paragraph'), 0, 'macro');
-      blockTokenizers.macro = transformNodes;
-      return linterFn;
-    }
-
-    // Modern remark path: best-effort AST transform for paragraphs starting with macros
-    return (tree: any, file: any) => {
-      visit(tree, 'paragraph', (node: any, index?: number, parent?: any) => {
-        if (!parent || typeof index !== 'number') return;
-        const first = node.children?.[0];
-        if (!first || first.type !== 'text') return;
-        const value: string = String(first.value);
-        if (!value.trim().startsWith('[')) return;
-        const match = macroRegex.exec(value + '\n');
-        if (!match || match.index !== 0) return;
+function attacher(this: any) {
+  // Modern remark path: AST transform for paragraphs starting with macros
+  return (tree: any, file: any) => {
+    visit(tree, 'paragraph', (node: any, index?: number, parent?: any) => {
+      if (!parent || typeof index !== 'number') return;
+      const first = node.children?.[0];
+      if (!first || first.type !== 'text') return;
+      const value: string = String(first.value);
+      if (!value.trim().startsWith('[')) return;
+      const match = macroRegex.exec(value + '\n');
+      if (!match || match.index !== 0) return;
 
         const $ = match[0];
         const spaces = typeof match[1] === 'undefined' ? '' : match[1];
@@ -236,13 +210,12 @@ export default function RemarkMacro() {
           }
         };
 
-        const legacyCtx = { file, Parser };
         return processBlock(eat, text, { $, spaces, macroName, macro, props }, helpers);
       });
 
       linterFn(tree, file);
     };
-  }
+}
 
   return {
     addMacro(name: string, fn: any, inline?: boolean) {
