@@ -1,5 +1,5 @@
-@import '../../styles/colors';
-@import '../../styles/placeholder';
+@use '../../styles/colors' as *;
+@use '../../styles/placeholder' as *;
 
 html[data-no-smooth-scroll] {
   scroll-behavior: initial !important;

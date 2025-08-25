@@ -1,4 +1,4 @@
-@import "../../../../styles/colors";
+@use "../../../../styles/colors" as *;
 
 .canvas-sequence-viewer {
   transform: transale3d(0,0,0); // enable GPU

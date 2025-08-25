@@ -1,7 +1,7 @@
 @use 'sass:math';
 
-@import "../../../../styles";
-@import "../../../../styles/dropdown";
+@use "../../../../styles" as *;
+@use "../../../../styles/dropdown" as *;
 
 .viewer-controller {
   margin-right: 1rem;

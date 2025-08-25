@@ -49,8 +49,8 @@ This branch (`codex/convert‐codebase‐to‐typescript‐and‐react‐19`) is
 
 If a test appears to hang (for example, a `waitFor()` never resolves and leaves open timers), run with a hard timeout to avoid the runner getting stuck:
 
-- Single file (10s timeout): `timeout 10 yarn test src/path/to/test.ts[x]`
-- Full suite (10s timeout): `timeout 10 yarn test`
+- Single file (30s timeout): `timeout 30 yarn test src/path/to/test.ts[x]`
+- Full suite (300s timeout): `timeout 300 yarn test`
 
 Note: The per-test timeout is configured in `vite.config.ts`, but that doesn’t help if the process itself won’t exit; prefer the hard timeout during debugging.
 

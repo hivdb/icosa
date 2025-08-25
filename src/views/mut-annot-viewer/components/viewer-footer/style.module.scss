@@ -1,5 +1,6 @@
-@import "../../../../styles/colors";
-@import "../../../../styles/functions";
+@use "sass:math";
+@use "../../../../styles/colors" as *;
+@use "../../../../styles/functions" as *;
 .footer-container {
   position: sticky;
   z-index: 2;
@@ -86,13 +87,13 @@
     padding-right: 1rem;
     background-color: white;
     position: absolute;
-    top: - $btn-height / 2;
+    top: - math.div($btn-height, 2);
     right: 6rem;
     height: $btn-height;
     font-size: 1.5rem;
     color: $color;
     border: 0.3rem solid $color;
-    border-radius: $btn-height / 2;
+    border-radius: math.div($btn-height, 2);
     cursor: pointer;
     transition: color 250ms ease-in-out, border-color 250ms ease-in-out;
     &:not(:disabled) {

@@ -1,5 +1,5 @@
-@import "~flexbox-grid-mixins";
-@import "../../../styles";
+@use "flexbox-grid-mixins" as *;
+@use "../../../styles" as *;
 
 .analysis-options {
   @extend %fieldset-highlight;

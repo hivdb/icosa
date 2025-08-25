@@ -7,14 +7,14 @@ $color: #a0a0a0;
   font-size: 2.5rem;
   position: fixed;
   z-index: 5000;
-  bottom: calc(50vh - #{$size / 8 * 5});
-  left: calc(50vw - #{$size / 8 * 5});
+  bottom: calc(50vh - #{math.div($size, 8) * 5});
+  left: calc(50vw - #{math.div($size, 8) * 5});
   display: inline-block;
-  width: $size / 8 * 10;
-  height: $size / 8 * 10;
+  width: math.div($size, 8) * 10;
+  height: math.div($size, 8) * 10;
   background-color: white;
-  padding: $size / 3 $size;
-  border-radius: $size / 3;
+  padding: math.div($size, 3) $size;
+  border-radius: math.div($size, 3);
   box-sizing: content-box;
   box-shadow: 1px 1px 4px #999;
 }
@@ -24,8 +24,8 @@ $color: #a0a0a0;
   position: absolute;
   width: $size;
   height: $size;
-  margin: $size / 6;
-  border: $size / 6 solid $color;
+  margin: math.div($size, 6);
+  border: math.div($size, 6) solid $color;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: $color transparent transparent transparent;
@@ -47,3 +47,4 @@ $color: #a0a0a0;
     transform: rotate(360deg);
   }
 }
+@use "sass:math";

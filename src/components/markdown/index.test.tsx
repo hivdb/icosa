@@ -19,7 +19,7 @@ describe('ExtendedMarkdown', () => {
   it('renders TOC and collapsable sections', async () => {
     const md = '# Title\n\n## Section';
     const {container, unmount} = render(
-      <ExtendedMarkdown toc collapsableLevels={[2]}>
+      <ExtendedMarkdown toc collapsableLevels={['h2']}>
         {md}
       </ExtendedMarkdown>
     );
@@ -31,7 +31,7 @@ describe('ExtendedMarkdown', () => {
   it('wraps headings into section elements', async () => {
     const md = '# Title\n\nParagraph\n\n## Section\n\nPara2';
     const {container} = render(
-      <ExtendedMarkdown collapsableLevels={[2]}>
+      <ExtendedMarkdown collapsableLevels={['h2']}>
         {md}
       </ExtendedMarkdown>
     );

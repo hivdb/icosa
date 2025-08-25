@@ -6,7 +6,7 @@ import Section from './section';
 import style from './style.module.scss';
 
 interface Props {
-  levels?: Array<'h2' | 'h3' | 'h4' | 'h5' | 'h6'>;
+  levels?: ('h2' | 'h3' | 'h4' | 'h5' | 'h6')[];
   children?: React.ReactNode;
 }
 

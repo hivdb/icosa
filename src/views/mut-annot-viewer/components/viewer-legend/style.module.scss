@@ -1,5 +1,5 @@
-@import "../../../../styles";
-@import "../../../../styles/dropdown";
+@use "../../../../styles" as *;
+@use "../../../../styles/dropdown" as *;
 
 .viewer-legend {
 }
