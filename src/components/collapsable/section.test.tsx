@@ -33,4 +33,25 @@ describe('SectionInner', () => {
     fireEvent.click(toggle);
     expect(screen.getByLabelText('expand')).toBeInTheDocument();
   });
+
+  it('does not leak router/match props to DOM', () => {
+    const ctx = setup();
+    const {container} = render(
+      <Context.Provider value={ctx}>
+        <SectionInner
+          level={2}
+          match={{location: {hash: ''}}}
+          router={{}}
+          registerCollapsableAnchor={ctx.registerCollapsableAnchor}
+          getClosestCollapsableAnchor={ctx.getClosestCollapsableAnchor}
+        >
+          <h2 id="sec2">Title</h2>
+        </SectionInner>
+      </Context.Provider>
+    );
+    const section = container.querySelector('section');
+    expect(section).not.toBeNull();
+    expect(section?.getAttribute('router')).toBeNull();
+    expect(section?.getAttribute('match')).toBeNull();
+  });
 });

@@ -28,6 +28,21 @@ describe('ExtendedMarkdown', () => {
     unmount();
   });
 
+  it('wraps headings into section elements', async () => {
+    const md = '# Title\n\nParagraph\n\n## Section\n\nPara2';
+    const {container} = render(
+      <ExtendedMarkdown collapsableLevels={[2]}>
+        {md}
+      </ExtendedMarkdown>
+    );
+    // Expect at least one top-level section and one nested section
+    const sections = container.querySelectorAll('section');
+    expect(sections.length).toBeGreaterThanOrEqual(2);
+    // Verify data-level attributes exist for grouping logic
+    expect(container.querySelector('section[data-level="1"]')).not.toBeNull();
+    expect(container.querySelector('section[data-level="2"]')).not.toBeNull();
+  });
+
   it('renders inline markdown without references or heading anchors', () => {
     const {container} = render(
       <ExtendedMarkdown inline displayReferences={false} noHeadingStyle disableHeadingTagAnchor>

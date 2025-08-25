@@ -2,6 +2,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import rehypeSectionize from './rehype-sectionize';
 
 import {AutoTOC} from '../toc';
 import Collapsable from '../collapsable';
@@ -47,7 +48,7 @@ export interface ExtendedMarkdownProps {
   /** Additional components mapping for react-markdown. */
   components?: Record<string, any>;
   /** Levels to be wrapped by collapsable sections. */
-  collapsableLevels?: number[];
+  collapsableLevels?: ('h2' | 'h3' | 'h4' | 'h5' | 'h6')[];
   /** Disable anchor links on heading tags. */
   disableHeadingTagAnchor?: boolean;
   /** Do not apply default heading tag styles. */
@@ -112,7 +113,11 @@ function ExtendedMarkdown({
     urlTransform: (url: string) => url,
     // Order matters: GFM parses footnotes; our plugin converts them to ref-link elements.
     remarkPlugins: [macroPlugin.attacher, remarkGfm, footnoteReferencePlugin],
-    rehypePlugins: escapeHtml ? [] : [rehypeRaw],
+    // Always sectionize after converting MDAST->HAST and before raw HTML injection
+    rehypePlugins: [
+      ...(escapeHtml ? [] : [rehypeRaw]),
+      rehypeSectionize
+    ],
     ...props
   };
   const components = buildMarkdownComponents({
@@ -154,10 +159,7 @@ function ExtendedMarkdown({
     );
   }
   if (collapsableLevels && collapsableLevels.length > 0) {
-    const levels = collapsableLevels.map(
-      l => `h${l}` as 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-    );
-    jsx = <Collapsable levels={levels}>{jsx}</Collapsable>;
+    jsx = <Collapsable levels={collapsableLevels}>{jsx}</Collapsable>;
   }
   if (toc) {
     return (

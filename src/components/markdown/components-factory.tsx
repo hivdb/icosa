@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { RefLink } from '../references';
+import Collapsable from '../collapsable';
 import MarkdownLink from './link';
 import { BadMacroNode } from './macro-plugin';
 import { StaticRefsNode } from './references';
@@ -8,7 +9,6 @@ import TableNodeWrapper from './macro-table';
 import GenomeMapNodeWrapper from './macro-genome-map';
 import TOCNodeWrapper from './macro-toc';
 import MdHeadingTag from './heading-tags';
-import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
 import { withMacroRawProps } from '../../vendor/remark-macro';
 
@@ -56,19 +56,25 @@ export function buildMarkdownComponents({
     ...(noHeadingStyle
       ? {}
       : {
-          h1: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 1, children })}</>,
-          h2: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 2, children })}</>,
-          h3: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 3, children })}</>,
-          h4: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 4, children })}</>,
-          h5: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 5, children })}</>,
-          h6: ({ children }: any) => <>{React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 6, children })}</>
+          // Return the heading component directly so section grouping
+          // in rehype-sectionize can detect HeadingTag elements reliably.
+          h1: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 1, children }),
+          h2: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 2, children }),
+          h3: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 3, children }),
+          h4: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 4, children }),
+          h5: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 5, children }),
+          h6: ({ children }: any) => React.createElement(MdHeadingTag(disableHeadingTagAnchor), { level: 6, children })
         }),
     ...addComponents
   } as Record<string, any>;
 
   return {
     ...generalComponents,
-    ...(inline ? {} : { root: RootWrapper }),
+    // Map custom md-section tag produced by rehype-sectionize to our
+    // Collapsable.Section React component.
+    'md-section': ({ level, children }: any) => (
+      <Collapsable.Section level={level}>{children}</Collapsable.Section>
+    ),
     ...(inline ? { p: ({ children }: any) => <>{children}</> } : null)
   } as Record<string, any>;
 }

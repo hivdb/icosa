@@ -32,6 +32,7 @@ export function SectionInner({
   level,
   children,
   match,
+  router,
   alwaysCollapsable = false,
   registerCollapsableAnchor = () => {},
   getClosestCollapsableAnchor = () => ({anchor: null, shouldCollapseOther: false}),
