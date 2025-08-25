@@ -10,6 +10,7 @@ import TOCNodeWrapper from './macro-toc';
 import MdHeadingTag from './heading-tags';
 import RootWrapper from './root-wrapper';
 import ImageWrapper from './image-wrapper';
+import { withMacroRawProps } from '../../vendor/remark-macro';
 
 export interface BuildComponentsOptions {
   inline: boolean;
@@ -42,12 +43,6 @@ export function buildMarkdownComponents({
   genomeMaps,
   addComponents = {}
 }: BuildComponentsOptions): Record<string, any> {
-  // Merge __raw props injected by vendor/remark-macro back into component props
-  const withMacroRawProps = (Comp: any) => (props: any) => {
-    const merged = props && props.__raw ? { ...props, ...props.__raw } : props;
-    return <Comp {...merged} />;
-  };
-
   const generalComponents = {
     a: MarkdownLink,
     img: (ImageWrapper as any)({ imagePrefix }),

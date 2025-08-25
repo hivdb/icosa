@@ -1,5 +1,6 @@
 import { visit } from 'unist-util-visit';
 import { parseProps, type MacroRegistry, type MacroHelpers, type BadMacroNode } from './types';
+import { attachRawProps } from './raw-store';
 
 // Matches lines that start with optional two spaces, then [macroName props?]\n
 const macroRegex = /^(\s{2})?\[(\w+)(.*)?\](?!\()\n?/;
@@ -45,6 +46,16 @@ function toKebab(input: string): string {
     .toLowerCase();
 }
 
+/**
+ * Ensure a macro-returned node has a stable `hName` and `hProperties`, and
+ * attach a side-channel id to rehydrate complex props at render time.
+ *
+ * - Infers `data.hName` as `macro-${kebab(node.type)}` when not provided.
+ * - Ensures `data.hProperties` exists and is used as the registration target
+ *   for the raw-props FinalizationRegistry.
+ * - Stores the original props in the raw store and writes the id to
+ *   `hProperties.__rawId` while also copying shallow props for convenience.
+ */
 function ensureHName(node: any) {
   if (!node || typeof node !== 'object') return node;
   const type = node.type;
@@ -57,13 +68,14 @@ function ensureHName(node: any) {
   }
   // Expose node fields as hProperties so components receive them as props
   const { children, type: _t, position: _p, data: _d, ...rest } = node;
-  // Attach flattened props for react-markdown, but also keep a __raw copy
-  // so complex values (like arrays) survive any downstream tokenization.
-  node.data.hProperties = {
-    ...(node.data.hProperties || {}),
-    ...rest,
-    __raw: rest
-  };
+  // Use a stable hProperties object so FinalizationRegistry registration
+  // targets the same reference that is ultimately attached to the node.
+  const hProps = (node.data.hProperties = node.data.hProperties || {});
+  // Attach flattened props for react-markdown, and store a raw copy in a
+  // side-channel map to preserve complex values (arrays, ReactNodes, objects)
+  // through the mdast -> hast pipeline.
+  const __rawId = attachRawProps(hProps, rest);
+  Object.assign(hProps, rest, { __rawId });
   return node;
 }
 
@@ -234,3 +246,5 @@ function attacher(this: any) {
     },
   };
 }
+
+export { withMacroRawProps } from './react-helpers';
