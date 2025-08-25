@@ -3,7 +3,6 @@
 @use "../../../styles/dropdown" as *;
 
 .patterns-input-container {
-  // @include grid($flex-wrap: wrap, $gutter: 18px);
   margin-bottom: .5rem;
   flex-grow: 1;
   display: flex;
