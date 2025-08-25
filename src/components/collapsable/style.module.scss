@@ -59,6 +59,12 @@
     @include collapsable-section(2);
   }
 
+  &.collapse-h2 {
+    section[data-level="2"] {
+      @include collapsable-section(2);
+    }
+  }
+
   &.collapse-h3 {
 
     section[data-level="3"] {

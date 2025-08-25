@@ -24,7 +24,7 @@ describe('ExtendedMarkdown', () => {
       </ExtendedMarkdown>
     );
     await waitFor(() => expect(container.querySelector('#_toc')).not.toBeNull());
-    expect(container.querySelector('[class*="collapse-h2"]')).not.toBeNull();
+    expect(container.querySelector('section[data-level="2"]')).not.toBeNull();
     unmount();
   });
 
