@@ -1,5 +1,5 @@
-@use "react-dropdown/style.css";
 @use "./colors" as *;
+@use "./react-dropdown" as *;
 
 %base-dropdown {
   :global {

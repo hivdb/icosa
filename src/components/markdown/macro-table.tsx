@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import macroPlugin from './macro-plugin';
 import SimpleTable, {ColumnDef} from '../simple-table';
 import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
+import rehypeSectionize from './rehype-sectionize';
 
 import style from './style.module.scss';
 
@@ -50,7 +51,10 @@ function nl2brMdText(text: unknown) {
  */
 function defaultRenderer(mdProps: any, cmsPrefix?: string) {
   return (value: any) => {
-    if (typeof value === 'string') {
+    if (value === '-') {
+      return value;
+    }
+    else if (typeof value === 'string') {
       value = value.replace(/\$\$CMS_PREFIX\$\$/g, cmsPrefix ?? '');
       return <ReactMarkdown {...mdProps}>{value}</ReactMarkdown>;
     }
@@ -254,7 +258,7 @@ export function Table({
   noHeaderOverlapping,
   windowScroll,
   references,
-  mdProps: {components, ...mdProps},
+  mdProps: {components, rehypePlugins = [], ...mdProps},
   cmsPrefix,
   tableScrollStyle = {},
   tableStyle = {}
@@ -263,7 +267,10 @@ export function Table({
     ...components,
     p: InlineParagraph
   };
-  columnDefs = buildColumnDefs(columnDefs, {...mdProps, components}, cmsPrefix);
+  // Remove rehypeSectionize from rehypePlugins for table rendering
+  const filteredRehypePlugins = rehypePlugins.filter((plugin: any) => plugin !== rehypeSectionize);
+
+  columnDefs = buildColumnDefs(columnDefs, {...mdProps, components, rehypePlugins: filteredRehypePlugins}, cmsPrefix);
   data = expandMultiCells(data, columnDefs);
 
   return <>
@@ -280,6 +287,7 @@ export function Table({
       data={data} />
     <ReactMarkdown
       {...mdProps}
+      rehypePlugins={filteredRehypePlugins}
       components={components}
     >
       {references}

@@ -54,6 +54,7 @@ sdgsdh
 sdhsdhsd
 
 - [^test2#inline]
+- [^refx]
 
 [refs]
 test1
