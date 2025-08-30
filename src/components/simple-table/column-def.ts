@@ -154,7 +154,7 @@ function coerceSort({
   let mySort: ColumnSort | undefined;
   if (!sort && decorator) {
     mySort = rows =>
-      sortBy(rows, row => decorator(nestedGet(row as RowRecord, name), row));
+      sortBy(rows, row => decorator(nestedGet(row, name), row));
   }
   else if (!sort) {
     mySort = rows => sortBy(rows, [name]);
@@ -205,7 +205,7 @@ export interface ColumnDefOptions {
   exportRaw?: boolean;
   sort?: ColumnSort | Array<string | ColumnSort>;
   sortable?: boolean;
-  textAlign?: string;
+  textAlign?: 'left' | 'right' | 'center' | 'justify';
   nullsLast?: boolean;
   none?: string;
   multiCells?: boolean;
@@ -230,7 +230,7 @@ export default class ColumnDef implements ColumnDefOptions {
   exportCell?: ColumnExportCell;
   sort: ColumnSort;
   sortable: boolean;
-  textAlign: string;
+  textAlign: 'left' | 'right' | 'center' | 'justify';
   nullsLast: boolean;
   none: string;
   multiCells: boolean;

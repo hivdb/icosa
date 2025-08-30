@@ -25,7 +25,7 @@ function moveNullsLast(data: RowRecord[], name: string) {
   const nonNulls: RowRecord[] = [];
   const nulls: RowRecord[] = [];
   for (const item of data) {
-    const value = nestedGet(item as object, name);
+    const value = nestedGet(item, name);
     if (value === undefined || value === null || value === '') {
       nulls.push(item);
     }

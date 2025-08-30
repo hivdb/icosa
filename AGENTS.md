@@ -113,29 +113,24 @@ Note: The per-test timeout is configured in `vite.config.ts`, but that doesn’t
 * **Runtime types**: Where the boundary is dynamic (e.g., CMS/GraphQL), add light runtime guards (type predicates) around parsing.
 * **Typing**: Use TypeScript’s type system to ensure type safety. Avoid `any` unless absolutely necessary, and document why with a `@todo` comment. `@ts-nocheck` is not allowed.
 
----
-
 ## TypeScript Typing Guidelines
 
-* **Type Safety**: Prefer strict typing over `any`. Use `unknown` for truly unknown external data that requires runtime type checking.
-* **`any` vs `unknown`**:
-  - Use `unknown` for input parameters that come from external sources (APIs, CMS, user input) and require type guards
-  - Use `any` only when interfacing with legacy JavaScript or when type information is genuinely unavailable
-  - Document any use of `any` with `@todo` comments explaining why it's necessary
-* **Type Consolidation**: Consolidate similar types across files into shared type definitions to maintain consistency
-* **Type Placement**: Place types in the component where they are primarily used, even if referenced by other components
-* **Runtime Safety**: For external data boundaries, use type predicates and runtime validation where appropriate
-* **Component type**: Consolidate shared types/interfaces into a single `types.ts` file per component.
-* **Duplicate types**: When duplicates exist across files, the canonical definition must come from the source of truth (the file that originally defines the behavior). Replace local/inline duplicates with imports from `<component-name>/types.ts`.
-* **Prefer precise shapes**: Limit `unknown` to the minimum necessary. When a stricter structure is obvious, define and use it (e.g., `RowRecord = Record<string, unknown>` for table rows, and prefer `RowRecord[]` over `unknown[]`).
-* **Unify function signatures with types**: When a function’s signature corresponds to an exported type (e.g., a renderer), use that type directly for the function signature rather than repeating a structural duplicate (e.g., return `ColumnRender` from `createUnsafeRenderFromTpl`).
+* **Strict Typing**: Avoid `any` whenever possible. Use `unknown` for values from external sources (APIs, CMS, user input) that require runtime checks or type guards.
+  - Use `any` only when interoperating with legacy JavaScript or when type information is truly unavailable.
+  - Document each `any` usage with a `@todo` comment explaining why it’s necessary.
+* **Runtime Safety**: At data boundaries, validate untyped inputs with runtime checks or type predicates to guard against invalid structures.
+* **Type Precision**: Prefer explicit shapes over overly generic types.
+  - Example: define `RowRecord = Record<string, unknown>` for table rows, and use `RowRecord[]` instead of `unknown[]`.
+* **Local Placement**: Define types within the component where they are primarily used.
+* **Shared Types**: When multiple components share types/interfaces, consolidate them into a `types.ts` file within the component.
+* **Canonical Definitions**: Eliminate duplicate type definitions. The source of truth should be the file that originally defines the behavior. Other files should import from that canonical definition.
+* **Unify Signatures**: If a function’s signature matches an exported type/interface, reference that type directly instead of duplicating its structure.
+  - Example: if `ColumnRender` exists, return `ColumnRender` from `createRenderFromTemplate` instead of repeating its shape inline.
 
 ## CSS & Assets in Tests
 
 * Do **not** remove third‑party CSS. If it breaks tests, add a **shim** under `src/shims/` and wire it via `vite.config.ts:test.alias`.
 * Keep shims **scoped to tests** only.
-
----
 
 ## PR Checklist
 

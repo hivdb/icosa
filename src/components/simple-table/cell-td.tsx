@@ -36,7 +36,7 @@ function SimpleTableCellTd({
     } = columnDef;
 
     const jsx = render(
-      nestedGet(row as RowRecord, name),
+      nestedGet(row, name),
       row,
       rowContext,
       renderConfig
@@ -47,7 +47,7 @@ function SimpleTableCellTd({
      className={classNames(
        enableRowSpan && rowSpan === 0 ?
          style.hide : null,
-       style[textAlign as keyof typeof style]
+       style[textAlign]
      )}
      {...(isEmpty ? {'data-is-empty': ''} : null)}
      style={bodyCellStyle}

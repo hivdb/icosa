@@ -9,9 +9,9 @@ import type {RowRecord, RowSpanKeyGetter} from './types';
 function countGroups(rows: RowRecord[], rowSpanKeyGetter: RowSpanKeyGetter) {
   let numGroups = 0;
   let prevRow: RowRecord | undefined;
-  let prevName: string | undefined;
+  let prevName;
   for (const row of rows) {
-    let curName: string | undefined;
+    let curName;
     if (prevRow && rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)) {
       curName = prevName;
     }
@@ -151,7 +151,7 @@ export default function useRowSpanMatrix({
         return matrix;
       }
 
-      let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns as RowSpanColumn[]);
+      let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns);
       const groupStack: RowSpanGroup[] = [];
       do {
         const subGroups: RowSpanGroup[] | undefined = curGroup!.subGroups;
