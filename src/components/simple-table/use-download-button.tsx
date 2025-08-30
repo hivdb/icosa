@@ -4,8 +4,8 @@ import startCase from 'lodash/startCase';
 import {FaCaretUp} from '@react-icons/all-files/fa/FaCaretUp';
 import {FaCaretDown} from '@react-icons/all-files/fa/FaCaretDown';
 
-import type ColumnDefClass from './column-def';
-type ColumnDef = InstanceType<typeof ColumnDefClass>;
+import type {RowRecord} from './types';
+import type ColumnDef from './column-def';
 
 import {dumpCSV, dumpTSV, dumpExcelSimple} from '../../utils/sheet-utils';
 import {makeDownload} from '../../utils/download';
@@ -109,7 +109,6 @@ function useDefaultDownloadOption({onSave}: DefaultDownloadOptionArgs) {
   return [defaultOpt, save] as const;
 }
 
-
 /**
  * Manage open/close state for the option dropdown menu.
  */
@@ -179,13 +178,13 @@ export default function useDownloadButton({
   });
 
   const readTableData = React.useCallback(
-  async (): Promise<any[][]> => {
+  async (): Promise<string[][]> => {
       setCopying(true);
       await sleep(600);
       try {
         const node = tableRef.current!.querySelector('table')! as HTMLTableElement;
         let header: string[] = [];
-        const content: Record<string, any>[] = [];
+        const content: Array<RowRecord> = [];
         const labels: string[] = [];
         for (const row of Array.from(node.rows)) {
           if (row.dataset.skipCopy) {
@@ -199,37 +198,43 @@ export default function useDownloadButton({
             }
             continue;
           }
-          const tr: Record<string, any> = {};
+          const tr: RowRecord = {};
           for (let i = 0; i < columnDefs.length; i ++) {
             const cell = row.cells[i];
             const colDef = columnDefs[i];
             const label = labels[i] || startCase(colDef.name);
             if (colDef.exportCell) {
               // columnDef can supply an "exportCell" method
-                const payload = JSON.parse(row.dataset.payload || '{}');
+                const payload = JSON.parse(row.dataset.payload || '{}') as RowRecord;
               const cellData = colDef.exportCell(
                 payload[colDef.name],
                 payload
               );
               if (cellData instanceof Array) {
                 for (const one of cellData) {
-                  for (const key in one) {
-                    if (key) {
-                      tr[`${label}: ${key}`] = one[key];
-                    }
-                    else {
-                      tr[label] = one[key];
+                  if (one && typeof one === 'object' && !Array.isArray(one)) {
+                    const obj = one as Record<string, unknown>;
+                    for (const key in obj) {
+                      const val = obj[key];
+                      if (key) {
+                        tr[`${label}: ${key}`] = val;
+                      }
+                      else {
+                        tr[label] = val;
+                      }
                     }
                   }
                 }
               }
-              else if (cellData instanceof Object) {
-                for (const key in cellData) {
+              else if (cellData && typeof cellData === 'object') {
+                const obj = cellData as Record<string, unknown>;
+                for (const key in obj) {
+                  const val = obj[key];
                   if (key) {
-                    tr[`${label}: ${key}`] = cellData[key];
+                    tr[`${label}: ${key}`] = val;
                   }
                   else {
-                    tr[label] = cellData[key];
+                    tr[label] = val;
                   }
                 }
               }
@@ -250,11 +255,12 @@ export default function useDownloadButton({
         const headerWithValue = header.filter(
           h => content.some(row => row[h])
         );
-        return [headerWithValue, ...content.map(
+        const rows: string[][] = content.map(
           trmap => headerWithValue.map(
-            field => trmap[field]
+            field => `${trmap[field] ?? ''}`
           )
-        )];
+        );
+        return [headerWithValue, ...rows];
       }
       finally {
         setCopying(false);

@@ -1,7 +1,9 @@
 import type React from 'react';
+import type {ReactNode} from 'react';
 import sortBy from 'lodash/sortBy';
 import nestedGet from 'lodash/get';
 import startCase from 'lodash/startCase';
+import type {RowRecord, RowContext, RenderConfig, RowSpanKeyGetter} from './types';
 
 /**
  * Create a renderer function from a template string.
@@ -15,12 +17,7 @@ import startCase from 'lodash/startCase';
 export function createUnsafeRenderFromTpl(
   tpl: string,
   escapeHtml = false
-): (
-  cellData: unknown,
-  rowData: unknown,
-  rowContext: unknown,
-  renderConfig: unknown
-) => string {
+): ColumnRender {
   // Note: never allow ColumnDef from UGC data
   if (escapeHtml) {
     /* eslint-disable-next-line no-new-func */
@@ -52,12 +49,7 @@ export function createUnsafeRenderFromTpl(
       }
       return escapeHtml\`${tpl}\`;
         `
-      ) as (
-        cellData: unknown,
-        rowData: unknown,
-        rowContext: unknown,
-        renderConfig: unknown
-      ) => string;
+      ) as ColumnRender;
     }
     else {
       /* eslint-disable-next-line no-new-func */
@@ -67,12 +59,7 @@ export function createUnsafeRenderFromTpl(
         'rowContext',
         'renderConfig',
         `return \`${tpl}\`;`
-      ) as (
-        cellData: unknown,
-        rowData: unknown,
-        rowContext: unknown,
-        renderConfig: unknown
-      ) => string;
+      ) as ColumnRender;
     }
   }
 
@@ -80,7 +67,7 @@ interface CoerceRenderOptions {
   render?: ColumnRender;
   decorator?: Decorator;
   renderTpl?: string;
-  none?: string;
+  none?: ReactNode;
 }
 
 /**
@@ -105,15 +92,15 @@ function coerceRender({
       cellData === null ||
       cellData === ''
         ? none
-        : cellData
-    ) as unknown as React.ReactNode;
+        : cellData as ReactNode
+    );
   }
   if (decorator) {
     return (
       cellData: unknown,
-      rowData: unknown,
-      rowContext: unknown,
-      renderConfig: unknown
+      rowData: RowRecord,
+      rowContext: RowContext,
+      renderConfig: RenderConfig
     ) =>
       myRender(
         decorator(cellData, rowData, rowContext),
@@ -167,7 +154,7 @@ function coerceSort({
   let mySort: ColumnSort | undefined;
   if (!sort && decorator) {
     mySort = rows =>
-      sortBy(rows, row => decorator(nestedGet(row, name), row));
+      sortBy(rows, row => decorator(nestedGet(row as RowRecord, name), row));
   }
   else if (!sort) {
     mySort = rows => sortBy(rows, [name]);
@@ -176,9 +163,9 @@ function coerceSort({
     const sortKeys = sort.map(key =>
       key instanceof Function
         ? key
-        : (row: any) => nestedGet(row, `${name}.${key}`) || ''
+        : (row: RowRecord) => nestedGet(row, `${name}.${key}`) || ''
     );
-    mySort = (rows: any[]) => sortBy(rows, sortKeys);
+    mySort = (rows: RowRecord[]) => sortBy(rows, sortKeys) as RowRecord[];
   }
   else {
     mySort = sort;
@@ -187,33 +174,33 @@ function coerceSort({
 }
 
 export type Decorator = (
-  cellData: any,
-  rowData: any,
-  rowContext?: any
-) => any;
+  cellData: unknown,
+  rowData: RowRecord,
+  rowContext?: RowContext
+) => ReactNode;
 
 export type ColumnRender = (
-  cellData: any,
-  rowData: any,
-  rowContext: any,
-  renderConfig: any
-) => React.ReactNode;
+  cellData: unknown,
+  rowData: RowRecord,
+  rowContext: RowContext,
+  renderConfig: RenderConfig
+) => ReactNode;
 
 export type ColumnExportCell = (
-  cellData: any,
-  rowData: any
-) => any;
+  cellData: unknown,
+  rowData: RowRecord
+) => unknown;
 
-export type ColumnSort = (rows: any[], name: string) => any[];
+export type ColumnSort = (rows: RowRecord[], name: string) => RowRecord[];
 
 export interface ColumnDefOptions {
   name: string;
-  label?: React.ReactNode;
+  label?: ReactNode;
   exportLabel?: string;
   decorator?: Decorator;
   render?: ColumnRender;
   renderTpl?: string;
-  renderConfig?: any;
+  renderConfig?: RenderConfig;
   exportCell?: ColumnExportCell;
   exportRaw?: boolean;
   sort?: ColumnSort | Array<string | ColumnSort>;
@@ -223,7 +210,7 @@ export interface ColumnDefOptions {
   none?: string;
   multiCells?: boolean;
   rowSpanKey?: string;
-  rowSpanKeyGetter?: (row: any) => any;
+  rowSpanKeyGetter?: RowSpanKeyGetter;
   headCellStyle?: React.CSSProperties;
   bodyCellStyle?: React.CSSProperties;
   bodyCellColSpan?: number;
@@ -232,14 +219,14 @@ export interface ColumnDefOptions {
 /**
  * Definition for a table column used by {@link SimpleTable}.
  */
-export default class ColumnDef {
+export default class ColumnDef implements ColumnDefOptions {
   name: string;
-  label: React.ReactNode;
+  label: ReactNode;
   exportLabel?: string;
   decorator?: Decorator;
   render: ColumnRender;
   renderTpl?: string;
-  renderConfig: any;
+  renderConfig: RenderConfig;
   exportCell?: ColumnExportCell;
   sort: ColumnSort;
   sortable: boolean;
@@ -248,7 +235,7 @@ export default class ColumnDef {
   none: string;
   multiCells: boolean;
   rowSpanKey?: string;
-  rowSpanKeyGetter?: (row: any) => any;
+  rowSpanKeyGetter?: RowSpanKeyGetter;
   headCellStyle: React.CSSProperties;
   bodyCellStyle: React.CSSProperties;
   bodyCellColSpan: number;

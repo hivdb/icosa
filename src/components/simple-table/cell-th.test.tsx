@@ -1,6 +1,7 @@
 import {render, fireEvent, waitFor} from '@testing-library/react';
 import {describe, it, expect, vi} from 'vitest';
 import '@testing-library/jest-dom';
+import type {RowRecord} from './types';
 
 vi.mock('sleep-promise', () => ({default: () => Promise.resolve()}));
 

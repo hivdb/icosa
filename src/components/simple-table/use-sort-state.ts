@@ -10,9 +10,9 @@ import type {SortState} from './types';
  */
 export default function useSortState<T>(
   data: T[]
-): [SortState, React.Dispatch<React.SetStateAction<SortState>>] {
+): [SortState<T>, React.Dispatch<React.SetStateAction<SortState<T>>>] {
   const prevData = React.useRef<T[] | null>(data);
-  const [sortState, setSortState] = React.useState<SortState>({
+  const [sortState, setSortState] = React.useState<SortState<T>>({
     columns: [],
     sortedData: data
   });

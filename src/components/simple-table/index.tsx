@@ -3,25 +3,20 @@ import classNames from 'classnames';
 
 import useDownloadButton from './use-download-button';
 import SimpleTableTable from './table';
+import type {SimpleTableTableProps} from './table';
 import ColumnDef from './column-def';
 import style from './style.module.scss';
 export {ColumnDef};
+import type {RowRecord} from './types';
 
-interface Props {
+interface SimpleTableProps extends Omit<SimpleTableTableProps, 'enableRowSpan' | 'onBeforeSort' | 'onSort'> {
   windowScroll?: boolean;
   compact?: boolean;
   lastCompact?: boolean;
   noHeaderOverlapping?: boolean;
-  color?: string;
-  data: any[];
   cacheKey?: string;
-  columnDefs: ColumnDef[];
   sheetName?: string;
-  onRowClick?: (row: any, idx: number, e: React.MouseEvent<HTMLTableRowElement>) => void;
-  getRowKey?: (row: any) => string | number | null;
-  className?: string;
   tableScrollStyle?: React.CSSProperties;
-  tableStyle?: React.CSSProperties;
   afterTable?: React.ReactNode;
   disableCopy?: boolean;
 }
@@ -46,7 +41,7 @@ export default function SimpleTable({
   tableStyle = {},
   afterTable,
   disableCopy = false
-}: Props) {
+}: SimpleTableProps) {
 
   const tableRef = React.useRef<HTMLDivElement>(null);
   const [mobileLabelWidth, setMobileLabelWidth] = React.useState('auto');

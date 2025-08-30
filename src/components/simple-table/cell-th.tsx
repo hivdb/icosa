@@ -5,27 +5,9 @@ import {FaSortUp} from '@react-icons/all-files/fa/FaSortUp';
 import {FaSort} from '@react-icons/all-files/fa/FaSort';
 
 import style from './style.module.scss';
-
-interface ColumnDef {
-  name: string;
-  label: React.ReactNode;
-  sort: (rows: any[], name: string) => any[];
-  sortable: boolean;
-  nullsLast?: boolean;
-  headCellStyle?: React.CSSProperties;
-}
-
-interface SortColumn {
-  name: string;
-  direction: 'ascending' | 'descending' | null;
-  nullsLast?: boolean;
-  sort: (rows: any[], name: string) => any[];
-}
-
-interface SortState {
-  columns: SortColumn[];
-  sortedData: any[];
-}
+import nestedGet from 'lodash/get';
+import type {SortState, SortColumn, RowRecord} from './types';
+import type ColumnDef from './column-def';
 
 function getNextDirection(direction: 'ascending' | 'descending' | null) {
   if (direction === null) {
@@ -39,15 +21,12 @@ function getNextDirection(direction: 'ascending' | 'descending' | null) {
   }
 }
 
-function moveNullsLast(data: any[], name: string) {
-  const nonNulls: any[] = [];
-  const nulls: any[] = [];
+function moveNullsLast(data: RowRecord[], name: string) {
+  const nonNulls: RowRecord[] = [];
+  const nulls: RowRecord[] = [];
   for (const item of data) {
-    if (
-      item[name] === undefined ||
-      item[name] === null ||
-      item[name] === ''
-    ) {
+    const value = nestedGet(item as object, name);
+    if (value === undefined || value === null || value === '') {
       nulls.push(item);
     }
     else {
@@ -57,7 +36,7 @@ function moveNullsLast(data: any[], name: string) {
   return [...nonNulls, ...nulls];
 }
 
-function applySorts(data: any[], columns: SortColumn[]) {
+function applySorts(data: RowRecord[], columns: SortColumn[]) {
   let sortedData = [...data];
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
@@ -85,8 +64,8 @@ function applySorts(data: any[], columns: SortColumn[]) {
   return sortedData;
 }
 
-interface Props {
-  data: any[];
+interface SimpleTableCellThProps {
+  data: RowRecord[];
   columnDef: ColumnDef;
   sortState: SortState;
   onBeforeSort?: (arg: SortState) => void;
@@ -102,7 +81,7 @@ function SimpleTableCellTh({
   sortState,
   onBeforeSort,
   onSort
-}: Props) {
+}: SimpleTableCellThProps) {
   const {
     name,
     label,

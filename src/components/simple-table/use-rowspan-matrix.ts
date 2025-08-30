@@ -1,17 +1,17 @@
 import React from 'react';
 import nestGet from 'lodash/get';
+import type {RowRecord, RowSpanKeyGetter} from './types';
 
-type KeyGetter = (row: any) => any;
 
 /**
  * Count how many groups exist based on the given key getter.
  */
-function countGroups(rows: any[], rowSpanKeyGetter: KeyGetter) {
+function countGroups(rows: RowRecord[], rowSpanKeyGetter: RowSpanKeyGetter) {
   let numGroups = 0;
-  let prevRow: any;
-  let prevName: any;
+  let prevRow: RowRecord | undefined;
+  let prevName: string | undefined;
   for (const row of rows) {
-    let curName;
+    let curName: string | undefined;
     if (prevRow && rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)) {
       curName = prevName;
     }
@@ -27,7 +27,7 @@ function countGroups(rows: any[], rowSpanKeyGetter: KeyGetter) {
 
 interface RowSpanColumn {
   name: string;
-  rowSpanKeyGetter: KeyGetter;
+  rowSpanKeyGetter: RowSpanKeyGetter;
   idx: number;
   allNumRows?: number[];
   subGroups?: RowSpanGroup[];
@@ -42,16 +42,16 @@ interface RowSpanGroup {
 }
 
 function groupByColumns(
-  rows: any[],
+  rows: RowRecord[],
   columns: RowSpanColumn[],
   rowIdxOffset = 0
 ): RowSpanGroup {
   const {name, rowSpanKeyGetter, idx} = columns.shift()!;
-  const groups: any[][] = [];
-  let prevRow: any;
-  let prevGroup: any[] | undefined;
+  const groups: RowRecord[][] = [];
+  let prevRow: RowRecord | undefined;
+  let prevGroup: RowRecord[] | undefined;
   for (const row of rows) {
-    let curGroup: any[];
+    let curGroup: RowRecord[];
     if (
       prevRow &&
       rowSpanKeyGetter(prevRow) === rowSpanKeyGetter(row)
@@ -101,10 +101,10 @@ interface UseRowSpanMatrixArgs {
   columnDefs: Array<{
     name: string;
     rowSpanKey?: string;
-    rowSpanKeyGetter?: KeyGetter;
+    rowSpanKeyGetter?: RowSpanKeyGetter;
     multiCells?: boolean;
   }>;
-  data: any[];
+  data: RowRecord[];
 }
 
 /**
@@ -131,10 +131,10 @@ export default function useRowSpanMatrix({
           rowSpanKeyGetter,
           multiCells
         }, idx) => {
-          const getter: KeyGetter = rowSpanKeyGetter ? rowSpanKeyGetter : (
+          const getter: RowSpanKeyGetter = rowSpanKeyGetter ? rowSpanKeyGetter : (
             rowSpanKey ?
-              (row: any) => nestGet(row, rowSpanKey) :
-              (row: any) => nestGet(row, name)
+              (row: RowRecord) => nestGet(row, rowSpanKey) :
+              (row: RowRecord) => nestGet(row, name)
           );
           return {
             name,
@@ -151,7 +151,7 @@ export default function useRowSpanMatrix({
         return matrix;
       }
 
-      let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns as any);
+      let curGroup: RowSpanGroup | null = groupByColumns(data, rowSpanColumns as RowSpanColumn[]);
       const groupStack: RowSpanGroup[] = [];
       do {
         const subGroups: RowSpanGroup[] | undefined = curGroup!.subGroups;

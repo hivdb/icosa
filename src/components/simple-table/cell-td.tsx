@@ -3,25 +3,13 @@ import nestedGet from 'lodash/get';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
+import type {RowRecord, RowContext} from './types';
+import type ColumnDef from './column-def';
 
-interface ColumnDef {
-  name: string;
-  render: (
-    cellData: any,
-    row: any,
-    rowContext: any,
-    renderConfig: any
-  ) => React.ReactNode;
-  renderConfig?: any;
-  bodyCellColSpan?: number;
-  textAlign?: string;
-  bodyCellStyle?: React.CSSProperties;
-}
-
-interface Props {
-  row: any;
+interface SimpleTableCellTdProps {
+  row: RowRecord;
   rowSpan: number;
-  rowContext: any;
+  rowContext: RowContext;
   columnDef: ColumnDef;
   enableRowSpan?: boolean;
 }
@@ -35,7 +23,7 @@ function SimpleTableCellTd({
   rowContext,
   columnDef,
   enableRowSpan = true
-}: Props) {
+}: SimpleTableCellTdProps) {
 
   return React.useMemo(() => {
     const {
@@ -48,7 +36,7 @@ function SimpleTableCellTd({
     } = columnDef;
 
     const jsx = render(
-      nestedGet(row, name),
+      nestedGet(row as RowRecord, name),
       row,
       rowContext,
       renderConfig
