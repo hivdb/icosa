@@ -6,12 +6,10 @@ import {getColorInt} from '../../utils/colors';
 
 import type {View, PositionAnnot, ResidueAnnot, CameraState} from './types';
 import type { RepresentationDescriptor } from 'react-ngl';
-import {viewShape} from './prop-types';
 import ResidueLayer from './residue-layer';
 import CameraController from './camera-controller';
 
 export type {View as ProteinView};
-export {viewShape as proteinViewShape};
 
 /** Props for {@link ProteinViewer} */
 interface ProteinViewerProps {
@@ -164,4 +162,3 @@ export default function ProteinViewer({
     ]
   );
 }
-
