@@ -1,6 +1,6 @@
 import uniq from 'lodash/uniq';
 
-import type {Annotation, Position} from '../../prop-types';
+import type {Annotation, Position} from '../../types';
 
 /**
  * Convert a list of integers into an array of inclusive ranges.
@@ -292,4 +292,3 @@ export function calcUnderscoreAnnotLocations(
     return minAvailableLoc;
   }
 }
-

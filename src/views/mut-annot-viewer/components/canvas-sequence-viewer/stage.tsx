@@ -11,7 +11,7 @@ import SelectedLayer from './selected-layer';
 import AnnotsLayer from './annots-layer';
 import HoverLayer from './hover-layer';
 
-import type {Position} from '../../prop-types';
+import type {Position} from '../../types';
 
 /**
  * Create an array of integers between `start` and `end` (inclusive).

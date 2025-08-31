@@ -20,7 +20,7 @@ import type {
   Position,
   SeqViewerSize,
   Annotation
-} from '../../prop-types';
+} from '../../types';
 
 
 /**

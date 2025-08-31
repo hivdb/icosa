@@ -7,7 +7,7 @@ import type {
   AnnotCategory,
   CurAnnotNameLookup,
   Annotation
-} from '../../prop-types';
+} from '../../types';
 
 import style from './style.module.scss';
 import ColorLegend from './color-legend';

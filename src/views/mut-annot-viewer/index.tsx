@@ -2,7 +2,7 @@ import React, {Suspense, lazy} from 'react';
 import {Route} from 'found';
 import makeClassNames from 'classnames';
 import Loader from '../../components/loader';
-import type {FragmentOption} from './prop-types';
+import type {FragmentOption} from './types';
 
 import CustomColors from '../../components/custom-colors';
 import {NewWindowRoute} from '../../components/new-window';

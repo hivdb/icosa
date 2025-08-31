@@ -4,7 +4,7 @@ import {Layer} from 'react-konva';
 import PositionGroup from './position-group';
 import USAnnotGroup from './underscore-annot-group';
 
-import type {Position} from '../../../prop-types';
+import type {Position} from '../../../types';
 
 interface HoverLayerProps {
   hoverPos?: number;

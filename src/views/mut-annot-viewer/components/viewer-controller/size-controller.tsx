@@ -4,7 +4,7 @@ import capitalize from 'lodash/capitalize';
 import style from './style.module.scss';
 
 import Button from '../../../../components/button';
-import type {SeqViewerSize} from '../../prop-types';
+import type {SeqViewerSize} from '../../types';
 
 interface SizeControllerProps {
   /** Current sequence viewer size. */

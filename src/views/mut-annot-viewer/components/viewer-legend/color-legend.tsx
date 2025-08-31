@@ -8,7 +8,7 @@ import type {
   Annotation,
   Citation,
   AnnotCategory
-} from '../../prop-types';
+} from '../../types';
 import {getAnnotation} from '../../utils';
 import LegendContext from '../legend-context';
 

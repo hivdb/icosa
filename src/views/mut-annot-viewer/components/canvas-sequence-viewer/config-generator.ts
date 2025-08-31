@@ -1,7 +1,7 @@
 import {getColorHex} from '../../../../utils/colors';
 import type {LegendContextValue} from '../legend-context';
 
-import type {SeqViewerSize} from '../../prop-types';
+import type {SeqViewerSize} from '../../types';
 
 const BASE_SIZE_PIXEL_MAP: Record<SeqViewerSize, number> = {
   large: 40,

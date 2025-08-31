@@ -7,7 +7,7 @@ import type {
   CurAnnotNameLookup,
   Annotation,
   SeqViewerSize
-} from '../../prop-types';
+} from '../../types';
 
 import style from './style.module.scss';
 import SizeController from './size-controller';

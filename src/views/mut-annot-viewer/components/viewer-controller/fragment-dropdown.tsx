@@ -1,7 +1,7 @@
 import React from 'react';
 import Dropdown from 'react-dropdown';
 
-import type {FragmentOption} from '../../prop-types';
+import type {FragmentOption} from '../../types';
 
 import style from './style.module.scss';
 

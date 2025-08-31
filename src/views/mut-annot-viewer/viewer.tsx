@@ -7,10 +7,10 @@ import ViewerController from './components/viewer-controller';
 import ViewerLegend from './components/viewer-legend';
 import ViewerFooter, {useFootnote} from './components/viewer-footer';
 import {usePositionLookup} from './utils';
-import type {Citation} from './prop-types';
+import type {Citation} from './types';
 
 import style from './style.module.scss';
-import type {SeqViewerSize} from './prop-types';
+import type {SeqViewerSize} from './types';
 
 interface Location {
   pathname?: string;

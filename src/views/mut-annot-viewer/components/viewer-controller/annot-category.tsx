@@ -6,7 +6,7 @@ import type {
   Annotation,
   CurAnnotNamesArray,
   AnnotCategory as AnnotCategoryDef
-} from '../../prop-types';
+} from '../../types';
 import LegendContext from '../legend-context';
 import {sentenceCase} from '../../utils';
 
