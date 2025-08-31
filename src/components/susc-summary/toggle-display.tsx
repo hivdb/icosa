@@ -1,5 +1,6 @@
 import React from 'react';
 import style from './style.module.scss';
+import type { SuscSummary } from './types';
 
 /**
  * Props for {@link ToggleDisplayButton}.
@@ -53,7 +54,7 @@ export function ToggleDisplayButton({
  * @param rows - Array of row objects containing a `displayOrder` property.
  * @returns Filtered rows, expansion state and a toggle button element.
  */
-export default function useToggleDisplay<T extends { displayOrder: number }>(
+export default function useToggleDisplay<T extends SuscSummary>(
   rows: T[]
 ) {
   const [expanded, onToggle] = React.useReducer((e) => !e, false);

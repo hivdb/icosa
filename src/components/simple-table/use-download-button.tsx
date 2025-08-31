@@ -148,8 +148,11 @@ function useOptMenu() {
 }
 
 
-interface UseDownloadButtonArgs {
-  columnDefs: ColumnDef[];
+type CSVRowRecord = Record<string, unknown>;
+
+
+interface UseDownloadButtonArgs<R extends RowRecord> {
+  columnDefs: ColumnDef<unknown, R>[];
   sheetName: string;
   tableRef: React.RefObject<HTMLElement> | React.MutableRefObject<HTMLElement | null>;
 }
@@ -163,11 +166,11 @@ interface UseDownloadButtonArgs {
  * @returns Object containing the React element for the buttons and a flag
  *   indicating whether copy/export is in progress.
  */
-export default function useDownloadButton({
+export default function useDownloadButton<R extends RowRecord>({
   columnDefs,
   sheetName,
   tableRef
-}: UseDownloadButtonArgs) {
+}: UseDownloadButtonArgs<R>) {
 
   const [copying, setCopying] = React.useState(false);
 
@@ -184,7 +187,7 @@ export default function useDownloadButton({
       try {
         const node = tableRef.current!.querySelector('table')! as HTMLTableElement;
         let header: string[] = [];
-        const content: Array<RowRecord> = [];
+        const content: Array<CSVRowRecord> = [];
         const labels: string[] = [];
         for (const row of Array.from(node.rows)) {
           if (row.dataset.skipCopy) {
@@ -198,16 +201,16 @@ export default function useDownloadButton({
             }
             continue;
           }
-          const tr: RowRecord = {};
+          const tr: CSVRowRecord = {};
           for (let i = 0; i < columnDefs.length; i ++) {
             const cell = row.cells[i];
             const colDef = columnDefs[i];
             const label = labels[i] || startCase(colDef.name);
             if (colDef.exportCell) {
               // columnDef can supply an "exportCell" method
-                const payload = JSON.parse(row.dataset.payload || '{}') as RowRecord;
+              const payload = JSON.parse(row.dataset.payload || '{}') as R;
               const cellData = colDef.exportCell(
-                payload[colDef.name],
+                payload[colDef.name as keyof R],
                 payload
               );
               if (cellData instanceof Array) {

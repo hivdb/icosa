@@ -5,6 +5,9 @@ import {
 } from './common';
 import GeneMutationPrevalence from './gene-mutation-prevalence';
 
+import type {DRComments} from '../dr-comment-by-types';
+import type {SubtypeStat, PrevalenceEntry} from './types';
+
 /**
  * Display sequence mutation prevalence tables grouped by gene.
  *
@@ -14,9 +17,9 @@ import GeneMutationPrevalence from './gene-mutation-prevalence';
  * @returns Fragment containing tables for each gene.
  */
 export interface SeqMutationPrevalenceProps {
-  subtypeStats: any[];
-  mutationPrevalences: any[];
-  drugResistance: any[];
+  subtypeStats: SubtypeStat[];
+  mutationPrevalences: PrevalenceEntry[];
+  drugResistance: DRComments[];
 }
 
 export default function SeqMutationPrevalence({
@@ -33,10 +36,10 @@ export default function SeqMutationPrevalence({
     [subtypeStats]
   );
   const mutCommentsByGene = drugResistance
-    .reduce((acc, geneDR) => {
+    .reduce<Record<string, DRComments>>((acc, geneDR) => {
       acc[geneDR.gene.name] = geneDR;
       return acc;
-    }, {} as Record<string, any>);
+    }, {});
 
   return (
     <>

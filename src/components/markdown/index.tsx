@@ -26,12 +26,7 @@ export function normalizeChildren(children: string | string[]): string {
 /**
  * Structure of a table referenced by markdown macros.
  */
-interface MarkdownTable {
-  /** Column definitions for the table. */
-  columnDefs: any[];
-  /** Data rows for the table. */
-  data: any[];
-}
+import type {MarkdownTablePreset} from './types';
 
 /**
  * Props accepted by {@link ExtendedMarkdown}.
@@ -66,9 +61,9 @@ export interface ExtendedMarkdownProps {
   /** Toggle rendering of footnote references. */
   displayReferences?: boolean;
   /** Presets for genome map macros. */
-  genomeMaps?: Record<string, any>;
+  genomeMaps?: Record<string, unknown>;
   /** Table data available for the `table` macro. */
-  tables?: Record<string, MarkdownTable>;
+  tables?: Record<string, MarkdownTablePreset>;
   /**
    * Whether to escape HTML in markdown content.
    * Defaults to `true` for security reasons.

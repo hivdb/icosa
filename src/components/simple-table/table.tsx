@@ -11,14 +11,14 @@ import CellTd from './cell-td';
 import type {SortState, RowRecord, RowContext} from './types';
 import type ColumnDef from './column-def';
 
-export interface SimpleTableTableProps {
-  data: RowRecord[];
-  onRowClick?: (row: RowRecord, idx: number, e: React.MouseEvent<HTMLTableRowElement>) => void;
-  onBeforeSort?: (state: SortState<RowRecord>) => void;
-  onSort?: (state: SortState<RowRecord>) => void;
-  columnDefs: ColumnDef[];
+export interface SimpleTableTableProps<R extends RowRecord> {
+  data: R[];
+  onRowClick?: (row: R, idx: number, e: React.MouseEvent<HTMLTableRowElement>) => void;
+  onBeforeSort?: (state: SortState<R>) => void;
+  onSort?: (state: SortState<R>) => void;
+  columnDefs: ColumnDef<any, R>[];
   color?: string;
-  getRowKey?: (row: RowRecord) => string | number | null;
+  getRowKey?: (row: R) => string | number | null;
   className?: string;
   tableStyle?: React.CSSProperties;
   enableRowSpan?: boolean;
@@ -27,7 +27,7 @@ export interface SimpleTableTableProps {
 /**
  * Render the inner table of {@link SimpleTable}.
  */
-export default function SimpleTableTable({
+export default function SimpleTableTable<R extends RowRecord>({
   data,
   onRowClick,
   onBeforeSort,
@@ -38,7 +38,7 @@ export default function SimpleTableTable({
   className,
   tableStyle = {},
   enableRowSpan = true
-}: SimpleTableTableProps) {
+}: SimpleTableTableProps<R>) {
 
   const [
     sortState,
@@ -46,7 +46,7 @@ export default function SimpleTableTable({
   ] = useSortState(data);
 
   const handleSort = React.useCallback(
-    (sortState: SortState<RowRecord>) => {
+    (sortState: SortState<R>) => {
       setSortState(sortState);
       onSort && onSort(sortState);
     },

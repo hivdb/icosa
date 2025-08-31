@@ -21,9 +21,9 @@ function getNextDirection(direction: 'ascending' | 'descending' | null) {
   }
 }
 
-function moveNullsLast(data: RowRecord[], name: string) {
-  const nonNulls: RowRecord[] = [];
-  const nulls: RowRecord[] = [];
+function moveNullsLast<R extends RowRecord>(data: R[], name: string) {
+  const nonNulls: R[] = [];
+  const nulls: R[] = [];
   for (const item of data) {
     const value = nestedGet(item, name);
     if (value === undefined || value === null || value === '') {
@@ -36,7 +36,7 @@ function moveNullsLast(data: RowRecord[], name: string) {
   return [...nonNulls, ...nulls];
 }
 
-function applySorts(data: RowRecord[], columns: SortColumn[]) {
+function applySorts<R extends RowRecord>(data: R[], columns: SortColumn<R>[]) {
   let sortedData = [...data];
   for (let idx = columns.length - 1; idx > -1; idx --) {
     const {name, sort, direction, nullsLast} = columns[idx];
@@ -64,24 +64,24 @@ function applySorts(data: RowRecord[], columns: SortColumn[]) {
   return sortedData;
 }
 
-interface SimpleTableCellThProps {
-  data: RowRecord[];
-  columnDef: ColumnDef;
-  sortState: SortState;
-  onBeforeSort?: (arg: SortState) => void;
-  onSort?: (arg: SortState) => void;
+interface SimpleTableCellThProps<T, R extends RowRecord> {
+  data: R[];
+  columnDef: ColumnDef<T, R>;
+  sortState: SortState<R>;
+  onBeforeSort?: (arg: SortState<R>) => void;
+  onSort?: (arg: SortState<R>) => void;
 }
 
 /**
  * Render a sortable table header cell.
  */
-function SimpleTableCellTh({
+function SimpleTableCellTh<T, R extends RowRecord>({
   data,
   columnDef,
   sortState,
   onBeforeSort,
   onSort
-}: SimpleTableCellThProps) {
+}: SimpleTableCellThProps<T, R>) {
   const {
     name,
     label,

@@ -1,9 +1,12 @@
 import React from 'react';
+import type {ReactNode} from 'react';
 import '../../../styles/griddle-table.scss';
 import {FaRegPlusSquare} from '@react-icons/all-files/fa/FaRegPlusSquare';
 import {FaRegMinusSquare} from '@react-icons/all-files/fa/FaRegMinusSquare';
 import {parseMutation} from '../../../utils/mutation';
 import style from '../style.module.scss';
+
+import type {PrevalenceRow} from './types';
 
 /**
  * Column renderer for mutation names with expand/collapse icons.
@@ -14,7 +17,7 @@ import style from '../style.module.scss';
  */
 export interface PrevalenceMutColProps {
   mutation: string;
-  row: any;
+  row: PrevalenceRow;
 }
 
 export default function PrevalenceMutCol({
@@ -48,7 +51,7 @@ export default function PrevalenceMutCol({
       </span>;
     }
     else { // aas.length > 2 or no-cons mixture
-      let display: any[] = [];
+      let display: ReactNode[] = [];
       let aaList = new Array(...aas.replace(cons, ''));
       const consPrefix = aas.length === aaList.length ? '' : cons;
       const firstAA = aaList.shift();

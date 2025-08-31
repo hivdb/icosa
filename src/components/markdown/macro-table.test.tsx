@@ -1,3 +1,5 @@
+import {describe, it, expect} from 'vitest';
+import type {PresetColumnDef, MDRow} from './types';
 import {render, screen} from '@testing-library/react';
 import TableNodeWrapper, {
   buildColumnDefs,
@@ -78,3 +80,31 @@ describe('TableNodeWrapper', () => {
     });
   });
 });
+
+describe('macro-table typing helpers', () => {
+  it('buildColumnDefs returns ColumnDef array with working renderers', () => {
+    const preset: PresetColumnDef[] = [
+      {name: 'a', label: 'A'},
+      {name: 'b', renderTpl: 'val=${cellData}'}
+    ];
+    const colDefs = buildColumnDefs(preset, {components: {}}, '/cms');
+    expect(colDefs).toHaveLength(2);
+    const row: MDRow = {a: 'x', b: 3};
+    const rendered = colDefs[1].render(3, row, {}, {});
+    expect(String(rendered)).toContain('val=3');
+  });
+
+  it('expandMultiCells expands rows on a single multiCells column', () => {
+    const preset: PresetColumnDef[] = [
+      {name: 'items', multiCells: true},
+      {name: 'label'}
+    ];
+    const colDefs = buildColumnDefs(preset, {components: {}}, undefined);
+    const data: MDRow[] = [{items: [1, 2], label: 'x'}];
+    const expanded = expandMultiCells(data, colDefs);
+    expect(expanded).toHaveLength(2);
+    expect((expanded[0] as any).items).toBe(1);
+    expect((expanded[1] as any).items).toBe(2);
+  });
+});
+

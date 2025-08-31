@@ -4,10 +4,12 @@ import '../../../styles/griddle-table.scss';
 
 import ReportSection from '../report-section';
 import DRCommentByTypes from '../dr-comment-by-types';
+import type {DRComments} from '../dr-comment-by-types';
 
 import {subtypeDisplayNames, geneToDrugClass} from './common';
 import PrevalenceData from './prevalence-data';
 import PrevalenceMutCol from './prevalence-mut-col';
+import type {SubtypeStat, PrevalenceRow} from './types';
 import style from './style.module.scss';
 
 /**
@@ -17,16 +19,18 @@ import style from './style.module.scss';
  * @param gene - Current gene name.
  * @returns Array of column definitions.
  */
-function useColumnDefs(subtypeStats: any[], gene: string) {
+function useColumnDefs(subtypeStats: SubtypeStat[], gene: string) {
   return React.useMemo(
     () => {
-      let colDefs: ColumnDef[] = [
-        new ColumnDef({
+      let colDefs: ColumnDef<any, PrevalenceRow>[] = [
+        new ColumnDef<string, PrevalenceRow>({
           name: 'mutation',
-          render: (mut, row) => <PrevalenceMutCol mutation={mut} row={row} />,
+          render: (mut, row) => (
+            <PrevalenceMutCol mutation={mut} row={row} />
+          ),
           sortable: false
         }),
-        new ColumnDef({
+        new ColumnDef<string, PrevalenceRow>({
           name: 'triplet',
           label: 'Codon',
           sortable: false,
@@ -37,14 +41,14 @@ function useColumnDefs(subtypeStats: any[], gene: string) {
       for (const type of ['Naive', 'Treated']) {
         colDefs = colDefs.concat(subtypeStats.map(
           ({name, stats}) => {
-            let colDef: ColumnDef | undefined;
+            let colDef: ColumnDef<[string, number][], PrevalenceRow> | undefined;
             for (const stat of stats) {
               if (stat.gene.name !== gene) {
                 continue;
               }
-              const total = stat[`total${type}`];
+              const total = stat[`total${type}` as 'totalNaive' | 'totalTreated'];
               const display = subtypeDisplayNames[name] || name;
-              colDef = new ColumnDef({
+              colDef = new ColumnDef<[string, number][], PrevalenceRow>({
                 name: `${type.toLowerCase()}${name}`,
                 label: (
                   <span>
@@ -63,7 +67,7 @@ function useColumnDefs(subtypeStats: any[], gene: string) {
                 sortable: false
               });
             }
-            return colDef as ColumnDef;
+            return colDef!;
           }
         ));
       }
@@ -84,9 +88,9 @@ function useColumnDefs(subtypeStats: any[], gene: string) {
  */
 export interface GeneMutationPrevalenceProps {
   gene: string;
-  subtypeStats: any[];
-  mutationComments: any;
-  data: any[];
+  subtypeStats: SubtypeStat[];
+  mutationComments: DRComments;
+  data: PrevalenceRow[];
 }
 
 export default function GeneMutationPrevalence({
@@ -100,27 +104,27 @@ export default function GeneMutationPrevalence({
   const colDefs = useColumnDefs(subtypeStats, gene);
 
   const handleRowClick = React.useCallback(
-    (curRow: any) => {
+    (curRow: PrevalenceRow) => {
       const {rowId, children, showChildren} = curRow;
       if (children) {
-        let newDisplayData;
+        let newDisplayData: PrevalenceRow[];
         if (showChildren) {
           newDisplayData = displayData.filter(
             ({parentRowId}) => parentRowId !== rowId
           );
         }
         else {
-          newDisplayData = displayData.reduce(
+          newDisplayData = displayData.reduce<PrevalenceRow[]>(
             (acc, row) => {
               acc.push(row);
-              if (row.rowId === rowId) {
+              if (row.rowId === rowId && row.children) {
                 for (const childRow of row.children) {
                   acc.push(childRow);
                 }
               }
               return acc;
             },
-            [] as any[]
+            []
           );
         }
         curRow.showChildren = !showChildren;

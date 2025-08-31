@@ -1,3 +1,11 @@
+import type {
+  SubtypeForAA,
+  PrevalenceEntry,
+  SubtypeStat,
+  FlatPrevalenceEntry,
+  PrevalenceRow
+} from './types';
+
 /**
  * Mapping from gene to corresponding drug class.
  */
@@ -15,23 +23,6 @@ const subtypeDisplayNames: Record<string, string> = {
   CRF02_AG: 'AG'
 };
 
-interface Subtype {
-  name: string;
-  stats?: any;
-}
-
-interface PrevalenceEntry {
-  boundMutation: {
-    gene: {name: string};
-    position: number;
-    reference: string;
-    text: string;
-    triplet: string;
-  };
-  matched: any[];
-  others: any[];
-}
-
 /**
  * Convert mutation prevalence data into table rows grouped by gene.
  *
@@ -41,9 +32,9 @@ interface PrevalenceEntry {
  */
 function mutationPrevalencesToTableData(
   prevalences: PrevalenceEntry[],
-  allSubtypes: Subtype[]
-): Record<string, any[]> {
-  const rowsByGenes: Record<string, any[]> = {};
+  allSubtypes: SubtypeStat[]
+): Record<string, PrevalenceRow[]> {
+  const rowsByGenes: Record<string, PrevalenceRow[]> = {};
   for (const [rowId, {
     boundMutation: {
       gene,
@@ -54,8 +45,7 @@ function mutationPrevalencesToTableData(
     },
     matched, others
   }] of prevalences.entries()) {
-    const row = toTableRow(text, triplet, matched, allSubtypes);
-    const children: any[] = [];
+    const children: PrevalenceRow[] = [];
     for (const {AA, subtypes} of [...others].sort(
       ({AA: a1}, {AA: a2}) => a1.localeCompare(a2)
     )) {
@@ -70,9 +60,13 @@ function mutationPrevalencesToTableData(
         parentRowId: rowId
       });
     }
-    (row as any).rowId = rowId;
-    (row as any).children = children;
-    (row as any).showChildren = false;
+
+    const row = {
+      ...toTableRow(text, triplet, matched, allSubtypes),
+      rowId,
+      children,
+      showChildren: false
+    };
     rowsByGenes[gene.name] = rowsByGenes[gene.name] || [];
     rowsByGenes[gene.name].push(row);
   }
@@ -82,10 +76,10 @@ function mutationPrevalencesToTableData(
 function toTableRow(
   mutation: string,
   triplet: string,
-  subtypesForAAs: any[],
-  allSubtypes: Subtype[]
-) {
-  const row: any = {mutation, triplet};
+  subtypesForAAs: SubtypeForAA[],
+  allSubtypes: SubtypeStat[]
+): FlatPrevalenceEntry {
+  const row: FlatPrevalenceEntry = {mutation, triplet};
   for (const {name} of allSubtypes) {
     row[`naive${name}`] = [];
     row[`treated${name}`] = [];
@@ -105,8 +99,8 @@ function toTableRow(
       AA = AA.replace('Deletion', 'del').replace('Insertion', 'ins');
       if (AA.indexOf('-') > -1) { AA = 'del'; }
       else if (AA.indexOf('_') > -1) { AA = 'ins'; }
-      row[`naive${name}`].push([AA, percentageNaive]);
-      row[`treated${name}`].push([AA, percentageTreated]);
+      row[`naive${name}`]!.push([AA, percentageNaive]);
+      row[`treated${name}`]!.push([AA, percentageTreated]);
     }
   }
   return row;

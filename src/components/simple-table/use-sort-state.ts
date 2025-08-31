@@ -1,5 +1,5 @@
 import React from 'react';
-import type {SortState} from './types';
+import type {SortState, RowRecord} from './types';
 
 /**
  * Track sorting state for a data array.
@@ -8,11 +8,11 @@ import type {SortState} from './types';
  * @returns A tuple containing the current sort state and a setter
  *   function that mimics `React.useState`.
  */
-export default function useSortState<T>(
-  data: T[]
-): [SortState<T>, React.Dispatch<React.SetStateAction<SortState<T>>>] {
-  const prevData = React.useRef<T[] | null>(data);
-  const [sortState, setSortState] = React.useState<SortState<T>>({
+export default function useSortState<R extends RowRecord>(
+  data: R[]
+): [SortState<R>, React.Dispatch<React.SetStateAction<SortState<R>>>] {
+  const prevData = React.useRef<R[] | null>(data);
+  const [sortState, setSortState] = React.useState<SortState<R>>({
     columns: [],
     sortedData: data
   });

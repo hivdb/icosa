@@ -5,6 +5,7 @@ import {parseMutation} from '../../../utils/mutation';
 import Link from '../../link';
 
 import {geneToDrugClass} from './common';
+import type {PrevalenceRow} from './types';
 
 /**
  * Render mutation prevalence percentages with links to external details.
@@ -21,7 +22,7 @@ export interface PrevalenceDataProps {
   rxType: string;
   subtype: string;
   percents: Array<[string, number]>;
-  row: any;
+  row: PrevalenceRow;
 }
 
 function renderPercentage(pcnt: number) {

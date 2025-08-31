@@ -39,43 +39,74 @@ export interface CumFold {
   /** Fold metrics */
   cumulativeFold: { median: number };
   /** Number of measurements contributing */
-  cumulativeCount?: number;
+  cumulativeCount: number;
 }
 
-/** Row for antibody susceptibility summary table */
-export interface AbSuscSummaryRow {
+/**
+ * Base item for susceptibility summary tables
+ */
+export interface SuscSummary {
   mutations: Mutation[];
   references: Reference[];
-  variant?: Variant;
-  displayOrder?: number | null;
-  /** Fold change keyed by antibody combo */
-  fold: Record<string, CumFold>;
+  variant?: Variant | null;
   variantMatchingMutations?: Mutation[];
   variantExtraMutations?: Mutation[];
   variantMissingMutations?: Mutation[];
+  displayOrder?: number | null;
+}
+
+export interface AbSummaryByAntibodyEntry extends CumFold {
+  antibodies: Antibody[];
+}
+
+export interface ItemsByResistLevelEntry extends CumFold {
+  resistanceLevel: string;
+}
+
+export interface VpSummaryByVaccineEntry extends CumFold {
+  vaccineName: string;
+  references: Reference[];
+  itemsByResistLevel: ItemsByResistLevelEntry[];
+}
+
+
+export interface AbSuscSummaryInput extends SuscSummary {
+  itemsByAntibody: AbSummaryByAntibodyEntry[];
+}
+
+/** Row for antibody susceptibility summary table */
+export interface AbSuscSummaryRow extends SuscSummary {
+  /** Fold change keyed by antibody combo */
+  fold: Record<string, CumFold>;
+}
+
+export interface VpSuscSummaryInput extends SuscSummary {
+  itemsByVaccine: VpSummaryByVaccineEntry[];
 }
 
 /** Row for vaccine plasma susceptibility summary */
-export interface VpSuscSummaryRow {
-  mutations: Mutation[];
+export interface VpSuscSummaryRow extends SuscSummary {
   vaccineName: string;
-  variant?: Variant;
   numRefs: number;
   numSamples: number;
   medianFold: number;
-  references: Reference[];
-  displayOrder?: number | null;
   levels: Record<string, number>;
 }
 
-/** Row for convalescent plasma susceptibility summary */
-export interface CpSuscSummaryRow {
-  mutations: Mutation[];
+export interface CpSuscSummaryInput extends SuscSummary {
   variant?: Variant;
+  mutations: Mutation[];
+  references: Reference[];
+  cumulativeCount: number;
+  cumulativeFold: {median: number};
+  itemsByResistLevel: ItemsByResistLevelEntry[];
+  displayOrder?: number | null;
+}
+
+/** Row for convalescent plasma susceptibility summary */
+export interface CpSuscSummaryRow extends SuscSummary {
   numRefs: number;
   numSamples: number;
   medianFold: number;
-  references: Reference[];
-  displayOrder?: number | null;
   levels: Record<string, number>;
 }

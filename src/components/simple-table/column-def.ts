@@ -3,7 +3,18 @@ import type {ReactNode} from 'react';
 import sortBy from 'lodash/sortBy';
 import nestedGet from 'lodash/get';
 import startCase from 'lodash/startCase';
-import type {RowRecord, RowContext, RenderConfig, RowSpanKeyGetter} from './types';
+import type {
+  RowRecord,
+  RowContext,
+  RenderConfig,
+  RowSpanKeyGetter,
+  ColumnSort,
+  SortKeyGetter,
+  Decorator,
+  ColumnRender,
+  ColumnExportCell,
+  ColumnDefOptions
+} from './types';
 
 /**
  * Create a renderer function from a template string.
@@ -14,10 +25,10 @@ import type {RowRecord, RowContext, RenderConfig, RowSpanKeyGetter} from './type
  * @returns A function that takes four arguments: cellData, rowData,
  *   rowContext and renderConfig and returns a string.
  */
-export function createUnsafeRenderFromTpl(
+export function createUnsafeRenderFromTpl<T, R extends RowRecord>(
   tpl: string,
   escapeHtml = false
-): ColumnRender {
+): ColumnRender<T, R> {
   // Note: never allow ColumnDef from UGC data
   if (escapeHtml) {
     /* eslint-disable-next-line no-new-func */
@@ -49,7 +60,7 @@ export function createUnsafeRenderFromTpl(
       }
       return escapeHtml\`${tpl}\`;
         `
-      ) as ColumnRender;
+      ) as ColumnRender<T, R>;
     }
     else {
       /* eslint-disable-next-line no-new-func */
@@ -59,27 +70,22 @@ export function createUnsafeRenderFromTpl(
         'rowContext',
         'renderConfig',
         `return \`${tpl}\`;`
-      ) as ColumnRender;
+      ) as ColumnRender<T, R>;
     }
   }
 
-interface CoerceRenderOptions {
-  render?: ColumnRender;
-  decorator?: Decorator;
-  renderTpl?: string;
-  none?: ReactNode;
-}
+interface CoerceRenderOptions<T, R extends RowRecord> extends Pick<ColumnDefOptions<T, R>, 'render' | 'decorator' | 'renderTpl' | 'none'> {}
 
 /**
  * Normalize various render options into a single render function.
  */
-function coerceRender({
+function coerceRender<T, R extends RowRecord>({
   render,
   decorator,
   renderTpl,
   none
-}: CoerceRenderOptions): ColumnRender {
-  let myRender: ColumnRender;
+}: CoerceRenderOptions<T, R>): ColumnRender<T, R> {
+  let myRender: ColumnRender<T, R>;
   if (render) {
     myRender = render;
   }
@@ -97,8 +103,8 @@ function coerceRender({
   }
   if (decorator) {
     return (
-      cellData: unknown,
-      rowData: RowRecord,
+      cellData: T,
+      rowData: R,
       rowContext: RowContext,
       renderConfig: RenderConfig
     ) =>
@@ -112,20 +118,16 @@ function coerceRender({
   return myRender;
 }
 
-interface CoerceExportCellOptions {
-  exportCell?: ColumnExportCell;
-  exportRaw?: boolean;
-  decorator?: Decorator;
-}
+interface CoerceExportCellOptions<T, R extends RowRecord> extends Pick<ColumnDefOptions<T, R>, 'exportCell' | 'exportRaw' | 'decorator'> {}
 
 /**
  * Normalize export cell options into a consistent function.
  */
-function coerceExportCell({
+function coerceExportCell<T, R extends RowRecord>({
   exportCell,
   exportRaw,
   decorator
-}: CoerceExportCellOptions): ColumnExportCell | undefined {
+}: CoerceExportCellOptions<T, R>): ColumnExportCell<T, R> | undefined {
   let myExportCell = exportCell;
   if (!exportCell && exportRaw) {
     myExportCell = cellData => cellData;
@@ -137,24 +139,20 @@ function coerceExportCell({
   return myExportCell;
 }
 
-interface CoerceSortOptions {
-  sort?: ColumnSort | Array<string | ColumnSort>;
-  decorator?: Decorator;
-  name: string;
-}
+interface CoerceSortOptions<T, R extends RowRecord> extends Pick<ColumnDefOptions<T, R>, 'name' | 'sort' | 'decorator'> {}
 
 /**
  * Normalize the sorting configuration into a sort function.
  */
-function coerceSort({
+function coerceSort<T, R extends RowRecord>({
   sort,
   decorator,
   name
-}: CoerceSortOptions): ColumnSort {
-  let mySort: ColumnSort | undefined;
+}: CoerceSortOptions<T, R>): ColumnSort<R> {
+  let mySort: ColumnSort<R> | undefined;
   if (!sort && decorator) {
     mySort = rows =>
-      sortBy(rows, row => decorator(nestedGet(row, name), row));
+      sortBy(rows, row => decorator(nestedGet(row, name) as T, row));
   }
   else if (!sort) {
     mySort = rows => sortBy(rows, [name]);
@@ -163,9 +161,9 @@ function coerceSort({
     const sortKeys = sort.map(key =>
       key instanceof Function
         ? key
-        : (row: RowRecord) => nestedGet(row, `${name}.${key}`) || ''
+        : (row: R) => nestedGet(row, `${name}.${key}`) || ''
     );
-    mySort = (rows: RowRecord[]) => sortBy(rows, sortKeys) as RowRecord[];
+    mySort = (rows: R[]) => sortBy(rows, sortKeys) as R[];
   }
   else {
     mySort = sort;
@@ -173,62 +171,19 @@ function coerceSort({
   return mySort!;
 }
 
-export type Decorator = (
-  cellData: unknown,
-  rowData: RowRecord,
-  rowContext?: RowContext
-) => ReactNode;
-
-export type ColumnRender = (
-  cellData: unknown,
-  rowData: RowRecord,
-  rowContext: RowContext,
-  renderConfig: RenderConfig
-) => ReactNode;
-
-export type ColumnExportCell = (
-  cellData: unknown,
-  rowData: RowRecord
-) => unknown;
-
-export type ColumnSort = (rows: RowRecord[], name: string) => RowRecord[];
-
-export interface ColumnDefOptions {
-  name: string;
-  label?: ReactNode;
-  exportLabel?: string;
-  decorator?: Decorator;
-  render?: ColumnRender;
-  renderTpl?: string;
-  renderConfig?: RenderConfig;
-  exportCell?: ColumnExportCell;
-  exportRaw?: boolean;
-  sort?: ColumnSort | Array<string | ColumnSort>;
-  sortable?: boolean;
-  textAlign?: 'left' | 'right' | 'center' | 'justify';
-  nullsLast?: boolean;
-  none?: string;
-  multiCells?: boolean;
-  rowSpanKey?: string;
-  rowSpanKeyGetter?: RowSpanKeyGetter;
-  headCellStyle?: React.CSSProperties;
-  bodyCellStyle?: React.CSSProperties;
-  bodyCellColSpan?: number;
-}
-
 /**
  * Definition for a table column used by {@link SimpleTable}.
  */
-export default class ColumnDef implements ColumnDefOptions {
+export default class ColumnDef<T, R extends RowRecord> implements ColumnDefOptions<T, R> {
   name: string;
   label: ReactNode;
   exportLabel?: string;
-  decorator?: Decorator;
-  render: ColumnRender;
+  decorator?: Decorator<T, R>;
+  render: ColumnRender<T, R>;
   renderTpl?: string;
   renderConfig: RenderConfig;
-  exportCell?: ColumnExportCell;
-  sort: ColumnSort;
+  exportCell?: ColumnExportCell<T, R>;
+  sort: ColumnSort<R>;
   sortable: boolean;
   textAlign: 'left' | 'right' | 'center' | 'justify';
   nullsLast: boolean;
@@ -310,7 +265,7 @@ export default class ColumnDef implements ColumnDefOptions {
     headCellStyle = {},
     bodyCellStyle = {},
     bodyCellColSpan = 1
-  }: ColumnDefOptions) {
+  }: ColumnDefOptions<T, R>) {
     this.name = name;
     this.label = label ? label : startCase(name);
     this.exportLabel = exportLabel;

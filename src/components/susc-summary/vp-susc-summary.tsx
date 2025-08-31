@@ -10,7 +10,7 @@ import {
   getRowKey,
   displayFold
 } from './funcs';
-import type {VpSuscSummaryRow} from './types';
+import type {VpSuscSummaryRow, VpSuscSummaryInput, ItemsByResistLevelEntry, Mutation, Reference} from './types';
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
@@ -22,7 +22,7 @@ const SIRLevels = [
   'resistant'
 ];
 
-function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
+function buildPayload(vaccPlasmaSuscSummary: VpSuscSummaryInput[]): VpSuscSummaryRow[] {
   return vaccPlasmaSuscSummary
     .reduce(
       (acc: VpSuscSummaryRow[], {
@@ -30,7 +30,7 @@ function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
         mutations,
         itemsByVaccine,
         displayOrder
-      }: any) => [
+      }: VpSuscSummaryInput) => [
         ...acc,
         ...itemsByVaccine.map(
           ({
@@ -39,7 +39,7 @@ function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
             cumulativeCount: numSamples,
             cumulativeFold: {median: medianFold},
             itemsByResistLevel
-          }: any) => {
+          }) => {
             const row: VpSuscSummaryRow = {
               variant,
               mutations,
@@ -50,7 +50,7 @@ function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
               references,
               displayOrder,
               levels: {}
-            } as any;
+            };
             for (const level of SIRLevels) {
               row.levels[level] = 0;
             }
@@ -73,7 +73,7 @@ function buildPayload(vaccPlasmaSuscSummary: any[]): VpSuscSummaryRow[] {
           }
         )
       ],
-      [] as VpSuscSummaryRow[]
+      []
       )
       .filter((row: VpSuscSummaryRow) => row.displayOrder !== null);
 }
@@ -96,10 +96,10 @@ function renderPcntBar(_: unknown, row: VpSuscSummaryRow) {
 function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
   return React.useMemo(
     () => [
-      new ColumnDef({
+      new ColumnDef<Mutation[], VpSuscSummaryRow>({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations: any, {variant}: any) => (
+        render: (mutations, {variant}) => (
           <CellMutations {...{mutations, variant}} />
         ),
           bodyCellStyle: {
@@ -110,37 +110,37 @@ function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
           ...mutations.map(({position, AAs}: any) => [position, AAs])
         ]]
       }),
-      new ColumnDef({
+      new ColumnDef<string, VpSuscSummaryRow>({
         name: 'vaccineName',
         label: 'Vaccine'
       }),
-      new ColumnDef({
+      new ColumnDef<number, VpSuscSummaryRow>({
         name: 'numRefs',
         label: '# studies',
         multiCells: true
       }),
-      new ColumnDef({
+      new ColumnDef<number, VpSuscSummaryRow>({
         name: 'numSamples',
         label: '# samples',
         multiCells: true
       }),
-      new ColumnDef({
+      new ColumnDef<number, VpSuscSummaryRow>({
         name: 'levels.susceptible',
         label: 'Susceptibility distribution',
         render: renderPcntBar,
         multiCells: true,
         sortable: false
       }),
-      new ColumnDef({
+      new ColumnDef<number, VpSuscSummaryRow>({
         name: 'medianFold',
         label: 'Median Fold',
         render: displayFold,
         multiCells: true
       }),
-      new ColumnDef({
+      new ColumnDef<Reference[], VpSuscSummaryRow>({
         name: 'references',
         label: <LabelReferences />,
-        render: (refs: any) => <CellReferences {...{refs, openRefInNewWindow}} />,
+        render: (refs) => <CellReferences {...{refs, openRefInNewWindow}} />,
         multiCells: true,
         sortable: false
       })
@@ -154,7 +154,7 @@ interface VaccPlasmaSuscSummaryTableProps {
   openRefInNewWindow?: boolean;
 }
 
-const VaccPlasmaSuscSummaryTable: React.FC<VaccPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
+  const VaccPlasmaSuscSummaryTable: React.FC<VaccPlasmaSuscSummaryTableProps> = ({rows, openRefInNewWindow = false}) => {
     const normalizedRows = rows.map(row => ({
       ...row,
       displayOrder: row.displayOrder ?? 0
@@ -201,7 +201,7 @@ const VaccPlasmaSuscSummaryTable: React.FC<VaccPlasmaSuscSummaryTableProps> = ({
 };
 
 interface VaccPlasmaSuscSummaryProps {
-  vaccPlasmaSuscSummary: {itemsByVariantOrMutations: any[]};
+  vaccPlasmaSuscSummary: {itemsByVariantOrMutations: VpSuscSummaryInput[]};
 }
 
 function VaccPlasmaSuscSummary({
@@ -210,7 +210,7 @@ function VaccPlasmaSuscSummary({
   }
 }: VaccPlasmaSuscSummaryProps) {
   itemsByVariantOrMutations = itemsByVariantOrMutations
-    .filter(({itemsByVaccine}: any) => itemsByVaccine.length > 0);
+    .filter(({itemsByVaccine}) => itemsByVaccine.length > 0);
   const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
@@ -227,4 +227,3 @@ export {
 };
 
 export default React.memo(VaccPlasmaSuscSummary);
-

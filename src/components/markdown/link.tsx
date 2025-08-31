@@ -33,7 +33,7 @@ function renderLink(href: string, props: LinkProps) {
   const target = getTarget(href, props);
   if (!href.startsWith('#') && target === undefined) {
     return (
-      <Link to={href} {...(others as any)}>
+      <Link to={href} {...others as Omit<React.ComponentProps<typeof Link>, 'to'>}>
         {children}
       </Link>
     );

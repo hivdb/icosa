@@ -3,17 +3,7 @@ import pluralize from 'pluralize';
 import shortenMutationList from '../../utils/shorten-mutation-list';
 
 import style from './style.module.scss';
-import type { Mutation, Variant } from './types';
-
-/**
- * Data structure representing mismatch information for a variant.
- */
-export interface MismatchRow {
-  variant: Variant | null;
-  variantMatchingMutations: Mutation[];
-  variantExtraMutations: Mutation[];
-  variantMissingMutations: Mutation[];
-}
+import type {SuscSummary, Mutation, Variant} from './types';
 
 /**
  * Props for {@link MismatchMutations} component.
@@ -21,7 +11,7 @@ export interface MismatchRow {
  * @property rows - Rows containing mismatch data for each variant.
  */
 export interface MismatchMutationsProps {
-  rows: MismatchRow[];
+  rows: SuscSummary[];
 }
 
 /**
@@ -31,7 +21,7 @@ export default function MismatchMutations({ rows }: MismatchMutationsProps) {
   const variantRows = React.useMemo(
       () =>
         rows
-          .filter((row): row is MismatchRow & {variant: Variant} => row.variant !== null)
+          .filter((row): row is SuscSummary & {variant: Variant} => row.variant !== null)
           .map(({
             variant,
             variantMatchingMutations,
@@ -40,13 +30,13 @@ export default function MismatchMutations({ rows }: MismatchMutationsProps) {
           }) => {
             const {name} = variant;
             const matchingMutations = shortenMutationList(
-              variantMatchingMutations
+              variantMatchingMutations ?? []
             ).map(({ text }) => text);
-          const extraMutations = shortenMutationList(variantExtraMutations).map(
+          const extraMutations = shortenMutationList(variantExtraMutations ?? []).map(
             ({ text }) => text
           );
           const missingMutations = shortenMutationList(
-            variantMissingMutations
+            variantMissingMutations ?? []
           ).map(({ text }) => text);
           return {
             variantName: name,

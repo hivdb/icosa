@@ -1,20 +1,28 @@
 import type {Mutation, Variant} from './types';
 
+
+interface RowKeyOptions {
+  variant?: Variant | null;
+  mutations: Mutation[];
+  vaccineName?: string;
+}
+
+
 /**
  * Build a unique key for a susceptibility row.
  *
  * @param params - Row parameters
  * @returns Unique key string
  */
-export function getRowKey({variant, mutations, vaccineName}: {variant?: Variant; mutations: Mutation[]; vaccineName?: string;}) {
+export function getRowKey(row: RowKeyOptions): string {
+  const {variant, mutations} = row;
+  const vaccineName = 'vaccineName' in row ? row.vaccineName : null;
   const mutText = variant ?
     variant.name : mutations.map(({text}) => text).join('+');
   if (vaccineName) {
     return `${mutText}__${vaccineName}`;
   }
-  else {
-    return mutText;
-  }
+  return mutText;
 }
 
 /**
@@ -23,8 +31,7 @@ export function getRowKey({variant, mutations, vaccineName}: {variant?: Variant;
  * @param fold - Fold change value
  * @returns Formatted display string
  */
-export function displayFold(fold: number) {
+export function displayFold(fold: number): string {
   return fold >= 1000 ?
     '≥1,000' : `${fold.toFixed(fold > 10 ? 0 : 1)}`;
 }
-

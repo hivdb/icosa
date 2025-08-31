@@ -7,9 +7,10 @@ import type {SimpleTableTableProps} from './table';
 import ColumnDef from './column-def';
 import style from './style.module.scss';
 export {ColumnDef};
-import type {RowRecord} from './types';
+import type {RowSpanKeyGetter, RowRecord, RowContext} from './types';
+export type {RowSpanKeyGetter, RowRecord, RowContext};
 
-interface SimpleTableProps extends Omit<SimpleTableTableProps, 'enableRowSpan' | 'onBeforeSort' | 'onSort'> {
+interface SimpleTableProps<R extends RowRecord> extends Omit<SimpleTableTableProps<R>, 'enableRowSpan' | 'onBeforeSort' | 'onSort'> {
   windowScroll?: boolean;
   compact?: boolean;
   lastCompact?: boolean;
@@ -24,7 +25,7 @@ interface SimpleTableProps extends Omit<SimpleTableTableProps, 'enableRowSpan' |
 /**
  * Container component for rendering a sortable and downloadable table.
  */
-export default function SimpleTable({
+export default function SimpleTable<R extends RowRecord>({
   windowScroll = false,
   compact = false,
   lastCompact = false,
@@ -41,7 +42,7 @@ export default function SimpleTable({
   tableStyle = {},
   afterTable,
   disableCopy = false
-}: SimpleTableProps) {
+}: SimpleTableProps<R>) {
 
   const tableRef = React.useRef<HTMLDivElement>(null);
   const [mobileLabelWidth, setMobileLabelWidth] = React.useState('auto');
@@ -125,7 +126,7 @@ export default function SimpleTable({
          className ? `${className}__scroll` : null
        )}
        style={tableScrollStyle}>
-        <SimpleTableTable
+        <SimpleTableTable<R>
          data={data}
          key={cacheKey}
          onRowClick={onRowClick}

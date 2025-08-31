@@ -13,7 +13,7 @@ import {
 import CellMutations from './cell-mutations';
 import CellReferences, {LabelReferences} from './cell-references';
 import useToggleDisplay from './toggle-display';
-import type {CpSuscSummaryRow} from './types';
+import type {CpSuscSummaryRow, CpSuscSummaryInput, ItemsByResistLevelEntry, Mutation, Variant, Reference} from './types';
 import style from './style.module.scss';
 
 const SIRLevels = [
@@ -28,7 +28,7 @@ const SIRLevels = [
  * @param convPlasmaSuscSummary - Raw summary data
  * @returns Array of row objects
  */
-export function buildPayload(convPlasmaSuscSummary: any[]): CpSuscSummaryRow[] {
+export function buildPayload(convPlasmaSuscSummary: CpSuscSummaryInput[]): CpSuscSummaryRow[] {
   return convPlasmaSuscSummary
     .map(
       ({
@@ -39,7 +39,7 @@ export function buildPayload(convPlasmaSuscSummary: any[]): CpSuscSummaryRow[] {
         cumulativeFold: {median: medianFold},
         itemsByResistLevel,
         displayOrder
-      }: any) => {
+      }: CpSuscSummaryInput) => {
         const row: CpSuscSummaryRow = {
           variant,
           mutations,
@@ -49,7 +49,7 @@ export function buildPayload(convPlasmaSuscSummary: any[]): CpSuscSummaryRow[] {
           references,
           displayOrder,
           levels: {},
-        } as any;
+        };
         for (const level of SIRLevels) {
           row.levels[level] = 0;
         }
@@ -92,43 +92,43 @@ function renderPcntBar(_: unknown, row: CpSuscSummaryRow) {
 function useColumnDefs({openRefInNewWindow}: {openRefInNewWindow: boolean}) {
   return React.useMemo(
     () => ([
-      new ColumnDef({
+      new ColumnDef<Mutation[], CpSuscSummaryRow>({
         name: 'mutations',
         label: 'Variant',
-        render: (mutations: any, {variant}: any) => (
+        render: (mutations, {variant}) => (
           <CellMutations {...{mutations, variant}} />
         ),
           bodyCellStyle: {
             '--desktop-max-width': '14rem'
           } as React.CSSProperties,
-        sort: [({mutations}: any) => [
+        sort: [({mutations}) => [
           mutations.length,
-          ...mutations.map(({position, AAs}: any) => [position, AAs])
+          ...mutations.map(({position, AAs}) => [position, AAs])
         ]]
       }),
-      new ColumnDef({
+      new ColumnDef<number, CpSuscSummaryRow>({
         name: 'numRefs',
         label: '# studies'
       }),
-      new ColumnDef({
+      new ColumnDef<number, CpSuscSummaryRow>({
         name: 'numSamples',
         label: '# samples'
       }),
-      new ColumnDef({
+      new ColumnDef<number, CpSuscSummaryRow>({
         name: 'levels.susceptible',
         label: 'Susceptibility distribution',
         render: renderPcntBar,
         sortable: false
       }),
-      new ColumnDef({
+      new ColumnDef<number, CpSuscSummaryRow>({
         name: 'medianFold',
         label: 'Median Fold',
         render: displayFold
       }),
-      new ColumnDef({
+      new ColumnDef<Reference[], CpSuscSummaryRow>({
         name: 'references',
         label: <LabelReferences />,
-        render: (refs: any) => (
+        render: (refs) => (
           <CellReferences {...{refs, openRefInNewWindow}} />
         ),
         sortable: false
@@ -154,7 +154,7 @@ interface ConvPlasmaSuscSummaryTableProps {
   if (rows.length > 0) {
     return <>
       <SimpleTable
-       cacheKey={`${expanded}`}
+       cacheKey={expanded.toString()}
        compact lastCompact disableCopy
        className={style['susc-summary']}
        getRowKey={getRowKey}
@@ -190,7 +190,7 @@ interface ConvPlasmaSuscSummaryTableProps {
 };
 
 interface ConvPlasmaSuscSummaryProps {
-  convPlasmaSuscSummary: {itemsByVariantOrMutations: any[]};
+  convPlasmaSuscSummary: {itemsByVariantOrMutations: CpSuscSummaryInput[]};
 }
 
 function ConvPlasmaSuscSummary({
@@ -198,7 +198,7 @@ function ConvPlasmaSuscSummary({
 }: ConvPlasmaSuscSummaryProps) {
 
   itemsByVariantOrMutations = itemsByVariantOrMutations
-    .filter(({itemsByResistLevel}: any) => itemsByResistLevel.length > 0);
+    .filter(({itemsByResistLevel}) => itemsByResistLevel.length > 0);
   const payload = buildPayload(itemsByVariantOrMutations);
 
   return (
@@ -209,4 +209,3 @@ function ConvPlasmaSuscSummary({
 }
 
 export default React.memo(ConvPlasmaSuscSummary);
-

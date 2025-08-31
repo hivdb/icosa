@@ -6,24 +6,24 @@ import style from './style.module.scss';
 import type {RowRecord, RowContext} from './types';
 import type ColumnDef from './column-def';
 
-interface SimpleTableCellTdProps {
-  row: RowRecord;
+interface SimpleTableCellTdProps<T, R extends RowRecord> {
+  row: R;
   rowSpan: number;
   rowContext: RowContext;
-  columnDef: ColumnDef;
+  columnDef: ColumnDef<T, R>;
   enableRowSpan?: boolean;
 }
 
 /**
  * Render a table cell with optional row span handling.
  */
-function SimpleTableCellTd({
+function SimpleTableCellTd<T, R extends RowRecord>({
   row,
   rowSpan,
   rowContext,
   columnDef,
   enableRowSpan = true
-}: SimpleTableCellTdProps) {
+}: SimpleTableCellTdProps<T, R>) {
 
   return React.useMemo(() => {
     const {
@@ -36,7 +36,7 @@ function SimpleTableCellTd({
     } = columnDef;
 
     const jsx = render(
-      nestedGet(row, name),
+      nestedGet(row, name) as T,
       row,
       rowContext,
       renderConfig

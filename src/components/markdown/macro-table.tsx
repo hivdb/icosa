@@ -5,7 +5,8 @@ import sortBy from 'lodash/sortBy';
 import ReactMarkdown from 'react-markdown';
 
 import macroPlugin from './macro-plugin';
-import SimpleTable, {ColumnDef} from '../simple-table';
+import SimpleTable, {ColumnDef, RowContext} from '../simple-table';
+import type {MDRow, PresetColumnDef, MarkdownTablePreset, MarkdownRendererProps} from './types';
 import {createUnsafeRenderFromTpl} from '../simple-table/column-def';
 import rehypeSectionize from './rehype-sectionize';
 
@@ -49,16 +50,16 @@ function nl2brMdText(text: unknown) {
  * @param cmsPrefix - Optional CMS prefix used to replace placeholders.
  * @returns A function converting cell values to React nodes.
  */
-function defaultRenderer(mdProps: any, cmsPrefix?: string) {
-  return (value: any) => {
+function defaultRenderer(mdProps: MarkdownRendererProps, cmsPrefix?: string) {
+  return (value: unknown): React.ReactNode => {
     if (value === '-') {
-      return value;
+      return value as string;
     }
     else if (typeof value === 'string') {
-      value = value.replace(/\$\$CMS_PREFIX\$\$/g, cmsPrefix ?? '');
-      return <ReactMarkdown {...mdProps}>{value}</ReactMarkdown>;
+      const replaced = value.replace(/\$\$CMS_PREFIX\$\$/g, cmsPrefix ?? '');
+      return <ReactMarkdown {...mdProps}>{replaced}</ReactMarkdown>;
     }
-    return value;
+    return value as React.ReactNode;
   };
 }
 
@@ -66,55 +67,53 @@ function defaultRenderer(mdProps: any, cmsPrefix?: string) {
  * A collection of supported render functions referenced by string name in
  * table column definitions.
  */
-const renderFuncs: Record<string, any> = {
-  default: defaultRenderer,
-    template: (tpl: string, mdProps: any, cmsPrefix?: string) => {
-      const renderTpl = createUnsafeRenderFromTpl(tpl, true) as (...args: any[]) => any;
-      return (...args: any[]) => defaultRenderer(mdProps, cmsPrefix)(renderTpl(...args));
-    },
-  nl2br(mdProps: any, cmsPrefix?: string) {
-    return (value: any) => defaultRenderer(mdProps, cmsPrefix)(nl2brMdText(value));
-  },
-  join(mdProps: any, cmsPrefix?: string) {
-    return (value: any[], _row: any, _context: any, {joinBy = ''}: {joinBy?: string}) => {
-      if (!value) {
-        return null;
-      }
-      return defaultRenderer(mdProps, cmsPrefix)(value.join(joinBy));
-    };
-  },
-  articleList(mdProps: any, cmsPrefix?: string) {
+type RendererFactory = (mdProps: MarkdownRendererProps, cmsPrefix?: string) => (
+  value: unknown,
+  row: MDRow,
+  context: RowContext,
+  config: Record<string, unknown>
+) => React.ReactNode;
+
+const renderTemplate = (
+  tpl: string,
+  mdProps: MarkdownRendererProps,
+  cmsPrefix?: string
+) => {
+  const renderTpl = createUnsafeRenderFromTpl<unknown, MDRow>(tpl, true);
+  return (value: unknown, row: MDRow, context: RowContext, config: Record<string, unknown>) =>
+    defaultRenderer(mdProps, cmsPrefix)(renderTpl(value, row, context, config));
+};
+
+const renderFuncs: Record<string, RendererFactory> = {
+  default: (mdProps, cmsPrefix) => (value) => defaultRenderer(mdProps, cmsPrefix)(value),
+  nl2br: (mdProps, cmsPrefix) => (value) => defaultRenderer(mdProps, cmsPrefix)(nl2brMdText(value)),
+  join: (mdProps, cmsPrefix) => (value, _row, _context, {joinBy = ''}) => defaultRenderer(mdProps, cmsPrefix)((Array.isArray(value) ? value : [value]).join(String(joinBy))),
+  articleList: (mdProps: MarkdownRendererProps, cmsPrefix?: string) => {
     const freeTextRenderer = defaultRenderer(mdProps, cmsPrefix);
-    return (articles: any[]) => (<>
-      {articles.map(({
-        doi,
-        firstAuthor: {surname} = {},
-        year,
-        journal,
-        journalShort,
-        freeText
-      }, idx) => (
-        <div key={idx}>
-          {freeText ?
-            freeTextRenderer(freeText) : <>
-              <a
-                href={`https://doi.org/${doi}`}
-                rel="noopener noreferrer"
-                target="_blank">
-                {surname} {year}
-              </a>{' '}({journalShort ? journalShort : journal})
-            </>}
-        </div>
-      ))}
-    </>);
+    return (articles) => (
+      <>
+        {(Array.isArray(articles) ? articles : []).map((item, idx) => {
+          const {doi, firstAuthor, year, journal, journalShort, freeText} = item ?? {};
+          const surname = firstAuthor?.surname ?? '';
+          return (
+            <div key={idx}>
+              {freeText ?
+                freeTextRenderer(freeText) : <>
+                  <a href={`https://doi.org/${doi}`} rel="noopener noreferrer" target="_blank">
+                    {surname} {year}
+                  </a>{' '}({journalShort ? journalShort : journal})
+                </>}
+            </div>
+          );
+        })}
+      </>
+    );
   },
-  compoundEC50Obj(mdProps: any, cmsPrefix?: string) {
+  compoundEC50Obj: (mdProps: Record<string, unknown>, cmsPrefix?: string) => {
     const freeTextRenderer = defaultRenderer(mdProps, cmsPrefix);
-    return (compounds: any) => {
-      if (!(compounds instanceof Array)) {
-        compounds = [];
-      }
-      const content = compounds.map(({name, ec50, ec50Note}: any) => {
+    return (compounds) => {
+      const list = Array.isArray(compounds) ? compounds as Array<{name: string; ec50?: number; ec50Note?: string}> : [];
+      const content = list.map(({name, ec50, ec50Note}) => {
         const part = [`${name}`];
         if (ec50 && ec50Note) {
           part.push(` (${ec50}, ${ec50Note})`);
@@ -127,24 +126,23 @@ const renderFuncs: Record<string, any> = {
       return freeTextRenderer(content);
     };
   },
-  nowrap(mdProps: any, cmsPrefix?: string) {
-    return (value: any) => <span className={style.nowrap}>
-      {defaultRenderer(mdProps, cmsPrefix)(value)}
-    </span>;
-  },
-  checkMark() {
-    return (value: any) => value ? '\u2713' : '';
-  }
+  nowrap: (mdProps: Record<string, unknown>, cmsPrefix?: string) => (value) => (
+    <span className={style.nowrap}>{defaultRenderer(mdProps, cmsPrefix)(value)}</span>
+  ),
+  checkMark: () => (value) => (value ? '\u2713' : '')
 };
 
 /** Sorting helper functions referenced by string name. */
-const sortFuncs: Record<string, any> = {
-  articleList: (rows: any[]) => sortBy(rows, ({references}: any) =>
-    references.map(({firstAuthor: {surname} = [], year}: any) => [surname, -year])
+const sortFuncs: Record<string, (rows: MDRow[], column?: string) => MDRow[]> = {
+  articleList: (rows: MDRow[]) => sortBy(rows, ({references}: any) =>
+    (references as Array<{firstAuthor?: {surname?: string}; year?: number}>).map(({firstAuthor, year} = {}) => [firstAuthor?.surname || '', -(year ?? 0)])
   ),
-  numeric: (rows: any[], column: string) => sortBy(
+  numeric: (rows: MDRow[], column = '') => sortBy(
     rows,
-    row => parseInt(nestedGet(row, column))
+    row => {
+      const v = nestedGet(row, column as string);
+      return parseInt(String(v));
+    }
   )
 };
 
@@ -156,16 +154,16 @@ const sortFuncs: Record<string, any> = {
  * @param cmsPrefix - Optional CMS prefix.
  * @returns Array of {@link ColumnDef} objects.
  */
-export function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: string) {
-  const objs: ColumnDef[] = [];
-  const colHeaderRenderer = renderFuncs.nl2br(mdProps);
+export function buildColumnDefs(columnDefs: PresetColumnDef[], mdProps: Record<string, unknown>, cmsPrefix?: string) {
+  const objs: ColumnDef<unknown, MDRow>[] = [];
+  const colHeaderRenderer = (value: unknown) => defaultRenderer(mdProps, cmsPrefix)(nl2brMdText(value));
   for (const colDef of columnDefs) {
     let {render, renderTpl, sort, label, ...props} = colDef;
     if (typeof render === 'string') {
       render = renderFuncs[render](mdProps, cmsPrefix);
     }
     else if (renderTpl) {
-      render = renderFuncs.template(renderTpl, mdProps, cmsPrefix);
+      render = renderTemplate(renderTpl, mdProps, cmsPrefix);
     }
     else {
       render = renderFuncs.default(mdProps, cmsPrefix);
@@ -176,7 +174,7 @@ export function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: str
     if (colDef.label) {
       label = colHeaderRenderer(label);
     }
-    objs.push(new ColumnDef({
+    objs.push(new ColumnDef<unknown, MDRow>({
       render, sort, label, ...props
     } as any));
   }
@@ -190,7 +188,7 @@ export function buildColumnDefs(columnDefs: any[], mdProps: any, cmsPrefix?: str
  * @param columnDefs - Processed column definitions.
  * @returns Expanded data array.
  */
-export function expandMultiCells(data: any[], columnDefs: any[]) {
+export function expandMultiCells(data: MDRow[], columnDefs: ColumnDef<unknown, MDRow>[]) {
   let expandTarget: string | null = null;
   for (const {name, multiCells} of columnDefs) {
     if (!multiCells) {
@@ -208,13 +206,13 @@ export function expandMultiCells(data: any[], columnDefs: any[]) {
   if (expandTarget === null) {
     return data;
   }
-  const newRows: any[] = [];
+  const newRows: MDRow[] = [];
   for (let i = 0; i < data.length; i ++) {
     const {...row} = data[i];
-    const [...subRows] = row[expandTarget];
-    delete row[expandTarget];
+    const [...subRows] = (row as any)[expandTarget];
+    delete (row as any)[expandTarget];
     for (const subRow of subRows) {
-      const newRow = {...row, _spanIndex: i};
+      const newRow = {...row, _spanIndex: i} as any;
       newRow[expandTarget] = subRow;
       newRows.push(newRow);
     }
@@ -233,14 +231,14 @@ export function InlineParagraph({children}: InlineParagraphProps) {
 
 interface TableProps {
   cacheKey?: string;
-  columnDefs: any[];
-  data: any[];
+  columnDefs: PresetColumnDef[];
+  data: MDRow[];
   compact?: boolean;
   lastCompact?: boolean;
   noHeaderOverlapping?: boolean;
   windowScroll?: boolean;
-  references?: any;
-  mdProps: {components?: Record<string, any>; [key: string]: any};
+  references?: string;
+  mdProps: MarkdownRendererProps;
   cmsPrefix?: string;
   tableScrollStyle?: React.CSSProperties;
   tableStyle?: React.CSSProperties;
@@ -270,8 +268,8 @@ export function Table({
   // Remove rehypeSectionize from rehypePlugins for table rendering
   const filteredRehypePlugins = rehypePlugins.filter((plugin: any) => plugin !== rehypeSectionize);
 
-  columnDefs = buildColumnDefs(columnDefs, {...mdProps, components, rehypePlugins: filteredRehypePlugins}, cmsPrefix);
-  data = expandMultiCells(data, columnDefs);
+  const processedColumnDefs = buildColumnDefs(columnDefs, {...mdProps, components, rehypePlugins: filteredRehypePlugins}, cmsPrefix);
+  const processedData = expandMultiCells(data, processedColumnDefs);
 
   return <>
     <SimpleTable
@@ -283,8 +281,8 @@ export function Table({
       cacheKey={cacheKey}
       tableScrollStyle={tableScrollStyle}
       tableStyle={tableStyle}
-      columnDefs={columnDefs}
-      data={data} />
+      columnDefs={processedColumnDefs}
+      data={processedData} />
     <ReactMarkdown
       {...mdProps}
       rehypePlugins={filteredRehypePlugins}
@@ -296,8 +294,8 @@ export function Table({
 }
 
 interface TableNodeWrapperProps {
-  tables: Record<string, {columnDefs: any[]; data: any[]}>;
-  mdProps: any;
+  tables: Record<string, MarkdownTablePreset>;
+  mdProps: MarkdownRendererProps;
   cmsPrefix?: string;
 }
 

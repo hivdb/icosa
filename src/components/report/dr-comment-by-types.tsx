@@ -20,7 +20,7 @@ function highlight(comment: string, highlightText: string[]): string {
   return comment.replaceAll(pattern, '**$1**');
 }
 
-interface MutationComment {
+export interface MutationComment {
   name: string;
   text: string;
   highlightText: string[];
@@ -31,7 +31,7 @@ interface CommentByType {
   comments: MutationComment[];
 }
 
-interface DRCommentByTypesProps {
+export interface DRComments {
   gene: {name: string};
   commentsByTypes: CommentByType[];
   disabledDrugs?: string[];
@@ -44,7 +44,7 @@ export default function DRCommentByTypes({
   gene,
   commentsByTypes,
   disabledDrugs = []
-}: DRCommentByTypesProps) {
+}: DRComments) {
   if (commentsByTypes.every(({comments}) => comments.length === 0)) {
     return null;
   }

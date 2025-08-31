@@ -119,13 +119,18 @@ Note: The per-test timeout is configured in `vite.config.ts`, but that doesn’t
   - Use `any` only when interoperating with legacy JavaScript or when type information is truly unavailable.
   - Document each `any` usage with a `@todo` comment explaining why it’s necessary.
 * **Runtime Safety**: At data boundaries, validate untyped inputs with runtime checks or type predicates to guard against invalid structures.
-* **Type Precision**: Prefer explicit shapes over overly generic types.
-  - Example: define `RowRecord = Record<string, unknown>` for table rows, and use `RowRecord[]` instead of `unknown[]`.
+* **Type Precision**: Prefer explicit shapes over overly generic types. Do not “spray” `any`/`unknown` through the pipeline.
+  - Model objects by their real construction: define interfaces for rows and payloads (e.g., `PrevalenceRow`, `SubtypeStat`, `DRComments`).
+  - Use `Record<K, V>` or concrete interfaces when you truly have dynamic keys.
+  - Example: define `RowRecord = Record<string, unknown>` for generic table rows, but prefer domain row interfaces and thread them via generics.
 * **Local Placement**: Define types within the component where they are primarily used.
-* **Shared Types**: When multiple components share types/interfaces, consolidate them into a `types.ts` file within the component.
+* **Shared Types**: When multiple components share types/interfaces, consolidate them into a `types.ts` file within the component/feature directory.
 * **Canonical Definitions**: Eliminate duplicate type definitions. The source of truth should be the file that originally defines the behavior. Other files should import from that canonical definition.
 * **Unify Signatures**: If a function’s signature matches an exported type/interface, reference that type directly instead of duplicating its structure.
-  - Example: if `ColumnRender` exists, return `ColumnRender` from `createRenderFromTemplate` instead of repeating its shape inline.
+  - Example: return `ColumnRender` from `createUnsafeRenderFromTpl` rather than repeating a structural type.
+* **Typed reducers/maps**: Avoid `as any` in reducers and mappers. Provide accumulator generics, e.g. `reduce<Record<string, DRComments>>(..., {})` and `map<DesiredType>(...)`.
+* **Generic components**: Prefer generics over loosening types: e.g., make table/column types generic on cell and row (`ColumnDef<Cell, Row>`), and propagate to header/body cells and sort state (`SortState<Row>`).
+* **Boundary casting**: Perform `as ...` casts only at boundaries (e.g., `JSON.parse`, DOM dataset). Inside application code, keep types explicit so inference flows end‑to‑end.
 
 ## CSS & Assets in Tests
 
