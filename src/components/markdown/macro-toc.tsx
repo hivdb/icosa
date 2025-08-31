@@ -16,7 +16,7 @@ import BasicTOC from '../toc';
 export function tocMacro(
   content: string,
   props: Record<string, unknown>,
-  _helpers: { parseBlock?: (md: string) => any[] }
+  _helpers: { parseBlock?: (md: string) => string[] }
 ) {
   // Pass raw markdown through as a prop; we’ll render it at component time
   return {

@@ -4,7 +4,7 @@ import type {ColumnRender} from '../simple-table/types';
 
 /** Generic row shape for Markdown-driven tables. */
 export interface MDRow {
-  [key: string]: unknown;
+  [key: string]: any;
 }
 
 /** Column definition passed by CMS/preset for macro-table. */
@@ -41,4 +41,21 @@ export interface MarkdownRendererProps {
  */
 export interface MarkdownComponentsMap {
   [key: string]: React.ComponentType<any>;
+}
+
+export interface Article {
+  doi?: string;
+  journal?: string;
+  journalShort?: string;
+  freeText?: string;
+  firstAuthor?: {
+    surname?: string;
+  };
+  year?: number;
+}
+
+export interface CompoundEC50 {
+  name: string;
+  ec50?: number;
+  ec50Note?: string;
 }

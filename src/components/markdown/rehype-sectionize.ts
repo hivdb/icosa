@@ -88,6 +88,6 @@ export default function rehypeSectionize() {
     const children = (tree.children ?? []) as ElementContent[];
     const [sections] = groupSections(children);
     // Replace top-level children with the grouped sections
-    (tree as any).children = sections;
+    (tree as Root).children = sections as unknown as Root['children'];
   };
 }

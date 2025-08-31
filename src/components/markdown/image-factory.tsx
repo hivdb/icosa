@@ -29,7 +29,7 @@ function Image({src, style, alt, imagePrefix, ...props}: CommonProps) {
   return <img {...props} alt={alt} src={String(url)} style={style} />;
 }
 
-export default function ImageWrapper({imagePrefix}: {imagePrefix?: string}) {
+export default function ImageFactory({imagePrefix}: {imagePrefix?: string}) {
   return function Dispatcher({src, alt, ...props}: CommonProps) {
     let style: React.CSSProperties | undefined;
     let source = String(src);

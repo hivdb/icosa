@@ -9,7 +9,7 @@ import TableNodeWrapper from './macro-table';
 import GenomeMapNodeWrapper from './macro-genome-map';
 import TOCNodeWrapper from './macro-toc';
 import MdHeadingTagFactory from './heading-tags-factory';
-import ImageWrapper from './image-wrapper';
+import ImageFactory from './image-factory';
 import { withMacroRawProps } from '../../vendor/remark-macro';
 
 import type {MarkdownTablePreset, MarkdownRendererProps, MarkdownComponentsMap} from './types';
@@ -24,7 +24,7 @@ export interface BuildComponentsOptions {
   mdProps: MarkdownRendererProps;
   cmsPrefix?: string;
   genomeMaps?: Record<string, unknown>;
-  addComponents?: Record<string, any>;
+  addComponents?: Partial<MarkdownComponentsMap>;
 }
 
 /**
@@ -47,7 +47,7 @@ export function buildMarkdownComponents({
 }: BuildComponentsOptions): MarkdownComponentsMap {
   const generalComponents = {
     a: MarkdownLink,
-    img: (ImageWrapper as any)({ imagePrefix }),
+    img: ImageFactory({ imagePrefix }),
     'macro-bad-macro-node': withMacroRawProps(BadMacroNode),
     'macro-static-refs-node': withMacroRawProps(StaticRefsNode),
     'macro-table-node': withMacroRawProps(TableNodeWrapper({ tables, mdProps, cmsPrefix })),

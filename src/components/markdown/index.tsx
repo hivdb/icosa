@@ -12,6 +12,7 @@ import OptReferences from './references';
 import macroPlugin from './macro-plugin';
 import footnoteReferencePlugin from './footnote-plugin';
 import buildMarkdownComponents from './components-factory';
+import type {MarkdownComponentsMap, MarkdownRendererProps} from './types';
 
 /**
  * Normalize markdown children by concatenating arrays into a single string.
@@ -41,7 +42,7 @@ export interface ExtendedMarkdownProps {
   /** Render markdown inline without block level wrapper. */
   inline?: boolean;
   /** Additional components mapping for react-markdown. */
-  components?: Record<string, any>;
+  components?: MarkdownComponentsMap;
   /** Levels to be wrapped by collapsable sections. */
   collapsableLevels?: ('h2' | 'h3' | 'h4' | 'h5' | 'h6')[];
   /** Disable anchor links on heading tags. */
@@ -72,7 +73,7 @@ export interface ExtendedMarkdownProps {
   /**
    * Any additional props are forwarded to `react-markdown`.
    */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -104,7 +105,7 @@ function ExtendedMarkdown({
   ...props
 }: ExtendedMarkdownProps) {
   children = normalizeChildren(children);
-  const mdProps: any = {
+  const mdProps: MarkdownRendererProps = {
     urlTransform: (url: string) => url,
     // Order matters: GFM parses footnotes; our plugin converts them to ref-link elements.
     remarkPlugins: [macroPlugin.attacher, remarkGfm, footnoteReferencePlugin],
@@ -132,9 +133,9 @@ function ExtendedMarkdown({
     <ReactMarkdown
       {...mdProps}
       components={components}
-      key={children as any}
+      key={String(children)}
     >
-      {children as any}
+      {children}
     </ReactMarkdown>
   );
   const refContext = useReference(
@@ -159,7 +160,7 @@ function ExtendedMarkdown({
   if (toc) {
     return (
       <AutoTOC
-        key={children as any}
+        key={String(children)}
         className={tocClassName}>
         {jsx}
       </AutoTOC>
