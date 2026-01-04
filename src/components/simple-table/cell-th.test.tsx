@@ -14,7 +14,7 @@ describe('SimpleTableCellTh', () => {
     const columnDef = {
       name: 'a',
       label: 'A',
-      sort: (rows: any[]) => rows.sort((x, y) => (x.a > y.a ? 1 : -1)),
+      sort: rows => rows.sort((x, y) => (x.a > y.a ? 1 : -1)),
       sortable: true,
       nullsLast: false,
       headCellStyle: {}
@@ -26,7 +26,7 @@ describe('SimpleTableCellTh', () => {
         <SimpleTableCellTh
          data={data}
          columnDef={columnDef as any}
-         sortState={sortState as any}
+         sortState={sortState}
          onBeforeSort={onBeforeSort}
          onSort={onSort} />
       </tr></thead></table>
