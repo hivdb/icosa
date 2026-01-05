@@ -121,11 +121,11 @@ export default function PatternsInputForm({
       }
       if (preventSubmit) {
         submitDisabled || setSubmitDisabled(true);
-      } else if (submitDisabled && !disabled) {
+      } else if (submitDisabled) {
         submitDisabled && setSubmitDisabled(false);
       }
     },
-    [disabled, patterns, setPatterns, submitDisabled]
+    [patterns, setPatterns, submitDisabled]
   );
 
   const handleReset = React.useCallback(() => setPatterns([newPatternObj()]), [setPatterns]);
@@ -133,7 +133,7 @@ export default function PatternsInputForm({
   return (
     <BaseForm
      resetDisabled={disabled}
-     submitDisabled={submitDisabled}
+     submitDisabled={disabled || submitDisabled}
      to={to as string}
      onSubmit={handleSubmit}
      onReset={handleReset}>
