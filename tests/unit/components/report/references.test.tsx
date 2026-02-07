@@ -3,9 +3,8 @@ import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import ReferencesSection, {RefContextWrapper} from '../../../../src/components/report/references';
-import ConfigContext from '../../../../src/components/report/config-context';
-import {ReferenceContext} from '../../../../src/components/report/references';
-import {ReferenceObject} from '../../../../src/references/reference-context';
+import ConfigContext from '../../../../src/utils/config-context';
+import ReferenceContext, {ReferenceObject} from '../../../../src/components/references/reference-context';
 
 test('RefContextWrapper renders children after config load', async () => {
   render(

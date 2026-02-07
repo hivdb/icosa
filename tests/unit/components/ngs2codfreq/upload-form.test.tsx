@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
-import ConfigContext from '../../../../src/components/ngs2codfreq/config-context';
+import ConfigContext from '../../../../src/utils/config-context';
 import NGSUploadForm from '../../../../src/components/ngs2codfreq/upload-form';
 import {vi} from 'vitest';
 

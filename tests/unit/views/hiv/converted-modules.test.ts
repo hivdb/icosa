@@ -4,9 +4,9 @@ import { subOptions as readSubOptions } from '../../../../src/views/hiv/tabular-
 import { subOptions as seqSubOptions } from '../../../../src/views/hiv/tabular-report-by-sequences/sub-options';
 import getReadQuery from '../../../../src/views/hiv/tabular-report-by-reads/query.graphql';
 import getSeqQuery from '../../../../src/views/hiv/tabular-report-by-sequences/query.graphql';
-import seqSummary from '../../../../src/tabular-report/hiv-seq-summary';
-import resistanceSummary from '../../../../src/tabular-report/hiv-resistance-summary';
-import algorithmComparison from '../../../../src/tabular-report/hiv-alg-comparison';
+import seqSummary from '../../../../src/views/hiv/tabular-report/hiv-seq-summary';
+import resistanceSummary from '../../../../src/views/hiv/tabular-report/hiv-resistance-summary';
+import algorithmComparison from '../../../../src/views/hiv/tabular-report/hiv-alg-comparison';
 
 // Minimal smoke tests for converted modules
 

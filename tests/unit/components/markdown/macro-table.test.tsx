@@ -91,7 +91,9 @@ describe('macro-table typing helpers', () => {
     expect(colDefs).toHaveLength(2);
     const row: MDRow = {a: 'x', b: 3};
     const rendered = colDefs[1].render(3, row, {}, {});
-    expect(String(rendered)).toContain('val=3');
+    // renderTpl returns a React element, so render it and check text content
+    const {container} = render(<div>{rendered}</div>);
+    expect(container.textContent).toContain('val=3');
   });
 
   it('expandMultiCells expands rows on a single multiCells column', () => {

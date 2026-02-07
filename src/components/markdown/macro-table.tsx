@@ -113,7 +113,7 @@ const renderFuncs: Record<string, RendererFactory> = {
   compoundEC50Obj: (mdProps: MarkdownRendererProps, cmsPrefix?: string) => {
     const freeTextRenderer = defaultRenderer(mdProps, cmsPrefix);
     return (compounds: CompoundEC50[]) => {
-      const list = compounds ?? [];
+      const list = Array.isArray(compounds) ? compounds : [];
       const content = list.map(({name, ec50, ec50Note}) => {
         const part = [`${name}`];
         if (ec50 && ec50Note) {

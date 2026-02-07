@@ -7,7 +7,7 @@ import sars2Routes from '../../../../src/views/sars2';
 import useExtendVariables from '../../../../src/views/sars2/use-extend-variables';
 import useApolloClient from '../../../../src/views/sars2/apollo-client';
 import PrintHeader from '../../../../src/views/sars2/print-header';
-import ConfigContext from '../../../../src/views/sars2/config-context';
+import ConfigContext from '../../../../src/utils/config-context';
 import config from '../../../../src/config';
 import {pangolinQuery} from '../../../../src/views/sars2/common-query.graphql';
 import {loadExampleCodonReads, loadExampleFasta} from '../../../../src/forms/helpers';
