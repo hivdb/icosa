@@ -32,7 +32,7 @@ interface AnnotationData {
   annotCategories: any[];
   annotations: any[];
   positions: any[];
-  citations: any[];
+  citations: Record<string, Citation>;
   comments: {data: any[]; references: string};
 }
 
@@ -190,17 +190,6 @@ function MutAnnotViewerInner({
 
   const [selectedPositions, setSelectedPositions] = React.useState<number[]>([]);
 
-  const citationLookup = React.useMemo(
-    () => citations.reduce(
-      (acc, c) => ({
-        ...acc,
-        [`${c.citationId}.${c.sectionId}`]: c
-      }),
-      {} as Record<string, Citation>
-    ),
-    [citations]
-  );
-
   const [footnote, hasFootnote, showFootnote, openFn, closeFn] = useFootnote({
     selectedPositions,
     commentLookup,
@@ -255,7 +244,7 @@ function MutAnnotViewerInner({
                 curAnnotNameLookup,
                 annotations,
                 positionLookup,
-                citations: citationLookup
+                citations
               }
             }
           />

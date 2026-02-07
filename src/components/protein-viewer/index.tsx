@@ -99,7 +99,7 @@ export default function ProteinViewer({
         {
           type: 'tube',
           params: {
-            sele: sele ?? '',
+            sele,
             radius: 0.1,
             color: 'white'
           }

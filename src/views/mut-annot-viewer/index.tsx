@@ -34,7 +34,7 @@ interface AnnotationData {
   annotCategories: any[];
   annotations: any[];
   positions: any[];
-  citations: any[];
+  citations: Record<string, any>;
   comments: {data: any[]; references: string};
 }
 

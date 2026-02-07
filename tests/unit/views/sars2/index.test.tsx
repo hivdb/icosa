@@ -10,7 +10,7 @@ import PrintHeader from '../../../../src/views/sars2/print-header';
 import ConfigContext from '../../../../src/utils/config-context';
 import config from '../../../../src/config';
 import {pangolinQuery} from '../../../../src/views/sars2/common-query.graphql';
-import {loadExampleCodonReads, loadExampleFasta} from '../../../../src/forms/helpers';
+import {loadExampleCodonReads, loadExampleFasta} from '../../../../src/views/sars2/forms/helpers';
 
 describe('sars2 view utilities', () => {
   it('creates routes', () => {
