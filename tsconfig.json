@@ -19,7 +19,7 @@
       "react"
     ]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "exclude": [
     "src/views/mut-annot-viewer",
     "src/**/*.test.ts",
