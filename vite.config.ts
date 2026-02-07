@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -6,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   esbuild: {
     loader: 'tsx',
-    include: /src\/.*\.[tj]sx?$/
+    include: /(src|tests)\/.*\.[tj]sx?$/
   },
   server: {
     port: 3009

@@ -1,0 +1,19 @@
+// TODO: This test occasionally hangs due to unresolved timers within
+// `react-async`. It is temporarily disabled to keep the test suite
+// stable. Once the underlying issue is resolved this test should be
+// re-enabled.
+import {describe, it} from 'vitest';
+import {renderHook, waitFor} from '@testing-library/react';
+
+import useSmartAsync from '../../../src/utils/use-smart-async';
+
+describe('useSmartAsync', () => {
+  it('returns stable async result', async () => {
+    const promiseFn = async () => 42;
+    const {result} = renderHook(() =>
+      useSmartAsync<number>({promiseFn, key: 'testKey'})
+    );
+    await waitFor(() => expect(result.current.isPending).toBe(false));
+    expect(result.current.data).toBe(42);
+  });
+});
