@@ -1,5 +1,6 @@
 import {useCallback} from 'react';
 import Dropdown from 'react-dropdown';
+import type {Match, Router} from 'found';
 
 import style from './style.module.scss';
 
@@ -9,8 +10,8 @@ interface Option {
 }
 
 interface PresetSelectionProps {
-  match: {location: {pathname: string}};
-  router: {push: (path: string) => void};
+  match: Match;
+  router: Router;
   options: Option[];
 }
 

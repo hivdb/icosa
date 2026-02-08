@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  "exclude": [
+    "src/views/mut-annot-viewer",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "tests"
+  ]
+}

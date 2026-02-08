@@ -1,19 +1,15 @@
 import React from 'react';
 import makeClassNames from 'classnames';
 
+import type {CollapsableProps} from './types';
 import Context, {CollapsableContextValue} from './context';
 import Section from './section';
 import style from './style.module.scss';
 
-interface Props {
-  levels?: ('h2' | 'h3' | 'h4' | 'h5' | 'h6')[];
-  children?: React.ReactNode;
-}
-
 /**
  * Provide collapsable behaviour for nested sections based on heading levels.
  */
-function Collapsable({levels = ['h3'], children}: Props) {
+function Collapsable({levels = ['h3'], children}: CollapsableProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const collapsableContext = React.useMemo(
     () => new CollapsableContextValue(containerRef as React.RefObject<HTMLDivElement>, levels),

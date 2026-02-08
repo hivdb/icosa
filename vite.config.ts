@@ -31,6 +31,16 @@ export default defineConfig({
       'react-ngl': path.resolve(__dirname, 'src/shims/react-ngl.tsx'),
       // Test-only shim to avoid native `canvas` dependency from react-konva
       'react-konva': path.resolve(__dirname, 'src/shims/react-konva.tsx')
+    },
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/shims/**',
+        'src/types/**',
+        'src/**/*.d.ts'
+      ]
     }
   }
 });

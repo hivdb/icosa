@@ -4,26 +4,10 @@ import {FaMinusCircle} from '@react-icons/all-files/fa/FaMinusCircle';
 import Children from 'react-children-utilities';
 import {withRouter} from 'found';
 
+import type {SectionInnerProps, SectionProps, SectionElementProps} from './types';
 import {getAnchor, HeadingTag} from '../heading-tags';
 import Context from './context';
 import style from './style.module.scss';
-
-interface SectionInnerProps {
-  level: number;
-  children?: React.ReactNode | ((args: {onLoad: () => void}) => React.ReactNode);
-  match: any;
-  router: any;
-  alwaysCollapsable?: boolean;
-  registerCollapsableAnchor: (
-    anchor: string | null,
-    level: string,
-    alwaysCollapsable?: boolean
-  ) => void;
-  getClosestCollapsableAnchor: (hash: string | null) => {
-    anchor: string | null;
-    shouldCollapseOther: boolean;
-  };
-}
 
 /**
  * Functional replacement for the legacy class based SectionInner component.
@@ -54,11 +38,11 @@ export function SectionInner({
     () =>
       Children.deepFind(
         renderedChildren,
-        child => !!child && (child as any).type === HeadingTag
+        child => !!child && React.isValidElement(child) && child.type === HeadingTag
       ),
     [renderedChildren]
   );
-  const myAnchor = headingChild ? getAnchor(headingChild as any) : null;
+  const myAnchor = headingChild && React.isValidElement(headingChild) ? getAnchor(headingChild) : null;
 
   React.useEffect(() => {
     registerCollapsableAnchor(myAnchor, `h${level}`, alwaysCollapsable);
@@ -97,7 +81,10 @@ export function SectionInner({
     onClick: toggleDisplay
   };
 
-  const sectionProps: any = {...props, 'data-level': level};
+  const sectionProps: SectionElementProps = {
+    ...props,
+    'data-level': level
+  };
   if (expanded) {
     sectionProps['data-expanded'] = '';
     sectionProps.style = {...sectionProps.style, minHeight};
@@ -120,7 +107,11 @@ export function SectionInner({
   );
 }
 
-function Section(props: Omit<SectionInnerProps, 'registerCollapsableAnchor' | 'getClosestCollapsableAnchor'>) {
+/**
+ * Section component that consumes context and passes to SectionInner.
+ * The withRouter HOC will inject match and router props.
+ */
+function Section(props: SectionInnerProps) {
   const {registerCollapsableAnchor, getClosestCollapsableAnchor} = React.useContext(Context);
   return (
     <SectionInner
@@ -131,4 +122,6 @@ function Section(props: Omit<SectionInnerProps, 'registerCollapsableAnchor' | 'g
   );
 }
 
-export default withRouter(Section);
+// Type assertion needed because Found's withRouter types don't align perfectly with our props
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withRouter(Section as any) as React.ComponentType<SectionProps>;

@@ -1,5 +1,6 @@
 import React from 'react';
 import Loader from '../../components/loader';
+import type {Location, Router} from 'found';
 
 import LegendContext from './components/legend-context';
 import CanvasSequenceViewer from './components/canvas-sequence-viewer';
@@ -11,15 +12,6 @@ import type {Citation} from './types';
 
 import style from './style.module.scss';
 import type {SeqViewerSize} from './types';
-
-interface Location {
-  pathname?: string;
-  query?: Record<string, any>;
-}
-
-interface Router {
-  push: (loc: any) => void;
-}
 
 interface FragmentOption {
   name: string;
@@ -311,7 +303,7 @@ export default function MutAnnotViewer({
           refDataLoader,
           location,
           router,
-          region: location?.query?.region
+          region: Array.isArray(location?.query?.region) ? location.query.region[0] : location?.query?.region
         });
       }
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Match, Router } from 'found';
+import type {Match, Router} from 'found';
 import useExtendVariables from '../use-extend-variables';
 import useApolloClient from '../apollo-client';
 
@@ -84,9 +84,10 @@ interface WrapperProps {
 export default function ReportByPatternsContainerWrapper(props: WrapperProps) {
   const {
     location: {
-      query: {output = 'default'} = {}
+      query: {output: outputParam = 'default'} = {}
     } = {}
   } = props.match;
+  const output = Array.isArray(outputParam) ? outputParam[0] : outputParam;
   const lazyLoad = output !== 'printable';
   return (
     <ConfigContext.Consumer>

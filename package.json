@@ -120,12 +120,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --project tsconfig.build.json && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "coverage": "c8 -r text-summary -r lcov vitest run",
-    "coverage:html": "c8 -r html vitest run",
-    "coverage:check": "c8 check-coverage --branches 80 --functions 80 --lines 80 --statements 80",
+    "coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=lcov",
+    "coverage:html": "vitest run --coverage --coverage.reporter=html",
+    "coverage:check": "vitest run --coverage --coverage.thresholds.branches=80 --coverage.thresholds.functions=80 --coverage.thresholds.lines=80 --coverage.thresholds.statements=80",
     "codex": "docker run -it --rm -v $PWD:/workspace -v $PWD/.codex/node_modules:/workspace/node_modules -v $PWD/.codex/.codex:/root/.codex ghcr.io/openai/codex-universal:latest /workspace/scripts/init-codex.sh"
   },
   "eslintConfig": {

@@ -1,15 +1,17 @@
 import React from 'react';
 
+import type {ClosestAnchorResult} from './types';
+
 /**
  * Runtime context used by the Collapsable components.
  */
 export class CollapsableContextValue {
-  #containerRef: React.RefObject<HTMLDivElement>;
+  #containerRef: React.RefObject<HTMLDivElement | null>;
   #collapsableLevels: string[];
   #collapsableAnchors: Record<string, boolean>;
 
   constructor(
-    containerRef: React.RefObject<HTMLDivElement>,
+    containerRef: React.RefObject<HTMLDivElement | null>,
     levels: string[]
   ) {
     this.#containerRef = containerRef;
@@ -48,10 +50,10 @@ export class CollapsableContextValue {
    * Determine which anchor should currently be expanded based on the URL
    * hash.
    */
-  getClosestCollapsableAnchor = (curHash: string | null) => {
+  getClosestCollapsableAnchor = (curHash: string | null): ClosestAnchorResult => {
     if (!curHash) {
       return {
-        anchor: null as string | null,
+        anchor: null,
         shouldCollapseOther: false
       };
     }
@@ -90,4 +92,13 @@ export class CollapsableContextValue {
   };
 }
 
-export default React.createContext<CollapsableContextValue>({} as any);
+/**
+ * Default empty context value for Collapsable.
+ * Components should always be wrapped in a Collapsable.Provider.
+ */
+const defaultContextValue: CollapsableContextValue = new CollapsableContextValue(
+  React.createRef<HTMLDivElement>(),
+  []
+);
+
+export default React.createContext<CollapsableContextValue>(defaultContextValue);

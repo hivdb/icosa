@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import {Router, Match} from 'found';
+import type {Match, Router} from 'found';
 
 import {getFullLink} from '../../../utils/cms';
 import setTitle from '../../../utils/set-title';
