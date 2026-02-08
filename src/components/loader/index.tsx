@@ -2,11 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import style from './style.module.scss';
 
-export interface LoaderProps {
-  inline?: boolean;
-  modal?: boolean;
-  className?: string;
-}
+import type {LoaderProps} from './types';
+
+export type {LoaderProps};
 
 export default function Loader({inline = false, modal = false, className}: LoaderProps) {
   return (

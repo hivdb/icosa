@@ -3,16 +3,9 @@ import classNames from 'classnames';
 import {Link as FoundLink} from 'found';
 
 import style from './style.module.scss';
+import type {LinkProps} from './types';
 
-export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  to?: string | Record<string, unknown>;
-  href?: string;
-  onClick?: React.MouseEventHandler<HTMLElement>;
-  noDefaultStyle?: boolean;
-  children?: React.ReactNode;
-  className?: string;
-  linkStyle?: 'help';
-}
+export type {LinkProps};
 
 const Link: React.FC<LinkProps> = ({
   to,

@@ -3,11 +3,9 @@ import classNames from 'classnames';
 
 import '../../styles/globals.scss';
 import style from './style.module.scss';
+import type {LayoutProps} from './types';
 
-export interface LayoutProps {
-  className?: string;
-  children?: React.ReactNode;
-}
+export type {LayoutProps};
 
 /**
  * Layout component providing page header and container.

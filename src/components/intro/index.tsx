@@ -2,19 +2,14 @@ import React from 'react';
 import classNames from 'classnames';
 
 import style from './style.module.scss';
+import type {IntroHeaderProps, IntroHeaderSupplementProps, IntroProps} from './types';
+
+export type {IntroHeaderProps, IntroHeaderSupplementProps, IntroProps};
 
 const ClassNameContext = React.createContext<string | null>(null);
 
-export interface IntroHeaderProps {
-  children: React.ReactNode;
-}
-
 export function IntroHeader({children}: IntroHeaderProps) {
   return <header>{children}</header>;
-}
-
-export interface IntroHeaderSupplementProps {
-  children: React.ReactNode;
 }
 
 export function IntroHeaderSupplement({children}: IntroHeaderSupplementProps) {
@@ -25,11 +20,6 @@ export function IntroHeaderSupplement({children}: IntroHeaderSupplementProps) {
   );
 
   return <div className={className}>{children}</div>;
-}
-
-export interface IntroProps {
-  className?: string;
-  children: React.ReactNode | React.ReactNode[];
 }
 
 export default function Intro({className, children}: IntroProps) {

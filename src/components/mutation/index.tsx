@@ -7,6 +7,9 @@ import Markdown from '../markdown';
 import useMessages from '../../utils/use-messages';
 
 import style from './style.module.scss';
+import type {MutationProps, AARead} from './types';
+
+export type {MutationProps, AARead};
 
 function formatPercent(percent: number) {
   return round(percent, percent >= 10 ? 0 : 1) + '%';
@@ -15,32 +18,10 @@ function formatPercent(percent: number) {
 function execTemplate(template: string, options: Record<string, any>) {
   let msg = template;
   for (const [key, val] of Object.entries(options)) {
-    const pattern = new RegExp(`\\\\\$\\{${key}\\}`, 'g');
+    const pattern = new RegExp(`\\$\\{${key}\\}`, 'g');
     msg = msg.replace(pattern, String(val));
   }
   return msg.trim();
-}
-
-export interface MutationProps {
-  as?: React.ElementType;
-  gene: string;
-  text: string;
-  isUnusual?: boolean;
-  isDRM?: boolean;
-  DRMDrugClass?: {name: string; fullName: string};
-  isApobecMutation?: boolean;
-  isApobecDRM?: boolean;
-  isUnsequenced: boolean;
-  totalReads?: number;
-  allAAReads?: {aminoAcid: string; percent: number}[];
-  config: {
-    highlightUnusualMutation?: boolean;
-    highlightDRM?: boolean;
-    highlightApobecMutation?: boolean;
-    highlightApobecDRM?: boolean;
-    geneDisplay: Record<string, string>;
-    messages: Record<string, string>;
-  };
 }
 
 export default function Mutation({
