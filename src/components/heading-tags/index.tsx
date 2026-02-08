@@ -2,8 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import {FaLink} from '@react-icons/all-files/fa/FaLink';
 import Children from 'react-children-utilities';
+import type {HeadingTagProps, HeadingTagWrapperProps} from './types';
 
 import style from './style.module.scss';
+
+export type {HeadingTagProps, HeadingTagWrapperProps} from './types';
 
 /**
  * Extract all text content from a React node.
@@ -25,19 +28,12 @@ export function getChildrenText(elem: React.ReactNode): string {
  * @returns Sanitised anchor text.
  */
 export function getAnchor(elem: React.ReactElement | React.ReactNode): string {
-  if (React.isValidElement(elem) && elem.type === HeadingTag) {
+  if ((elem as React.ReactElement).type === HeadingTag) {
     elem = (elem as React.ReactElement<{children?: React.ReactNode}>).props.children;
   }
-  return String(getChildrenText(elem))
+  return getChildrenText(elem)
     .toLowerCase()
     .replace(/[^\w-]+/g, '.');
-}
-export interface HeadingTagProps extends React.HTMLAttributes<HTMLHeadingElement> {
-  id?: string;
-  level: 1 | 2 | 3 | 4 | 5 | 6;
-  className?: string;
-  children: React.ReactNode;
-  disableAnchor?: boolean;
 }
 
 /**
@@ -79,32 +75,27 @@ export function HeadingTag({
   );
 
   const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-  return React.createElement(
-    Tag,
-    {
-      ...props,
-      ref: elemRef,
-      className: classNames(className, style['heading-tag']),
-      id: anchor
-    },
-    disableAnchor
-      ? null
-      : React.createElement(
-          'a',
-          {
-            href: `#${anchor}`,
-            className: style['anchor-link'],
-            'data-anchor-link': ''
-          },
-          React.createElement(FaLink, {name: 'linkify'})
-        ),
-    children
+  return (
+    <Tag
+      {...props}
+      ref={elemRef}
+      className={classNames(className, style['heading-tag'])}
+      id={anchor}
+    >
+      {disableAnchor ? null : (
+        <a
+          href={`#${anchor}`}
+          className={style['anchor-link']}
+          data-anchor-link=""
+        >
+          <FaLink name="linkify" />
+        </a>
+      )}
+      {children}
+    </Tag>
   );
 
 }
-
-
-type HeadingTagWrapperProps = Omit<HeadingTagProps, 'level'>;
 
 export function H1(props: HeadingTagWrapperProps) {
   return <HeadingTag {...props} level={1} />;

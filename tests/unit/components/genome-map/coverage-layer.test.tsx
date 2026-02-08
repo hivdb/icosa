@@ -3,9 +3,9 @@ import {describe, it, expect} from 'vitest';
 import '@testing-library/jest-dom';
 
 import CoverageLayer from '../../../../src/components/genome-map/coverage-layer';
-import {scaleMultipleLinears} from '../../../../src/components/genome-map/helpers';
+import {createTestScale} from './test-utils';
 
-const scaleX = scaleMultipleLinears([[0, 10, 1]], [0, 100]);
+const scaleX = createTestScale([[0, 10, 1]], [0, 100]);
 
 describe('CoverageLayer', () => {
   it('renders coverage paths', () => {

@@ -3,9 +3,9 @@ import {describe, it, expect} from 'vitest';
 import '@testing-library/jest-dom';
 
 import RegionGroup from '../../../../src/components/genome-map/region-group';
-import {scaleMultipleLinears} from '../../../../src/components/genome-map/helpers';
+import {createTestScale} from './test-utils';
 
-const scaleX = scaleMultipleLinears([[0, 10, 1]], [0, 100]);
+const scaleX = createTestScale([[0, 10, 1]], [0, 100]);
 
 describe('RegionGroup', () => {
   it('renders position groups', () => {
