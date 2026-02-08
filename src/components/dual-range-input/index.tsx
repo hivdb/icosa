@@ -1,21 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
+import type {NumberDualRangeInputProps} from './types';
 
 import style from './style.module.scss';
 
-export interface NumberDualRangeInputProps {
-  className?: string;
-  nameStart: string;
-  nameEnd: string;
-  start: number;
-  end: number;
-  onChange: (name: string, value: number) => void;
-  min?: number;
-  max?: number;
-  step?: number;
-  minGap?: number;
-  disabled?: boolean;
-}
+export type {NumberDualRangeInputProps} from './types';
 
 export default function NumberDualRangeInput({
   className,

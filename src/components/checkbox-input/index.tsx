@@ -1,7 +1,10 @@
 import React, {createRef} from 'react';
 import classNames from 'classnames';
+import type {CheckboxInputProps} from './types';
 
 import style from './style.module.scss';
+
+export type {CheckboxInputProps} from './types';
 
 const isClipPathPolygonSupported = (() => {
   if (typeof document === 'undefined') {
@@ -9,29 +12,18 @@ const isClipPathPolygonSupported = (() => {
   }
   const elem = document.createElement('span');
   const expected = 'polygon(100% 0px, 100% 100%, 0px 100%)';
-  for (const attr of ['webkitClipPath', 'clipPath'] as const) {
-    if ((elem.style as any)[attr] === undefined) {
+  const elemStyle = elem.style as unknown as Record<string, string | undefined>;
+  for (const attr of ['webkitClipPath', 'clipPath']) {
+    if (elemStyle[attr] === undefined) {
       continue;
     }
-    (elem.style as any)[attr] = expected;
-    if ((elem.style as any)[attr] === expected) {
+    elemStyle[attr] = expected;
+    if (elemStyle[attr] === expected) {
       return true;
     }
   }
   return false;
 })();
-
-export interface CheckboxInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  id: string;
-  name: string;
-  className?: string;
-  value: any;
-  children: React.ReactNode;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-  checked?: boolean;
-  disabled?: boolean;
-  style?: React.CSSProperties;
-}
 
 function CheckboxInput({
   id,

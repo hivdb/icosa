@@ -1,25 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Button, {ButtonSize, ButtonStyle} from '../button';
+import Button from '../button';
+import type {FileInputProps} from './types';
 
 import style from './style.module.scss';
 
-const onVoid = () => null;
+export type {FileInputProps} from './types';
 
-export interface FileInputProps {
-  name?: string;
-  className?: string;
-  accept?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  multiple?: boolean;
-  children?: React.ReactNode;
-  hideSelected?: boolean;
-  btnSize?: ButtonSize;
-  onChange?: (files: File[]) => void;
-  btnStyle?: ButtonStyle;
-}
+const onVoid = () => null;
 
 /**
  * Provide a styled file input with custom button and selected file display.
@@ -43,37 +32,51 @@ export default function FileInput({
   const [value, setValue] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLSpanElement>) => {
-      e && e.preventDefault();
-      let files: File[] = [];
-      const dt = (e as React.DragEvent<HTMLSpanElement>).dataTransfer;
-      if (dt?.items) {
-        files = Array.from(dt.items)
-          .filter(({kind}) => kind === 'file')
-          .map(item => item.getAsFile() as File);
-      }
-      else if ((e as React.ChangeEvent<HTMLInputElement>).currentTarget.files) {
-        files = Array.from((e as React.ChangeEvent<HTMLInputElement>).currentTarget.files as FileList);
-      }
+  const processFiles = React.useCallback(
+    (files: File[]) => {
       if (files.length > 0) {
         let fname = files[0].name;
+        let processedFiles = files;
         if (!multiple) {
-          files = files.slice(0, 1);
+          processedFiles = files.slice(0, 1);
         }
         if (files.length > 1) {
           fname += ' ...';
         }
         setValue(fname);
+        if (onChange) onChange(processedFiles);
       }
-      if (onChange) onChange(files);
     },
     [multiple, onChange]
   );
 
+  const handleChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      e && e.preventDefault();
+      const files: File[] = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+      processFiles(files);
+    },
+    [processFiles]
+  );
+
+  const handleDrop = React.useCallback(
+    (e: React.DragEvent<HTMLSpanElement>) => {
+      e && e.preventDefault();
+      let files: File[] = [];
+      if (e.dataTransfer?.items) {
+        files = Array.from(e.dataTransfer.items)
+          .filter(({kind}) => kind === 'file')
+          .map(item => item.getAsFile())
+          .filter((file): file is File => file !== null);
+      }
+      processFiles(files);
+    },
+    [processFiles]
+  );
+
   const handleUpload = React.useCallback(
     (e: React.MouseEvent) => {
-      if ((e as any).buttons && (e as any).buttons !== 1) {
+      if (e.buttons && e.buttons !== 1) {
         return;
       }
       e && e.preventDefault();
@@ -91,7 +94,7 @@ export default function FileInput({
 
   return (
     <span
-      onDrop={handleChange}
+      onDrop={handleDrop}
       onDragOver={handleDragOver}
       className={classNames(className, style['file-input'])}>
       <input

@@ -5,7 +5,7 @@ import {
 import style from './style.module.scss';
 
 function handleClick(evt: React.MouseEvent<HTMLAnchorElement>) {
-  evt.preventDefault();
+  evt && evt.preventDefault();
   window.scrollTo(0, 0);
 }
 

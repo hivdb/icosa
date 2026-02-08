@@ -3,26 +3,11 @@ import makeClassNames from 'classnames';
 
 import Link from '../link';
 import ExtLink from '../link/external';
+import type {ButtonProps} from './types';
 
 import style from './style.module.scss';
 
-export type ButtonStyle = 'default' | 'info' | 'primary' | 'light' | 'link';
-export type ButtonSize = 'xlarge' | 'large' | 'normal' | 'small';
-
-export interface ButtonProps {
-  onClick?: React.MouseEventHandler<HTMLElement>;
-  name?: string;
-  btnStyle?: ButtonStyle;
-  btnSize?: ButtonSize;
-  btnHeight?: number;
-  disabled?: boolean;
-  className?: string;
-  value?: string | number;
-  href?: string;
-  to?: string;
-  type?: 'button' | 'submit' | 'reset';
-  children: React.ReactNode;
-}
+export type {ButtonStyle, ButtonSize, ButtonProps} from './types';
 
 /**
  * Render a styled button or link element depending on provided props.
@@ -59,17 +44,17 @@ const Button: React.FC<ButtonProps> = ({
   const componentProps: Record<string, unknown> = { ...props };
 
   // Ensure style-related props are not forwarded to the DOM to avoid React warnings
-  delete (componentProps as any).btnStyle;
-  delete (componentProps as any).btnSize;
-  delete (componentProps as any).btnHeight;
+  delete componentProps.btnStyle;
+  delete componentProps.btnSize;
+  delete componentProps.btnHeight;
 
   let componentSpecificProps: Record<string, unknown> = {};
   if (href || to) {
     Component = to ? Link : ExtLink;
     componentSpecificProps = to ? {to} : {href};
-    (componentProps as any).noDefaultStyle = true;
+    componentProps.noDefaultStyle = true;
   } else {
-    (componentProps as any).type = type;
+    componentProps.type = type;
   }
 
   return (
