@@ -3,20 +3,15 @@
  * paginated data in a "cumulative" fashion.
  */
 
+import type {
+  OffsetLimitOptions,
+  OffsetLimitResult,
+  InitOffsetLimitOptions,
+  InitOffsetLimitResult
+} from './types';
+
 export const DEFAULT_QUICKLOAD_LIMIT = 2;
-
-export interface OffsetLimitOptions {
-  size: number;
-  offset: number;
-  lazyLoad: boolean;
-  quickLoadLimit?: number;
-}
-
-export interface OffsetLimitResult {
-  loadFirstIndex: number;
-  offset: number;
-  limit: number;
-}
+export type {OffsetLimitOptions, OffsetLimitResult, InitOffsetLimitOptions, InitOffsetLimitResult};
 
 /**
  * Calculate the next offset and limit for fetching data.
@@ -43,18 +38,6 @@ export function calcOffsetLimit({
   limit = Math.min(limit, size - offset);
 
   return {loadFirstIndex, offset, limit};
-}
-
-export interface InitOffsetLimitOptions {
-  size: number;
-  curIndex?: number | null;
-  lazyLoad: boolean;
-  quickLoadLimit?: number;
-}
-
-export interface InitOffsetLimitResult {
-  initOffset: number;
-  initLimit: number;
 }
 
 /**

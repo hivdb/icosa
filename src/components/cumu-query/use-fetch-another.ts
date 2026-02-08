@@ -3,16 +3,9 @@ import nestGet from 'lodash/get';
 import {useRouter} from 'found';
 
 import {calcOffsetLimit, DEFAULT_QUICKLOAD_LIMIT} from './funcs';
+import type {UseFetchAnotherArgs, FetchAnotherFn} from './types';
 
-interface UseFetchAnotherArgs {
-  inputObjs: any[];
-  loaded: boolean;
-  isCached: (name: any) => boolean;
-  setCursor: (cursor: {offset: number; limit: number; loadFirstIndex: number}) => void;
-  lazyLoad: boolean;
-  quickLoadLimit?: number;
-  inputUniqKeyName: string;
-}
+export type {UseFetchAnotherArgs, FetchAnotherFn};
 
 /**
  * Generate a function that fetches another item and updates URL state if
@@ -26,7 +19,7 @@ export default function useFetchAnother({
   lazyLoad,
   quickLoadLimit = DEFAULT_QUICKLOAD_LIMIT,
   inputUniqKeyName
-}: UseFetchAnotherArgs) {
+}: UseFetchAnotherArgs): FetchAnotherFn {
   const {match, router} = useRouter();
   const pendingResolve = React.useRef<((value?: unknown) => void) | null>(null);
 

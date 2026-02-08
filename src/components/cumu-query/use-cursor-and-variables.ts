@@ -1,30 +1,14 @@
 import React from 'react';
 import nestGet from 'lodash/get';
 
-interface Cursor {
-  loadFirstIndex?: number;
-  offset: number;
-  limit: number;
-}
+import type {
+  Cursor,
+  UseCursorAndVariablesArgs,
+  CursorVariables,
+  UseCursorAndVariablesResult
+} from './types';
 
-interface UseCursorArgs {
-  initOffset: number;
-  initLimit: number;
-  isCached: (key: any) => boolean;
-  inputObjs: any[];
-  currentSelected: {index: number};
-  inputUniqKeyName: string;
-  mainInputName: string;
-  maxPerRequest: number;
-  onExtendVariables: (vars: Record<string, any>) => Record<string, any>;
-}
-
-interface CursorVariables {
-  variables: Record<string, any>;
-  isEmptyQuery: boolean;
-  fetchedCount: number;
-  fetchingCount: number;
-}
+export type {Cursor, UseCursorAndVariablesArgs, CursorVariables, UseCursorAndVariablesResult};
 
 /**
  * Manage the query cursor and derive query variables for batched requests.
@@ -39,7 +23,7 @@ export default function useCursorAndVariables({
   mainInputName,
   maxPerRequest,
   onExtendVariables
-}: UseCursorArgs) {
+}: UseCursorAndVariablesArgs): UseCursorAndVariablesResult {
   const [cursor, setCursor] = React.useState<Cursor>({
     loadFirstIndex,
     offset: initOffset,

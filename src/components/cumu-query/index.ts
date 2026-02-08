@@ -4,45 +4,15 @@ import useFetchAnother from './use-fetch-another';
 import useResultCache from './use-result-cache';
 import useCursorAndVariables from './use-cursor-and-variables';
 import {calcOffsetLimit, calcInitOffsetLimit} from './funcs';
+import type {UseCumuQueryArgs, UseCumuQueryResult} from './types';
 
 export {calcOffsetLimit, calcInitOffsetLimit};
-
-interface UseCumuQueryArgs {
-  /** GraphQL query document. */
-  query: any;
-  /** Apollo client instance. */
-  client: any;
-  /** Name of the main input variable. */
-  mainInputName: string;
-  /** Objects describing each requested item. */
-  inputObjs: any[];
-  /** Name of the main output field in the response. */
-  mainOutputName: string;
-  /** Path to the unique key within each output object. */
-  outputUniqKeyName: string;
-  /** Initial cursor offset. */
-  initOffset: number;
-  /** Initial cursor limit. */
-  initLimit: number;
-  /** Function extending query variables. */
-  onExtendVariables: (vars: Record<string, any>) => Record<string, any>;
-  /** Currently selected item index. */
-  currentSelected: {index: number};
-  /** Unique key name within each input object. */
-  inputUniqKeyName: string;
-  /** Maximum items fetched per request. */
-  maxPerRequest: number;
-  /** Whether to lazy load items. */
-  lazyLoad: boolean;
-  /** Quick load limit when lazy loading. */
-  quickLoadLimit?: number;
-  [key: string]: any;
-}
+export type {UseCumuQueryArgs, UseCumuQueryResult};
 
 /**
  * Hook that manages fetching data cumulatively with cursor state and cache.
  */
-export default function useCumuQuery(props: UseCumuQueryArgs) {
+export default function useCumuQuery(props: UseCumuQueryArgs): UseCumuQueryResult {
   const {
     query,
     client,

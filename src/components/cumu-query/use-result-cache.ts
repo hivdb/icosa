@@ -1,17 +1,9 @@
 import React from 'react';
 import nestGet from 'lodash/get';
 
-interface ResultCacheProps {
-  inputObjs: any[];
-  mainOutputName: string;
-  outputUniqKeyName: string;
-}
+import type {ResultCacheArgs, ResultCache, UseResultCacheResult} from './types';
 
-interface Cache {
-  inputObjs: any[];
-  lookup: Record<string, any>;
-  misc: Record<string, any>;
-}
+export type {ResultCacheArgs, UseResultCacheResult};
 
 /**
  * Cache results returned from batched queries so that subsequent fetches
@@ -21,8 +13,8 @@ export default function useResultCache({
   inputObjs,
   mainOutputName,
   outputUniqKeyName
-}: ResultCacheProps) {
-  const cache: Cache = React.useMemo(
+}: ResultCacheArgs): UseResultCacheResult {
+  const cache: ResultCache = React.useMemo(
     () => ({
       inputObjs,
       lookup: {},
