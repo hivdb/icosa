@@ -8,6 +8,9 @@ import SequenceInputForm from './sequence-input-form';
 import SequenceReadsInputForm from './sequence-reads-input-form';
 import NGS2CodFreqForm from './ngs2codfreq-form';
 import useBasePath from './use-base-path';
+import type {AnalyzeFormsProps, AnalyzeTab} from './types';
+
+export type {AnalyzeFormsProps, AnalyzeTab};
 
 /**
  * Extract the name of the active tab from the router location.
@@ -25,42 +28,7 @@ function useCurrentTab(location: {pathname: string}): string {
 
 // useBasePath has been moved to its own module to allow isolated testing
 
-export interface AnalyzeFormsProps {
-  /** Router match object providing current location. */
-  match: {location: {pathname: string}};
-  /** Router instance used for navigation actions. */
-  router: {replace(path: string): void; push(loc: any): void};
-  /** Optional submit handler invoked by individual forms. */
-  onSubmit?(...args: any[]): Promise<any>;
-  /** Tabs to display. Defaults to patterns, sequences and reads. */
-  enableTabs?: Array<'patterns' | 'sequences' | 'reads'>;
-  /** Base path used when constructing tab links. */
-  basePath: string;
-  /** Destination path for mutation pattern submission. */
-  patternsTo: string;
-  /** Destination path for sequence submission. */
-  sequencesTo: string;
-  /** Destination path for sequence read submission. */
-  /**
-   * Destination path for sequence read submission. Required when the
-   * `reads` tab is enabled.
-   */
-  readsTo?: string;
-  /** Configuration for sequence output options. */
-  sequencesOutputOptions?: Record<string, any>;
-  /** Configuration for sequence read output options. */
-  seqReadsOutputOptions?: Record<string, any>;
-  /** Available NGS runners passed to the ngs2codfreq form. */
-  ngsRunners?: any[];
-  /** Optional sidebar element displayed with ngs2codfreq. */
-  ngs2codfreqSide?: React.ReactNode;
-  /** Children elements placed above all forms. */
-  children?: React.ReactNode;
-  /** Allow additional arbitrary props. */
-  [key: string]: any;
-}
-
-const defaultTabs: Array<'patterns' | 'sequences' | 'reads'> = [
+const defaultTabs: AnalyzeTab[] = [
   'patterns',
   'sequences',
   'reads'

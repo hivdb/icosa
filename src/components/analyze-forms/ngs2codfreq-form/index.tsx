@@ -7,9 +7,28 @@ import ConfigContext from '../../../utils/config-context';
 import NGS2CodFreq from '../../ngs2codfreq';
 import Loader from '../../loader';
 import {buildGeneValidator} from '../../../utils/sequence-reads';
+import type {NGSRunner} from '../types';
 import style from '../style.module.scss';
 
 const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
+
+interface CodonRead {
+  codon: string;
+  reads: number;
+}
+
+interface Read {
+  allCodonReads: CodonRead[];
+  gene: string | null;
+  position: number | null;
+  [key: string]: unknown;
+}
+
+interface RawSequenceRead {
+  allReads: Read[];
+  name: string;
+  [key: string]: unknown;
+}
 
 /**
  * Normalize sequence read objects using provided gene validator.
@@ -19,17 +38,21 @@ const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
  * @returns Reformatted sequence read data.
  */
 function reformCodFreqs(
-  allSequenceReads: any[],
+  allSequenceReads: RawSequenceRead[],
   geneValidator: (g: string, p: number) => [string | null, number | null]
 ) {
   return allSequenceReads.map(({allReads, name, ...seqReads}) => ({
     name: name.replace(SUFFIX_PATTERN, ''),
-    allReads: allReads.map(({allCodonReads, gene, position, ...read}: any) => {
-      [gene, position] = geneValidator(gene, position);
+    allReads: allReads.map(({allCodonReads, gene, position, ...read}) => {
+      let validatedGene: string | null = gene;
+      let validatedPosition: number | null = position;
+      if (gene !== null && position !== null) {
+        [validatedGene, validatedPosition] = geneValidator(gene, position);
+      }
       return {
-        allCodonReads: allCodonReads.map(({codon, reads}: any) => ({codon, reads})),
-        gene,
-        position,
+        allCodonReads: allCodonReads.map(({codon, reads}: CodonRead) => ({codon, reads})),
+        gene: validatedGene,
+        position: validatedPosition,
         ...read
       };
     }),
@@ -39,7 +62,7 @@ function reformCodFreqs(
 
 export interface NGS2CodFreqFormProps {
   showOptionsForm?: boolean;
-  runners?: any[];
+  runners?: NGSRunner[];
   redirectTo?: string;
   analyzeTo?: string;
 }
@@ -76,7 +99,7 @@ export default function NGS2CodFreqForm({
   );
 
   const handleAnalyze = React.useCallback(
-    async (codfreqs: any[]) => {
+    async (codfreqs: RawSequenceRead[]) => {
       const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
       const allSequenceReads = reformCodFreqs(codfreqs, geneValidator);
       await BigData.clear();

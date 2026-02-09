@@ -3,8 +3,12 @@ import classNames from 'classnames';
 import {useRouter} from 'found';
 
 import Button from '../button';
+import type {AnalyzeBaseFormProps, FormSubmitState} from './types';
+import type {LocationDescriptorObject} from 'farce';
 
 import style from './style.module.scss';
+
+export type {AnalyzeBaseFormProps};
 
 /**
  * Retrieve previously entered form values from the router location.
@@ -14,41 +18,18 @@ import style from './style.module.scss';
  * between form pages.  This hook extracts that state so the form can be
  * pre-filled when the user returns to it.
  *
- * @returns A plain object containing any saved input state.  If the location
+ * @returns A plain object containing saved input state.  If the location
  * does not include a `state` object an empty object is returned.
  */
-function useSavedInput(): Record<string, any> {
+function useSavedInput(): FormSubmitState {
   const {
     match: {
       location: {state = {}}
     }
   } = useRouter();
-  return state as Record<string, any>;
+  return state as FormSubmitState;
 }
 
-/** Props for {@link AnalyzeBaseForm}. */
-export interface AnalyzeBaseFormProps {
-  /** Destination pathname to navigate after successful submission. */
-  to: string;
-  /** Submit handler returning validation result, state and optional query. */
-  onSubmit(
-    e: React.SyntheticEvent
-  ): Promise<[
-    boolean,
-    Record<string, any>,
-    Record<string, any>?
-  ]>;
-  /** Reset handler invoked when user clicks reset. */
-  onReset(e: React.SyntheticEvent): void;
-  /** Form body or render function receiving saved input. */
-  children: React.ReactNode | ((state: Record<string, any>) => React.ReactNode);
-  /** Optional CSS class applied to the container. */
-  className?: string;
-  /** Whether reset button should be disabled. */
-  resetDisabled: boolean;
-  /** Whether submit button should be disabled. */
-  submitDisabled: boolean;
-}
 
 /**
  * Base wrapper used by all analyze forms providing consistent submit/reset
@@ -83,14 +64,15 @@ export default function AnalyzeBaseForm({
       const {outputOption} = state as {outputOption?: string};
       e.preventDefault();
       if (validated) {
-        // eslint-disable-next-line no-unused-vars
-        let {location: {state: _state, ...loc}} = match as any;
-        const pathname = to;
         if (outputOption && outputOption !== 'default') {
           query = {...query, output: outputOption};
         }
-        loc = {...loc, state, pathname, query} as any;
-        router.push(loc);
+        const newLocation: LocationDescriptorObject = {
+          pathname: to,
+          state,
+          query
+        };
+        router.push(newLocation);
       }
     },
     [match, onSubmit, router, to]
@@ -105,8 +87,7 @@ export default function AnalyzeBaseForm({
   const handleReset = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.persist();
-      // eslint-disable-next-line no-unused-vars
-      const {location: {state, ...loc}} = match as any;
+      const {location: {state, ...loc}} = match;
       router.replace(loc);
       onReset(e);
     },

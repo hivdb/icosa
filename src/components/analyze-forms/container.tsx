@@ -1,17 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 
+import type {AnalyzeFormsContainerProps} from './types';
 import style from './style.module.scss';
 
-/** Props for {@link AnalyzeFormsContainer}. */
-export interface AnalyzeFormsContainerProps {
-  /** Name of the currently active tab. */
-  tabName: string;
-  /** Optional additional CSS class. */
-  className?: string;
-  /** Inner content of the container. */
-  children?: React.ReactNode;
-}
+export type {AnalyzeFormsContainerProps};
+
 
 /**
  * Wrapper element providing a section with `data-tabname` attribute used by

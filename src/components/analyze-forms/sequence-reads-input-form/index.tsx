@@ -18,9 +18,17 @@ import FileInput from '../../file-input';
 import Link from '../../link/basic';
 import Loader from '../../loader';
 
+import type {
+  SequenceRead,
+  SequenceReadsInputFormProps,
+  FormSubmitState,
+  QueryParams
+} from '../types';
 import style from '../style.module.scss';
 
 import useOutputOptions from './use-output-options';
+
+export type {SequenceRead, SequenceReadsInputFormProps};
 
 const SUPPORT_FORMATS = {
   'application/gzip': ['.codfreq.gz'],
@@ -35,14 +43,6 @@ const SUPPORT_FORMATS_TEXT = Object.entries(SUPPORT_FORMATS)
 
 const SUFFIX_PATTERN = /(\.codfreq|\.codfish|\.aavf)?(\.txt|csv|tsv)?$/i;
 
-export interface SequenceReadsInputFormProps {
-  children?: React.ReactNode;
-  to: string;
-  outputOptions?: Record<string, any>;
-  onSubmit?(e: React.SyntheticEvent, seqReads: any[]): Promise<any>;
-  exampleCodonReads?: string[];
-}
-
 /**
  * Form accepting codon read files for analysis. Supports drag-and-drop and
  * handles optional output options similar to sequence form.
@@ -53,7 +53,7 @@ export default function SequenceReadsInputForm({
   exampleCodonReads = [],
   to,
   ...rest
-}: SequenceReadsInputFormProps & Record<string, any>): React.JSX.Element {
+}: SequenceReadsInputFormProps & Record<string, unknown>): React.JSX.Element {
   const {outputOption, outputOptions, outputOptionElement} = useOutputOptions(
     rest
   );
@@ -63,7 +63,7 @@ export default function SequenceReadsInputForm({
   const [config, isConfigPending] = ConfigContext.use();
   const [isSubmitting, setSubmitting] = React.useState(false);
   const [optionResult, setOptionResult] = React.useState<React.ReactNode>(null);
-  const [allSequenceReads, setAllSeqReads] = React.useState<any[]>([]);
+  const [allSequenceReads, setAllSeqReads] = React.useState<SequenceRead[]>([]);
 
   /**
    * Clear any uploaded sequence reads and reset the form state.
@@ -80,10 +80,10 @@ export default function SequenceReadsInputForm({
   const handleSubmit = React.useCallback(
     async (
       e: React.SyntheticEvent
-    ): Promise<[boolean, Record<string, any>, Record<string, any>?]> => {
+    ): Promise<[boolean, FormSubmitState, QueryParams?]> => {
       e && e.persist();
       let validated = true;
-      let state: any = {};
+      let state: FormSubmitState = {};
       if (onSubmit) {
         [validated, state] = await onSubmit(e, allSequenceReads);
       }
@@ -133,7 +133,7 @@ export default function SequenceReadsInputForm({
       e && e.preventDefault();
       setLoading(true);
       const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
-      const allSeqReads: any[] = [];
+      const allSeqReads: SequenceRead[] = [];
       for (const url of exampleCodonReads) {
         const resp = await fetch(url);
         const data = await resp.text();
@@ -160,7 +160,7 @@ export default function SequenceReadsInputForm({
       setLoading(true);
       const knownFiles = new Set<string>();
       const geneValidator = buildGeneValidator(config!.geneValidatorDefs);
-      for (const {name} of allSequenceReads as any[]) {
+      for (const {name} of allSequenceReads) {
         knownFiles.add(name);
       }
       const unsupportedFiles: string[] = [];
@@ -224,7 +224,7 @@ export default function SequenceReadsInputForm({
           Upload file(s):
         </label>
         <FileInput
-         onChange={handleUpload as any}
+         onChange={handleUpload}
          name="reads-file"
          multiple
          accept={SUPPORT_FORMATS_TEXT}
@@ -239,8 +239,8 @@ export default function SequenceReadsInputForm({
       </div>
       <Dropzone
        useFsAccessApi={false}
-       accept={SUPPORT_FORMATS as any}
-       onDrop={acceptedFiles => handleUpload(acceptedFiles)}>
+       accept={SUPPORT_FORMATS}
+       onDrop={handleUpload}>
         {({getRootProps, getInputProps, isDragActive}) => (
           <div className={style.dropzone}>
             <input {...getInputProps()} />
@@ -248,7 +248,7 @@ export default function SequenceReadsInputForm({
              data-drag-active={isDragActive}
              data-placeholder={config!.messages['seqreads-analysis-form-placeholder']}
              {...getRootProps({className: style['sequence-reads-preview']})}>
-              {allSequenceReads.map((sr: any, idx: number) => (
+              {allSequenceReads.map((sr, idx) => (
                 <li key={`codfreq-${idx}`}>
                   <FaRegFileAlt className={style['file-icon']} />
                   <br />

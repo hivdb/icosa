@@ -9,6 +9,7 @@ import MutationsInput, {MutationsConfig} from '../../mutations-input';
 import Loader from '../../loader';
 
 import BaseForm from '../base';
+import type {FormSubmitState, QueryParams} from '../types';
 import parentStyle from '../style.module.scss';
 
 import style from './style.module.scss';
@@ -46,7 +47,18 @@ export interface PatternsInputFormProps {
   /** Destination for navigation upon submit. */
   to?: string;
   /** Submit callback receiving the payload. */
-  onSubmit?(e: React.SyntheticEvent, payload: any): Promise<any>;
+  onSubmit?(e: React.SyntheticEvent, payload: PatternPayload): Promise<[boolean, FormSubmitState]>;
+}
+
+/**
+ * Pattern payload structure for submission.
+ */
+export interface PatternPayload {
+  patterns: Array<{
+    name?: string;
+    mutations: string[];
+    [key: string]: unknown;
+  }>;
 }
 
 /**
@@ -77,16 +89,15 @@ export default function PatternsInputForm({
   const handleSubmit = React.useCallback(
     async (
       e: React.SyntheticEvent
-    ): Promise<[boolean, Record<string, any>, Record<string, any>?]> => {
-      const payload = {
+    ): Promise<[boolean, FormSubmitState, QueryParams?]> => {
+      const payload: PatternPayload = {
         patterns: patterns.map(({uuid, name, mutations, ...pattern}) => ({
           ...pattern,
-          name: !name || name === uuid ? mutations.join('+') : name,
           mutations
         }))
       };
       let validated = true;
-      let state: Record<string, any> = {};
+      let state: FormSubmitState = {};
       if (onSubmit) {
         [validated, state] = await onSubmit(e, payload);
       }
@@ -97,7 +108,7 @@ export default function PatternsInputForm({
         validated,
         state,
         {
-          name: payload.patterns[0].name,
+          name: payload.patterns[0].name as string | undefined,
           mutations: payload.patterns[0].mutations.join(',')
         }
       ];

@@ -273,4 +273,85 @@ describe('PatternsInputForm handleChange behavior', () => {
       expect(submitButton).not.toHaveAttribute('disabled');
     });
   });
+
+  it('calls onSubmit when form is submitted', async () => {
+    const onSubmit = vi.fn().mockResolvedValue([true, {result: 'success'}]);
+    const {container} = render(<PatternsInputForm {...defaultProps} onSubmit={onSubmit} />);
+    
+    // Add valid mutation
+    const addValidButton = screen.getByTestId('trigger-valid');
+    addValidButton.click();
+    
+    await waitFor(() => {
+      const submitButton = container.querySelector('button[type="submit"]');
+      expect(submitButton).not.toHaveAttribute('disabled');
+    });
+    
+    // Submit form
+    const submitButton = container.querySelector('button[type="submit"]');
+    submitButton?.click();
+    
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+      const payload = onSubmit.mock.calls[0][1];
+      expect(payload.patterns).toBeDefined();
+      expect(payload.patterns[0].mutations).toEqual(['RT:E40F']);
+    });
+  });
+
+  it('handles form submission without onSubmit callback', async () => {
+    const {container} = render(<PatternsInputForm to="/test" />);
+    
+    // Add valid mutation
+    const addValidButton = screen.getByTestId('trigger-valid');
+    addValidButton.click();
+    
+    await waitFor(() => {
+      const submitButton = container.querySelector('button[type="submit"]');
+      expect(submitButton).not.toHaveAttribute('disabled');
+    });
+    
+    // Submit form - should not throw
+    const submitButton = container.querySelector('button[type="submit"]');
+    expect(() => submitButton?.click()).not.toThrow();
+  });
+
+  it('handles form reset', async () => {
+    render(<PatternsInputForm {...defaultProps} />);
+    
+    // Add mutation
+    const addValidButton = screen.getByTestId('trigger-valid');
+    addValidButton.click();
+    
+    await waitFor(() => {
+      const mutationsDisplay = screen.getByTestId('current-mutations');
+      expect(mutationsDisplay.textContent).toBe('["RT:E40F"]');
+    });
+    
+    // Reset form
+    const resetButton = screen.getByRole('button', {name: /reset/i});
+    resetButton.click();
+    
+    await waitFor(() => {
+      const mutationsDisplay = screen.getByTestId('current-mutations');
+      expect(mutationsDisplay.textContent).toBe('[]');
+    });
+  });
+
+  it('toggles retain input option checkbox', async () => {
+    render(<PatternsInputForm {...defaultProps} />);
+    
+    const checkbox = screen.getByRole('checkbox', {name: /save input mutations/i});
+    expect(checkbox).toBeChecked(); // Default is true
+    
+    checkbox.click();
+    await waitFor(() => {
+      expect(checkbox).not.toBeChecked();
+    });
+    
+    checkbox.click();
+    await waitFor(() => {
+      expect(checkbox).toBeChecked();
+    });
+  });
 });

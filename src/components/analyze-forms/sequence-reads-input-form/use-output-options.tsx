@@ -3,13 +3,14 @@ import RadioInput from '../../radio-input';
 import CheckboxInput from '../../checkbox-input';
 import SeqSummary from '../../report/seq-summary';
 
+import type {OutputOptionState} from '../types';
 import style from '../style.module.scss';
 
 export interface SeqReadsOutputOption {
   label: React.ReactNode;
   children?: React.ReactNode[];
   defaultChildren?: number[];
-  renderer?: (state: any) => React.ReactNode;
+  renderer?: (state: OutputOptionState) => React.ReactNode;
 }
 
 export interface UseOutputOptionsProps {

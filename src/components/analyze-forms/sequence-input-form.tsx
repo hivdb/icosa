@@ -9,29 +9,18 @@ import FileInput from '../file-input';
 import RadioInput from '../radio-input';
 import CheckboxInput from '../checkbox-input';
 import Link from '../link/basic';
+import type {
+  ExampleFasta,
+  OutputOptionConfig,
+  SequenceInputFormProps,
+  FormSubmitState,
+  QueryParams
+} from './types';
 
 import style from './style.module.scss';
 
-export interface ExampleFasta {
-  url: string;
-  title: string;
-}
+export type {ExampleFasta, OutputOptionConfig, SequenceInputFormProps};
 
-export interface OutputOptionConfig {
-  label: React.ReactNode;
-  subOptions?: React.ReactNode[];
-  defaultSubOptions?: number[];
-  renderer?: (state: any) => React.ReactNode;
-}
-
-export interface SequenceInputFormProps {
-  children?: React.ReactNode;
-  childrenPlacement?: 'top' | 'bottom';
-  exampleFasta?: ExampleFasta[];
-  to?: string;
-  outputOptions: Record<string, OutputOptionConfig>;
-  onSubmit?(e: React.SyntheticEvent, sequences: any[]): Promise<any>;
-}
 
 /**
  * Form for submitting FASTA sequences for analysis. Supports uploading files,
@@ -125,16 +114,16 @@ export default function SequenceInputForm({
       e: React.SyntheticEvent
     ): Promise<[
       boolean,
-      Record<string, any>,
-      Record<string, any>?
+      FormSubmitState,
+      QueryParams?
     ]> => {
       const sequences = parseFasta(sequence, 'userinput');
       if (header && sequences.length > 0) {
         sequences[0].header = header;
       }
       let validated = true;
-      let state: Record<string, any> = {};
-      let query: Record<string, any> | undefined;
+      let state: FormSubmitState = {};
+      let query: QueryParams | undefined;
       if (onSubmit) {
         [validated, state, query] = await onSubmit(e, sequences);
       }
