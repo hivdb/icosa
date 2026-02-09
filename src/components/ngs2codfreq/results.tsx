@@ -6,14 +6,8 @@ import {downloadCodfreqs, saveAllFiles} from '../../utils/fastq2codfreq';
 import Loader from '../loader';
 // import ProgressBar from 'react-progressbar';
 
+import type {NGSResultsProps} from './types';
 import style from './style.module.scss';
-
-export interface NGSResultsProps {
-  taskKey?: string;
-  progressLookup: Record<string, any>;
-  className?: string;
-  onAnalyze?: (codfreqs: any[]) => void;
-}
 
 /** Display progress and downloadable results of the NGS pipeline. */
 /**
@@ -81,7 +75,9 @@ export default function NGSResults({
   const handleAnalyze = React.useCallback(
     (e?: React.MouseEvent<HTMLButtonElement>) => {
       e && e.preventDefault();
-      onAnalyze && onAnalyze(codfreqs);
+      if (onAnalyze && codfreqs) {
+        onAnalyze(codfreqs);
+      }
     },
     [onAnalyze, codfreqs]
   );
@@ -115,7 +111,7 @@ export default function NGSResults({
         </li>
       ))}
     </ul>
-    {!isDownloading && codfreqs.length > 0 ?
+    {!isDownloading && codfreqs && codfreqs.length > 0 ?
       <div className={classNames(
         style['button-group'],
         className ? `${className}__button-group` : null
@@ -124,7 +120,7 @@ export default function NGSResults({
           style['description'],
           className ? `${className}__description` : null
         )}>
-          {pluralize("CodFreq file", codfreqs.length, true)}:
+          {pluralize("CodFreq file", codfreqs?.length ?? 0, true)}:
         </label>
         <button
          type="button"

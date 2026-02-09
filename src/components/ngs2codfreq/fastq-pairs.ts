@@ -2,30 +2,12 @@ import uniq from 'lodash/uniq';
 import orderBy from 'lodash/orderBy';
 import difference from 'lodash/difference';
 
+import type {PairPattern, FastqPair} from './types';
 
 // Utility constants used to infer FASTQ file pairings based on file names.
 const FILENAME_DELIMITERS = [' ', '_', '-'];
 const PAIRED_FASTQ_MARKER = ['1', '2'];
 const INVALID_PAIRED_FASTQ_MARKER = /[1-9]0*[12]|[^0]00+[12]|[12]\d/;
-
-/** Description of a filename pattern used to detect pairing. */
-export interface PairPattern {
-  delimiter: string | null;
-  diffOffset: number;
-  posPairedMarker: number;
-  reverse: number;
-}
-
-/**
- * A FASTQ pair entry. `pair` contains the two files; one may be `null` for
- * single-end reads. `n` indicates how many files are present (1 or 2).
- */
-export interface FastqPair {
-  name: string;
-  pair: [File | null, File | null];
-  pattern: PairPattern;
-  n: number;
-}
 
 
 function getShortLen(text1: string, text2: string): number {
@@ -92,23 +74,24 @@ function* pairingFiles<T>(filenames: T[]): Generator<[T, T], void, unknown> {
  */
 function suggestPairName({
   pair: [file],
-  pattern: { delimiter, diffOffset, reverse }
+  pattern
 }: FastqPair): string {
   const fileName = file?.name ?? '';
   let pairName = fileName.split(/\.fastq(?:\.gz)?/i)[0];
-  if (reverse === -1 || !delimiter) {
-    // Single-end reads or missing delimiter; return raw name
+  if (pattern.reverse === -1) {
+    // Single-end reads
     return pairName;
   }
-  let chunks = pairName.split(delimiter);
-  if (reverse) {
+  // TypeScript now knows pattern.delimiter is string (not null)
+  let chunks = pairName.split(pattern.delimiter);
+  if (pattern.reverse) {
     chunks = chunks.reverse();
   }
-  chunks.splice(diffOffset, 1);
-  if (reverse) {
+  chunks.splice(pattern.diffOffset, 1);
+  if (pattern.reverse) {
     chunks = chunks.reverse();
   }
-  return chunks.join(delimiter);
+  return chunks.join(pattern.delimiter);
 }
 
 
@@ -293,7 +276,7 @@ function* findPatterns(f1: File, f2: File): Generator<PairPattern, void, unknown
           delimiter,
           diffOffset,
           posPairedMarker,
-          reverse
+          reverse: reverse as 0 | 1
         };
       }
     }
@@ -345,7 +328,7 @@ export function* identifyPairs(files: File[]): Generator<FastqPair, void, unknow
     [({pairs}) => pairs.length, 'reverse'],
     ['desc', 'desc']
   );
-  for (const {pairs, ...pattern} of orderedPatterns) {
+  for (const {pairs, delimiter, diffOffset, posPairedMarker, reverse} of orderedPatterns) {
     const known: File[] = [];
     let invalid = false;
     for (const [left, right] of pairs) {
@@ -368,7 +351,12 @@ export function* identifyPairs(files: File[]): Generator<FastqPair, void, unknow
         const fastqPair: FastqPair = {
           name: '',
           pair: pair as [File, File],
-          pattern,
+          pattern: {
+            delimiter,
+            diffOffset,
+            posPairedMarker,
+            reverse: reverse as 0 | 1
+          },
           n: 2
         };
         fastqPair.name = suggestPairName(fastqPair);

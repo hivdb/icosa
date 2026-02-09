@@ -8,7 +8,8 @@ import ConfigContext from '../../utils/config-context';
 import Link from '../link';
 import Loader from '../loader';
 
-import {identifyPairs, type FastqPair} from './fastq-pairs';
+import {identifyPairs} from './fastq-pairs';
+import type {FastqPair, NGSUploadFormProps} from './types';
 import PreviewFiles from './preview-files';
 import style from './style.module.scss';
 
@@ -16,13 +17,6 @@ const SUPPORT_FORMATS = {
   'chemical/seq-na-fastq': ['.fastq'],
   'application/gzip': ['.fastq.gz']
 };
-
-export interface NGSUploadFormProps {
-  isOptionsDefault: boolean;
-  showOptionsForm: boolean;
-  className?: string;
-  onSubmit?: (pairs: FastqPair[]) => void;
-}
 
 /** Form for uploading FASTQ files and configuring options. */
 export default function NGSUploadForm({
@@ -80,7 +74,9 @@ export default function NGSUploadForm({
   const handleSubmit = useCallback(
     (e?: React.FormEvent<HTMLFormElement>) => {
       e && e.preventDefault();
-      onSubmit && onSubmit(fastqPairs);
+      if (onSubmit) {
+        onSubmit(fastqPairs);
+      }
     },
     [onSubmit, fastqPairs]
   );
