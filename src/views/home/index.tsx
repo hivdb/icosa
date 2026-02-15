@@ -91,6 +91,9 @@ export default function Home() {
       <li>
         <Link to="/markdown-debugger/">Markdown Debugger</Link>
       </li>
+      <li>
+        <Link to="/select-debugger/">Select Component Debugger</Link>
+      </li>
     </ul>
     </div>
   );
