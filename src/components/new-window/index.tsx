@@ -1,14 +1,14 @@
 import React from 'react';
 import {Route} from 'found';
 import {useMountedCallback} from '../../utils/use-mounted';
+import type {
+  NewWindowPropsProviderProps,
+  NewWindowRouteProps,
+  UseNewWindowOptions,
+  UseNewWindowResult
+} from './types';
 
 const READY_EVENT = '_newwindowready';
-
-interface NewWindowPropsProviderProps {
-  routeProps: Record<string, any>;
-  overrideProps?: Record<string, any>;
-  Component: React.ComponentType<any>;
-}
 
 function NewWindowPropsProvider({routeProps, overrideProps, Component}: NewWindowPropsProviderProps) {
   const touched = React.useRef(false);
@@ -23,16 +23,6 @@ function NewWindowPropsProvider({routeProps, overrideProps, Component}: NewWindo
   }, []);
 
   return <>{touched.current ? <Component {...routeProps} {...props} {...overrideProps} /> : null}</>;
-}
-
-interface NewWindowRouteProps {
-  /** Optional prefix used to build the popup path. */
-  pathPrefix?: string;
-  /** Props injected into the rendered component inside the popup. */
-  overrideProps?: Record<string, any>;
-  /** Component rendered within the new window route. */
-  Component: React.ComponentType<any>;
-  [key: string]: any;
 }
 
 /**
@@ -61,17 +51,6 @@ export function NewWindowRoute({
       )}
     />
   );
-}
-
-interface UseNewWindowOptions {
-  name: string;
-  onUnload?: () => void;
-  features?: string;
-}
-
-interface UseNewWindowResult {
-  isOpener: boolean;
-  isChild: boolean;
 }
 
 export function useNewWindow(
@@ -125,3 +104,10 @@ export function useNewWindow(
     isChild
   };
 }
+
+export type {
+  NewWindowPropsProviderProps,
+  NewWindowRouteProps,
+  UseNewWindowOptions,
+  UseNewWindowResult
+} from './types';
