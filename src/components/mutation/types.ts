@@ -1,6 +1,6 @@
 /**
  * Type definitions for Mutation component.
- * 
+ *
  * Mutation displays individual mutation information with highlighting
  * and optional hover popups.
  */
@@ -47,7 +47,7 @@ export interface MutationConfig {
 
 /**
  * Props for Mutation component.
- * 
+ *
  * @param as - HTML element type to render as (default: 'li')
  * @param gene - Gene name
  * @param text - Mutation text (e.g., 'M184V')

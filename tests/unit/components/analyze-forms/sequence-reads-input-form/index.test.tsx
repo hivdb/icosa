@@ -98,7 +98,7 @@ describe('SequenceReadsInputForm', () => {
 
   it('handles file upload', async () => {
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -112,14 +112,14 @@ describe('SequenceReadsInputForm', () => {
 
   it('uploads files successfully', async () => {
     mockParseSequenceReads.mockReturnValue({name: 'sample', gene: 'PR', allReads: []});
-    
+
     const file = new File(['data'], 'sample.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
     await userEvent.upload(fileInput, file);
-    
+
     await waitFor(() => {
       expect(screen.getByText('sample')).toBeTruthy();
       expect(mockReadFile).toHaveBeenCalledWith(file);
@@ -129,7 +129,7 @@ describe('SequenceReadsInputForm', () => {
 
   it('rejects files with invalid names', async () => {
     const file = new File(['data'], 'invalid file!.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -143,7 +143,7 @@ describe('SequenceReadsInputForm', () => {
   it('handles file removal', async () => {
     mockParseSequenceReads.mockReturnValue({name: 'test', gene: 'PR', allReads: []});
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -166,7 +166,7 @@ describe('SequenceReadsInputForm', () => {
     mockParseSequenceReads.mockReturnValue({name: 'test', gene: 'PR', allReads: []});
     const onSubmit = vi.fn().mockResolvedValue([true, {}]);
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" onSubmit={onSubmit} />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -187,7 +187,7 @@ describe('SequenceReadsInputForm', () => {
     const outputOptions = {custom: {label: 'Custom', renderer}};
     const onSubmit = vi.fn().mockResolvedValue([true, {}]);
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" onSubmit={onSubmit} outputOptions={outputOptions} />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -208,7 +208,7 @@ describe('SequenceReadsInputForm', () => {
   it('enables reset button after file upload', async () => {
     mockParseSequenceReads.mockReturnValue({name: 'test', gene: 'PR', allReads: []});
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const resetBtn = screen.getByRole('button', {name: /reset/i});
@@ -226,7 +226,7 @@ describe('SequenceReadsInputForm', () => {
 
     const analyzeBtn = screen.getByRole('button', {name: /analyze/i});
     const resetBtn = screen.getByRole('button', {name: /reset/i});
-    
+
     expect(analyzeBtn).toBeDisabled();
     expect(resetBtn).toBeDisabled();
   });
@@ -234,7 +234,7 @@ describe('SequenceReadsInputForm', () => {
   it('enables buttons when files are uploaded', async () => {
     mockParseSequenceReads.mockReturnValue({name: 'test', gene: 'PR', allReads: []});
     const file = new File(['data'], 'test.codfreq', {type: 'text/plain'});
-    
+
     render(<SequenceReadsInputForm to="/reads" />);
 
     const fileInput = screen.getByRole('button', {name: /choose file/i}).previousSibling as HTMLInputElement;
@@ -243,7 +243,7 @@ describe('SequenceReadsInputForm', () => {
 
     const analyzeBtn = screen.getByRole('button', {name: /analyze/i});
     const resetBtn = screen.getByRole('button', {name: /reset/i});
-    
+
     expect(analyzeBtn).not.toBeDisabled();
     expect(resetBtn).not.toBeDisabled();
   });

@@ -38,7 +38,7 @@ describe('Select component helper functions integration', () => {
 
   test('component handles options of various sizes', () => {
     const onChange = vi.fn();
-    
+
     const smallOptions = [{value: '1', label: 'One'}];
     const mediumOptions = Array.from({length: 50}, (_, i) => ({
       value: `${i}`,

@@ -12,11 +12,11 @@ vi.mock('react-tagsinput', () => ({
   __esModule: true,
   default: ({value, onChange, inputProps, renderTag, className, focusedClassName, tagProps, pasteSplit}: any) => (
     <div className={className} data-testid="tagsinput-container">
-      <input 
-        data-testid="tagsinput" 
-        value={value.join(',')} 
+      <input
+        data-testid="tagsinput"
+        value={value.join(',')}
         onChange={e => onChange(e.target.value.split(',').filter((v: string) => v))}
-        {...inputProps} 
+        {...inputProps}
       />
       {value.map((tag: string, idx: number) => (
         renderTag ? renderTag({
@@ -111,14 +111,14 @@ describe('MutationsTagsInput', () => {
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(
-      <MutationsTagsInput 
-        config={config} 
+      <MutationsTagsInput
+        config={config}
         geneOnly="RT"
-        mutations={['RT:M184V', 'PR:D30N', 'RT:K65R']} 
-        onChange={onChange} 
+        mutations={['RT:M184V', 'PR:D30N', 'RT:K65R']}
+        onChange={onChange}
       />
     );
-    
+
     // Should only show RT mutations
     const input = screen.getByTestId('tagsinput') as HTMLInputElement;
     expect(input.value).toContain('RT:M184V');
@@ -129,18 +129,18 @@ describe('MutationsTagsInput', () => {
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     mockParseMutation.mockReturnValue(['', '', '', '']);
-    
+
     render(
-      <MutationsTagsInput 
-        config={config} 
+      <MutationsTagsInput
+        config={config}
         geneOnly="RT"
-        mutations={[]} 
-        onChange={onChange} 
+        mutations={[]}
+        onChange={onChange}
       />
     );
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: 'M184V'}});
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['RT:M184V'],
       expect.anything()
@@ -155,18 +155,18 @@ describe('MutationsTagsInput', () => {
 
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
-    
+
     render(
-      <MutationsTagsInput 
-        config={config} 
+      <MutationsTagsInput
+        config={config}
         geneOnly="RT"
-        mutations={['RT:M184V', 'PR:D30N']} 
-        onChange={onChange} 
+        mutations={['RT:M184V', 'PR:D30N']}
+        onChange={onChange}
       />
     );
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: 'RT:K65R'}});
-    
+
     // Should include both RT:K65R and the preserved PR:D30N
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       expect.arrayContaining(['RT:K65R', 'PR:D30N']),
@@ -176,13 +176,13 @@ describe('MutationsTagsInput', () => {
 
   it('passes errors to onChange when sanitization fails', () => {
     mockSanitizeMutations.mockReturnValue([['mut'], [{text: 'mut', errors: ['error']}]]);
-    
+
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(<MutationsTagsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: 'mut'}});
-    
+
     expect(onChange).toHaveBeenCalledWith({mutations: ['mut']}, true);
   });
 
@@ -190,42 +190,42 @@ describe('MutationsTagsInput', () => {
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     const {container} = render(
-      <MutationsTagsInput 
-        config={config} 
+      <MutationsTagsInput
+        config={config}
         parentClassName="custom"
-        mutations={[]} 
-        onChange={onChange} 
+        mutations={[]}
+        onChange={onChange}
       />
     );
-    
+
     expect(container.querySelector('.custom-tagsinput')).toBeInTheDocument();
   });
 
   it('renders tags with error state', () => {
     mockParseAndValidateMutation.mockReturnValue({text: 'BAD', errors: ['Invalid mutation']});
-    
+
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(<MutationsTagsInput config={config} mutations={['BAD']} onChange={onChange} />);
-    
+
     // The renderTag function should be called and render the tag with error state
     expect(mockParseAndValidateMutation).toHaveBeenCalledWith('BAD');
   });
 
   it('strips gene prefix from tag text when geneOnly is set', () => {
     mockParseAndValidateMutation.mockReturnValue({text: 'RT:M184V', errors: []});
-    
+
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(
-      <MutationsTagsInput 
-        config={config} 
+      <MutationsTagsInput
+        config={config}
         geneOnly="RT"
-        mutations={['RT:M184V']} 
-        onChange={onChange} 
+        mutations={['RT:M184V']}
+        onChange={onChange}
       />
     );
-    
+
     // parseAndValidateMutation should be called for rendering
     expect(mockParseAndValidateMutation).toHaveBeenCalled();
   });
@@ -239,9 +239,9 @@ describe('MutationsTagsInput', () => {
       messages: {}
     };
     render(<MutationsTagsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: '184'}});
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['184'],
       expect.objectContaining({allowPositions: true})
@@ -257,9 +257,9 @@ describe('MutationsTagsInput', () => {
       messages: {}
     };
     render(<MutationsTagsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: 'M184V'}});
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['M184V'],
       expect.objectContaining({defaultGene: 'RT'})
@@ -274,9 +274,9 @@ describe('MutationsTagsInput', () => {
       messages: {}
     };
     render(<MutationsTagsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     fireEvent.change(screen.getByTestId('tagsinput'), {target: {value: 'rt:M184V'}});
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['rt:M184V'],
       expect.objectContaining({geneSynonyms: {rt: 'RT'}})
@@ -287,7 +287,7 @@ describe('MutationsTagsInput', () => {
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(<MutationsTagsInput config={config} mutations={['mut']} onChange={onChange} />);
-    
+
     expect(screen.getByTestId('errors')).toBeInTheDocument();
   });
 
@@ -295,9 +295,9 @@ describe('MutationsTagsInput', () => {
     const onChange = vi.fn();
     const config = {geneReferences: {}, geneSynonyms: {}, messages: {}};
     render(<MutationsTagsInput config={config} mutations={['bad']} onChange={onChange} />);
-    
+
     fireEvent.click(screen.getByTestId('error-change'));
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(['cleaned'], expect.anything());
   });
 
@@ -309,7 +309,7 @@ describe('MutationsTagsInput', () => {
       messages: {'pattern-analysis-input-placeholder': 'Very long placeholder text here'}
     };
     render(<MutationsTagsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     const input = screen.getByTestId('tagsinput');
     // Placeholder is 31 characters long
     expect(input).toHaveAttribute('size', '31');
@@ -323,15 +323,15 @@ describe('MutationsTagsInput', () => {
       messages: {}
     };
     mockSanitizeMutations.mockReturnValue([['K103N'], []]);
-    
+
     const {container} = render(<MutationsTagsInput config={config} mutations={['M184V', 'K103N']} onChange={onChange} />);
-    
+
     // Find and click the remove link by href
     const removeLinks = container.querySelectorAll('a[href="#remove-mutation"]');
     expect(removeLinks).toHaveLength(2);
-    
+
     fireEvent.click(removeLinks[0]);
-    
+
     // Should call sanitizeMutations with the remaining mutation
     expect(mockSanitizeMutations).toHaveBeenCalledWith(['K103N'], expect.anything());
   });
@@ -343,10 +343,10 @@ describe('MutationsTagsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     // The pasteSplit function should split on various delimiters
     const pasteSplit = (data: string) => data.split(/[\s,;+.]+/g);
-    
+
     // Test the function directly
     expect(pasteSplit('M184V K103N')).toEqual(['M184V', 'K103N']);
     expect(pasteSplit('M184V,K103N')).toEqual(['M184V', 'K103N']);

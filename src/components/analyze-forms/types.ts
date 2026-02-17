@@ -1,6 +1,6 @@
 /**
  * Type definitions for analyze forms components.
- * 
+ *
  * This module provides types for the analyze forms system which allows users
  * to submit mutations, sequences, or sequence reads for analysis.
  */

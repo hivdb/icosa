@@ -104,10 +104,10 @@ describe('NGSResults component', () => {
     };
     const onAnalyze = vi.fn();
     render(<NGSResults progressLookup={progressLookup} onAnalyze={onAnalyze} />);
-    
+
     const analyzeButton = screen.getByText('Analyze');
     fireEvent.click(analyzeButton);
-    
+
     await waitFor(() => {
       expect(onAnalyze).toHaveBeenCalledWith(codfreqs);
     });
@@ -119,10 +119,10 @@ describe('NGSResults component', () => {
       'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
     };
     render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
-    
+
     const downloadButton = screen.getByText('Download');
     fireEvent.click(downloadButton);
-    
+
     await waitFor(() => {
       expect(downloadCodfreqs).toHaveBeenCalledWith('test-task');
     });

@@ -80,7 +80,7 @@ describe('HeadingTag component', () => {
   it('scrolls to element when hash matches anchor', async () => {
     window.location.hash = '#test.heading';
     const {container} = render(<HeadingTag level={2}>Test Heading</HeadingTag>);
-    
+
     await vi.waitFor(() => {
       expect(scrollToSpy).toHaveBeenCalled();
     }, {timeout: 100});

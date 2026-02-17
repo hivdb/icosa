@@ -29,14 +29,14 @@ describe('MutationPrefills component', () => {
     render(
       <MutationPrefills labelMessage="Label" options={opts} onSelect={onSelect} />
     );
-    
+
     // Simulate deselecting all options
     const select = screen.getByRole('listbox') as HTMLSelectElement;
     Object.defineProperty(select, 'selectedOptions', {
       value: [],
       writable: true
     });
-    
+
     fireEvent.change(select);
     expect(onSelect).toHaveBeenCalledWith(null);
   });
@@ -48,14 +48,14 @@ describe('MutationPrefills component', () => {
     ];
     const onSelect = vi.fn();
     render(
-      <MutationPrefills 
-        labelMessage="Label" 
-        options={opts} 
+      <MutationPrefills
+        labelMessage="Label"
+        options={opts}
         value={opts[1]}
-        onSelect={onSelect} 
+        onSelect={onSelect}
       />
     );
-    
+
     const select = screen.getByRole('listbox') as HTMLSelectElement;
     expect(select.value).toBe('opt2');
   });
@@ -66,14 +66,14 @@ describe('MutationPrefills component', () => {
     ];
     const onSelect = vi.fn();
     render(
-      <MutationPrefills 
-        labelMessage="Label" 
-        options={opts} 
+      <MutationPrefills
+        labelMessage="Label"
+        options={opts}
         value={null}
-        onSelect={onSelect} 
+        onSelect={onSelect}
       />
     );
-    
+
     const select = screen.getByRole('listbox') as HTMLSelectElement;
     expect(select.value).toBe('');
   });
@@ -86,7 +86,7 @@ describe('MutationPrefills component', () => {
     render(
       <MutationPrefills labelMessage="Label" options={opts} onSelect={onSelect} />
     );
-    
+
     const option = screen.getByRole('option', {name: 'opt1'});
     expect(option).toHaveClass('custom-class');
   });
@@ -97,7 +97,7 @@ describe('MutationPrefills component', () => {
     render(
       <MutationPrefills labelMessage="Custom Label" options={opts} onSelect={onSelect} />
     );
-    
+
     expect(screen.getByText('Custom Label')).toBeInTheDocument();
   });
 });
@@ -122,7 +122,7 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     expect(screen.getByText('Select Preset')).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'Preset1'})).toBeInTheDocument();
     expect(screen.getByRole('option', {name: 'Preset2'})).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     expect(screen.getByRole('option', {name: '(clear)'})).toBeInTheDocument();
   });
 
@@ -156,7 +156,7 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     expect(screen.getByText('<pattern-analysis-prefill-label>')).toBeInTheDocument();
   });
 
@@ -172,11 +172,11 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     fireEvent.change(screen.getByRole('listbox'), {
       target: {value: 'Preset1'}
     });
-    
+
     expect(onChange).toHaveBeenCalledWith(
       {name: 'Preset1', mutations: ['M184V']},
       false
@@ -195,17 +195,17 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     // First select a preset
     fireEvent.change(screen.getByRole('listbox'), {
       target: {value: 'Preset1'}
     });
-    
+
     // Then select clear
     fireEvent.change(screen.getByRole('listbox'), {
       target: {value: '(clear)'}
     });
-    
+
     expect(onChange).toHaveBeenLastCalledWith(
       {name: null, mutations: []},
       false
@@ -225,17 +225,17 @@ describe('useMutationPrefills hook', () => {
       }
     });
     render(<Stub />);
-    
+
     const select = screen.getByRole('listbox') as HTMLSelectElement;
-    
+
     // Select first preset
     fireEvent.change(select, {target: {value: 'Preset1'}});
     expect(select.value).toBe('Preset1');
-    
+
     // Select second preset
     fireEvent.change(select, {target: {value: 'Preset2'}});
     expect(select.value).toBe('Preset2');
-    
+
     // Clear selection
     fireEvent.change(select, {target: {value: '(clear)'}});
     expect(select.value).toBe('');

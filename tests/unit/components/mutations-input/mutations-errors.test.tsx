@@ -87,10 +87,10 @@ describe('MutationsErrors component', () => {
         onAutoClean={onAutoClean}
       />
     );
-    
+
     const errorDiv = container.querySelector('[data-display]');
     expect(errorDiv).toHaveAttribute('data-display', 'true');
-    
+
     rerender(
       <MutationsErrors
         allErrors={[]}
@@ -111,7 +111,7 @@ describe('MutationsErrors component', () => {
         onAutoClean={onAutoClean}
       />
     );
-    
+
     const errorDiv = container.querySelector('[data-display]') as HTMLElement;
     // 2 mutations + 3 errors + 2 (one per mutation) = 5 rows
     expect(errorDiv.style.getPropertyValue('--error-rows')).toBe('5');
@@ -125,13 +125,13 @@ describe('MutationsErrors component', () => {
         onAutoClean={onAutoClean}
       />
     );
-    
+
     const link = screen.getByText('remove all problematic mutations');
     const event = new MouseEvent('click', {bubbles: true, cancelable: true});
     const preventDefaultSpy = vi.spyOn(event, 'preventDefault');
-    
+
     link.dispatchEvent(event);
-    
+
     expect(onAutoClean).toHaveBeenCalled();
   });
 });
@@ -179,7 +179,7 @@ describe('useMutationErrors hook', () => {
         messages: {}
       });
     render(<Wrapper />);
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['M184V'],
       expect.objectContaining({defaultGene: 'RT'})
@@ -196,7 +196,7 @@ describe('useMutationErrors hook', () => {
         messages: {}
       });
     render(<Wrapper />);
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['184'],
       expect.objectContaining({allowPositions: true})
@@ -213,7 +213,7 @@ describe('useMutationErrors hook', () => {
         messages: {}
       });
     render(<Wrapper />);
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['M184V'],
       expect.objectContaining({defaultGene: 'PR'})
@@ -223,7 +223,7 @@ describe('useMutationErrors hook', () => {
   it('handles auto-clean by calling onChange with sanitized mutations', () => {
     mockSanitizeMutations.mockReturnValueOnce([[], [{text: 'bad', errors: ['err']}]]);
     mockSanitizeMutations.mockReturnValueOnce([['good'], []]);
-    
+
     const onChange = vi.fn();
     const Wrapper = () =>
       useMutationErrors({
@@ -233,9 +233,9 @@ describe('useMutationErrors hook', () => {
         messages: {}
       });
     render(<Wrapper />);
-    
+
     fireEvent.click(screen.getByText('remove all problematic mutations'));
-    
+
     expect(onChange).toHaveBeenCalledWith(['good']);
   });
 
@@ -249,9 +249,9 @@ describe('useMutationErrors hook', () => {
         messages: {}
       });
     render(<Wrapper />);
-    
+
     fireEvent.click(screen.getByText('remove all problematic mutations'));
-    
+
     expect(mockSanitizeMutations).toHaveBeenLastCalledWith(
       ['mut1'],
       expect.objectContaining({removeErrors: true})
@@ -266,9 +266,9 @@ describe('useMutationErrors hook', () => {
       onPreventSubmit: vi.fn(),
       messages: {}
     });
-    
+
     const {container} = render(<Wrapper />);
-    
+
     expect(container.querySelector('.test-parent-errors')).toBeInTheDocument();
   });
 
@@ -286,7 +286,7 @@ describe('useMutationErrors hook', () => {
         onPreventSubmit: vi.fn()
       });
     render(<Wrapper />);
-    
+
     expect(mockSanitizeMutations).toHaveBeenCalledWith(
       ['mut1'],
       expect.objectContaining({

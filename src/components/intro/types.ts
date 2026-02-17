@@ -1,6 +1,6 @@
 /**
  * Type definitions for Intro component and its sub-components.
- * 
+ *
  * Intro provides a structured layout for introductory sections with
  * optional headers and supplements.
  */
@@ -28,7 +28,7 @@ export interface IntroHeaderSupplementProps {
 /**
  * Props for Intro component.
  * Main container for introductory sections.
- * 
+ *
  * @param className - CSS class name for styling
  * @param children - Child elements (IntroHeader and body content)
  */

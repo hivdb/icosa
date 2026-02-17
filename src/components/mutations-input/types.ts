@@ -1,6 +1,6 @@
 /**
  * Type definitions for the mutations-input component and its subcomponents.
- * 
+ *
  * This file centralizes all TypeScript interfaces used across the mutations-input
  * component family to ensure consistency and easier maintenance.
  */
@@ -36,7 +36,7 @@ export interface MutationSuggestion {
 /**
  * Tuple representing a processed mutation option with position, amino acids,
  * and formatted select options for the dropdown.
- * 
+ *
  * Used internally by MutationSuggestOptions to cache computed options.
  */
 export type MutationOptionTuple = [

@@ -20,8 +20,8 @@ describe('Region', () => {
   it('renders region with wavy shape', () => {
     const {container} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -39,8 +39,8 @@ describe('Region', () => {
   it('renders region with label position "after"', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -57,8 +57,8 @@ describe('Region', () => {
   it('renders region with label position "below"', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -75,8 +75,8 @@ describe('Region', () => {
   it('renders region with custom color and offsetY', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -94,8 +94,8 @@ describe('Region', () => {
   it('renders narrow region with wavy shape', () => {
     const {container} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -112,8 +112,8 @@ describe('Region', () => {
   it('renders region with line shape', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -129,8 +129,8 @@ describe('Region', () => {
   it('renders region with label position "over"', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -147,8 +147,8 @@ describe('Region', () => {
   it('renders region with label position "above"', () => {
     const {getByText} = render(
       <svg>
-        <Region 
-          scaleX={scaleX} 
+        <Region
+          scaleX={scaleX}
           region={{
             name: 'r1',
             posStart: 1,
@@ -167,8 +167,8 @@ describe('Region', () => {
     const narrowScale = createTestScale([[0, 100, 1]], [0, 10]);
     const {container} = render(
       <svg>
-        <Region 
-          scaleX={narrowScale} 
+        <Region
+          scaleX={narrowScale}
           region={{
             name: 'r1',
             posStart: 50,
@@ -187,8 +187,8 @@ describe('Region', () => {
     const gappedScale = createTestScale([[0, 10, 1], [20, 30, 1]], [0, 100]);
     const {container} = render(
       <svg>
-        <Region 
-          scaleX={gappedScale} 
+        <Region
+          scaleX={gappedScale}
           region={{
             name: 'r1',
             posStart: 15, // In the gap between domains

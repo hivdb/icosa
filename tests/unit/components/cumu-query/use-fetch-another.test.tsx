@@ -94,13 +94,13 @@ describe('useFetchAnother', () => {
     let api: any = null;
     const {rerender} = render(<Wrapper loaded={false} isCached={() => false} onReady={h => {api = h;}} />);
     const promise = api.fetchAnother('b');
-    
+
     // Promise should not resolve yet
     let resolved = false;
     promise.then(() => {resolved = true;});
     await new Promise(resolve => setTimeout(resolve, 10));
     expect(resolved).toBe(false);
-    
+
     // Rerender with loaded=true
     rerender(<Wrapper loaded={true} isCached={() => false} onReady={h => {api = h;}} />);
     await promise;
@@ -109,8 +109,8 @@ describe('useFetchAnother', () => {
 
   test('uses lazy load settings', async () => {
     let api: any = null;
-    render(<Wrapper 
-      loaded={false} 
+    render(<Wrapper
+      loaded={false}
       lazyLoad={true}
       quickLoadLimit={3}
       onReady={h => {api = h;}}
@@ -124,19 +124,19 @@ describe('useFetchAnother', () => {
   test('resolves pending promise when component becomes loaded', async () => {
     let api: any = null;
     const {rerender} = render(<Wrapper loaded={false} isCached={() => false} onReady={h => {api = h;}} />);
-    
+
     const promise1 = api.fetchAnother('a');
     const promise2 = api.fetchAnother('b');
-    
+
     // Both promises should be pending
     let resolved1 = false;
     let resolved2 = false;
     promise1.then(() => {resolved1 = true;});
     promise2.then(() => {resolved2 = true;});
-    
+
     await new Promise(resolve => setTimeout(resolve, 10));
     expect(resolved1).toBe(false);
-    
+
     // Only the latest promise should resolve when loaded
     rerender(<Wrapper loaded={true} isCached={() => false} onReady={h => {api = h;}} />);
     await promise2;

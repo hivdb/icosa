@@ -1,6 +1,6 @@
 /**
  * Type definitions for InlineLoader component.
- * 
+ *
  * InlineLoader is a wrapper around Loader that always renders inline.
  */
 

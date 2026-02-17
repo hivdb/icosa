@@ -103,7 +103,7 @@ const seqLevelSuscSummary = `
         cumulativeCount
         cumulativeFold {
           median: percentile(p: 50)
-        } 
+        }
         references { refName }
         items {
           reference { refName }

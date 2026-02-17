@@ -55,9 +55,9 @@ describe('useCumuQuery', () => {
   test('returns expected structure when loaded successfully', () => {
     mockUseQuery.mockReturnValue({loading: false, error: undefined, data: {items: []}} as any);
     mockIsCursorFulfilled.mockReturnValue(true);
-    
+
     const result = useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(result.loaded).toBe(true);
     expect(result.error).toBe(null);
     expect(result.fetchAnother).toBe(mockFetchAnother);
@@ -70,9 +70,9 @@ describe('useCumuQuery', () => {
     const error = new Error('GraphQL error') as any;
     mockUseQuery.mockReturnValue({loading: false, error, data: null} as any);
     mockIsCursorFulfilled.mockReturnValue(true);
-    
+
     const result = useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(result.loaded).toBe(false);
     expect(result.error).toBe(error);
     expect(result.cursor).toBeUndefined();
@@ -83,27 +83,27 @@ describe('useCumuQuery', () => {
     const error = new Error('GraphQL error') as any;
     mockUseQuery.mockReturnValue({loading: false, error, data: {items: []}} as any);
     mockIsCursorFulfilled.mockReturnValue(true);
-    
+
     useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(mockCacheResults).not.toHaveBeenCalled();
   });
 
   test('triggers reload when not loading and cursor not fulfilled', () => {
     mockUseQuery.mockReturnValue({loading: false, error: undefined, data: {items: []}} as any);
     mockIsCursorFulfilled.mockReturnValue(false);
-    
+
     useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(mockSetCursor).toHaveBeenCalledWith({offset: 0, limit: 1});
   });
 
   test('does not trigger reload when loading', () => {
     mockUseQuery.mockReturnValue({loading: true, error: undefined, data: null} as any);
     mockIsCursorFulfilled.mockReturnValue(false);
-    
+
     useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(mockSetCursor).not.toHaveBeenCalled();
   });
 
@@ -120,9 +120,9 @@ describe('useCumuQuery', () => {
       isCursorFulfilled: mockIsCursorFulfilled,
       getVariables: vi.fn()
     });
-    
+
     const result = useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(result.extVariables).toEqual({otherVar: 'value'});
     expect(result.extVariables.items).toBeUndefined();
   });
@@ -140,9 +140,9 @@ describe('useCumuQuery', () => {
       isCursorFulfilled: mockIsCursorFulfilled,
       getVariables: vi.fn()
     });
-    
+
     const result = useCumuQuery({query: {}, client: {}, mainInputName: 'items'} as any);
-    
+
     expect(result.progressObj).toEqual({
       progress: 5,
       nextProgress: 8,

@@ -1,6 +1,6 @@
 /**
  * Type definitions for the cumulative query system.
- * 
+ *
  * This module provides a hook for fetching data cumulatively with cursor-based
  * pagination, caching, and lazy loading support.
  */
@@ -33,7 +33,7 @@ export interface ProgressObj {
 
 /**
  * Function to fetch another item by its unique key.
- * 
+ *
  * @param curName - Unique identifier of the item to fetch
  * @param updateCurrentSelected - Whether to update URL state (default: true)
  * @returns Promise that resolves when the item is loaded

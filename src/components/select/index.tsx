@@ -118,7 +118,7 @@ export default function Select({
 
   // Determine which react-select variant to use based on props
   // Use early returns to avoid type assertions
-  
+
   if (loadOptions && allowCreate) {
     if (options && options.length > 100) {
       return (

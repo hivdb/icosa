@@ -16,7 +16,7 @@ export default function SelectDebugger() {
   const [asyncCreatableValue, setAsyncCreatableValue] = useState<SelectOption | null>(null);
   const [virtualizedValue, setVirtualizedValue] = useState<SelectOption | null>(null);
   const [customPromptValue, setCustomPromptValue] = useState<SelectOption | null>(null);
-  
+
   // State for component integration demos
   const [paginatorValue, setPaginatorValue] = useState<SelectOption | null>(null);
   const [cameraViewValue, setCameraViewValue] = useState<SelectOption | null>(null);

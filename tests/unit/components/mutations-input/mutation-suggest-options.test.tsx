@@ -5,15 +5,15 @@ import '@testing-library/jest-dom/vitest';
 vi.mock('../../../../src/components/select', () => ({
   __esModule: true,
   default: ({options, onChange, value, name, placeholder}: any) => (
-    <select 
-      data-testid="select" 
+    <select
+      data-testid="select"
       name={name}
       onChange={e => {
         const selectedOption = options.find((o: any) => o.value === e.target.value);
         if (selectedOption) {
           onChange(selectedOption);
         }
-      }} 
+      }}
       value={value?.value || ''}
     >
       <option value="">{placeholder}</option>
@@ -142,10 +142,10 @@ describe('MutationSuggestOptions', () => {
         onChange={onChange}
       />
     );
-    
+
     const select = screen.getByTestId('select');
     const options = select.querySelectorAll('option');
-    
+
     // Should have placeholder + T, V, I, and * options
     expect(options.length).toBeGreaterThanOrEqual(5);
     expect(screen.getByText('T')).toBeInTheDocument();
@@ -169,7 +169,7 @@ describe('MutationSuggestOptions', () => {
         onChange={onChange}
       />
     );
-    
+
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
@@ -178,7 +178,7 @@ describe('MutationSuggestOptions', () => {
   it('calls expandIndel for each amino acid', () => {
     mockExpandIndel.mockClear();
     mockExpandIndel.mockImplementation((aa: string) => aa);
-    
+
     const onChange = vi.fn();
     const config = {geneReferences: {gene: 'AB'}, geneDisplay: {gene: 'Gene'}, messages: {}};
     render(
@@ -189,7 +189,7 @@ describe('MutationSuggestOptions', () => {
         onChange={onChange}
       />
     );
-    
+
     // expandIndel should be called for each amino acid option
     expect(mockExpandIndel).toHaveBeenCalledWith('T');
     expect(mockExpandIndel).toHaveBeenCalledWith('V');
@@ -206,7 +206,7 @@ describe('MutationSuggestOptions', () => {
         onChange={onChange}
       />
     );
-    
+
     // Asterisk option should have value with position only
     const select = screen.getByTestId('select');
     const asteriskOption = Array.from(select.querySelectorAll('option')).find(
@@ -227,7 +227,7 @@ describe('MutationSuggestOptions', () => {
         onChange={onChange}
       />
     );
-    
+
     fireEvent.change(screen.getByTestId('select'), {target: {value: 'RT:V3I'}});
     expect(onChange).toHaveBeenCalledWith({value: 'RT:V3I', label: 'I'});
   });

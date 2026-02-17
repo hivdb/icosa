@@ -56,7 +56,7 @@ describe('SequenceInputForm', () => {
   it('updates header input', () => {
     render(<SequenceInputForm to="/analyze" />);
     const headerInput = document.querySelector('input[name="header"]') as HTMLInputElement;
-    
+
     fireEvent.change(headerInput, {target: {value: 'Test Header'}});
     expect(headerInput).toHaveValue('Test Header');
   });
@@ -65,19 +65,19 @@ describe('SequenceInputForm', () => {
     const user = userEvent.setup({delay: null});
     render(<SequenceInputForm to="/analyze" />);
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
-    
+
     await user.type(sequenceInput, '>seq1{Enter}ATGC');
     expect(sequenceInput).toHaveValue('>seq1\nATGC');
   });
 
   it('handles file upload', async () => {
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const file = new File(['>seq1\nATGC'], 'test.fasta', {type: 'text/plain'});
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    
+
     fireEvent.change(fileInput, {target: {files: [file]}});
-    
+
     await waitFor(() => {
       expect(readFile).toHaveBeenCalledWith(file);
     });
@@ -85,19 +85,19 @@ describe('SequenceInputForm', () => {
 
   it('rejects non-text file types', async () => {
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const file = new File(['data'], 'test.jpg', {type: 'image/jpeg'});
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    
+
     fireEvent.change(fileInput, {target: {files: [file]}});
-    
+
     expect(readFile).not.toHaveBeenCalled();
   });
 
   it('shows Load Examples link when examples provided', () => {
     const exampleFasta = [{url: '/example.fasta', title: 'Example 1'}];
     render(<SequenceInputForm to="/analyze" exampleFasta={exampleFasta} />);
-    
+
     expect(screen.getByText('Load Examples')).toBeTruthy();
   });
 
@@ -105,13 +105,13 @@ describe('SequenceInputForm', () => {
     global.fetch = vi.fn().mockResolvedValue({
       text: () => Promise.resolve('>example\nATGC')
     });
-    
+
     const exampleFasta = [{url: '/example.fasta', title: 'Example 1'}];
     render(<SequenceInputForm to="/analyze" exampleFasta={exampleFasta} />);
-    
+
     const loadLink = screen.getByText('Load Examples');
     fireEvent.click(loadLink);
-    
+
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/example.fasta');
     });
@@ -123,10 +123,10 @@ describe('SequenceInputForm', () => {
       {url: '/example2.fasta', title: 'Example 2'}
     ];
     render(<SequenceInputForm to="/analyze" exampleFasta={exampleFasta} />);
-    
+
     const loadLink = screen.getByText('Load Examples');
     fireEvent.click(loadLink);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Example 1')).toBeTruthy();
       expect(screen.getByText('Example 2')).toBeTruthy();
@@ -137,21 +137,21 @@ describe('SequenceInputForm', () => {
     global.fetch = vi.fn().mockResolvedValue({
       text: () => Promise.resolve('>example2\nGGCC')
     });
-    
+
     const exampleFasta = [
       {url: '/example1.fasta', title: 'Example 1'},
       {url: '/example2.fasta', title: 'Example 2'}
     ];
     render(<SequenceInputForm to="/analyze" exampleFasta={exampleFasta} />);
-    
+
     const loadLink = screen.getByText('Load Examples');
     fireEvent.click(loadLink);
-    
+
     await waitFor(() => screen.getByText('Example 2'));
-    
+
     const example2Link = screen.getByText('Example 2');
     fireEvent.click(example2Link);
-    
+
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/example2.fasta');
     });
@@ -163,7 +163,7 @@ describe('SequenceInputForm', () => {
       csv: {label: 'CSV'}
     };
     render(<SequenceInputForm to="/analyze" outputOptions={outputOptions} />);
-    
+
     expect(screen.getByText('Output options')).toBeTruthy();
     expect(screen.getByText('JSON')).toBeTruthy();
     expect(screen.getByText('CSV')).toBeTruthy();
@@ -175,10 +175,10 @@ describe('SequenceInputForm', () => {
       csv: {label: 'CSV'}
     };
     render(<SequenceInputForm to="/analyze" outputOptions={outputOptions} />);
-    
+
     const csvRadio = screen.getByLabelText('CSV');
     fireEvent.click(csvRadio);
-    
+
     expect(csvRadio).toBeChecked();
   });
 
@@ -191,10 +191,10 @@ describe('SequenceInputForm', () => {
       }
     };
     render(<SequenceInputForm to="/analyze" outputOptions={outputOptions} />);
-    
+
     const customRadio = screen.getByLabelText('Custom');
     fireEvent.click(customRadio);
-    
+
     expect(screen.getByText('Option 1')).toBeTruthy();
     expect(screen.getByText('Option 2')).toBeTruthy();
   });
@@ -208,15 +208,15 @@ describe('SequenceInputForm', () => {
       }
     };
     render(<SequenceInputForm to="/analyze" outputOptions={outputOptions} />);
-    
+
     const customRadio = screen.getByLabelText('Custom');
     fireEvent.click(customRadio);
-    
+
     const option2Checkbox = screen.getByLabelText('Option 2');
     fireEvent.click(option2Checkbox);
-    
+
     expect(option2Checkbox).toBeChecked();
-    
+
     fireEvent.click(option2Checkbox);
     expect(option2Checkbox).not.toBeChecked();
   });
@@ -224,13 +224,13 @@ describe('SequenceInputForm', () => {
   it('submits form with default output option', async () => {
     const user = userEvent.setup({delay: null});
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, '>seq1{Enter}ATGC');
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalled();
     });
@@ -240,13 +240,13 @@ describe('SequenceInputForm', () => {
     const user = userEvent.setup({delay: null});
     const onSubmit = vi.fn().mockResolvedValue([true, {}, {}]);
     render(<SequenceInputForm to="/analyze" onSubmit={onSubmit} />);
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, '>seq1{Enter}ATGC');
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalled();
     });
@@ -256,16 +256,16 @@ describe('SequenceInputForm', () => {
     const user = userEvent.setup({delay: null});
     const onSubmit = vi.fn().mockResolvedValue([true, {}, {}]);
     render(<SequenceInputForm to="/analyze" onSubmit={onSubmit} />);
-    
+
     const headerInput = document.querySelector('input[name="header"]') as HTMLInputElement;
     await user.type(headerInput, 'Custom Header');
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, '>seq1{Enter}ATGC');
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalled();
       const sequences = onSubmit.mock.calls[0][1];
@@ -283,18 +283,18 @@ describe('SequenceInputForm', () => {
       }
     };
     render(<SequenceInputForm to="/analyze" outputOptions={outputOptions} />);
-    
+
     const customRadio = screen.getByLabelText('Custom');
     await user.click(customRadio);
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, '>seq1{Enter}ATGC');
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     expect(submitButton).not.toBeDisabled();
-    
+
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(mockRenderer).toHaveBeenCalled();
     });
@@ -303,16 +303,16 @@ describe('SequenceInputForm', () => {
   it('resets form when reset button clicked', async () => {
     const user = userEvent.setup({delay: null});
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const headerInput = document.querySelector('input[name="header"]') as HTMLInputElement;
     await user.type(headerInput, 'Test');
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, 'ATGC');
-    
+
     const resetButton = screen.getByRole('button', {name: /reset/i});
     await user.click(resetButton);
-    
+
     await waitFor(() => {
       expect(headerInput).toHaveValue('');
       expect(sequenceInput).toHaveValue('');
@@ -321,7 +321,7 @@ describe('SequenceInputForm', () => {
 
   it('disables submit button when no sequence provided', () => {
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     expect(submitButton).toBeDisabled();
   });
@@ -329,17 +329,17 @@ describe('SequenceInputForm', () => {
   it('enables submit button when sequence provided', async () => {
     const user = userEvent.setup({delay: null});
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const sequenceInput = document.querySelector('textarea[class*="sequence-input"]') as HTMLTextAreaElement;
     await user.type(sequenceInput, 'ATGC');
-    
+
     const submitButton = screen.getByRole('button', {name: /analyze/i});
     expect(submitButton).not.toBeDisabled();
   });
 
   it('disables reset button when form is empty', () => {
     render(<SequenceInputForm to="/analyze" />);
-    
+
     const resetButton = screen.getByRole('button', {name: /reset/i});
     expect(resetButton).toBeDisabled();
   });

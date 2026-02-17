@@ -45,7 +45,7 @@ describe('useCursorAndVariables', () => {
 
   test('loads first index when not cached', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       currentSelected={{index: 2}}
       initOffset={2}
@@ -61,7 +61,7 @@ describe('useCursorAndVariables', () => {
   test('skips loadFirstIndex when already cached', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
     const isCached = (key: any) => key === 3; // id 3 is cached
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       currentSelected={{index: 2}}
       initOffset={0}
@@ -75,7 +75,7 @@ describe('useCursorAndVariables', () => {
 
   test('throws error when loadFirstIndex is out of bounds', () => {
     expect(() => {
-      render(<Wrapper 
+      render(<Wrapper
         onReady={() => {}}
         currentSelected={{index: 10}}
         inputObjs={[{id: 1}, {id: 2}]}
@@ -86,7 +86,7 @@ describe('useCursorAndVariables', () => {
   test('counts fetched items correctly', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
     const isCached = (key: any) => key === 1; // id 1 is cached
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={isCached}
       initOffset={0}
@@ -98,7 +98,7 @@ describe('useCursorAndVariables', () => {
 
   test('respects maxPerRequest limit', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={() => false}
       initOffset={0}
@@ -112,7 +112,7 @@ describe('useCursorAndVariables', () => {
 
   test('stops at end of inputObjs', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={() => false}
       initOffset={0}
@@ -125,7 +125,7 @@ describe('useCursorAndVariables', () => {
 
   test('isCursorFulfilled returns true when all items cached', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={() => true}
       initOffset={0}
@@ -136,7 +136,7 @@ describe('useCursorAndVariables', () => {
 
   test('isCursorFulfilled returns false when items not cached', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={() => false}
       initOffset={0}
@@ -148,7 +148,7 @@ describe('useCursorAndVariables', () => {
   test('onExtendVariables is called with variables', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
     const onExtendVariables = (v: any) => ({...v, extra: 'value'});
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       onExtendVariables={onExtendVariables}
     />);
@@ -157,7 +157,7 @@ describe('useCursorAndVariables', () => {
 
   test('isEmptyQuery is true when no items to fetch', () => {
     let state: ReturnType<typeof useCursorAndVariables> | null = null;
-    render(<Wrapper 
+    render(<Wrapper
       onReady={h => {state = h;}}
       isCached={() => true}
       initOffset={0}

@@ -54,7 +54,7 @@ export default function useOutputOptions({
   );
 
   const handleChildChange = React.useCallback(
-  
+
     (e: React.ChangeEvent<HTMLInputElement>) => {
       let {children} = outputOption;
       const child = parseInt(e.currentTarget.value);

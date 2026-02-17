@@ -213,7 +213,7 @@ describe('SectionInner', () => {
   it('calls getClosestCollapsableAnchor when hash is present', () => {
     const ctx = setup();
     const getClosestSpy = vi.fn(() => ({anchor: null, shouldCollapseOther: false}));
-    
+
     render(
       <Context.Provider value={ctx}>
         <SectionInner
@@ -233,7 +233,7 @@ describe('SectionInner', () => {
   it('handles function children with onLoad callback', async () => {
     const ctx = setup();
     const onLoadSpy = vi.fn();
-    
+
     render(
       <Context.Provider value={ctx}>
         <SectionInner
@@ -250,9 +250,9 @@ describe('SectionInner', () => {
         </SectionInner>
       </Context.Provider>
     );
-    
+
     expect(screen.getByText('Dynamic content')).toBeInTheDocument();
-    
+
     // Call onLoad and verify it triggers update
     onLoadSpy();
     await waitFor(() => {
@@ -263,7 +263,7 @@ describe('SectionInner', () => {
   it('handles sections without heading child', () => {
     const ctx = setup();
     const registerSpy = vi.fn();
-    
+
     render(
       <Context.Provider value={ctx}>
         <SectionInner
@@ -277,7 +277,7 @@ describe('SectionInner', () => {
         </SectionInner>
       </Context.Provider>
     );
-    
+
     expect(registerSpy).toHaveBeenCalledWith(null, 'h3', false);
   });
 
@@ -298,7 +298,7 @@ describe('SectionInner', () => {
         </SectionInner>
       </Context.Provider>
     );
-    
+
     const section = container.querySelector('section');
     expect(section?.getAttribute('data-testid')).toBe('custom-section');
     expect(section?.className).toContain('custom-class');
@@ -319,7 +319,7 @@ describe('SectionInner', () => {
         </SectionInner>
       </Context.Provider>
     );
-    
+
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
 });

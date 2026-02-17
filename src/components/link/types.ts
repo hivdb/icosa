@@ -1,6 +1,6 @@
 /**
  * Type definitions for Link component.
- * 
+ *
  * Link provides a unified interface for internal (Found router) and external links.
  */
 
@@ -9,7 +9,7 @@ import type React from 'react';
 /**
  * Props for Link component.
  * Supports both internal routing (via Found) and external links.
- * 
+ *
  * @param to - Internal route path or route object (uses Found router)
  * @param href - External URL (uses standard anchor tag)
  * @param onClick - Click handler

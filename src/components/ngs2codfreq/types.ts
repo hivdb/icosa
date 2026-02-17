@@ -4,7 +4,7 @@
 
 /**
  * Description of a filename pattern used to detect pairing.
- * 
+ *
  * This is a discriminated union:
  * - Single-end reads: reverse === -1, delimiter is null
  * - Paired reads: reverse === 0 or 1, delimiter is a string

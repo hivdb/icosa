@@ -219,7 +219,7 @@ describe('Select component', () => {
 
   test('handles allowCreate prop', () => {
     const onCreate = vi.fn();
-    
+
     render(
       <Select
         name="test-select"
@@ -235,7 +235,7 @@ describe('Select component', () => {
 
   test('renders with allowCreate and onCreate props', () => {
     const onCreate = vi.fn();
-    
+
     render(
       <Select
         name="test-select"
@@ -377,13 +377,13 @@ describe('Select component', () => {
     const select = screen.getByTestId('react-select');
     // Simulate selecting nothing (null)
     fireEvent.change(select, {target: {value: ''}});
-    
+
     expect(mockOnChange).toHaveBeenCalled();
   });
 
   test('handles creating new option with allowCreate and __new value', () => {
     const onCreate = vi.fn();
-    
+
     // Create a wrapper that simulates the handleChange logic
     const TestWrapper = () => {
       const handleChange = (newValue: SelectOption | null) => {

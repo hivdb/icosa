@@ -81,10 +81,10 @@ describe('NGSUploadForm component', () => {
   test('calls onSubmit when form is submitted', async () => {
     const onSubmit = vi.fn();
     render(<NGSUploadForm isOptionsDefault showOptionsForm={false} onSubmit={onSubmit} />, {wrapper: Wrapper});
-    
+
     const submitButton = screen.getByText(/Start process/i);
     fireEvent.click(submitButton);
-    
+
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith([]);
     });
@@ -92,7 +92,7 @@ describe('NGSUploadForm component', () => {
 
   test('does not call onSubmit when not provided', async () => {
     render(<NGSUploadForm isOptionsDefault showOptionsForm={false} />, {wrapper: Wrapper});
-    
+
     const submitButton = screen.getByText(/Start process/i);
     expect(() => fireEvent.click(submitButton)).not.toThrow();
   });
@@ -129,10 +129,10 @@ describe('NGSUploadForm component', () => {
 
   test('handles reset button click', async () => {
     render(<NGSUploadForm isOptionsDefault showOptionsForm={false} />, {wrapper: Wrapper});
-    
+
     const resetButton = screen.getByText(/Reset/i);
     fireEvent.click(resetButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/0 files/i)).toBeInTheDocument();
     });
@@ -146,10 +146,10 @@ describe('NGSUploadForm component', () => {
   test('shows loader when config is pending', () => {
     const ConfigContextMock = vi.mocked(ConfigContext);
     ConfigContextMock.use = vi.fn(() => [{messages: {}}, true] as const);
-    
+
     render(<NGSUploadForm isOptionsDefault showOptionsForm={false} />, {wrapper: Wrapper});
     expect(screen.getByTestId('loader')).toBeInTheDocument();
-    
+
     ConfigContextMock.use = vi.fn(() => [{messages: {'ngs2codfreq-placeholder': 'Drop FASTQ files here'}}, false] as const);
   });
 });

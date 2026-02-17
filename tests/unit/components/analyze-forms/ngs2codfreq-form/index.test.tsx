@@ -113,7 +113,7 @@ describe('NGS2CodFreqForm', () => {
   it('passes props to NGS2CodFreq', () => {
     const runners = [{name: 'runner1'}];
     render(
-      <NGS2CodFreqForm 
+      <NGS2CodFreqForm
         showOptionsForm={true}
         runners={runners}
         analyzeTo="/analyze"

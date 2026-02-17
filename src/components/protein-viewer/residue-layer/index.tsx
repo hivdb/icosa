@@ -30,7 +30,7 @@ export default function ResidueLayer({sele, residues}: ResidueLayerProps) {
 
   useEffect(
     () => {
-      const hlAtom = residues.reduce<Record<number, {label?: string; color: string | number}>>( 
+      const hlAtom = residues.reduce<Record<number, {label?: string; color: string | number}>>(
         (acc, {resno, label, color}) => {
           acc[resno] = {label, color};
           return acc;

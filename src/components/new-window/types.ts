@@ -1,13 +1,13 @@
 /**
  * Type definitions for the new-window component.
- * 
+ *
  * This component manages popup windows for rendering components in separate browser windows,
  * with bidirectional communication between parent and child windows.
  */
 
 /**
  * Props for the NewWindowPropsProvider internal component.
- * 
+ *
  * @internal
  */
 export interface NewWindowPropsProviderProps {

@@ -5,8 +5,8 @@ import '@testing-library/jest-dom/vitest';
 vi.mock('../../../../src/components/mutations-input/mutations-tagsinput', () => ({
   __esModule: true,
   default: ({onChange, geneOnly}: any) => (
-    <button 
-      data-testid={geneOnly ? `tagsinput-${geneOnly}` : 'tagsinput'} 
+    <button
+      data-testid={geneOnly ? `tagsinput-${geneOnly}` : 'tagsinput'}
       onClick={() => onChange({mutations: ['C']}, false)}
     >
       {geneOnly || 'all'}
@@ -109,9 +109,9 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     // Verify component renders with suggestions
     expect(screen.getByTestId('suggest-RT')).toBeInTheDocument();
   });
@@ -125,9 +125,9 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     // Should render main input but no suggestion sections
     expect(screen.getByTestId('tagsinput')).toBeInTheDocument();
     expect(screen.queryByTestId('suggest-RT')).not.toBeInTheDocument();
@@ -145,13 +145,13 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     const errors = [{text: 'mut', errors: ['error']}];
     mockSanitizeMutations.mockReturnValue([['mut'], errors]);
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
     fireEvent.click(screen.getByText('Select'));
-    
+
     expect(onChange).toHaveBeenCalledWith({mutations: ['mut']}, true);
   });
 
@@ -168,9 +168,9 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     // Should not render main input when splitGeneInput is true
     expect(screen.queryByTestId('tagsinput')).not.toBeInTheDocument();
     // Should render gene-specific input
@@ -185,18 +185,18 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(
-      <MutationsInput 
-        config={config} 
-        mutations={[]} 
+      <MutationsInput
+        config={config}
+        mutations={[]}
         onChange={onChange}
         extraProp="extraValue"
       />
     );
-    
+
     fireEvent.click(screen.getByTestId('tagsinput'));
-    
+
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({extraProp: 'extraValue', mutations: ['C']}),
       false
@@ -211,16 +211,16 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     const {container} = render(
-      <MutationsInput 
-        config={config} 
-        mutations={[]} 
+      <MutationsInput
+        config={config}
+        mutations={[]}
         onChange={onChange}
         className="custom-class"
       />
     );
-    
+
     expect(container.querySelector('.custom-class')).toBeInTheDocument();
   });
 
@@ -242,9 +242,9 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
-    
+
     expect(screen.getByTestId('suggest-RT')).toBeInTheDocument();
     expect(screen.getByTestId('suggest-PR')).toBeInTheDocument();
   });
@@ -257,34 +257,34 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     const {rerender} = render(
-      <MutationsInput 
-        config={config} 
-        mutations={[]} 
+      <MutationsInput
+        config={config}
+        mutations={[]}
         onChange={onChange}
         extraProp="value1"
       />
     );
-    
+
     fireEvent.click(screen.getByTestId('tagsinput'));
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({extraProp: 'value1'}),
       false
     );
-    
+
     onChange.mockClear();
-    
+
     // Change extras to trigger isEqual check
     rerender(
-      <MutationsInput 
-        config={config} 
-        mutations={[]} 
+      <MutationsInput
+        config={config}
+        mutations={[]}
         onChange={onChange}
         extraProp="value2"
       />
     );
-    
+
     fireEvent.click(screen.getByTestId('tagsinput'));
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({extraProp: 'value2'}),
@@ -304,18 +304,18 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     // Mock prompt to return null (user cancels)
     const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue(null);
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
     fireEvent.click(screen.getByText('Wildcard'));
-    
+
     // Prompt should be called
     expect(promptSpy).toHaveBeenCalled();
     // onChange should NOT be called because user cancelled
     expect(onChange).not.toHaveBeenCalled();
-    
+
     promptSpy.mockRestore();
   });
 
@@ -331,19 +331,19 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     // Mock prompt to return amino acids
     const promptSpy = vi.spyOn(window, 'prompt').mockReturnValue('V');
     mockSanitizeMutations.mockReturnValue([['RT:M184V'], []]);
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
     fireEvent.click(screen.getByText('Wildcard'));
-    
+
     // Prompt should be called
     expect(promptSpy).toHaveBeenCalled();
     // onChange should be called with the completed mutation
     expect(onChange).toHaveBeenCalledWith({mutations: ['RT:M184V']}, false);
-    
+
     promptSpy.mockRestore();
   });
 
@@ -359,10 +359,10 @@ describe('MutationsInput', () => {
       geneSynonyms: {},
       messages: {}
     };
-    
+
     render(<MutationsInput config={config} mutations={[]} onChange={onChange} />);
     fireEvent.click(screen.getByText('Empty'));
-    
+
     // onChange should NOT be called for empty value
     expect(onChange).not.toHaveBeenCalled();
   });

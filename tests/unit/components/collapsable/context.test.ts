@@ -69,28 +69,28 @@ describe('CollapsableContextValue', () => {
 
     it('searches for closest collapsable anchor in DOM hierarchy', () => {
       const container = containerRef.current!;
-      
+
       // Create DOM structure: section > h3#parent > section > div#child
       const parentSection = document.createElement('section');
       parentSection.setAttribute('data-level', '3');
-      
+
       const parentHeader = document.createElement('h3');
       parentHeader.id = 'parent-header';
       parentSection.appendChild(parentHeader);
-      
+
       const childSection = document.createElement('section');
       childSection.setAttribute('data-level', '4');
       parentSection.appendChild(childSection);
-      
+
       const childDiv = document.createElement('div');
       childDiv.id = 'child-element';
       childSection.appendChild(childDiv);
-      
+
       container.appendChild(parentSection);
-      
+
       // Register parent header as collapsable
       context.registerCollapsableAnchor('parent-header', 'h3', false);
-      
+
       // Search from child element should find parent header
       const result = context.getClosestCollapsableAnchor('child-element');
       expect(result.anchor).toBe('parent-header');
@@ -99,16 +99,16 @@ describe('CollapsableContextValue', () => {
 
     it('returns null when no collapsable anchor found in hierarchy', () => {
       const container = containerRef.current!;
-      
+
       const section = document.createElement('section');
       section.setAttribute('data-level', '3');
-      
+
       const div = document.createElement('div');
       div.id = 'orphan';
       section.appendChild(div);
-      
+
       container.appendChild(section);
-      
+
       const result = context.getClosestCollapsableAnchor('orphan');
       expect(result.anchor).toBeNull();
       expect(result.shouldCollapseOther).toBe(false);
@@ -122,47 +122,47 @@ describe('CollapsableContextValue', () => {
 
     it('handles element without parent node', () => {
       const container = containerRef.current!;
-      
+
       const orphanDiv = document.createElement('div');
       orphanDiv.id = 'orphan-div';
       container.appendChild(orphanDiv);
-      
+
       const result = context.getClosestCollapsableAnchor('orphan-div');
       expect(result.anchor).toBeNull();
     });
 
     it('handles section with header but no id attribute', () => {
       const container = containerRef.current!;
-      
+
       const section = document.createElement('section');
       section.setAttribute('data-level', '3');
-      
+
       const header = document.createElement('h3');
       // No id attribute
       section.appendChild(header);
-      
+
       const div = document.createElement('div');
       div.id = 'test-div';
       section.appendChild(div);
-      
+
       container.appendChild(section);
-      
+
       const result = context.getClosestCollapsableAnchor('test-div');
       expect(result.anchor).toBeNull();
     });
 
     it('stops searching when reaching container boundary', () => {
       const container = containerRef.current!;
-      
+
       const section = document.createElement('section');
       section.setAttribute('data-level', '3');
-      
+
       const div = document.createElement('div');
       div.id = 'boundary-test';
       section.appendChild(div);
-      
+
       container.appendChild(section);
-      
+
       const result = context.getClosestCollapsableAnchor('boundary-test');
       expect(result.anchor).toBeNull();
       expect(result.shouldCollapseOther).toBe(false);
@@ -174,7 +174,7 @@ describe('CollapsableContextValue', () => {
       const ctx = new CollapsableContextValue(containerRef, ['h2', 'h5']);
       ctx.registerCollapsableAnchor('h2-test', 'h2', false);
       ctx.registerCollapsableAnchor('h5-test', 'h5', false);
-      
+
       expect(ctx.getClosestCollapsableAnchor('h2-test').anchor).toBe('h2-test');
       expect(ctx.getClosestCollapsableAnchor('h5-test').anchor).toBe('h5-test');
     });
@@ -182,7 +182,7 @@ describe('CollapsableContextValue', () => {
     it('initializes with empty levels array', () => {
       const ctx = new CollapsableContextValue(containerRef, []);
       ctx.registerCollapsableAnchor('test', 'h3', false);
-      
+
       // Should not be registered because no levels are collapsable
       expect(ctx.getClosestCollapsableAnchor('test').anchor).toBeNull();
     });

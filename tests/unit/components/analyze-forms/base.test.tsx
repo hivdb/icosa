@@ -176,7 +176,7 @@ describe('AnalyzeBaseForm', () => {
     const buttons = screen.getAllByRole('button');
     const analyzeBtn = buttons.find(btn => btn.textContent === 'Analyze');
     const resetBtn = buttons.find(btn => btn.textContent === 'Reset');
-    
+
     expect(analyzeBtn).toBeDisabled();
     expect(resetBtn).toBeDisabled();
   });

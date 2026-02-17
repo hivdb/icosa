@@ -48,7 +48,7 @@ describe('ProteinViewer', () => {
     const views = [{name: 'view1', pdb: '1abc'}];
     const positions: any[] = [];
     render(<ProteinViewer views={views} positions={positions} />);
-    
+
     expect(capturedReprList).toHaveLength(1);
     const tubeRepr = capturedReprList[0];
     expect(tubeRepr.type).toBe('tube');
@@ -63,7 +63,7 @@ describe('ProteinViewer', () => {
     const views = [{name: 'view1', pdb: '1abc', sele: ':A'}];
     const positions: any[] = [];
     render(<ProteinViewer views={views} positions={positions} />);
-    
+
     expect(capturedReprList).toHaveLength(1);
     const tubeRepr = capturedReprList[0];
     expect(tubeRepr.type).toBe('tube');
@@ -77,7 +77,7 @@ describe('ProteinViewer', () => {
     const views = [{name: 'view1', pdb: '1abc'}];
     const positions = [{position: 1, label: 'A1', desc: '', bgColor: 0xff0000, color: 0xffffff}];
     render(<ProteinViewer views={views} positions={positions} />);
-    
+
     expect(capturedReprList).toHaveLength(2);
     expect(capturedReprList[0].type).toBe('tube');
     expect(capturedReprList[1].type).toBe('spacefill');
@@ -90,7 +90,7 @@ describe('ProteinViewer', () => {
     const views = [{name: 'view1', pdb: '1abc', sele: ':A'}];
     const positions = [{position: 1, label: 'A1', desc: '', bgColor: 0xff0000, color: 0xffffff}];
     render(<ProteinViewer views={views} positions={positions} />);
-    
+
     expect(capturedReprList).toHaveLength(2);
     const spacefillRepr = capturedReprList[1];
     expect(spacefillRepr.type).toBe('spacefill');
