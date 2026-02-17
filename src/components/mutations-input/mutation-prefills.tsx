@@ -1,16 +1,10 @@
 import React from 'react';
 
+import type { PrefillOption } from './types';
 import style from './style.module.scss';
 
-/** Interface describing a prefill option entry */
-export interface PrefillOption {
-  /** Name displayed for the prefill */
-  name: string;
-  /** Mutations associated with the option */
-  mutations: string[];
-  /** Optional extra class name for styling */
-  className?: string;
-}
+// Re-export for backward compatibility
+export type { PrefillOption } from './types';
 
 /** Props for the MutationPrefills component */
 export interface MutationPrefillsProps {

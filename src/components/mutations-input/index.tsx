@@ -1,31 +1,17 @@
 import React from 'react';
+import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 
 import { sanitizeMutations } from '../../utils/mutation';
 
 import MutationsTagsInput from './mutations-tagsinput';
-import useMutationPrefills, { PrefillOption } from './mutation-prefills';
+import useMutationPrefills from './mutation-prefills';
 import MutationSuggestOptions from './mutation-suggest-options';
+import type { MutationsConfig } from './types';
 import style from './style.module.scss';
 
-/** Configuration object for {@link MutationsInput} */
-export interface MutationsConfig {
-  /** When true, gene input is separated from mutation input */
-  mutationSplitGeneInput?: boolean;
-  /** Suggested mutations grouped by gene */
-  mutationSuggestions?: Array<{ gene: string; mutations: Array<[number, Iterable<string>]> }>;
-  /** Mapping of gene names to reference sequence strings */
-  geneReferences: Record<string, string>;
-  /** Mapping of gene names to display names */
-  geneDisplay: Record<string, string>;
-  /** Mapping of gene synonyms to canonical names */
-  geneSynonyms: Record<string, string>;
-  /** Internationalized messages used by nested components */
-  messages: Record<string, string>;
-  /** Optional predefined mutation sets */
-  mutationPrefills?: PrefillOption[];
-  [key: string]: unknown;
-}
+// Re-export types for external use
+export type { MutationsConfig } from './types';
 
 /** Props for {@link MutationsInput} */
 export interface MutationsInputProps {
@@ -58,12 +44,25 @@ export default function MutationsInput({
   isActive: _isActive = true,
   ...extras
 }: MutationsInputProps): React.JSX.Element {
+
+  // prevent updating handleMutationSelect when mutations change, which would
+  // cause the mutation suggestions to re-render
+  const mutationsRef = React.useRef(mutations);
+  mutationsRef.current = mutations;
+
+  // keep a stable reference to extras to prevent unnecessary re-renders of
+  // prefill options and mutation suggestions when extras change
+  const stableExtras = React.useRef(extras);
+  if (!isEqual(stableExtras.current, extras)) {
+    stableExtras.current = extras;
+  }
+
   const { mutationSplitGeneInput: splitGeneInput, mutationSuggestions } = config;
 
   const handleChange = React.useCallback(
     (payload: Record<string, any>, preventSubmit: boolean) =>
-      onChange({ ...extras, ...payload }, preventSubmit),
-    [onChange, extras]
+      onChange({ ...stableExtras.current, ...payload }, preventSubmit),
+    [onChange]
   );
 
   const prefillElement = useMutationPrefills({ onChange: handleChange, config });
@@ -79,10 +78,10 @@ export default function MutationsInput({
         }
         mut = `${mut}${aas}`;
       }
-      const [sanitized, allErrors] = sanitizeMutations([...mutations, mut], config);
+      const [sanitized, allErrors] = sanitizeMutations([...mutationsRef.current, mut], config);
       handleChange({ mutations: sanitized }, allErrors.length > 0);
     },
-    [config, mutations, handleChange]
+    [config, handleChange]
   );
 
   return (

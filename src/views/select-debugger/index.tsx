@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Select from '../../components/select';
 import AlgVerSelect from '../../components/algver-select';
+import MutationSuggestOptions from '../../components/mutations-input/mutation-suggest-options';
 import type {SelectOption} from '../../components/select/types';
 import style from './index.module.scss';
 
@@ -20,6 +21,7 @@ export default function SelectDebugger() {
   const [paginatorValue, setPaginatorValue] = useState<SelectOption | null>(null);
   const [cameraViewValue, setCameraViewValue] = useState<SelectOption | null>(null);
   const [algVerValue, setAlgVerValue] = useState<any>(null);
+  const [selectedMutation, setSelectedMutation] = useState<{value: string; label: string} | null>(null);
 
   const basicOptions: SelectOption[] = [
     {label: 'M184V', value: 'm184v'},
@@ -80,6 +82,26 @@ export default function SelectDebugger() {
       ]
     },
     excludeAlgorithmVersions: []
+  };
+
+  // Mock config for MutationSuggestOptions
+  const mockMutationConfig = {
+    allowPositions: true,
+    geneReferences: {
+      RT: 'PISPIETVPVKLKPGMDGPKVKQWPLTEEKIKALVEICTEMEKEGKISKIGPENPYNTPVFAIKKKDSTKWRKLVDFRELNKRTQDFWEVQLGIPHPAGLKKKKSVTVLDVGDAYFSVPLDEDFRKYTAFTIPSINNETPGIRYQYNVLPQGWKGSPAIFQSSMTKILEPFRKQNPDIVIYQYMDDLYVGSDLEIGQHRTKIEELRQHLLRWGLTTPDKKHQKEPPFLWMGYELHPDKWTVQPIVLPEKDSWTVNDIQKLVGKLNWASQIYPGIKVRQLCKLLRGTKALTEVIPLTEEAELELAENREILKEPVHGVYYDPSKDLIAEIQKQGQGQWTYQIYQEPFKNLKTGKYARMRGAHTNDVKQLTEAVQKITTESIVIWGKTPKFKLPIQKETWETWWTEYWQATWIPEWEFVNTPPLVKLWYQLEKEPIVGAETFYVDGAANRETKLGKAGYVTNRGRQKVVTLTDTTNQKTELQAIYLALQDSGLEVNIVTDSQYALGIIQAQPDQSESELVNQIIEQLIKKEKVYLAWVPAHKGIGGNEQVDKLVSAGIRKVLFLDGIDKAQDEHEKYHSNWRAMASDFNLPPVVAKEIVASCDKCQLKGEAMHGQVDCSPGIWQLDCTHLEGKVILVAVHVASGYIEAEVIPAETGQETAYFLLKLAGRWPVKTIHTDNGSNFTGATVRAACWWAGIKQEFGIPYNPQSQGVVESMNKELKKIIGQVRDQAEHLKTAVQMAVFIHNFKRKGGIGGYSAGERIVDIIATDIQTKELQKQITKIQNFRVYYRDSRNPLWKGPAKLLWKGEGAVVIQDNSDIKVVPRRKAKIIRDYGKQMAGDDCVASRQDED',
+      PR: 'PQITLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRWKPKMIGGIGGFIKVRQYDQILIEICGHKAIGTVLVGPTPVNIIGRNLLTQIGCTLNF'
+    },
+    geneDisplay: {
+      RT: 'Reverse Transcriptase',
+      PR: 'Protease'
+    },
+    messages: {}
+  };
+
+  const handleMutationSelect = (option: {value: string; label: string}) => {
+    setSelectedMutation(option);
+    // eslint-disable-next-line no-console
+    console.log('Selected mutation:', option);
   };
 
   return (
@@ -260,6 +282,26 @@ export default function SelectDebugger() {
         />
         <div className={style['selected-value']}>
           <strong>Selected:</strong> {algVerValue ? JSON.stringify(algVerValue) : 'None'}
+        </div>
+      </div>
+
+      <div className={style.section}>
+        <h2 className={style['section-title']}>10. MutationSuggestOptions Component</h2>
+        <p className={style['section-description']}>
+          Mutation suggestion dropdowns (migrated from react-dropdown to Select component)
+        </p>
+        <MutationSuggestOptions
+          gene="RT"
+          mutations={[
+            [184, ['V', 'I']],
+            [215, ['Y', 'F', 'C', 'D', 'E', 'S', 'V']],
+            [41, ['L']]
+          ]}
+          config={mockMutationConfig}
+          onChange={handleMutationSelect}
+        />
+        <div className={style['selected-value']}>
+          <strong>Selected:</strong> {selectedMutation ? JSON.stringify(selectedMutation) : 'None'}
         </div>
       </div>
     </div>

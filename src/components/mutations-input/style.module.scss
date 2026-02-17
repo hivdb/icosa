@@ -1,12 +1,8 @@
 @use "../../styles" as *;
 @use "../../styles/tabs" as *;
-@use "../../styles/dropdown" as *;
+@use "../../styles/select" as *;
 @use "../../styles/functions" as *;
 
-
-.mutation-main-input-with-columns {
-  @extend %general-dropdown;
-}
 
 .mutation-suggest-input {
   // @include grid-col($col: 1, $grid-columns: 3, $gutter: 18px, $condensed: true);
@@ -199,6 +195,9 @@
             margin-left: .6rem;
             display: block;
           }
+
+          // Style the Select component using the general-select mixin
+          @include general-select('mutation-select');
         }
       }
     }

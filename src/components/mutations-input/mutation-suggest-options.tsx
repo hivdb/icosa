@@ -1,7 +1,8 @@
 import React from 'react';
-import Dropdown, { Option as DropdownOption } from 'react-dropdown';
 
+import Select, { SelectOption } from '../select';
 import { expandIndel } from '../../utils/mutation';
+import type { MutationOptionTuple, MutationsConfig } from './types';
 
 import style from './style.module.scss';
 
@@ -12,16 +13,11 @@ export interface MutationSuggestOptionsProps {
   /** Suggested mutations represented as [position, amino acids] tuples */
   mutations: Array<[number, Iterable<string>]>;
   /** Configuration including references and display names */
-  config: {
-    allowPositions?: boolean;
-    geneReferences: Record<string, string>;
-    geneDisplay: Record<string, string>;
-    messages: Record<string, string>;
-  };
+  config: Pick<MutationsConfig, 'allowPositions' | 'geneReferences' | 'geneDisplay' | 'messages'>;
   /** Optional child content such as additional inputs */
   children?: React.ReactNode;
   /** Callback when a suggestion is chosen */
-  onChange(option: DropdownOption): void;
+  onChange(option: SelectOption): void;
 }
 
 /**
@@ -42,6 +38,46 @@ export default function MutationSuggestOptions({
   children,
   onChange
 }: MutationSuggestOptionsProps): React.JSX.Element {
+  const handleChange = React.useCallback(
+    (pos: number) => (newValue: SelectOption | null) => {
+      if (newValue && newValue.value && newValue.label) {
+        onChange({ value: newValue.value, label: newValue.label });
+      }
+    },
+    [onChange]
+  );
+
+  const mutationOptions: MutationOptionTuple[] = React.useMemo(() => mutations.map(([pos, aas]) => [
+    pos,
+    aas,
+    Array.from(aas).map(aa => ({
+      value: `${gene}:${geneReferences[gene][pos - 1]}${pos}${expandIndel(aa)}`,
+      label: expandIndel(aa)
+    })).concat([
+      {
+        value: `${gene}:${geneReferences[gene][pos - 1]}${pos}`,
+        label: '*'
+      }
+    ])
+  ]), [gene, geneReferences, mutations]);
+
+  const selectElements = React.useMemo(() => mutationOptions.map(([pos, , options]) => (
+    <li key={pos}>
+      <label htmlFor={`mut-${gene}-${pos}`}>{pos}</label>
+      <Select
+        inputId={`mut-${gene}-${pos}`}
+        name={`mut-${gene}-${pos}`}
+        classNamePrefix={style['mutation-select']}
+        options={options}
+        value={null}
+        placeholder="---"
+        onChange={handleChange(pos)}
+        isClearable={false}
+        isSearchable={false}
+      />
+    </li>
+  )), [gene, mutationOptions, handleChange]);
+
   return (
     <section key={gene} className={style['gene-mutation-input']}>
       <h2 className={style.desc}>
@@ -52,29 +88,7 @@ export default function MutationSuggestOptions({
       </h2>
       {children}
       <ul className={style['gene-mutation-suggest-options']}>
-        {mutations.map(([pos, aas]) => (
-          <li key={pos}>
-            <label htmlFor={`mut-${gene}-${pos}`}>{pos}</label>
-            <Dropdown
-              value={{ value: '', label: '---' }}
-              options={Array.from(aas)
-                .map(aa => ({
-                  value: `${gene}:${geneReferences[gene][pos - 1]}${pos}${expandIndel(aa)}`,
-                  label: expandIndel(aa),
-                  data: { pos }
-                }))
-                .concat([
-                  {
-                    value: `${gene}:${geneReferences[gene][pos - 1]}${pos}`,
-                    label: '*',
-                    data: { pos }
-                  }
-                ])}
-              placeholder="---"
-              onChange={onChange}
-            />
-          </li>
-        ))}
+        {selectElements}
       </ul>
     </section>
   );

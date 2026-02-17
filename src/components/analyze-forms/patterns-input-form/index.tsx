@@ -123,12 +123,15 @@ export default function PatternsInputForm({
     ) => {
       const { uuid, name, mutations } = payload as unknown as PatternObj;
       if (uuid) {
-        const patternObj = patterns.find(p => p.uuid === uuid);
-        if (patternObj) {
-          patternObj.name = name;
-          patternObj.mutations = mutations;
-          setPatterns([...patterns]);
-        }
+        setPatterns(prevPatterns => {
+          const patternObj = prevPatterns.find(p => p.uuid === uuid);
+          if (patternObj) {
+            patternObj.name = name;
+            patternObj.mutations = mutations;
+            return [...prevPatterns];
+          }
+          return prevPatterns;
+        });
       }
       if (preventSubmit) {
         submitDisabled || setSubmitDisabled(true);
@@ -136,8 +139,9 @@ export default function PatternsInputForm({
         submitDisabled && setSubmitDisabled(false);
       }
     },
-    [patterns, setPatterns, submitDisabled]
+    [submitDisabled]
   );
+  React.useMemo(() => console.log('submitDisabled changed:', submitDisabled), [submitDisabled]);
 
   const handleReset = React.useCallback(() => setPatterns([newPatternObj()]), [setPatterns]);
 

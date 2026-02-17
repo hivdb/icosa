@@ -9,18 +9,13 @@ import {
 } from '../../utils/mutation';
 
 import useMutationsErrors from './mutations-errors';
+import type { MutationsConfig } from './types';
 import style from './style.module.scss';
 
 /** Props for {@link MutationsTagsInput} */
 export interface MutationsTagsInputProps {
   /** Configuration containing mutation parsing options */
-  config: {
-    allowPositions?: boolean;
-    mutationDefaultGene?: string;
-    geneSynonyms?: Record<string, string>;
-    geneReferences: Record<string, string>;
-    messages: Record<string, string>;
-  };
+  config: Pick<MutationsConfig, 'allowPositions' | 'mutationDefaultGene' | 'geneSynonyms' | 'geneReferences' | 'messages'>;
   /** Restrict inputs to a specific gene */
   geneOnly?: string;
   /** Current list of mutation strings */

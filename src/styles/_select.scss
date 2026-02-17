@@ -1,47 +1,320 @@
 @use "./colors" as *;
 
-@mixin select($class-name-prefix) {
-  :global .#{$class-name-prefix}__control {
+/**
+ * Base mixin for react-select styling to match react-dropdown appearance.
+ * This provides the foundation for all select variants.
+ * 
+ * @param $class-name-prefix - The classNamePrefix used by react-select (e.g., 'my-select')
+ * @param $with-custom-arrow - Whether to include custom dropdown arrow styling (default: true)
+ */
+@mixin base-select($class-name-prefix, $with-custom-arrow: true) {
+  // Placeholder class to ensure the class name is in CSS Module map
+  .#{$class-name-prefix} {
+    display: block; // Needed for CSS Module name mapping
+  }
+
+  .#{$class-name-prefix}:global(__control) {
     background-color: color(dropdown-bg);
     border-radius: 0;
-    border-color: color(dropdown-border);
+    border: none;
     overflow: visible;
     min-height: auto;
-  }
-
-  :global .#{$class-name-prefix}__indicator {
-    padding: 4px;
+    box-shadow: none;
     cursor: pointer;
+    
+    &:hover {
+      border-color: color(dropdown-border);
+      @if $with-custom-arrow {
+        .#{$class-name-prefix}:global(__dropdown-indicator) {
+          background-color: color(dropdown-arrow-active-bg);
+        }
+      }
+    }
+    
+    @media print {
+      color: black;
+      background-color: transparent;
+      border: none;
+    }
   }
 
-  :global .#{$class-name-prefix}__menu {
+  .#{$class-name-prefix}:global(__value-container) {
+    height: 100%;
+    border-color: color(dropdown-border);
+    border-style: solid;
+    border-width: 1px 0 1px 1px;
+  }
+
+  .#{$class-name-prefix}:global(__placeholder) {
+    margin: 0;
+  }
+
+  .#{$class-name-prefix}:global(__single-value) {
+    margin: 0;
+  }
+
+  .#{$class-name-prefix}:global(__indicator-separator) {
+    display: none;
+  }
+
+  .#{$class-name-prefix}:global(__indicators) {
+    position: relative;
+  }
+
+  @if $with-custom-arrow {
+    .#{$class-name-prefix}:global(__dropdown-indicator) {
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: color(dropdown-arrow-bg);
+      position: relative;
+      cursor: pointer;
+      align-self: stretch;
+
+      &::before {
+        content: " ";
+        position: absolute;
+        background-color: color(btn-flare-bg);
+        clip-path: polygon(100% 0, 0 0, 0 100%);
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      &::after {
+        content: "▾";
+        color: color(dropdown-arrow);
+        position: relative;
+        line-height: 1;
+      }
+
+      svg {
+        display: none;
+      }
+    }
+
+    .#{$class-name-prefix}:global(__control--menu-is-open) .#{$class-name-prefix}:global(__dropdown-indicator) {
+      background-color: color(dropdown-arrow-active-bg);
+    }
+  } @else {
+    .#{$class-name-prefix}:global(__dropdown-indicator) {
+      padding: 4px;
+      cursor: pointer;
+    }
+  }
+
+  .#{$class-name-prefix}:global(__menu) {
     border-radius: 0;
-    background-color: color(dropdown-menu-bg);
-    z-index: 100;
+    background-color: var(--sierra-color-dropdown-menu-bg);
+    box-shadow: none;
+    border: none;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
-  :global .#{$class-name-prefix}__option {
-    $line-height: 1.5em;
-    $vertical-spacing: .2em;
-    $line-clamp: 2;
-    padding-top: $vertical-spacing;
-    padding-bottom: $vertical-spacing;
-    line-height: $line-height;
-    max-height: $line-height * $line-clamp + $vertical-spacing * 2;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: $line-clamp;
+  .#{$class-name-prefix}:global(__menu-list) {
+    padding: 0;
   }
 
-  :global .#{$class-name-prefix}__option--is-selected {
+  .#{$class-name-prefix}:global(__option) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: color(dropdown-opt-hover-bg);
+      color: color(dropdown-opt-hover);
+    }
+  }
+
+  .#{$class-name-prefix}:global(__option--is-selected) {
     background-color: color(dropdown-opt-selected-bg);
     color: color(dropdown-opt-selected);
   }
 
-  :global .#{$class-name-prefix}__option--is-focused {
-    background-color: color(dropdown-opt-hover-bg);
-    color: color(dropdown-opt-hover);
+  .#{$class-name-prefix}:global(__option--is-focused) {
+    background-color: transparent;
+    color: inherit;
   }
+}
+
+/**
+ * General select styling - standard size with custom arrow.
+ * Equivalent to %general-dropdown from _dropdown.scss.
+ * 
+ * @param $class-name-prefix - The classNamePrefix used by react-select
+ * 
+ * Usage:
+ *   .my-select {
+ *     @include general-select('my-select');
+ *   }
+ */
+@mixin general-select($class-name-prefix) {
+  $container-size: 25px;
+  @include base-select($class-name-prefix, true);
+  
+  .#{$class-name-prefix}:global(__control) {
+    height: $container-size;
+    font-size: .9rem;
+  }
+
+  .#{$class-name-prefix}:global(__value-container) {
+    padding: 0 8px;
+  }
+
+  .#{$class-name-prefix}:global(__placeholder),
+  .#{$class-name-prefix}:global(__single-value) {
+    font-size: .9rem;
+  }
+
+  .#{$class-name-prefix}:global(__dropdown-indicator) {
+    width: $container-size;
+
+    &::after {
+      font-size: 1rem;
+    }
+  }
+
+  .#{$class-name-prefix}:global(__menu) {
+    font-size: .9rem;
+  }
+
+  .#{$class-name-prefix}:global(__menu-list) {
+    max-height: 24rem;
+  }
+
+  .#{$class-name-prefix}:global(__option) {
+    padding: 4px 8px;
+    font-size: .9rem;
+  }
+}
+
+/**
+ * Small select styling - compact size with custom arrow.
+ * Equivalent to %small-dropdown from _dropdown.scss.
+ * 
+ * @param $class-name-prefix - The classNamePrefix used by react-select
+ * 
+ * Usage:
+ *   .my-small-select {
+ *     @include small-select('my-small-select');
+ *   }
+ */
+@mixin small-select($class-name-prefix) {
+  $container-size: 20px;
+  @include base-select($class-name-prefix, true);
+  
+  .#{$class-name-prefix}:global(__control) {
+    height: $container-size;
+    font-size: .85rem;
+  }
+
+  .#{$class-name-prefix}:global(__value-container) {
+    padding: 0 6px;
+  }
+
+  .#{$class-name-prefix}:global(__placeholder),
+  .#{$class-name-prefix}:global(__single-value) {
+    font-size: .85rem;
+  }
+
+  .#{$class-name-prefix}:global(__dropdown-indicator) {
+    width: $container-size;
+    
+    &::after {
+      font-size: .85rem;
+    }
+  }
+
+  .#{$class-name-prefix}:global(__menu) {
+    font-size: .85rem;
+  }
+
+  .#{$class-name-prefix}:global(__menu-list) {
+    max-height: 18rem;
+  }
+
+  .#{$class-name-prefix}:global(__option) {
+    padding: 2px 6px;
+    font-size: .85rem;
+  }
+}
+
+/**
+ * Large select styling - bigger size with custom arrow.
+ * Equivalent to %large-dropdown from _dropdown.scss.
+ * 
+ * @param $class-name-prefix - The classNamePrefix used by react-select
+ * 
+ * Usage:
+ *   .my-large-select {
+ *     @include large-select('my-large-select');
+ *   }
+ */
+@mixin large-select($class-name-prefix) {
+  $container-size: 42px;
+  @include base-select($class-name-prefix, true);
+  
+  .#{$class-name-prefix}:global(__control) {
+    height: $container-size;
+    font-size: 1.5rem;
+  }
+
+  .#{$class-name-prefix}:global(__value-container) {
+    padding: 0 12px;
+  }
+
+  .#{$class-name-prefix}:global(__placeholder),
+  .#{$class-name-prefix}:global(__single-value) {
+    font-size: 1.5rem;
+  }
+
+  .#{$class-name-prefix}:global(__dropdown-indicator) {
+    width: $container-size;
+    
+    &::after {
+      font-size: 1.5rem;
+    }
+  }
+
+  .#{$class-name-prefix}:global(__menu) {
+    font-size: 1.5rem;
+  }
+
+  .#{$class-name-prefix}:global(__menu-list) {
+    max-height: 30rem;
+  }
+
+  .#{$class-name-prefix}:global(__option) {
+    padding: 8px 12px;
+    font-size: 1.5rem;
+  }
+}
+
+/**
+ * Simple select styling without custom arrow - for cases where you want
+ * the default react-select appearance but with consistent colors.
+ * 
+ * @param $class-name-prefix - The classNamePrefix used by react-select
+ * 
+ * Usage:
+ *   .my-simple-select {
+ *     @include simple-select('my-simple-select');
+ *   }
+ */
+@mixin simple-select($class-name-prefix) {
+  @include base-select($class-name-prefix, false);
+  
+  .#{$class-name-prefix}:global(__control) {
+    padding: 4px 8px;
+  }
+
+  .#{$class-name-prefix}:global(__option) {
+    padding: 8px 12px;
+  }
+}
+
+// Legacy mixin for backward compatibility with existing code
+@mixin select($class-name-prefix) {
+  @include simple-select($class-name-prefix);
 }

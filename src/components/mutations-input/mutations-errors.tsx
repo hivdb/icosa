@@ -3,16 +3,12 @@ import classNames from 'classnames';
 
 import { sanitizeMutations } from '../../utils/mutation';
 
+import type { MutationError } from './types';
 import style from './style.module.scss';
 import linkStyle from '../link/style.module.scss';
 
-/** Shape describing a mutation error entry */
-export interface MutationError {
-  /** Original mutation text */
-  text: string;
-  /** List of validation error messages */
-  errors: string[];
-}
+// Re-export for backward compatibility
+export type { MutationError } from './types';
 
 /** Props for the {@link MutationsErrors} presentation component */
 export interface MutationsErrorsProps {
