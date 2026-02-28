@@ -9,17 +9,7 @@ import {
 
 import style from '../style.module.scss';
 import DropPlaceholder from './drop-placeholder';
-
-interface FASTQItemProps {
-  file: File;
-  index: number;
-  className?: string;
-  onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
-  onDrag: (e: React.DragEvent<HTMLElement>) => void;
-  onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
-  onRemove: (args: {index: number; fileName: string}) => void;
-  draggable?: boolean;
-}
+import type {FASTQItemProps, FASTQPairItemProps} from './types';
 
 /**
  * Render a list item representing a single FASTQ file. Handles dragging
@@ -108,23 +98,6 @@ function FASTQItem({
   );
 }
 
-
-export interface FASTQPairItemProps {
-  name: string;
-  pair: (File | null)[];
-  n: number;
-  index: number;
-  className?: string;
-  onDragStart: (file: File, e: React.DragEvent<HTMLLIElement>) => void;
-  onDrag: (e: React.DragEvent<HTMLElement>) => void;
-  onDragEnd: (e: React.DragEvent<HTMLLIElement>) => void;
-  curDragFile: File | null;
-  onSplit: (idx: number) => void;
-  onMove: (args: {src: {index: number; fileName: string}; target: {index: number}}) => void;
-  onNameChange: (name: string, index: number) => void;
-  onRemove: (args: {index: number; fileName: string}) => void;
-  draggable?: boolean;
-}
 
 /**
  * Display a pair (or single) of FASTQ files with controls for naming, splitting

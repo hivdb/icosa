@@ -2,15 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import style from '../style.module.scss';
-
-
-export interface DropPlaceholderProps {
-  allowFiles?: File[];
-  blockFiles?: (File | null)[];
-  onMove: (payload: {index: number; fileName: string}) => void;
-  curDragFile: File | null;
-  className?: string;
-}
+import type {DropPlaceholderProps} from './types';
 
 /**
  * Placeholder element displayed within file lists to indicate a valid drop

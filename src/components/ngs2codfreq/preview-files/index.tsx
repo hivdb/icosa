@@ -1,10 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import {moveFile, removeFile, splicePair, type FastqPair} from '../fastq-pairs';
+import {moveFile, removeFile, splicePair} from '../fastq-pairs';
+import type {FastqPair} from '../types';
 import style from '../style.module.scss';
 import FASTQPairItem from './item';
 import useUndoHistory from './undo-history';
+import type {PreviewFilesProps} from './types';
 
 
 function calcStep(distance: number) {
@@ -14,13 +16,6 @@ function calcStep(distance: number) {
     distance = -distance;
   }
   return direction * Math.ceil(distance / 20);
-}
-
-
-export interface PreviewFilesProps {
-  fastqPairs: FastqPair[];
-  onChange: (pairs: FastqPair[]) => void;
-  className?: string;
 }
 
 /**
