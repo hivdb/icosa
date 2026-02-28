@@ -152,4 +152,22 @@ describe('NGSUploadForm component', () => {
 
     ConfigContextMock.use = vi.fn(() => [{messages: {'ngs2codfreq-placeholder': 'Drop FASTQ files here'}}, false] as const);
   });
+
+  describe('Dropzone Configuration', () => {
+    test('dropzone has correct role and tabindex', () => {
+      const {container} = render(<NGSUploadForm isOptionsDefault showOptionsForm={false} />, {wrapper: Wrapper});
+      const dropzone = container.querySelector('[role="presentation"]') as HTMLElement;
+
+      expect(dropzone).toBeInTheDocument();
+      expect(dropzone).toHaveAttribute('tabindex', '0');
+    });
+
+    test('dropzone renders with correct data-drag-active attribute', () => {
+      const {container} = render(<NGSUploadForm isOptionsDefault showOptionsForm={false} />, {wrapper: Wrapper});
+      const dropzone = container.querySelector('[data-drag-active]');
+      
+      expect(dropzone).toBeInTheDocument();
+      expect(dropzone).toHaveAttribute('data-drag-active', 'false');
+    });
+  });
 });

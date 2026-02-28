@@ -5,14 +5,16 @@ import React from 'react';
 import NGSResults from '../../../../src/components/ngs2codfreq/results';
 import type {ProgressPayload} from '../../../../src/components/ngs2codfreq/types';
 
+const mockUseDownload = vi.fn(() => ({
+  onInit: vi.fn(),
+  onAddFile: vi.fn(),
+  onFinish: vi.fn(),
+  loadedFiles: [],
+  isDownloading: false
+}));
+
 vi.mock('../../../../src/utils/download', () => ({
-  useDownload: () => ({
-    onInit: vi.fn(),
-    onAddFile: vi.fn(),
-    onFinish: vi.fn(),
-    loadedFiles: [],
-    isDownloading: false
-  })
+  useDownload: () => mockUseDownload()
 }));
 
 vi.mock('../../../../src/utils/fastq2codfreq', () => ({
@@ -134,5 +136,119 @@ describe('NGSResults component', () => {
     };
     const {container} = render(<NGSResults progressLookup={progressLookup} className="custom" />);
     expect(container.querySelector('.custom__results-container')).toBeInTheDocument();
+  });
+
+  describe('Download All Files', () => {
+    test('calls saveAllFiles when download all button is clicked with showDirectoryPicker support', async () => {
+      const {saveAllFiles} = await import('../../../../src/utils/fastq2codfreq');
+      const progressLookup: Record<string, ProgressPayload> = {
+        'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
+      };
+      
+      // Mock showDirectoryPicker support
+      Object.defineProperty(window, 'showDirectoryPicker', {
+        value: vi.fn(),
+        writable: true,
+        configurable: true
+      });
+
+      render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
+
+      const downloadAllButton = screen.getByText(/Download all files/i);
+      fireEvent.click(downloadAllButton);
+
+      await waitFor(() => {
+        expect(saveAllFiles).toHaveBeenCalledWith('test-task', expect.any(Object));
+      });
+
+      // Cleanup
+      delete (window as any).showDirectoryPicker;
+    });
+
+    test('shows confirmation dialog when showDirectoryPicker is not supported', async () => {
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+      const {saveAllFiles} = await import('../../../../src/utils/fastq2codfreq');
+      const progressLookup: Record<string, ProgressPayload> = {
+        'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
+      };
+
+      // Ensure showDirectoryPicker is not defined
+      delete (window as any).showDirectoryPicker;
+
+      render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
+
+      const downloadAllButton = screen.getByText(/Download all files/i);
+      fireEvent.click(downloadAllButton);
+
+      await waitFor(() => {
+        expect(confirmSpy).toHaveBeenCalled();
+        expect(confirmSpy.mock.calls[0][0]).toContain('not yet supported by your browser');
+      });
+
+      confirmSpy.mockRestore();
+    });
+
+    test('cancels download when user declines confirmation', async () => {
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+      const {saveAllFiles} = await import('../../../../src/utils/fastq2codfreq');
+      const progressLookup: Record<string, ProgressPayload> = {
+        'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
+      };
+
+      delete (window as any).showDirectoryPicker;
+
+      render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
+
+      const downloadAllButton = screen.getByText(/Download all files/i);
+      fireEvent.click(downloadAllButton);
+
+      await waitFor(() => {
+        expect(confirmSpy).toHaveBeenCalled();
+      });
+
+      expect(saveAllFiles).not.toHaveBeenCalled();
+
+      confirmSpy.mockRestore();
+    });
+  });
+
+  describe('Download Progress', () => {
+    test('shows loader when downloading', () => {
+      mockUseDownload.mockReturnValueOnce({
+        onInit: vi.fn(),
+        onAddFile: vi.fn(),
+        onFinish: vi.fn(),
+        loadedFiles: [],
+        isDownloading: true
+      });
+
+      const progressLookup: Record<string, ProgressPayload> = {
+        'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
+      };
+
+      render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
+      expect(screen.getByTestId('loader')).toBeInTheDocument();
+    });
+
+    test('displays loaded files during download', () => {
+      mockUseDownload.mockReturnValueOnce({
+        onInit: vi.fn(),
+        onAddFile: vi.fn(),
+        onFinish: vi.fn(),
+        loadedFiles: ['file1.bam', 'file2.fastq', 'file3.codfreq'],
+        isDownloading: true
+      } as any);
+
+      const progressLookup: Record<string, ProgressPayload> = {
+        'finish-task': {step: 'finish-task', description: 'Complete', count: 1, total: 1, codfreqs: [{}]}
+      };
+
+      render(<NGSResults taskKey="test-task" progressLookup={progressLookup} />);
+      
+      expect(screen.getByTestId('loader')).toBeInTheDocument();
+      expect(screen.getByText('file1.bam')).toBeInTheDocument();
+      expect(screen.getByText('file2.fastq')).toBeInTheDocument();
+      expect(screen.getByText('file3.codfreq')).toBeInTheDocument();
+    });
   });
 });
