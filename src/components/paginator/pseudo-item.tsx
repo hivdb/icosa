@@ -1,11 +1,7 @@
 import React from 'react';
+import type {PseudoItemProps} from './types';
 
-export interface PseudoItemProps {
-  name: string;
-  onClick?: () => void;
-  href?: string;
-  children: React.ReactNode;
-}
+export type {PseudoItemProps};
 
 export default function PseudoItem(_props: PseudoItemProps): null {
   // This component does not render anything by itself; it serves as a

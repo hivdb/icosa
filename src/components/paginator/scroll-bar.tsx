@@ -1,9 +1,8 @@
 import React from 'react';
 import style from './style.module.scss';
+import type {ScrollBarProps} from './types';
 
-export interface ScrollBarProps {
-  onScroll: (offset: number) => boolean | void;
-}
+export type {ScrollBarProps};
 
 function ScrollBar({onScroll}: ScrollBarProps) {
   const scrollBarRef = React.useRef<HTMLDivElement>(null);

@@ -1,11 +1,5 @@
 import React from 'react';
-
-interface UseWheelEventProps {
-  childItems: unknown[];
-  displayNums: number;
-  resetScrollOffset: () => void;
-  onScroll: (steps: number) => void;
-}
+import type {UseWheelEventProps} from './types';
 
 /**
  * Hook to attach a non-passive wheel event listener for paginator navigation.

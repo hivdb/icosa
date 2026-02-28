@@ -1,14 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import PseudoItem, { PseudoItemProps } from './pseudo-item';
+import PseudoItem from './pseudo-item';
 import usePaginatorList from './paginator-list';
 import usePaginatorArrow from './paginator-arrow';
 import ScrollBar from './scroll-bar';
 import useScrollOffset from './use-scroll-offset';
 import useWheelEvent from './use-wheel-event';
 import style from './style.module.scss';
-import { getIndex, PaginatorChildItem } from './funcs';
+import { getIndex } from './funcs';
+import type {PaginatorProps, PseudoItemProps, PaginatorChildItem} from './types';
 
 function useChildItems(children: React.ReactNode): PaginatorChildItem[] {
   return React.useMemo(
@@ -48,14 +49,6 @@ function calcDisplayOffsets({
     }
   }
   return {selectedOffset, hoverOffset, descOffset};
-}
-
-export interface PaginatorProps {
-  inverseColor?: boolean;
-  footnote?: React.ReactNode;
-  currentSelected?: string;
-  className?: string;
-  children: React.ReactNode;
 }
 
 function Paginator({

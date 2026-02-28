@@ -1,11 +1,7 @@
 import React from 'react';
-import { getIndex, PaginatorChildItem } from './funcs';
+import { getIndex } from './funcs';
 import style from './style.module.scss';
-
-interface PaginatorArrowProps {
-  direction: number;
-  onClick: (direction: number) => void;
-}
+import type {PaginatorArrowProps, UsePaginatorArrowProps, PaginatorChildItem} from './types';
 
 function PaginatorArrow({
   direction,
@@ -47,12 +43,6 @@ const MemoPaginatorArrow = React.memo(
     next.onClick === prev.onClick
   )
 );
-
-interface UsePaginatorArrowProps {
-  currentSelected: string;
-  childItems: PaginatorChildItem[];
-  onScroll: (direction: number) => void;
-}
 
 export default function usePaginatorArrow({
   currentSelected,

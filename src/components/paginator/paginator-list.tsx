@@ -1,12 +1,7 @@
 import React from 'react';
-import PaginatorItem, { PaginatorItemProps } from './paginator-item';
+import PaginatorItem from './paginator-item';
 import style from './style.module.scss';
-import { PaginatorChildItem } from './funcs';
-
-export interface UsePaginatorListProps {
-  currentSelected: string;
-  childItems: PaginatorChildItem[];
-}
+import type {UsePaginatorListProps, PaginatorItemProps, PaginatorChildItem} from './types';
 
 /**
  * Build a list of paginator items and track the currently hovered item.
@@ -30,7 +25,7 @@ export default function usePaginatorList({
           {childItems.map((props, idx) => (
             <PaginatorItem
              key={idx}
-             {...(props as PaginatorItemProps)}
+             {...(props as unknown as PaginatorItemProps)}
              index={idx}
              isSelected={currentSelected === props.name}
              isHovering={currentHovering === props.name}

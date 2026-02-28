@@ -1,16 +1,8 @@
 import React from 'react';
 import style from './style.module.scss';
+import type {PaginatorItemProps} from './types';
 
-export interface PaginatorItemProps {
-  index: number;
-  name: string;
-  href?: string;
-  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  children: React.ReactNode;
-  isSelected: boolean;
-  isHovering?: boolean;
-  setCurrentHovering: (name: string | null) => void;
-}
+export type {PaginatorItemProps};
 
 function PaginatorItem({
   index,

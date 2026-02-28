@@ -1,11 +1,6 @@
 import React from 'react';
-import { getIndex, PaginatorChildItem } from './funcs';
-
-interface UseScrollOffsetProps {
-  currentSelected: string;
-  childItems: PaginatorChildItem[];
-  displayNums: number;
-}
+import { getIndex } from './funcs';
+import type {UseScrollOffsetProps, PaginatorChildItem} from './types';
 
 function calcInitScrollOffset({
   currentSelected,

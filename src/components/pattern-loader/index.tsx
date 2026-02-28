@@ -8,18 +8,14 @@ import {
 } from '../../utils/mutation';
 import {v5 as uuidv5} from 'uuid';
 
+import type {
+  Pattern,
+  CurrentSelected,
+  UseCurrentSelectedProps,
+  PatternLoaderProps
+} from './types';
+
 const UUID_NAMESPACE = '14ee7f0c-7b10-425e-a4b1-b9f0a03ab5a9';
-
-interface Pattern {
-  uuid: string;
-  name: string;
-  mutations: string[];
-}
-
-interface CurrentSelected {
-  index: number;
-  name: string;
-}
 
 /**
  * Derive the currently selected pattern based on the router state.
@@ -30,7 +26,7 @@ interface CurrentSelected {
 function useCurrentSelected({
   lazyLoad,
   patterns
-}: {lazyLoad: boolean; patterns: Pattern[]}): CurrentSelected | Record<string, never> {
+}: UseCurrentSelectedProps): CurrentSelected | Record<string, never> {
   const {
     match: {location = {query: {}}}
   } = useRouter();
@@ -108,16 +104,6 @@ function usePatterns() {
     ]
   );
   return [patterns, isConfigPending] as [Pattern[], boolean];
-}
-
-interface PatternLoaderProps {
-  children: (args: {
-    patterns: Pattern[];
-    isPending: boolean;
-    currentSelected: CurrentSelected;
-  }) => React.ReactElement;
-  childProps?: Record<string, unknown>;
-  lazyLoad: boolean;
 }
 
 /**
