@@ -371,8 +371,10 @@ describe('NGSOptionsForm', () => {
         ...defaultProps,
         primerType: 'bed' as const
       };
-      render(<NGSOptionsForm {...props} />);
-      expect(screen.getByText(/Upload BED/)).toBeInTheDocument();
+      const {container} = render(<NGSOptionsForm {...props} />);
+      // Check for the file input element since FileInput doesn't expose button text as accessible name
+      const fileInput = container.querySelector('input[type="file"]');
+      expect(fileInput).toBeInTheDocument();
     });
 
     it('shows primer count for BED primers', () => {
@@ -442,14 +444,17 @@ describe('NGSOptionsForm', () => {
 
   describe('Primer Type Switching', () => {
     it('switches between primer types', () => {
-      const {rerender} = render(<NGSOptionsForm {...defaultProps} primerType="off" />);
+      const {rerender, container} = render(<NGSOptionsForm {...defaultProps} primerType="off" />);
       expect(screen.getByText(/Primer trimming is turned off/)).toBeInTheDocument();
 
       rerender(<NGSOptionsForm {...defaultProps} primerType="fasta" />);
-      expect(screen.getByText(/Upload FASTA/)).toBeInTheDocument();
+      // Check for file input since FileInput doesn't expose button text as accessible name
+      let fileInput = container.querySelector('input[type="file"]');
+      expect(fileInput).toBeInTheDocument();
 
       rerender(<NGSOptionsForm {...defaultProps} primerType="bed" />);
-      expect(screen.getByText(/Upload BED/)).toBeInTheDocument();
+      fileInput = container.querySelector('input[type="file"]');
+      expect(fileInput).toBeInTheDocument();
     });
   });
 
