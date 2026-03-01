@@ -2,20 +2,7 @@ import React from 'react';
 import GenomeMap from '../../components/genome-map';
 import PromiseComponent from '../../utils/promise-component';
 import PresetSelection from './preset-selection';
-import type {Preset} from '../../components/genome-map/types';
-
-interface Option {
-  value: string;
-  label: React.ReactNode;
-}
-
-/**
- * Properties for the {@link GenomeViewer} component.
- */
-interface GenomeViewerProps {
-  options: Option[];
-  preset: Preset;
-}
+import type {GenomeViewerProps, GenomeViewerLoaderProps} from './types';
 
 /**
  * Renders a genome map with preset selection controls.
@@ -36,10 +23,6 @@ function GenomeViewer({options, preset}: GenomeViewerProps) {
       />
     </>
   );
-}
-
-interface GenomeViewerLoaderProps {
-  presetLoader: () => Promise<Preset & {presets: {name: string; label: React.ReactNode}[]}>;
 }
 
 /**

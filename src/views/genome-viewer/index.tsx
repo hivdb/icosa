@@ -5,23 +5,12 @@ import Loader from '../../components/loader';
 
 import PromiseComponent from '../../utils/promise-component';
 import CustomColors from '../../components/custom-colors';
+import type {SelectOption} from '../../components/select';
+import type {GenomeViewerRoutesProps} from './types';
 import style from './style.module.scss';
 
 const PresetSelection = lazy(() => import('./preset-selection'));
 const GenomeViewer = lazy(() => import('./viewer'));
-
-interface PresetSummary {
-  name: string;
-  label: React.ReactNode;
-}
-
-interface GenomeViewerRoutesProps {
-  pathPrefix?: string;
-  indexLoader: () => Promise<{presets: PresetSummary[]}>;
-  makePresetLoader: (name: string) => () => Promise<any>;
-  colors?: Record<string, string>;
-  className?: string;
-}
 
 /**
  * Defines Found routes and lazy-loaded components for the genome viewer.
@@ -46,7 +35,10 @@ export default function GenomeViewerRoutes({
           const promise = (async () => {
             const {presets} = await indexLoader();
             return {
-              options: presets.map(({name, label}) => ({ value: name, label })),
+              options: presets.map(({name, label}): SelectOption => ({ 
+                value: name, 
+                label: String(label) 
+              })),
               className: style['main-preset-selection']
             };
           })();

@@ -1,20 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
-import Dropdown, { ReactDropdownProps } from 'react-dropdown';
 import {useRouter} from 'found';
+import Select from '../../components/select';
+import type {SelectOption} from '../../components/select';
+import type {PresetSelectionProps} from './types';
 
 import style from './style.module.scss';
-
-interface Option {
-  value: string;
-  label: React.ReactNode;
-}
-
-interface PresetSelectionProps {
-  className?: string;
-  options: Option[];
-  as?: keyof React.JSX.IntrinsicElements | React.ComponentType<any>;
-}
 
 /**
  * Renders a dropdown for selecting genome viewer presets and updates the
@@ -52,7 +43,11 @@ export default function PresetSelection({
 
   // Swap the preset segment in the path when the user picks a new option
   const handleChange = React.useCallback(
-    ({value}: {value: string}) => {
+    (selectedOption: SelectOption | null) => {
+      if (!selectedOption?.value) {
+        return;
+      }
+      const {value} = selectedOption;
       const presetName = splittedPathName[splittedPathName.length - 1];
       let pathname: string;
       if (options.find(({value: v}) => v === presetName)) {
@@ -66,13 +61,19 @@ export default function PresetSelection({
   );
 
   const Wrapper: React.ElementType = Component;
+  const selectedValue = React.useMemo(
+    () => options.find(opt => opt.value === current) ?? null,
+    [current, options]
+  );
+
   return (
     <Wrapper className={classNames(style['preset-selection'], className)}>
-      <Dropdown
-        value={current ?? undefined}
+      <Select
+        name="preset"
+        value={selectedValue}
         placeholder="Choose a genome view..."
         options={options}
-        onChange={handleChange as ReactDropdownProps['onChange']}
+        onChange={handleChange}
       />
     </Wrapper>
   );
