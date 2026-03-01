@@ -5,12 +5,16 @@ import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
 import {H3} from '../../heading-tags';
 import CheckboxInput from '../../checkbox-input';
 import GenomeMap from '../../genome-map';
-import type {Preset} from '../../genome-map/types';
 import verticalTabsStyle, {useToggleTabs} from '../../vertical-tabs-style';
 import ConfigContext from '../../../utils/config-context';
 import createPersistedReducer from '../../../utils/use-persisted-reducer';
 
 import ReportSection from '../report-section';
+import type {
+  MutationViewerProps,
+  MutationViewerLoaderProps,
+  ExtendedPreset
+} from './types';
 
 import {
   getUnsequencedRegions,
@@ -23,26 +27,6 @@ const useViewReducer = createPersistedReducer(
   '--sierra-report-genome-map-view-opt'
 );
 
-export interface MutationViewerProps {
-  title?: string;
-  strain?: string;
-  output?: string;
-  children?: React.ReactNode;
-  defaultView?: "collapse" | "expansion";
-  hideViewToggler?: boolean;
-  viewCheckboxLabel?: string;
-  noUnseqRegions?: boolean;
-  regionPresets: any;
-  highlightUnusualMutation?: boolean;
-  highlightDRM?: boolean;
-  defaultPresetIndex?: number;
-  allGeneSeqs: Array<{gene:{name:string}; unsequencedRegions?: {regions: Array<{posStart:number; posEnd:number}>}}>;
-  coverages?: Array<{gene:string; position:number; coverage:number}>;
-  coverageUpperLimit?: number;
-}
-
-
-
 
 /**
  * Render genome mutation maps with optional collapse/expansion.
@@ -50,7 +34,7 @@ export interface MutationViewerProps {
  * @param props - {@link MutationViewerProps} properties controlling display
  * @returns Rendered mutation viewer section
  */
-function MutationViewer({
+export function MutationViewer({
   title = 'Mutation map',
   children,
   defaultView = 'collapse',
@@ -84,24 +68,12 @@ function MutationViewer({
   );
 
 
-  interface Payload extends Preset {
-    hasCoverage: boolean;
-  }
-
-  const payloads: Payload[] = React.useMemo(
+  const payloads: ExtendedPreset[] = React.useMemo(
     () =>
       presets.map(({
         name: curName,
         highlightGenes,
         preset: { minHeight, regions, ...otherPreset }
-      }: {
-        name: string;
-        highlightGenes?: string[];
-        preset: {
-          minHeight: number;
-          regions: Array<{ posStart: number; posEnd: number }>;
-          [key: string]: unknown;
-        };
       }) => {
         const presetPosStart = Math.min(
           ...regions.map(({ posStart }: { posStart: number }) => posStart)
@@ -165,7 +137,7 @@ function MutationViewer({
             maxPos: presetPosEnd,
             coverageUpperLimit
           })
-        } as Payload;
+        };
       }),
     [
       strain,
@@ -241,7 +213,7 @@ function MutationViewer({
             ))}
           </TabList>
           {togglerNode}
-          {payloads.map((payload: Payload) => (
+          {payloads.map((payload: ExtendedPreset) => (
             <TabPanel
              data-hide={!showAll && !payload.hasCoverage}
              key={`tabpanel-${payload.name}`}>
@@ -280,7 +252,7 @@ function MutationViewer({
  * @param props - {@link MutationViewerProps} without context-supplied fields
  * @returns MutationViewer component wrapped with context values
  */
-export default function MutationViewerLoader(props: Omit<MutationViewerProps, 'regionPresets' | 'hideViewToggler' | 'highlightUnusualMutation' | 'highlightDRM'>) {
+export default function MutationViewerLoader(props: MutationViewerLoaderProps) {
 
   return <ConfigContext.Consumer>
     {({
