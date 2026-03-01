@@ -3,19 +3,21 @@ import ConfigContext from '../../../utils/config-context';
 
 import GeneMutationList from './gene-mutation-list';
 import style from './style.module.scss';
-import type {MutationListProps, AppConfig} from './types';
+import type {MutationListProps} from './types';
+import type {MutationConfig} from '../../mutation/types';
 
 /**
  * Type guard to check if config has required MutationConfig fields.
  */
-function isValidConfig(config: Record<string, unknown> | null): config is AppConfig {
+function isValidConfig(config: unknown): config is MutationConfig {
   return (
     config !== null &&
     typeof config === 'object' &&
+    config !== undefined &&
     'geneDisplay' in config &&
     'messages' in config &&
-    typeof config.geneDisplay === 'object' &&
-    typeof config.messages === 'object'
+    typeof (config as MutationConfig).geneDisplay === 'object' &&
+    typeof (config as MutationConfig).messages === 'object'
   );
 }
 

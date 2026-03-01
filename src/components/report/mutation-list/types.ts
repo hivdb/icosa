@@ -5,13 +5,6 @@
 import type {MutationConfig} from '../../mutation/types';
 
 /**
- * Application configuration that extends MutationConfig with additional fields.
- */
-export interface AppConfig extends MutationConfig {
-  [key: string]: unknown;
-}
-
-/**
  * Properties for {@link MutationList} component.
  */
 export interface MutationListProps {
@@ -36,7 +29,7 @@ export interface GeneMutationListProps {
   /**
    * Global configuration object.
    */
-  config: AppConfig;
+  config: MutationConfig;
   /**
    * Mapping from gene name to display name.
    */
