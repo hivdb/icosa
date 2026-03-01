@@ -3,6 +3,7 @@ import React from 'react';
 import Mutation from '../../mutation';
 import style from './style.module.scss';
 import shortenMutationList from '../../../utils/shorten-mutation-list';
+import type {GeneMutationListProps} from './types';
 
 /**
  * Displays mutations for a specific gene.
@@ -13,18 +14,12 @@ import shortenMutationList from '../../../utils/shorten-mutation-list';
  * @param mutations - List of mutation objects for the gene.
  * @returns List item containing mutation entries when available.
  */
-export interface GeneMutationListProps {
-  config: any;
-  geneDisplay: Record<string, string>;
-  gene: {name: string};
-  mutations: any[];
-}
 
 export default function GeneMutationList({
   config,
   geneDisplay,
   gene: {name: geneName},
-  mutations
+  mutations = []
 }: GeneMutationListProps) {
   const shortMutations = React.useMemo(
     () => shortenMutationList(

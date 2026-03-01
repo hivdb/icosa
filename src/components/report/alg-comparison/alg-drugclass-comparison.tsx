@@ -2,14 +2,14 @@ import React from 'react';
 import {FaAngleDoubleRight} from '@react-icons/all-files/fa/FaAngleDoubleRight';
 
 import nl2br from '../../../utils/nl2br';
+import type {AlgDrugClassComparisonProps, Drug, DrugScore} from './types';
 
 import style from '../style.module.scss';
 
 /**
  * Display comparison details for a specific drug class across algorithms.
  *
- * @param props - Component props.
- * @param props.drugScores - List of scores for each drug and algorithm within
+ * @param drugScores - List of scores for each drug and algorithm within
  * the drug class.
  * @returns A responsive table rendering algorithm scores per drug.
  */
@@ -150,27 +150,4 @@ export default function AlgDrugClassComparison({
   );
 }
 
-/**
- * Properties for {@link AlgDrugClassComparison} component.
- */
-export interface AlgDrugClassComparisonProps {
-  /**
-   * List of scores for each drug and algorithm.
-   */
-  drugScores: DrugScore[];
-}
-
-/** Representation of a drug object. */
-export interface Drug {
-  name: string;
-  displayAbbr: string;
-}
-
-/** Representation of a drug score for an algorithm. */
-export interface DrugScore {
-  drug: Drug;
-  algorithm: string;
-  SIR: string;
-  interpretation: string;
-  explanation: string;
-}
+export type {AlgDrugClassComparisonProps, Drug, DrugScore} from './types';
