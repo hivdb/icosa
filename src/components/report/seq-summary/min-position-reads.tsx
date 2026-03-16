@@ -1,6 +1,7 @@
 import {memo, useCallback, useMemo} from 'react';
 import {useRouter} from 'found';
-import Dropdown from 'react-dropdown';
+import Select from '../../select';
+import type {SelectOption} from '../../select/types';
 import {HoverPopup} from '../../popup';
 import useMessages from '../../../utils/use-messages';
 
@@ -42,7 +43,7 @@ function MinPositionReads({
     curValue = Number.isNaN(parsed) ? defaultValue : parsed;
   }
 
-  const dropdownOptions = useMemo(
+  const selectOptions: SelectOption[] = useMemo(
     () => options.map(({label, value}) => ({label, value: String(value)})),
     [options]
   );
@@ -50,13 +51,14 @@ function MinPositionReads({
   /**
    * Handle updates to the minimum position reads threshold.
    *
-   * @param value - Selected read depth as a string.
+   * @param option - Selected read depth option.
    */
   const handleChange = useCallback(
-    ({value: posreads}: {value: string}) => {
+    (option: SelectOption | null) => {
+      if (!option || !option.value) return;
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
-      newLoc.query.posreads = posreads;
+      newLoc.query.posreads = option.value;
       router.push(newLoc);
     },
     [match.location, router]
@@ -77,11 +79,17 @@ function MinPositionReads({
       </HoverPopup>
     </dt>
     <dd className={style['has-dropdown']}>
-      <Dropdown
-       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
+      <Select
+       inputId="min-position-reads"
+       name="min-position-reads"
+       classNamePrefix={style.select}
+       value={selectOptions.find(({value}) => Number(value) === curValue) ?? null}
        placeholder="..."
-       options={dropdownOptions}
+       options={selectOptions}
        onChange={handleChange}
+       isClearable={false}
+       isSearchable={false}
+       testId="min-position-reads-select"
       />
     </dd>
   </>;

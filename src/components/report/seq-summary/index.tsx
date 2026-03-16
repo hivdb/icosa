@@ -339,3 +339,4 @@ SeqSummaryWrapper.ThresholdNomogram = ThresholdNomogram;
 SeqSummaryWrapper.Genotype = Genotype;
 
 export default SeqSummaryWrapper;
+export {SeqSummary};

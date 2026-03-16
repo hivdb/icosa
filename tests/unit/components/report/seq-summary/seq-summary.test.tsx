@@ -36,7 +36,7 @@ import {PrettyPairwiseButton, PrettyPairwiseList} from '../../../../../src/compo
 import {SDRMButton, SDRMList} from '../../../../../src/components/report/seq-summary/sdrm-list';
 import Subtype from '../../../../../src/components/report/seq-summary/subtype';
 import ThresholdNomogram from '../../../../../src/components/report/seq-summary/threshold-nomogram';
-import SeqSummary from '../../../../../src/components/report/seq-summary';
+import SeqSummaryWrapper, {SeqSummary} from '../../../../../src/components/report/seq-summary';
 import ConfigContext from '../../../../../src/utils/config-context';
 
 // Mock makeDownload
@@ -145,8 +145,79 @@ describe('Seq Summary components', () => {
     expect(screen.getByTestId('nomogram')).toBeInTheDocument();
   });
 
-  // test('SeqSummaryWrapper renders section', () => {
-  //   renderWithConfig(<SeqSummary cutoffKeyPoints={[]} includeGenes={[]} availableGenes={[]} headless={false} children={[]} />);
-  //   expect(screen.getByText('Sequence summary')).toBeInTheDocument();
-  // });
+  test('SeqSummary renders with default children', () => {
+    const config = {
+      messages: {},
+      geneDisplay: {G: 'GeneG'},
+      allGenes: ['G'],
+      highlightGenes: [],
+      displaySDRMs: true
+    };
+    const mockMatch = {location: {query: {}}} as any;
+    const mockRouter = {push: vi.fn()} as any;
+    
+    render(
+      <SeqSummary
+        config={config}
+        match={mockMatch}
+        router={mockRouter}
+        cutoffKeyPoints={[]}
+        includeGenes={['G']}
+        availableGenes={['G']}
+        headless={false}
+      />
+    );
+    expect(screen.getByText('Sequence summary')).toBeInTheDocument();
+  });
+
+  test('SeqSummary renders headless mode', () => {
+    const config = {geneDisplay: {}, allGenes: [], highlightGenes: []};
+    const mockMatch = {location: {query: {}}} as any;
+    const mockRouter = {push: vi.fn()} as any;
+    
+    render(
+      <SeqSummary
+        config={config}
+        match={mockMatch}
+        router={mockRouter}
+        cutoffKeyPoints={[]}
+        includeGenes={[]}
+        availableGenes={[]}
+        headless={true}
+        children={[]}
+      />
+    );
+    expect(screen.queryByText('Sequence summary')).not.toBeInTheDocument();
+  });
+
+  test('SeqSummary renders with gene sequences', () => {
+    const config = {
+      geneDisplay: {G: 'GeneG'},
+      allGenes: ['G'],
+      highlightGenes: []
+    };
+    const geneSeq = {
+      gene: {name: 'G'},
+      mutations: [],
+      unsequencedRegions: {size: 0, regions: []}
+    };
+    const mockMatch = {location: {query: {}}} as any;
+    const mockRouter = {push: vi.fn()} as any;
+    
+    render(
+      <SeqSummary
+        config={config}
+        match={mockMatch}
+        router={mockRouter}
+        cutoffKeyPoints={[]}
+        includeGenes={['G']}
+        availableGenes={['G']}
+        alignedGeneSequences={[geneSeq]}
+        children={[
+          <SeqSummaryWrapper.InlineGeneRange key="1" />
+        ]}
+      />
+    );
+    expect(screen.getByText('GeneG')).toBeInTheDocument();
+  });
 });

@@ -132,7 +132,7 @@
     color: color(dropdown-opt-selected);
   }
 
-  .#{$class-name-prefix}:global(__option--is-focused) {
+  .#{$class-name-prefix}:global(__option--is-focused):not(.#{$class-name-prefix}:global(__option--is-selected)):not(:hover) {
     background-color: transparent;
     color: inherit;
   }

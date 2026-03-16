@@ -1,6 +1,7 @@
 import {memo, useCallback} from 'react';
 import {useRouter} from 'found';
-import Dropdown from 'react-dropdown';
+import Select from '../../select';
+import type {SelectOption} from '../../select/types';
 
 import style from './style.module.scss';
 
@@ -38,7 +39,7 @@ function MinCodonReads({
     curValue = Number.isNaN(parsed) ? defaultValue : parsed;
   }
 
-  const dropdownOptions = options.map(({label, value}) => ({
+  const selectOptions: SelectOption[] = options.map(({label, value}) => ({
     label,
     value: String(value)
   }));
@@ -46,13 +47,14 @@ function MinCodonReads({
   /**
    * Update router query with new minimum codon reads threshold.
    *
-   * @param value - Selected threshold as a string.
+   * @param option - Selected threshold option.
    */
   const handleChange = useCallback(
-    ({value: cdreads}: {value: string}) => {
+    (option: SelectOption | null) => {
+      if (!option || !option.value) return;
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
-      newLoc.query.cdreads = cdreads;
+      newLoc.query.cdreads = option.value;
       router.push(newLoc);
     },
     [match.location, router]
@@ -63,11 +65,17 @@ function MinCodonReads({
       Mutation occurrence threshold:
     </dt>
     <dd className={style['has-dropdown']}>
-      <Dropdown
-       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
+      <Select
+       inputId="min-codon-reads"
+       name="min-codon-reads"
+       classNamePrefix={style.select}
+       value={selectOptions.find(({value}) => Number(value) === curValue) ?? null}
        placeholder="..."
-       options={dropdownOptions}
-       onChange={handleChange} />
+       options={selectOptions}
+       onChange={handleChange}
+       isClearable={false}
+       isSearchable={false}
+       testId="min-codon-reads-select" />
     </dd>
   </>;
 

@@ -2,7 +2,7 @@
 @use "../../../styles/tabs" as *;
 @use "../../../styles/mixins" as *;
 @use "../../../styles/colors" as *;
-@use "../../../styles/dropdown" as *;
+@use "../../../styles/select" as *;
 @use "../../../styles/functions" as *;
 
 .seq-summary {
@@ -17,21 +17,25 @@
 .desc-list {
   max-width: max(60%, 1400px);
   @include desc-list(var(--title-width), $overflow: visible);
+  
+  // Apply general-select styling
+  @include general-select('select');
+  
   .has-dropdown {
-    @extend %small-dropdown;
-    :global .Dropdown-root {
-      width: 9rem;
-      display: inline-block;
-    }
-    // display: inline-block;
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
+    
+    .select:global(__control) {
+      width: 9rem;
+    }
+    
     @media screen and (max-width: 640px) {
       margin-left: 0;
-      :global .Dropdown-root {
+      .select:global(__control) {
         width: 100%;
       }
     }
+    
     .dropdown-after {
       margin-left: .5rem;
     }
@@ -85,8 +89,6 @@ ul.outbreak-info-list {
   margin-bottom: 0;
   padding-left: 0;
   list-style-type: none;
-  > li {
-  }
 }
 
 ul.subtype-details {

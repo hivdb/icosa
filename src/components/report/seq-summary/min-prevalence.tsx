@@ -1,6 +1,7 @@
 import React from 'react';
 import {useRouter} from 'found';
-import Dropdown from 'react-dropdown';
+import Select from '../../select';
+import type {SelectOption} from '../../select/types';
 import {HoverPopup} from '../../popup';
 import useMessages from '../../../utils/use-messages';
 
@@ -42,14 +43,15 @@ function MinPrevalence({
     }
   }
 
-  const dropdownOptions = React.useMemo(
+  const selectOptions: SelectOption[] = React.useMemo(
     () => options.map(({label, value}) => ({label, value: String(value)})),
     [options]
   );
 
   const handleChange = React.useCallback(
-    ({value: cutoff}: {value: string}) => {
-      const numCutoff = parseFloat(cutoff);
+    (option: SelectOption | null) => {
+      if (!option || !option.value) return;
+      const numCutoff = parseFloat(option.value);
       const newLoc = {...match.location};
       newLoc.query = newLoc.query ? newLoc.query : {};
       newLoc.query.cutoff = String(numCutoff);
@@ -73,11 +75,17 @@ function MinPrevalence({
       </HoverPopup>
     </dt>
     <dd className={style['has-dropdown']}>
-      <Dropdown
-       value={dropdownOptions.find(({value}) => Number(value) === curValue)}
+      <Select
+       inputId="min-prevalence"
+       name="min-prevalence"
+       classNamePrefix={style.select}
+       value={selectOptions.find(({value}) => Number(value) === curValue) ?? null}
        placeholder="..."
-       options={dropdownOptions}
+       options={selectOptions}
        onChange={handleChange}
+       isClearable={false}
+       isSearchable={false}
+       testId="min-prevalence-select"
       />
     </dd>
   </>;
