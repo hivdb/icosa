@@ -7,6 +7,9 @@ import {getFullLink} from '../../utils/cms';
 import setTitle from '../../utils/set-title';
 import AnalyzeForms, {useBasePath} from '../../components/analyze-forms';
 import Intro, {IntroHeader} from '../../components/intro';
+import HCVTabularReportBySequences, {
+  subOptions as sequenceSubOptions
+} from './tabular-report-by-sequences';
 
 function Forms({config, curAnalysis, match, router}) {
   const basePath = useBasePath(match.location);
@@ -28,6 +31,14 @@ function Forms({config, curAnalysis, match, router}) {
      sequencesOutputOptions={{
        __printable: {
          label: 'Printable HTML'
+       },
+       csv: {
+         label: 'Machine-readable data (CSV/JSON)',
+         subOptions: sequenceSubOptions,
+         defaultSubOptions: sequenceSubOptions.map((_, idx) => idx),
+         renderer: props => <HCVTabularReportBySequences
+          patternsTo={`${basePath}/by-patterns/report/`}
+          {...props} />
        }
      }}
      exampleFasta={config.sequenceExamples.map(({url, title}) => ({
