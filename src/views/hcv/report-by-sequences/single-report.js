@@ -1,0 +1,103 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import {
+  ReportHeader,
+  ValidationReport,
+  SeqSummary,
+  MutationViewer as MutViewer,
+  RefContextWrapper
+} from '../../../components/report';
+
+import style from '../style.module.scss';
+
+
+SingleSequenceReport.propTypes = {
+  header: PropTypes.string,
+  currentSelected: PropTypes.object,
+  sequenceResult: PropTypes.object,
+  output: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onObserve: PropTypes.func.isRequired,
+  onDisconnect: PropTypes.func,
+  children: PropTypes.node
+};
+
+
+function SingleSequenceReport({
+  sequenceResult,
+  output,
+  header,
+  index,
+  onObserve,
+  onDisconnect,
+  children
+}) {
+
+  const {
+    alignedGeneSequences,
+    strain: {name: strain} = {}
+  } = sequenceResult || {};
+
+  return (
+    <article
+     data-loaded={!!sequenceResult}
+     className={style['sequence-article']}>
+      <RefContextWrapper>
+        <ReportHeader
+         output={output}
+         name={header}
+         index={index}
+         onObserve={onObserve}
+         onDisconnect={onDisconnect} />
+        {sequenceResult ? <>
+          <SeqSummary {...sequenceResult} {...{output, strain}}>
+            <SeqSummary.InlineGeneRange />
+            <SeqSummary.Genotype />
+            <SeqSummary.PrettyPairwise />
+          </SeqSummary>
+          <MutViewer {...{
+            title: 'Mutation map & quality assessment',
+            defaultView: 'expansion',
+            allGeneSeqs: alignedGeneSequences,
+            output,
+            strain
+          }}>
+            <ValidationReport {...sequenceResult} {...{output, strain}} />
+          </MutViewer>
+          {children}
+        </> : null}
+      </RefContextWrapper>
+    </article>
+  );
+
+}
+
+export default React.memo(
+  SingleSequenceReport,
+  (
+    {
+      index: prevIndex,
+      output: prevOutput,
+      onObserve: prevOnObserve,
+      header: prevHeader,
+      sequenceResult: prevResult,
+      children: prevChildren
+    },
+    {
+      index: nextIndex,
+      output: nextOutput,
+      onObserve: nextOnObserve,
+      header: nextHeader,
+      sequenceResult: nextResult,
+      children: nextChildren
+    }
+  ) => (
+    prevIndex === nextIndex &&
+    prevOutput === nextOutput &&
+    prevOnObserve === nextOnObserve &&
+    prevHeader === nextHeader &&
+    prevResult === nextResult &&
+    prevChildren === nextChildren
+  )
+);

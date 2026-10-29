@@ -1,6 +1,6 @@
 import drmList from './drm-list.json';
 
-// The HCV DRM list is combined across genotypes. Keep its special
+// The HCV RAS list is combined across genotypes. Keep its special
 // reference-dependent checks alongside the position/amino-acid list.
 function isSpecialDRM(geneName, {position, reference, AAs}) {
   const hasAA = aa => AAs.includes(aa);

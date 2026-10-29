@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import ConfigContext from '../../../utils/config-context';
 import SequenceAnalysisLayout from
   '../../../components/sequence-analysis-layout';
-import useApolloClient from '../../hbv/apollo-client';
-import useExtendVariables from '../../hbv/use-extend-variables';
+import useApolloClient from '../apollo-client';
+import useExtendVariables from '../use-extend-variables';
 import query from './query.graphql';
 import HCVTabularReports from './reports';
 import {subOptions} from './sub-options';

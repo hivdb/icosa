@@ -4,7 +4,7 @@ import {Route, Redirect} from 'found';
 import Loader from '../../components/loader';
 import ConfigContext, {useConfigLoader} from '../../utils/config-context';
 import defaultConfig from './config';
-import style from '../hbv/style.module.scss';
+import style from './style.module.scss';
 
 const Forms = lazy(() => import('./forms'));
 const PatternReport = lazy(() => import('./report-by-patterns'));

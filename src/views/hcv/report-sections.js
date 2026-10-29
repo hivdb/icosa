@@ -39,7 +39,7 @@ export function ResistanceSummary({geneSequences = []}) {
     <ReportSection
      key={gene.name}
      title={`Drug resistance interpretation: ${gene.name}`}
-     titleAnnotation="HCV DRM list">
+     titleAnnotation="HCV RAS list">
       <DRMutationByTypes
        gene={gene}
        mutationsByTypes={mutationGroups(gene.name, mutations)} />

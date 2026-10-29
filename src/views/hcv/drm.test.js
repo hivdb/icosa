@@ -1,7 +1,7 @@
 import {isMajorMutation, mutationGroups, classifyGeneMutations} from './drm';
 
 describe('HCV mutation groups', () => {
-  test('uses the HCV DRM list and keeps other mutations separate', () => {
+  test('uses the HCV RAS list and keeps other mutations separate', () => {
     const mutations = [
       {position: 80, reference: 'Q', AAs: 'R', text: 'Q80R'},
       {position: 87, reference: 'A', AAs: 'S', text: 'A87S'}

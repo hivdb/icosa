@@ -8,14 +8,14 @@ import SequenceAnalysisLayout from '../../components/sequence-analysis-layout';
 import {useReportPaginator} from '../../components/report';
 import PageBreak from '../../components/page-break';
 import setTitle from '../../utils/set-title';
-import useApolloClient from '../hbv/apollo-client';
-import useExtendVariables from '../hbv/use-extend-variables';
-import PrintHeader from '../hbv/print-header';
-import SingleSequenceReport from '../hbv/report-by-sequences/single-report';
+import useApolloClient from './apollo-client';
+import useExtendVariables from './use-extend-variables';
+import PrintHeader from './print-header';
+import SingleSequenceReport from './report-by-sequences/single-report';
 import query from './sequence-query.graphql';
 import {ResistanceSummary} from './report-sections';
 import {classifyGeneMutations} from './drm';
-import style from '../hbv/style.module.scss';
+import style from './style.module.scss';
 
 function SequenceResults({
   sequences, sequenceAnalysis, currentSelected, loaded, fetchAnother, output
@@ -47,7 +47,6 @@ function SequenceResults({
            output={output}
            sequenceResult={result ? {
              ...result,
-             drugResistance: result.drugResistance || [],
              alignedGeneSequences,
              includeGenes: alignedGeneSequences.map(
                ({gene}) => gene.name

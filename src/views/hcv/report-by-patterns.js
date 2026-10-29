@@ -16,13 +16,13 @@ import {
   '../../components/report';
 import PageBreak from '../../components/page-break';
 import setTitle from '../../utils/set-title';
-import useApolloClient from '../hbv/apollo-client';
-import PrintHeader from '../hbv/print-header';
+import useApolloClient from './apollo-client';
+import PrintHeader from './print-header';
 import query from './pattern-query.graphql';
 import {GeneMutations, ResistanceSummary} from './report-sections';
 import {classifyGeneMutations} from './drm';
 import {allGenes} from './region-presets';
-import style from '../hbv/style.module.scss';
+import style from './style.module.scss';
 
 function PatternResults({
   patterns, patternAnalysis, currentSelected, loaded, fetchAnother, output
