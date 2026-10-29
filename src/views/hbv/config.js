@@ -6,7 +6,7 @@ const config = {
   graphqlURI: (
     window.__NODE_ENV === 'production' ?
       '/hbv/graphql' :
-      'https://hivdb.stanford.edu/hbv/graphql'),
+      'http://localhost:8118/Sierra-HBV/graphql'),
   cmsStages: {
     'hivdb.stanford.edu': 'cms.hivdb.org/prod',
     'staging.hivdb.org': 's3-us-west-2.amazonaws.com/cms.hivdb.org/staging',
