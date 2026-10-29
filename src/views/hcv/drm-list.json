@@ -1,0 +1,42 @@
+{
+  "NS3": {
+    "36": "ACFGILM",
+    "41": "KR",
+    "43": "ILSV",
+    "54": "ACGS",
+    "55": "AI",
+    "56": "FHL",
+    "80": "HKLQR",
+    "122": "ADGINRT",
+    "155": "CGIKLMQSTVW",
+    "156": "GHKLMPSTV",
+    "158": "I",
+    "166": "STY",
+    "168": "ACEFGHIKLNQRSTVY",
+    "170": "ALTV",
+    "175": "L"
+  },
+  "NS5A_NTD": {
+    "24": "AEFHKQRST",
+    "26": "E",
+    "28": "ACGIKLMSTV",
+    "29": "#RS",
+    "30": "#CDEFGHKLNPQRSTY",
+    "31": "FIMPVW",
+    "32": "#AFLQRS",
+    "38": "F",
+    "58": "ACDGHLNPRST",
+    "62": "DL",
+    "92": "EKRSTVW",
+    "93": "ACFHLNRSTW"
+  },
+  "NS5B": {
+    "150": "V",
+    "159": "F",
+    "206": "E",
+    "282": "CGRT",
+    "316": "FHN",
+    "320": "FIV",
+    "321": "AI"
+  }
+}

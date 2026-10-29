@@ -239,7 +239,9 @@ function MutationViewer({
             {presets.map(({name, label}, idx) => (
               <Tab
                data-hide={!showAll && !payloads[idx].hasCoverage}
-               key={`tab-${name}`}>{label} ({name})</Tab>
+               key={`tab-${name}`}>
+                {label && label !== name ? `${label} (${name})` : name}
+              </Tab>
             ))}
           </TabList>
           {togglerNode}
@@ -259,7 +261,9 @@ function MutationViewer({
            key={`section=${name}`}
            data-hide={!showAll && !payloads[idx].hasCoverage}
            className={style['genome-map-expanded']}>
-            <H3 disableAnchor>{label} ({name})</H3>
+            <H3 disableAnchor>
+              {label && label !== name ? `${label} (${name})` : name}
+            </H3>
             <GenomeMap
              key={`genome-map-${name}`}
              preset={payloads[idx]}

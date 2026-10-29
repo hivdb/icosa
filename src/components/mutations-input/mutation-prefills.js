@@ -89,7 +89,7 @@ export default function useMutationPrefills({onChange, config}) {
     [setValue, handlePrefillSelect]
   );
 
-  if (!mutationPrefills) {
+  if (!mutationPrefills || mutationPrefills.length === 0) {
     return null;
   }
 
