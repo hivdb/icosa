@@ -1,4 +1,4 @@
-import {isMajorMutation, mutationGroups} from './drm';
+import {isMajorMutation, mutationGroups, classifyGeneMutations} from './drm';
 
 describe('HCV mutation groups', () => {
   test('uses the HCV DRM list and keeps other mutations separate', () => {
@@ -29,5 +29,17 @@ describe('HCV mutation groups', () => {
     expect(isMajorMutation('NS5A_NTD', {
       position: 93, reference: 'Y', AAs: 'T'
     })).toBe(true);
+  });
+
+  test('uses the same Major flags for mutation maps as reports', () => {
+    const [geneSeq] = classifyGeneMutations([{
+      gene: {name: 'NS3'},
+      mutations: [
+        {position: 80, reference: 'Q', AAs: 'K', isDRM: false},
+        {position: 87, reference: 'A', AAs: 'S', isDRM: true}
+      ]
+    }]);
+    expect(geneSeq.mutations.map(({isDRM}) => isDRM))
+      .toEqual([true, false]);
   });
 });

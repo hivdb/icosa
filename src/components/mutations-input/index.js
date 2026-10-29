@@ -96,7 +96,7 @@ export default function MutationsInput({
       {splitGeneInput ? null :
       <div className={style['mutation-main-input']}>
         {prefillElement}
-        <div className={style['or']}>or</div>
+        {prefillElement && <div className={style['or']}>or</div>}
         <MutationsTagsInput
          config={config}
          parentClassName={className}

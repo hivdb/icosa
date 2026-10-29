@@ -63,3 +63,13 @@ export function mutationGroups(geneName, mutations = []) {
     {mutationType: 'Other', mutations: other}
   ];
 }
+
+export function classifyGeneMutations(geneSequences = []) {
+  return geneSequences.map(geneSeq => ({
+    ...geneSeq,
+    mutations: geneSeq.mutations.map(mutation => ({
+      ...mutation,
+      isDRM: isMajorMutation(geneSeq.gene.name, mutation)
+    }))
+  }));
+}

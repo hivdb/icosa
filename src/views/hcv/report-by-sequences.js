@@ -14,6 +14,7 @@ import PrintHeader from '../hbv/print-header';
 import SingleSequenceReport from '../hbv/report-by-sequences/single-report';
 import query from './sequence-query.graphql';
 import {ResistanceSummary} from './report-sections';
+import {classifyGeneMutations} from './drm';
 import style from '../hbv/style.module.scss';
 
 function SequenceResults({
@@ -36,6 +37,9 @@ function SequenceResults({
     <main className={style.main} data-loaded={loaded}>
       {sequences.map(({header}, idx) => {
         const result = byHeader[header];
+        const alignedGeneSequences = classifyGeneMutations(
+          result?.alignedGeneSequences || []
+        );
         return <React.Fragment key={idx}>
           <SingleSequenceReport
            header={header}
@@ -44,7 +48,8 @@ function SequenceResults({
            sequenceResult={result ? {
              ...result,
              drugResistance: result.drugResistance || [],
-             includeGenes: (result.alignedGeneSequences || []).map(
+             alignedGeneSequences,
+             includeGenes: alignedGeneSequences.map(
                ({gene}) => gene.name
              )
            } : undefined}
@@ -53,7 +58,7 @@ function SequenceResults({
             {result && !result.validationResults?.some(
               ({level}) => level === 'CRITICAL'
             ) ? <ResistanceSummary
-             geneSequences={result.alignedGeneSequences} /> : null}
+             geneSequences={alignedGeneSequences} /> : null}
           </SingleSequenceReport>
           {idx + 1 < sequenceAnalysis.length ? <PageBreak /> : null}
         </React.Fragment>;

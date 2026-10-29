@@ -5,14 +5,23 @@ import {matchShape, routerShape} from 'found';
 import ConfigContext from '../../utils/config-context';
 import PatternLoader from '../../components/pattern-loader';
 import PatternAnalysisLayout from '../../components/pattern-analysis-layout';
-import {ReportHeader, ReportSection, useReportPaginator} from
+import {
+  ReportHeader,
+  ReportSection,
+  MutationViewer,
+  ValidationReport,
+  RefContextWrapper,
+  useReportPaginator
+} from
   '../../components/report';
 import PageBreak from '../../components/page-break';
 import setTitle from '../../utils/set-title';
 import useApolloClient from '../hbv/apollo-client';
 import PrintHeader from '../hbv/print-header';
 import query from './pattern-query.graphql';
-import {ValidationMessages, GeneMutations} from './report-sections';
+import {GeneMutations, ResistanceSummary} from './report-sections';
+import {classifyGeneMutations} from './drm';
+import {allGenes} from './region-presets';
 import style from '../hbv/style.module.scss';
 
 function PatternResults({
@@ -35,6 +44,18 @@ function PatternResults({
     <main className={style.main} data-loaded={loaded}>
       {patterns.map(({name}, idx) => {
         const result = byName[name];
+        const geneMutations = classifyGeneMutations(
+          result?.allGeneMutations || []
+        );
+        const resistanceGenes = geneMutations.filter(
+          ({gene}) => allGenes.includes(gene.name)
+        );
+        const otherGenes = geneMutations.filter(
+          ({gene}) => !allGenes.includes(gene.name)
+        );
+        const isCritical = result?.validationResults?.some(
+          ({level}) => level === 'CRITICAL'
+        );
         return <React.Fragment key={idx}>
           <article
            data-loaded={!!result}
@@ -45,15 +66,28 @@ function PatternResults({
              index={idx}
              onObserve={onObserve}
              onDisconnect={onDisconnect} />
-            {result ? <ReportSection title="Mutations & quality assessment">
-              <ValidationMessages results={result.validationResults} />
-              {(result.allGeneMutations || []).map(({gene, mutations}) => (
-                <GeneMutations
-                 key={gene.name}
-                 geneName={gene.name}
-                 mutations={mutations} />
-              ))}
-            </ReportSection> : null}
+            {result ? <RefContextWrapper>
+              <MutationViewer
+               title="Mutation map & quality assessment"
+               noUnseqRegions
+               strain="HCV1"
+               allGeneSeqs={resistanceGenes}
+               output={output}>
+                <ValidationReport
+                 validationResults={result.validationResults} />
+              </MutationViewer>
+              {!isCritical &&
+                <ResistanceSummary geneSequences={resistanceGenes} />}
+              {otherGenes.length > 0 ?
+                <ReportSection title="Other gene mutations">
+                  {otherGenes.map(({gene, mutations}) => (
+                    <GeneMutations
+                     key={gene.name}
+                     geneName={gene.name}
+                     mutations={mutations} />
+                  ))}
+                </ReportSection> : null}
+            </RefContextWrapper> : null}
           </article>
           {idx + 1 < patterns.length ? <PageBreak /> : null}
         </React.Fragment>;
