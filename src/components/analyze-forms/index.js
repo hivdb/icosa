@@ -39,6 +39,9 @@ AnalyzeForms.propTypes = {
   enableTabs: PropTypes.arrayOf(
     PropTypes.oneOf(['patterns', 'sequences', 'reads']).isRequired
   ),
+  hiddenTabs: PropTypes.arrayOf(
+    PropTypes.oneOf(['patterns', 'sequences', 'reads']).isRequired
+  ),
   //onTabSwitch: React.PropTypes.func,
   basePath: PropTypes.string.isRequired,
   patternsTo: PropTypes.string.isRequired,
@@ -52,7 +55,8 @@ AnalyzeForms.propTypes = {
 };
 
 AnalyzeForms.defaultProps = {
-  enableTabs: ['patterns', 'sequences', 'reads']
+  enableTabs: ['patterns', 'sequences', 'reads'],
+  hiddenTabs: []
 };
 
 export default function AnalyzeForms({
@@ -67,6 +71,7 @@ export default function AnalyzeForms({
   sequencesOutputOptions,
   seqReadsOutputOptions,
   enableTabs,
+  hiddenTabs,
   ngsRunners,
   ngs2codfreqSide,
   ...otherProps
@@ -146,7 +151,10 @@ export default function AnalyzeForms({
          selectedIndex={tabIndex}>
           <TabList>
             {tabNames.map((tabName, idx) => (
-              <Tab key={tabName}>
+              <Tab
+               key={tabName}
+               style={{display: hiddenTabs.includes(enableTabs[idx]) ?
+                 'none' : undefined}}>
                 <Link to={`${basePath}/${tabName}/`}>
                   {tabTitles[idx]}
                 </Link>

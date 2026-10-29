@@ -239,7 +239,9 @@ function MutationViewer({
             {presets.map(({name, label}, idx) => (
               <Tab
                data-hide={!showAll && !payloads[idx].hasCoverage}
-               key={`tab-${name}`}>{label} ({name})</Tab>
+               key={`tab-${name}`}>
+                {label && label !== name ? `${label} (${name})` : name}
+              </Tab>
             ))}
           </TabList>
           {togglerNode}

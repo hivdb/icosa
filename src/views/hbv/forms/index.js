@@ -76,6 +76,7 @@ function SierraForms({
        {config.messages['codfreq-example'] ||
          `&lt;codfreq-example&gt;`}
      </Markdown>}
+     hiddenTabs={['reads']}
      patternsTo={patternsTo}
      sequencesTo={sequencesTo}
      enableReads readsTo={readsTo}

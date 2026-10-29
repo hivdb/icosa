@@ -20,7 +20,8 @@ SingleSequenceReport.propTypes = {
   output: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   onObserve: PropTypes.func.isRequired,
-  onDisconnect: PropTypes.func
+  onDisconnect: PropTypes.func,
+  children: PropTypes.node
 };
 
 
@@ -30,7 +31,8 @@ function SingleSequenceReport({
   header,
   index,
   onObserve,
-  onDisconnect
+  onDisconnect,
+  children
 }) {
 
   const {
@@ -76,6 +78,7 @@ function SingleSequenceReport({
                suppressLevels
                {...{geneDR, output, strain}} />
             </React.Fragment>)}
+          {children}
         </> : null}
       </RefContextWrapper>
     </article>
@@ -91,20 +94,23 @@ export default React.memo(
       output: prevOutput,
       onObserve: prevOnObserve,
       header: prevHeader,
-      sequenceResult: prevResult
+      sequenceResult: prevResult,
+      children: prevChildren
     },
     {
       index: nextIndex,
       output: nextOutput,
       onObserve: nextOnObserve,
       header: nextHeader,
-      sequenceResult: nextResult
+      sequenceResult: nextResult,
+      children: nextChildren
     }
   ) => (
     prevIndex === nextIndex &&
     prevOutput === nextOutput &&
     prevOnObserve === nextOnObserve &&
     prevHeader === nextHeader &&
-    prevResult === nextResult
+    prevResult === nextResult &&
+    prevChildren === nextChildren
   )
 );

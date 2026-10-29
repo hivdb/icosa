@@ -77,6 +77,13 @@ export default function Home() {
         </ul>
       </li>
       <li>
+        Hepatitis C Virus Analysis Program
+        <ul>
+          <li><Link to="/hcv/by-patterns/">By mutations</Link></li>
+          <li><Link to="/hcv/by-sequences/">By sequence</Link></li>
+        </ul>
+      </li>
+      <li>
         <Link to="/protein-viewer/">Protein Viewer</Link>
       </li>
       <li>
